@@ -6,7 +6,7 @@ ACCOUNT_TOKEN = 'fc9bd67bb8deee6befd3ab0da3973718'
 API_VERSION = '2010-04-01'
 
 # base URL of this application
-BASE_URL =  "actionpods.heroku.com/callme" #production ex: "http://appname.heroku.com/callme"
+BASE_URL =  "http://actionpods.heroku.com/callme" #production ex: "http://appname.heroku.com/callme"
 
 # Outgoing Caller ID you have previously validated with Twilio
 CALLER_ID = '415-314-1222'
