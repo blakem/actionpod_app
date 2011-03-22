@@ -1,6 +1,10 @@
 ActionpodApp::Application.routes.draw do
   root :to => 'pages#home'
   
+  # Callme routes
+  match ':controller(/:action(.:format))'
+  match ':controller(/:action(/:id(.:format)))'
+  
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

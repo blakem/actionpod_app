@@ -1,0 +1,2 @@
+class CallmeController < ApplicationController
+end
