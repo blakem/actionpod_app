@@ -28,6 +28,7 @@ class CallmeController < ApplicationController
           'To' => params['number'],
           'Url' => BASE_URL + '/hellomoto.xml',
       }
+      resp = ''
       begin
           account = Twilio::RestAccount.new(ACCOUNT_SID, ACCOUNT_TOKEN)
           resp = account.request(
@@ -35,7 +36,7 @@ class CallmeController < ApplicationController
               'POST', d)
           resp.error! unless resp.kind_of? Net::HTTPSuccess
       rescue StandardError => bang
-          redirect_to({ :action => '.', 'msg' => "Error #{ bang }" })
+          redirect_to({ :action => '.', 'msg' => "Error #{ bang } #{resp.inspect}" })
           return
       end
       
