@@ -36,7 +36,7 @@ class CallmeController < ApplicationController
               'POST', d)
           resp.error! unless resp.kind_of? Net::HTTPSuccess
       rescue StandardError => bang
-          redirect_to({ :action => '.', 'msg' => "Error #{ bang } #{resp.inspect}" })
+          redirect_to({ :action => '.', 'msg' => "Error #{ bang } #{resp.body.inspect}" })
           return
       end
       
