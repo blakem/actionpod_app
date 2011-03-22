@@ -1,0 +1,3 @@
+type show_git_prompt 2>/dev/null | grep -q 'is a function' && rvm use ruby-1.9.2-p180@actionpod 
+type show_git_prompt 2>/dev/null | grep -q 'is a function' && show_git_prompt
+type show_git_prompt 2>/dev/null | grep -q 'is a function' || rvm use ruby-1.9.2-p180@actionpod 2>&1 > /dev/null
