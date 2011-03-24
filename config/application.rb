@@ -40,6 +40,9 @@ module ActionpodApp
     # Configure sensitive parameters which will be filtered from the log file.
     config.filter_parameters += [:password]
     
+    # For admin_data
+    config.serve_static_assets = true
+    
     if Rails.env.test?
       initializer :after => :initialize_dependency_mechanism do
         # Work around initializer in railties/lib/rails/application/bootstrap.rb

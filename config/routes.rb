@@ -1,9 +1,16 @@
 ActionpodApp::Application.routes.draw do
+  devise_for :users
+
   root :to => 'pages#home'
+  
   
   # Callme routes
   match ':controller(/:action(.:format))'
-  match ':controller(/:action(/:id(.:format)))'
+  match '/:controller(/:action(/:id))', :constraints => lambda{ |request|
+      # excluded if admin_data
+      !request.path.starts_with?("/admin_data")     
+  }
+  #match ':controller(/:action(/:id(.:format)))'
   
   # The priority is based upon order of creation:
   # first created -> highest priority.
