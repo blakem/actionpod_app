@@ -1,5 +1,5 @@
 # == Schema Information
-# Schema version: 20110324005526
+# Schema version: 20110328222634
 #
 # Table name: users
 #
@@ -17,6 +17,7 @@
 #  last_sign_in_ip      :string(255)
 #  created_at           :datetime
 #  updated_at           :datetime
+#  admin                :boolean
 #
 
 class User < ActiveRecord::Base
@@ -33,7 +34,7 @@ class User < ActiveRecord::Base
       record.errors.add attr, "Please enter correct invite code (#{value})." unless
         value && value == User.secret_invite_code
   end
-
+  
   def self.secret_invite_code
     "Acti0nP0DUser"
   end
