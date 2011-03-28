@@ -11,4 +11,8 @@ module ApplicationHelper
   def logo
     image_tag("logo.png", :alt => "ActionPods", :class => "round")
   end
+  
+  def admin_signed_in?
+    user_signed_in? && current_user.admin?
+  end
 end
