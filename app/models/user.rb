@@ -26,5 +26,15 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :validatable
 
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :email, :password, :password_confirmation, :remember_me
+  attr_accessible :email, :password, :password_confirmation, :remember_me, :invite_code
+  attr_accessor :invite_code
+
+  validates_each :invite_code, :on => :create do |record, attr, value|
+      record.errors.add attr, "Please enter correct invite code (#{value})." unless
+        value && value == User.secret_invite_code
+  end
+
+  def self.secret_invite_code
+    "Acti0nP0DUser"
+  end
 end

@@ -1,5 +1,7 @@
 require 'spec_helper'
 
 describe User do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it "Should have a secret invite code" do
+    User.secret_invite_code.should_not be_empty
+  end
 end
