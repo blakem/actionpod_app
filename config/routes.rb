@@ -1,11 +1,7 @@
 ActionpodApp::Application.routes.draw do
-  # devise_for :installs
-
+  root :to => 'pages#home'
   devise_for :users
 
-  root :to => 'pages#home'
-  
-  
   # Callme routes
   match ':controller(/:action(.:format))'
   match '/:controller(/:action(/:id))', :constraints => lambda{ |request|
