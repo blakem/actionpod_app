@@ -11,4 +11,13 @@ describe User do
     user.admin = true
     user.admin?.should be_true
   end
+  
+  it "should have many events" do
+    user = Factory(:user)
+    event1 = Factory(:event, :user_id => user.id)
+    event2 = Factory(:event, :user_id => user.id)
+    event3 = Factory(:event)
+    user.events.should include(event1, event2)
+    user.events.should_not include(event3)
+  end
 end
