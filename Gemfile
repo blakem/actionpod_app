@@ -6,6 +6,7 @@ gem 'devise'
 gem 'will_paginate', '3.0.pre2'
 gem 'admin_data', '1.1.11'
 gem 'twiliolib'
+gem 'ice_cube'
 
 group :test, :development do
   gem 'rspec-rails'
