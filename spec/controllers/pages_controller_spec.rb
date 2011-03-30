@@ -3,10 +3,10 @@ require 'spec_helper'
 describe PagesController do
   render_views
   describe "when not logged in" do
-    it "should redirect to the login page" do
+    it "should show a welcome page" do
   	  controller.user_signed_in?.should be_false
       get 'home'
-      response.should redirect_to(:action=>"new", :controller=>"devise/sessions")
+      response.should have_selector('h3', :content => 'Welcome')
     end
     
     it "should use a default Time.zone" do

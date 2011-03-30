@@ -1,11 +1,1 @@
-<h3>Welcome <%= current_user.name %></h3>
-<% if @events.any? %>
-  <h3>Your Scheduled Calls:</h3>
-  <ul>
-   <% @events.each do |event| %>
-   <li><%= event.name %> | <%= event.schedule.to_s %></li>
-   <% end %>
-  </ul>
-<% else %>
-  <h3>You don't have any scheduled calls</h3>
-<% end %>
+<h3>Welcome</h3>
