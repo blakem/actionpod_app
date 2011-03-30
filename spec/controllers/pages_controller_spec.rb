@@ -8,6 +8,10 @@ describe PagesController do
       get 'home'
       response.should redirect_to(:action=>"new", :controller=>"devise/sessions")
     end
+    
+    it "should use a default Time.zone" do
+      Time.zone.to_s.should == '(GMT+00:00) UTC'
+    end
   end
   
   describe "success" do
@@ -30,6 +34,10 @@ describe PagesController do
       response.should be_success
       response.should have_selector('title', :content => 'ActionPods')
     end   
+
+    it "should use the users time_zone" do
+      Time.zone.to_s.should == '(GMT-08:00) Pacific Time (US & Canada)'
+    end
 
   end
 end
