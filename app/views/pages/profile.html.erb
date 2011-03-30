@@ -3,7 +3,7 @@
   <h3>Your Scheduled Calls:</h3>
   <ul>
    <% @events.each do |event| %>
-   <li><%= event.name %> | <%= event.schedule.to_s %></li>
+   <li><%= event.name %> | <%= event.schedule_str %></li>
    <% end %>
   </ul>
 <% else %>

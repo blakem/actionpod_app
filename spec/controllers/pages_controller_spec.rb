@@ -52,7 +52,7 @@ describe PagesController do
       
       get 'home'
       response.should have_selector('h3', :content => "Your Scheduled Calls:")
-      response.should have_selector('ul>li', :content => event.schedule.to_s)
+      response.should have_selector('ul>li', :content => event.schedule_str)
       response.should have_selector('ul>li', :content => event.name)
     end
 

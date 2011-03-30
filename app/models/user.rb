@@ -35,6 +35,7 @@ class User < ActiveRecord::Base
   attr_accessor :invite_code
   
   has_many :events
+  has_many :pools
 
   validates_each :invite_code, :on => :create do |record, attr, value|
       record.errors.add attr, "Please enter correct invite code (#{value})." unless

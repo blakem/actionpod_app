@@ -24,6 +24,21 @@ class Event < ActiveRecord::Base
     self.schedule_yaml = default_schedule.to_yaml
   end
   
+  def schedule_str
+    string = self.schedule.to_s
+    string.match(/on the (\d+)\w+ hour of the day/)
+    hour = $1
+    ampm = hour.to_i >= 12 ? 'pm' : 'am'
+    string.match(/on the (\d+)\w+ minute of the hour/)
+    minute = $1
+
+    string.gsub!(/ on the (\d+)\w+ hour of the day/, '')
+    string.gsub!(/ on the (\d+)\w+ minute of the hour/, '')
+    string.gsub!(/Weekly /, '')
+
+    string = "#{hour}:" + sprintf('%02i', minute) + ampm + " #{string}"
+  end
+  
   private
     def default_schedule
       sched = IceCube::Schedule.new(Time.zone.now)

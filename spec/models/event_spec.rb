@@ -18,6 +18,8 @@ describe Event do
     event = Event.create(:name => 'NewEvent775', :user_id => user.id, :pool_id => pool.id)
     event.schedule.to_s.should == 
       'Weekly on Mondays, Tuesdays, Wednesdays, Thursdays, and Fridays on the 8th hour of the day on the 0th minute of the hour'
+    event.schedule_str.should ==
+      '8:00am on Mondays, Tuesdays, Wednesdays, Thursdays, and Fridays'
   end
   
   it "belongs to a pool" do

@@ -20,6 +20,16 @@ describe User do
     user.events.should include(event1, event2)
     user.events.should_not include(event3)
   end
+
+  it "can have zero or more pools" do
+    user = Factory(:user)
+    user.pools.count.should == 0
+    pool1 = Factory(:pool, :user_id => user.id)
+    pool2 = Factory(:pool, :user_id => user.id)
+    pool3 = Factory(:pool)
+    user.pools.should include(pool1, pool2)
+    user.pools.should_not include(pool3)
+  end
   
   it "should have a time_zone that defaults to 'Pacific Time (US & Canada)'" do
     user = User.create()
