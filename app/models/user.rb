@@ -1,5 +1,5 @@
 # == Schema Information
-# Schema version: 20110330000918
+# Schema version: 20110330005329
 #
 # Table name: users
 #
@@ -19,6 +19,9 @@
 #  updated_at           :datetime
 #  admin                :boolean
 #  time_zone            :string(255)
+#  name                 :string(255)
+#  primary_phone        :string(255)
+#  title                :string(255)
 #
 
 class User < ActiveRecord::Base

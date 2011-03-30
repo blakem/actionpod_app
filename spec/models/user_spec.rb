@@ -25,4 +25,19 @@ describe User do
     user = User.create()
     user.time_zone.should == 'Pacific Time (US & Canada)'
   end
+  
+  it "should have a name" do
+    user = Factory(:user, :name => 'Bob Jones')
+    user.name.should == 'Bob Jones'
+  end
+
+  it "should have a primary_phone" do
+    user = Factory(:user, :primary_phone => '415-444-1234')
+    user.primary_phone.should == '415-444-1234'
+  end
+
+  it "should have a title" do
+    user = Factory(:user, :title => 'Software Developer')
+    user.title.should == 'Software Developer'
+  end
 end

@@ -10,8 +10,18 @@ Factory.sequence :event_name do |n|
   "TestEvent#{n+1}"
 end
 
+Factory.sequence :user_name do |n|
+  "TestNamme#{n+1}"
+end
+
+Factory.sequence :user_title do |n|
+  "TestNamme#{n+1}"
+end
+
 Factory.define :user do |user|
   user.sequence(:email)  { Factory.next(:email) }
+  user.sequence(:name)  { Factory.next(:user_name) }
+  user.sequence(:title)  { Factory.next(:user_title) }
   user.password          "foobar"
   user.invite_code       User.secret_invite_code
 end
