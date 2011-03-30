@@ -114,3 +114,11 @@ def login_user
   end
 end
 
+def login_admin
+  before(:each) do
+    @request.env["devise.mapping"] = Devise.mappings[:user]
+    sign_in Factory.create(:user, :admin => true)
+    controller.current_user.admin = true
+    controller.current_user.save
+  end
+end

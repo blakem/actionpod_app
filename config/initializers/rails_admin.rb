@@ -1,1 +1,3 @@
-RailsAdmin.authenticate_with { 'admin_signed_in?' }
+RailsAdmin.authenticate_with do
+  redirect_to root_path unless admin_signed_in?
+end
