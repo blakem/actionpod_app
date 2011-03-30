@@ -20,4 +20,9 @@ describe User do
     user.events.should include(event1, event2)
     user.events.should_not include(event3)
   end
+  
+  it "should have a time_zone that defaults to 'Pacific Time (US & Canada)'" do
+    user = User.create()
+    user.time_zone.should == 'Pacific Time (US & Canada)'
+  end
 end

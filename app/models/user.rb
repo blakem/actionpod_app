@@ -1,5 +1,5 @@
 # == Schema Information
-# Schema version: 20110328222634
+# Schema version: 20110330000918
 #
 # Table name: users
 #
@@ -18,6 +18,7 @@
 #  created_at           :datetime
 #  updated_at           :datetime
 #  admin                :boolean
+#  time_zone            :string(255)
 #
 
 class User < ActiveRecord::Base
@@ -35,6 +36,12 @@ class User < ActiveRecord::Base
   validates_each :invite_code, :on => :create do |record, attr, value|
       record.errors.add attr, "Please enter correct invite code (#{value})." unless
         value && value == User.secret_invite_code
+  end
+
+  after_initialize :init
+
+  def init
+    self.time_zone = 'Pacific Time (US & Canada)'
   end
   
   def self.secret_invite_code
