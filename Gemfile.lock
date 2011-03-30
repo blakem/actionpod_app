@@ -1,3 +1,11 @@
+GIT
+  remote: git://github.com/sferik/rails_admin.git
+  revision: ba250e59ab7d4eaf4d57542774d88ac3a1b175fb
+  specs:
+    rails_admin (0.0.1)
+      builder (~> 2.1.0)
+      rails (~> 3.0.3)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -112,6 +120,7 @@ DEPENDENCIES
   factory_girl_rails
   ice_cube
   rails (= 3.0.5)
+  rails_admin!
   rspec
   rspec-rails
   spork (= 0.9.0.rc4)
