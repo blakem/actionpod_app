@@ -1,5 +1,5 @@
 # == Schema Information
-# Schema version: 20110329225808
+# Schema version: 20110330183523
 #
 # Table name: events
 #
@@ -9,12 +9,14 @@
 #  user_id       :integer         not null
 #  created_at    :datetime
 #  updated_at    :datetime
+#  pool_id       :integer         not null
 #
 
 class Event < ActiveRecord::Base
   include ScheduleAttributes
 
   belongs_to :user
+  belongs_to :pool
 
   after_initialize :init
 

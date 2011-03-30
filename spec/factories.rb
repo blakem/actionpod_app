@@ -11,11 +11,15 @@ Factory.sequence :event_name do |n|
 end
 
 Factory.sequence :user_name do |n|
-  "TestNamme#{n+1}"
+  "TestName#{n+1}"
 end
 
 Factory.sequence :user_title do |n|
-  "TestNamme#{n+1}"
+  "TestTitle#{n+1}"
+end
+
+Factory.sequence :pool_name do |n|
+  "TestPool#{n+1}"
 end
 
 Factory.define :user do |user|
@@ -29,4 +33,10 @@ end
 Factory.define :event do |event|
   event.sequence(:name)  { Factory.next(:event_name) }
   event.association :user_id, :factory => :user
+  event.association :pool_id, :factory => :pool
+end
+
+Factory.define :pool do |pool|
+  pool.sequence(:name)  { Factory.next(:pool_name) }
+  pool.association :user_id, :factory => :user
 end

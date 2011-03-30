@@ -14,8 +14,15 @@ describe Event do
 
   it "should have a default schedule of weekdays at 8am" do
     user = Factory(:user)
-    event = Event.create(:name => 'NewEvent775', :user_id => user.id)
+    pool = Factory(:pool)
+    event = Event.create(:name => 'NewEvent775', :user_id => user.id, :pool_id => pool.id)
     event.schedule.to_s.should == 
       'Weekly on Mondays, Tuesdays, Wednesdays, Thursdays, and Fridays on the 8th hour of the day on the 0th minute of the hour'
+  end
+  
+  it "belongs to a pool" do
+    pool = Factory(:pool)
+    event = Factory(:event, :pool_id => pool.id)
+    event.pool.should == pool    
   end
 end
