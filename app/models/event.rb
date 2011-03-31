@@ -62,17 +62,9 @@ class Event < ActiveRecord::Base
         'To' => user.primary_phone,
         'Url' => base_url + '/hellomoto.xml',
     }
-    resp = ''
-    begin
-        account = Twilio::RestAccount.new(account_sid, account_token)
-        resp = account.request(
-            "/#{api_version}/Accounts/#{account_sid}/Calls",
-            'POST', d)
-        resp.error! unless resp.kind_of? Net::HTTPSuccess
-    rescue StandardError => bang
-        redirect_to({ :action => '.', 'msg' => "Error #{ bang } #{resp.body.inspect}" })
-        return
-    end
+    account = Twilio::RestAccount.new(account_sid, account_token)
+    resp = account.request("/#{api_version}/Accounts/#{account_sid}/Calls", 'POST', d)
+    resp.error! unless resp.kind_of? Net::HTTPSuccess
   end
     
   private
