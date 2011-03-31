@@ -13,7 +13,7 @@
 #
 
 class Event < ActiveRecord::Base
-  include ScheduleAttributes
+  # include ScheduleAttributes
 
   belongs_to :user
   belongs_to :pool
@@ -24,21 +24,32 @@ class Event < ActiveRecord::Base
     self.schedule_yaml = default_schedule.to_yaml
   end
   
+  def schedule 
+    IceCube::Schedule.from_yaml(schedule_yaml)
+  end
+
   def schedule_str
     string = self.schedule.to_s
-    string.match(/on the (\d+)\w+ hour of the day/)
-    hour = $1
-    ampm = hour.to_i >= 12 ? 'pm' : 'am'
-    string.match(/on the (\d+)\w+ minute of the hour/)
-    minute = $1
-
-    string.gsub!(/ on the (\d+)\w+ hour of the day/, '')
-    string.gsub!(/ on the (\d+)\w+ minute of the hour/, '')
     string.gsub!(/Weekly /, '')
-
+    string.gsub!(/ on the (\d+)\w+ minute of the hour/, '')
+    minute = $1
+    string.gsub!(/ on the (\d+)\w+ hour of the day/, '')
+    hour = $1
+    ampm = 'am'
+    if hour.to_i >= 12
+      hour = (hour.to_i - 12).to_s
+      ampm = 'pm'
+    end
+    hour = '12' if hour.to_i == 0
     string = "#{hour}:" + sprintf('%02i', minute) + ampm + " #{string}"
   end
   
+  def alter_schedule(args)
+    sched_hash = schedule.to_hash
+    sched_hash[:rrules][0][:validations].merge!(args)
+    self.schedule_yaml = IceCube::Schedule.from_hash(sched_hash).to_yaml
+  end
+    
   private
     def default_schedule
       sched = IceCube::Schedule.new(Time.zone.now)
