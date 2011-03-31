@@ -9,6 +9,7 @@ gem 'admin_data', '1.1.11'
 gem 'twiliolib'
 gem 'ice_cube'
 gem 'pg'
+gem 'delayed_job'
 
 group :test, :development do
   gem 'rspec-rails'

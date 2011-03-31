@@ -42,6 +42,10 @@ GEM
     arel (2.0.9)
     bcrypt-ruby (2.1.4)
     builder (2.1.2)
+    daemons (1.1.2)
+    delayed_job (2.1.4)
+      activesupport (~> 3.0)
+      daemons
     devise (1.1.8)
       bcrypt-ruby (~> 2.1.2)
       warden (~> 1.0.2)
@@ -117,6 +121,7 @@ PLATFORMS
 DEPENDENCIES
   admin_data (= 1.1.11)
   annotate-models
+  delayed_job
   devise
   factory_girl_rails
   ice_cube
