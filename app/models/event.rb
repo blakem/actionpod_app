@@ -28,13 +28,12 @@ class Event < ActiveRecord::Base
     IceCube::Schedule.from_yaml(schedule_yaml)
   end
 
-  def schedule_str
-    string = self.schedule.to_s
-    string.gsub!(/Weekly /, '')
+  def schedule_str(string = self.schedule.to_s)
     string.gsub!(/ on the (\d+)\w+ minute of the hour/, '')
     minute = $1
     string.gsub!(/ on the (\d+)\w+ hour of the day/, '')
     hour = $1
+    string.gsub!(/Weekly /, '')
     ampm = 'am'
     if hour.to_i >= 12
       hour = (hour.to_i - 12).to_s

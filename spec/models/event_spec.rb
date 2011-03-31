@@ -45,5 +45,8 @@ describe Event do
     event.alter_schedule(:day => [2,3,4], :minute_of_hour => [15])
     event.schedule_str.should ==
       '12:15am on Tuesdays, Wednesdays, and Thursdays'
+    test_str = 'Weekly on the 8th hour of the day on Mondays, Tuesdays, Wednesdays, Thursdays, and Fridays on the 0th minute of the hour'      
+    event.schedule_str(test_str).should  ==
+      '8:00am on Mondays, Tuesdays, Wednesdays, Thursdays, and Fridays'
   end
 end
