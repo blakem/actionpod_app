@@ -64,7 +64,6 @@ class Event < ActiveRecord::Base
     }
     account = Twilio::RestAccount.new(account_sid, account_token)
     resp = account.request("/#{api_version}/Accounts/#{account_sid}/Calls", 'POST', d)
-    # resp.error! unless resp.kind_of? Net::HTTPSuccess
   end
     
   private
