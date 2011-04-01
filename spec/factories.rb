@@ -26,6 +26,7 @@ Factory.define :user do |user|
   user.sequence(:email)  { Factory.next(:email) }
   user.sequence(:name)  { Factory.next(:user_name) }
   user.sequence(:title)  { Factory.next(:user_title) }
+  user.sequence(:primary_phone) { Factory.next(:phone) }
   user.password          "foobar"
   user.invite_code       User.secret_invite_code
 end

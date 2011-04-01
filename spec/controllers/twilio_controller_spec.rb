@@ -2,10 +2,14 @@ require 'spec_helper'
 
 describe TwilioController do
   render_views
+  before(:each) do
+    @request.env["HTTP_ACCEPT"] = "application/xml"
+  end
+
   describe "when not logged in" do
     it "should be success" do
   	  controller.user_signed_in?.should be_false
-      get 'greeting.xml'
+      post :greeting
       response.content_type.should =~ /^application\/xml/
       response.should be_success
     end
@@ -13,18 +17,27 @@ describe TwilioController do
 
   describe "greeting" do
     it "should say hello" do
-      get 'greeting.xml'
+      post :greeting
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>gather', :numdigits => '1')
-      # response.should have_selector('response>gather', :action => 'http://actionpods.heroku.com/twilio/join_conference.xml')
+      response.should have_selector('response>gather', :action => 'http://actionpods.heroku.com/twilio/join_conference.xml')
       response.should have_selector('response>gather>say', :content => 'Hello')
       response.should have_selector('response>gather>say', :content => 'Please press 1')
+    end
+
+    it "should match up with the event being called" do
+      user = Factory(:user)
+      event = Factory(:event, :user_id => user.id, :name => 'Morning Call')      
+      post :greeting, :To => user.primary_phone
+      response.content_type.should =~ /^application\/xml/
+      response.should have_selector('response>gather', :numdigits => '1')
+      response.should have_selector('response>gather>say', :content => 'Hello, welcome to your Morning Call.')
     end
   end
 
   describe "join_conference" do
     it "should join a conference room" do
-      get 'join_conference.xml'
+      post :join_conference
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => 'Joining a conference room')
       response.should have_selector('response>dial>conference', :content => 'MyRoom')
