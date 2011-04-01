@@ -16,7 +16,7 @@ describe TwilioController do
       get 'greeting.xml'
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>gather', :numdigits => '1')
-      # response.should have_selector('response>gather', :action => 'join_conference.xml')
+      # response.should have_selector('response>gather', :action => 'http://actionpods.heroku.com/twilio/join_conference.xml')
       response.should have_selector('response>gather>say', :content => 'Hello')
       response.should have_selector('response>gather>say', :content => 'Please press 1')
     end
