@@ -1,4 +1,4 @@
 xml.instruct!
 xml.Response do
-    xml.Say "Good bye."
+    xml.Say "Hello."
 end
