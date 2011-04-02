@@ -6,7 +6,7 @@ describe EventQueuer do
   end
   
   it "Created Delayed Jobs for Events that are ready to run" do
-    now = Time.now
+    now = Time.now.utc
     event1 = create_event_at(now)
     event1.schedule.occurs_on?(now).should be_true
     event2 = create_event_at(now.yesterday)
@@ -15,6 +15,9 @@ describe EventQueuer do
     expect { 
       EventQueuer.new.queue_events(Time.now)
     }.to change(DelayedJob, :count).by(1)
+    DelayedJob.all.count.should be 1
+    dj = DelayedJob.first
+    dj.run_at.utc.should <= now + 1.minute
   end
 end
 

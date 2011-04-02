@@ -68,7 +68,7 @@ class Event < ActiveRecord::Base
     
   private
     def default_schedule
-      sched = IceCube::Schedule.new(Time.zone.now.yesterday)
+      sched = IceCube::Schedule.new(Time.now.yesterday.utc)
       sched.add_recurrence_rule IceCube::Rule.weekly(1).day(:monday, :tuesday, :wednesday, :thursday, :friday).hour_of_day(8).minute_of_hour(0)
       sched
     end
