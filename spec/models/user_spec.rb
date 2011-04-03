@@ -32,8 +32,10 @@ describe User do
   end
   
   it "should have a time_zone that defaults to 'Pacific Time (US & Canada)'" do
-    user = User.create()
-    user.time_zone.should == 'Pacific Time (US & Canada)'
+    user1 = User.create()
+    user1.time_zone.should == 'Pacific Time (US & Canada)'
+    user2 = User.create(:time_zone => 'Mountain Time (US & Canada)')
+    user2.time_zone.should == 'Mountain Time (US & Canada)'
   end
   
   it "should have a name" do

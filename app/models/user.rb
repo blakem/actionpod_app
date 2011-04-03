@@ -31,7 +31,7 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :validatable
 
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :email, :password, :password_confirmation, :remember_me, :invite_code
+  attr_accessible :email, :password, :password_confirmation, :remember_me, :invite_code, :time_zone, :name, :primary_phone, :title
   attr_accessor :invite_code
   
   has_many :events
@@ -45,7 +45,7 @@ class User < ActiveRecord::Base
   after_initialize :init
 
   def init
-    self.time_zone = 'Pacific Time (US & Canada)'
+    self.time_zone ||= 'Pacific Time (US & Canada)'
   end
   
   def self.secret_invite_code

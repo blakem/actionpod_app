@@ -68,7 +68,8 @@ class Event < ActiveRecord::Base
     
   private
     def default_schedule
-      sched = IceCube::Schedule.new(Time.now.yesterday.utc)
+      time_zone = self.user ? self.user.time_zone : 'Pacific Time (US & Canada)'
+      sched = IceCube::Schedule.new(Time.now.in_time_zone(time_zone).beginning_of_day)
       sched.add_recurrence_rule IceCube::Rule.weekly(1).day(:monday, :tuesday, :wednesday, :thursday, :friday).hour_of_day(8).minute_of_hour(0)
       sched
     end
