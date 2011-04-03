@@ -3,26 +3,28 @@ require 'spec_helper'
 describe EventQueuer do
   before(:each) do
     Event.all.each { |e| e.destroy }
+    @user = Factory(:user)
+    Time.zone = 'UTC'
   end
   
   it "Created Delayed Jobs for Events that are ready to run" do
-    now = Time.now.utc
-    event1 = create_event_at(now)
-    event1.schedule.occurs_on?(now).should be_true
-    event2 = create_event_at(now.yesterday)
-    event2.schedule.occurs_on?(now).should be_false
-
+    now = Time.now.in_time_zone(@user.time_zone)
+    event1 = create_event_at(now, @user)
+    event2 = create_event_at(now + 23.hours, @user)
+    event3 = create_event_at(now + 25.hours, @user)
     expect { 
       EventQueuer.new.queue_events(Time.now)
-    }.to change(DelayedJob, :count).by(1)
-    DelayedJob.all.count.should be 1
-    dj = DelayedJob.first
-    dj.run_at.utc.should <= now + 1.minute
+    }.to change(DelayedJob, :count).by(2)
+    DelayedJob.all.count.should be 2
+    run_at_list = DelayedJob.all.map { |dj| dj.run_at.to_s }
+    expected1 = (now - now.sec.seconds).utc.to_s
+    expected2 = (now + 23.hours - now.sec.seconds).utc.to_s
+    run_at_list.should include(expected1, expected2)
   end
 end
 
-def create_event_at(time)
-  event = Factory(:event)
+def create_event_at(time, user)
+  event = Factory(:event, :user_id => user.id)
   event.alter_schedule(:hour_of_day => [time.hour], :minute_of_hour => [time.min], :day => [time.wday])
   event.save
   event
