@@ -6,5 +6,5 @@ task :cron => :environment do
   count = EventQueuer.new.queue_events(Time.now.utc)
   puts "Cron Finished queuing #{count} events at: " + Time.now.to_s
 
-  HerokuBackupTask.execute
+  HerokuBackupTask.execute if Rails.env.production?
 end
