@@ -10,7 +10,20 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110331195131) do
+ActiveRecord::Schema.define(:version => 20110404044618) do
+
+  create_table "calls", :force => true do |t|
+    t.string   "Sid"
+    t.string   "DateCreated"
+    t.string   "DateUpdated"
+    t.string   "To"
+    t.string   "From"
+    t.string   "PhoneNumberSid"
+    t.string   "Uri"
+    t.integer  "event_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "delayed_jobs", :force => true do |t|
     t.integer  "priority",   :default => 0

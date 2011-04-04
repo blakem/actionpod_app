@@ -2,11 +2,11 @@ class TwilioController < ApplicationController
 
   respond_to :html, :xml
   def greeting
-    user = User.find_by_primary_phone(params[:To])
-    if user
-      event = user.events.first
-    end
-    @event_name = user && event ? event.name : ''
+    @event_name = "Call"
+    call_sid = params[:CallSid]
+    call = Call.find_by_Sid(call_sid)
+    event = Event.find_by_id(call.event_id) if call
+    @event_name = event.name if event
     @postto = base_url + '/join_conference.xml'
   end
 

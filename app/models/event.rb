@@ -51,19 +51,8 @@ class Event < ActiveRecord::Base
     self.schedule_yaml = IceCube::Schedule.from_hash(sched_hash).to_yaml
   end
 
-  def make_call # XXX needs tests
-    account_sid = 'AC2e57bf710b77d765d280786bc07dbacc'
-    account_token = 'fc9bd67bb8deee6befd3ab0da3973718'
-    api_version = '2010-04-01'
-    base_url =  "http://actionpods.heroku.com/twilio"
-    caller_id = '415-314-1222'
-    d = {
-        'From' => caller_id,
-        'To' => user.primary_phone,
-        'Url' => base_url + '/greeting.xml',
-    }
-    account = Twilio::RestAccount.new(account_sid, account_token)
-    resp = account.request("/#{api_version}/Accounts/#{account_sid}/Calls", 'POST', d)
+  def make_call
+    TwilioCaller.new.start_call_for_event(self)
   end
     
   private

@@ -1,0 +1,32 @@
+# Initial response to outbound phone call
+{"TwilioResponse"=>
+  {"Call"=>
+    {
+      "Sid"=>"CA82e34f0cfd43824029781072e34fac39", 
+      "DateCreated"=>"Mon, 04 Apr 2011 04:35:10 +0000", 
+      "DateUpdated"=>"Mon, 04 Apr 2011 04:35:10 +0000", 
+      "ParentCallSid"=>nil, 
+      "AccountSid"=>"AC2e57bf710b77d765d280786bc07dbacc", 
+      "To"=>"+14153141222", 
+      "From"=>"+14153141222", 
+      "PhoneNumberSid"=>"PN7bc59ac941fb55880733ef2fe6295477", 
+      "Status"=>"queued", 
+      "StartTime"=>nil, 
+      "EndTime"=>nil, 
+      "Duration"=>nil, 
+      "Price"=>nil, 
+      "Direction"=>"outbound-api", 
+      "AnsweredBy"=>nil, 
+      "ApiVersion"=>"2010-04-01", 
+      "Annotation"=>nil, 
+      "ForwardedFrom"=>nil, 
+      "GroupSid"=>nil, 
+      "CallerName"=>nil, 
+      "Uri"=>"/2010-04-01/Accounts/AC2e57bf710b77d765d280786bc07dbacc/Calls/CA82e34f0cfd43824029781072e34fac39", 
+      "SubresourceUris"=>{
+        "Notifications"=>"/2010-04-01/Accounts/AC2e57bf710b77d765d280786bc07dbacc/Calls/CA82e34f0cfd43824029781072e34fac39/Notifications", 
+        "Recordings"=>"/2010-04-01/Accounts/AC2e57bf710b77d765d280786bc07dbacc/Calls/CA82e34f0cfd43824029781072e34fac39/Recordings"
+      }
+    }
+  }
+}
