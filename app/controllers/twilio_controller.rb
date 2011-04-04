@@ -16,6 +16,9 @@ class TwilioController < ApplicationController
   def incoming
     @postto = base_url + '/join_conference.xml'
   end
+  
+  def sms
+  end
 
   private
     def base_url 
