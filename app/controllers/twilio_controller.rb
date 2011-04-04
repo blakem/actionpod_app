@@ -13,6 +13,10 @@ class TwilioController < ApplicationController
   def join_conference
   end
 
+  def incoming
+    @postto = base_url + '/join_conference.xml'
+  end
+
   private
     def base_url 
       "http://actionpods.heroku.com/twilio"
