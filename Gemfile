@@ -9,6 +9,7 @@ gem 'admin_data', '1.1.11'
 gem 'ice_cube'
 gem 'pg'
 gem 'delayed_job'
+gem 'heroku_backup_task'
 
 group :test, :development do
   gem 'rspec-rails'
