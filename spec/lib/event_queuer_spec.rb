@@ -11,15 +11,39 @@ describe EventQueuer do
     event1 = create_event_at(now + 5.minutes, @user)
     event2 = create_event_at(now + 23.hours, @user)
     event3 = create_event_at(now + 25.hours, @user)
+    rv = nil
     expect { 
-      count = EventQueuer.new.queue_events(Time.now.utc)
-      count.should == 2
+      rv = EventQueuer.new.queue_events(Time.now.utc)
+      rv.count.should == 2
     }.to change(DelayedJob, :count).by(2)
-    DelayedJob.all.count.should be 2
-    run_at_list = DelayedJob.all.map { |dj| dj.run_at.utc.to_s }
-    expected1 = (now + 5.minutes - now.sec.seconds).utc.to_s
-    expected2 = (now + 23.hours - now.sec.seconds).utc.to_s
-    run_at_list.should include(expected1, expected2)
+
+    event1_dj = DelayedJob.where(:obj_type => 'Event', :obj_id => event1.id, :obj_jobtype => 'make_call')[0]
+    event2_dj = DelayedJob.where(:obj_type => 'Event', :obj_id => event2.id, :obj_jobtype => 'make_call')[0]
+    event1_dj.run_at.utc.to_s.should == (now + 5.minutes - now.sec.seconds).utc.to_s
+    event2_dj.run_at.utc.to_s.should == (now + 23.hours - now.sec.seconds).utc.to_s
+
+    rv[0][:run_at] = rv[0][:run_at].to_s
+    rv[0].should == {
+      :obj_type => "Event", 
+      :obj_id => event1.id, 
+      :obj_jobtype => "make_call", 
+      :run_at      => (now + 5.minutes - now.sec.seconds).utc.to_s,
+      :id          => event1_dj.id
+    }
+    rv[1][:run_at] = rv[1][:run_at].to_s
+    rv[1].should == {
+      :obj_type => "Event", 
+      :obj_id => event2.id, 
+      :obj_jobtype => "make_call", 
+      :run_at      => (now + 23.hours - now.sec.seconds).utc.to_s,        
+      :id          => event2_dj.id
+    }
+
+    # Skip jobs that are already queued
+    expect { 
+      rv = EventQueuer.new.queue_events(Time.now.utc)
+      rv.count.should == 0
+    }.to_not change(DelayedJob, :count)
   end
 end
 
