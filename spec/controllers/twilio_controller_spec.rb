@@ -38,9 +38,14 @@ describe TwilioController do
 
   describe "join_conference" do
     it "should join a conference room" do
-      post :join_conference
+      user = Factory(:user)
+      pool = Factory(:pool, :timelimit => 33)
+      event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
+      Call.create(:Sid => '54321', :event_id => event.id)
+      post :join_conference, :CallSid => '54321'
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => 'Joining a conference room')
+      response.should have_selector('response>dial', :timelimit => '33')
       response.should have_selector('response>dial>conference', :content => 'MyRoom')
     end
   end
