@@ -16,7 +16,7 @@
   <%= f.text_field :title %></p>
 
   <p><%= f.label :time_zone %><br />
-  <%= f.text_field :time_zone %></p>
+  <%= f.collection_select :time_zone, ActiveSupport::TimeZone.us_zones, :name, :to_s %>
 
   <p><%= f.label :password %><br />
   <%= f.password_field :password %></p>
