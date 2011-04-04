@@ -30,7 +30,7 @@ class TwilioCaller
         'Url' => base_url + '/greeting.xml',
     }
     account = Twilio::RestAccount.new(account_sid, account_token)
-    resp = account.request(start_call_uri, 'POST', post_args)
+    resp = account.request(start_call_uri, 'POST', post_args) # XXX need to handle failure condition
     response_hash = (Hash.from_xml resp.body).with_indifferent_access
     call_hash = response_hash[:TwilioResponse][:Call]
     Call.create(
