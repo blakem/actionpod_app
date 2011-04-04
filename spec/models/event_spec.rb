@@ -30,7 +30,7 @@ describe Event do
     end
 
     it "should have a start_date of today" do
-      @event.schedule.to_hash[:start_date].to_date.should == Time.now.to_date
+      @event.schedule.to_hash[:start_date].to_date.should == Time.now.in_time_zone(@event.user.time_zone).to_date
     end
   
     it "should have a start_time of the beginning of today in the users timezone" do
