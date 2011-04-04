@@ -41,14 +41,23 @@ class User < ActiveRecord::Base
       record.errors.add attr, "Please enter correct invite code (#{value})." unless
         value && value == User.secret_invite_code
   end
+  validates_format_of :primary_phone, :with => /\A\+1\d{10}\Z/
 
   after_initialize :init
+
+  before_validation do
+    if attribute_present?("primary_phone")
+      self.primary_phone = primary_phone.gsub(/[^0-9]/, "")
+      self.primary_phone = "1" + primary_phone unless primary_phone =~ /^1\d{10}$/
+      self.primary_phone =  "+"  + primary_phone unless primary_phone =~ /^\+$/
+    end
+  end
 
   def init
     self.time_zone ||= 'Pacific Time (US & Canada)'
   end
   
   def self.secret_invite_code
-    "Acti0nP0DUser"
+    "acti0np0duser"
   end
 end

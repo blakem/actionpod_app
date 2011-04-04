@@ -1,7 +1,12 @@
 <footer>
   <nav class="round">
     <ul>
-	  <li><%= link_to "Home", root_path %></li>
-	</ul>
+      <li><%= link_to "Home", root_path %></li>
+      <%= render 'devise/menu/registration_items' %>
+	  <%= render 'devise/menu/login_items' %>
+      <% if controller.admin_signed_in? %>
+      <li><%= link_to "Admin", '/admin' %></li>
+	  <li><%= link_to "Data", '/admin_data' %></li>
+      <% end %>	</ul>
   </nav>
 </footer>
