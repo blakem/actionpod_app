@@ -3,8 +3,7 @@
   <h3>Your Scheduled Calls:</h3>
   <ul>
    <% @events.each do |event| %>
-   <li><b><%= link_to event.name, edit_event_path(event) %></b> at <%= event.schedule_str %>
-     <%= link_to 'Destroy', event, :confirm => 'Are you sure?', :method => :delete %></li>
+   <li><b><%= link_to event.name, edit_event_path(event) %></b> at <%= event.schedule_str %></li>
    <% end %>
    <li><b><%= link_to "Create New Event", new_event_path %>
   </ul>

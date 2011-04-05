@@ -130,7 +130,7 @@ describe EventsController do
           @event1.reload
           @event1.name.should == 'NewName'
           assigns(:event).should == @event1
-          response.should redirect_to(@event1)
+          response.should redirect_to(root_path)
         end
 
         it "redirects if you try to show someone else's event" do

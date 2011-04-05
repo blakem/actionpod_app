@@ -79,6 +79,15 @@ describe Event do
       @event.time.should == '9:00am'
     end
 
+    it "should be able to tell us if it's scheduled on a particular day of the week" do
+      @event.on_day(0).should be_false
+      @event.on_day(1).should be_true
+      @event.on_day(2).should be_true
+      @event.on_day(3).should be_true
+      @event.on_day(4).should be_true
+      @event.on_day(5).should be_true
+      @event.on_day(6).should be_false
+    end
    
   end
 end

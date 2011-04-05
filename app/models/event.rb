@@ -57,6 +57,10 @@ class Event < ActiveRecord::Base
     sched_hash[:rrules][0][:validations].merge!(args)
     self.schedule_yaml = IceCube::Schedule.from_hash(sched_hash).to_yaml
   end
+  
+  def on_day(int)
+    schedule.to_hash[:rrules][0][:validations][:day].include?(int)
+  end
 
   def make_call
     TwilioCaller.new.start_call_for_event(self)

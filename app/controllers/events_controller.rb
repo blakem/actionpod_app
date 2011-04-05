@@ -40,7 +40,7 @@ class EventsController < ApplicationController
     @event = Event.where(:id => params[:id], :user_id => current_user.id)[0]
     if @event
       if @event.update_attributes(params[:event])
-        redirect_to(@event, :notice => 'Event was successfully updated.')
+        redirect_to(root_path, :notice => 'Event was successfully updated.')
       else
         render :action => "edit"
       end

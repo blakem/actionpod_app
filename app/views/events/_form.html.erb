@@ -17,6 +17,14 @@
   <p><%= f.label :time %><br />
   <%= f.collection_select :time, Event.available_hours, :to_s, :to_s %>
 
+  <p> <%= check_box_tag 'event_days', 0, @event.on_day(0) %> Sunday <br/>
+      <%= check_box_tag 'event_days', 1, @event.on_day(1) %> Monday <br/>
+      <%= check_box_tag 'event_days', 2, @event.on_day(2) %> Tuesday <br/>
+      <%= check_box_tag 'event_days', 3, @event.on_day(3) %> Wednesday <br/>
+      <%= check_box_tag 'event_days', 4, @event.on_day(4) %> Thursday <br/>
+      <%= check_box_tag 'event_days', 5, @event.on_day(5) %> Friday <br/>
+      <%= check_box_tag 'event_days', 6, @event.on_day(6) %> Saturday </p>
+
   <div class="actions">
     <%= f.submit %>
   </div>
