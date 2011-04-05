@@ -1,6 +1,13 @@
 require 'spec_helper'
 
 describe Event do
+  
+  it "should require a name" do
+    event = Event.new
+    event.valid?
+    event.errors[:name].should include("can't be blank")
+  end
+  
   it "should have a user" do
     user = Factory(:user)
     event = Factory(:event, :user_id => user.id)

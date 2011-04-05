@@ -98,7 +98,7 @@ describe EventsController do
         it "redirects to the created event" do
           Event.stub(:new) { mock_event(:save => true) }
           post :create, :event => {}
-          response.should redirect_to(event_url(mock_event))
+          response.should redirect_to(root_path)
         end
       end
   
@@ -164,7 +164,7 @@ describe EventsController do
         event_id = @event1.id
         delete :destroy, :id => event_id
         Event.find_by_id(event_id).should be_nil
-        response.should redirect_to(events_url)
+        response.should redirect_to(root_path)
       end
   
       it "Doesn't allow you to delete someone elses events" do

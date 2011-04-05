@@ -15,6 +15,8 @@
 class Event < ActiveRecord::Base
   belongs_to :user
   belongs_to :pool
+
+  validates_presence_of :name
   
   def schedule 
     IceCube::Schedule.from_yaml(schedule_yaml || default_schedule.to_yaml)

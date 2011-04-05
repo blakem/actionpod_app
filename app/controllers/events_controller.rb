@@ -29,7 +29,7 @@ class EventsController < ApplicationController
     @event = Event.new(params[:event].merge(:user_id => current_user.id, :pool_id => pool.id))
 
     if @event.save
-      redirect_to(@event, :notice => 'Event was successfully created.')
+      redirect_to(root_path, :notice => 'Event was successfully created.')
     else
       render :action => "new"
     end
@@ -54,7 +54,7 @@ class EventsController < ApplicationController
     @event = Event.where(:id => params[:id], :user_id => current_user.id)[0]
     if @event
       @event.destroy
-      redirect_to(events_url)
+      redirect_to(root_path, :notice => 'Event was successfully deleted.')
     else
       redirect_to(root_path, :notice => "You don't have permissions to view that event.")
     end
