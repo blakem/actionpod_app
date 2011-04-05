@@ -11,6 +11,12 @@
     </div>
   <% end %>
 
+  <p><%= f.label :name %><br />
+  <%= f.text_field :name %></p>
+
+  <p><%= f.label :time %><br />
+  <%= f.collection_select :time, Event.available_hours, :to_s, :to_s %>
+
   <div class="actions">
     <%= f.submit %>
   </div>

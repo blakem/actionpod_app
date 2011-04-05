@@ -6,15 +6,15 @@ require 'ostruct'
 module ScheduleAtts
   # Your code goes here...
   DAY_NAMES = Date::DAYNAMES.map(&:downcase).map(&:to_sym)
-  def schedule
-    @schedule ||= begin
-      if schedule_yaml.blank?
-        IceCube::Schedule.new(Date.today.to_time).tap{|sched| sched.add_recurrence_rule(IceCube::Rule.daily) }
-      else
-        IceCube::Schedule.from_yaml(schedule_yaml)
-      end
-    end
-  end
+  # def schedule
+  #   @schedule ||= begin
+  #     if schedule_yaml.blank?
+  #       IceCube::Schedule.new(Date.today.to_time).tap{|sched| sched.add_recurrence_rule(IceCube::Rule.daily) }
+  #     else
+  #       IceCube::Schedule.from_yaml(schedule_yaml)
+  #     end
+  #   end
+  # end
 
   def schedule_attributes=(options)
     options = options.dup

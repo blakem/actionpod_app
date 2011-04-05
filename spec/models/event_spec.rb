@@ -59,5 +59,19 @@ describe Event do
       @event.schedule_str(test_str).should  ==
         '8:00am on Mondays, Tuesdays, Wednesdays, Thursdays, and Fridays'
     end
+    
+    it "should have time a time accessor to it's schedule" do
+      @event.time.should == '8:00am'
+    end
+
+    it "should have time a time setter to it's schedule" do
+      @event.time = '9:00am'
+      @event.time.should == '9:00am'
+      @event.save
+      @event.reload
+      @event.time.should == '9:00am'
+    end
+
+   
   end
 end
