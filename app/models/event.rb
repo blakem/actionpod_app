@@ -50,18 +50,18 @@ class Event < ActiveRecord::Base
     self.alter_schedule(:day => day_list)
   end
   
-  def schedule_str(string = nil)
-    unless string
-      return self.time + ", but No Days Selected!" if days.empty?
-      string ||= self.schedule.to_s
-    end
-    string.sub!(/Weekly/, '')
-    string.sub!(/on the (\d+)\w+ minute of the hour/, '')
-    minute = $1
-    string.sub!(/on the (\d+)\w+ hour of the day/, '')
-    hour = $1
-    string.strip!.gsub!(/\s+/, ' ')
-    ampm_format(hour, minute) + " #{string}"
+  def schedule_str
+    return self.time + ", but No Days Selected!" if days.empty?
+    hash =  {
+      0 => 'Sundays',
+      1 => 'Mondays',
+      2 => 'Tuesdays',
+      3 => 'Wednesdays',
+      4 => 'Thursdays',
+      5 => 'Fridays',
+      6 => 'Saturdays'
+    }
+    return self.time + " on " + days.sort.map { |k| hash[k] }.to_sentence
   end
   
   def alter_schedule(args)

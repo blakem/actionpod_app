@@ -126,3 +126,5 @@ def login_admin
     controller.current_user.save
   end
 end
+
+FakeWeb.allow_net_connect = false

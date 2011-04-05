@@ -62,11 +62,10 @@ describe Event do
       @event.alter_schedule(:day => [2,3,4], :minute_of_hour => [15])
       @event.schedule_str.should ==
         '12:15am on Tuesdays, Wednesdays, and Thursdays'
+      @event.alter_schedule(:day => [2,3], :minute_of_hour => [15])
+      @event.schedule_str.should == '12:15am on Tuesdays and Wednesdays'
       @event.alter_schedule(:day => [], :minute_of_hour => [15])
       @event.schedule_str.should == '12:15am, but No Days Selected!'
-      test_str = 'Weekly on the 8th hour of the day on Mondays, Tuesdays, Wednesdays, Thursdays, and Fridays on the 0th minute of the hour'      
-      @event.schedule_str(test_str).should  ==
-        '8:00am on Mondays, Tuesdays, Wednesdays, Thursdays, and Fridays'
     end
     
     it "should have time a time accessor to it's schedule" do

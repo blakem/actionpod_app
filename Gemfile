@@ -18,4 +18,5 @@ group :test, :development do
   gem 'spork', '0.9.0.rc4'
   gem 'webrat'
   gem 'factory_girl_rails'
+  gem 'fakeweb'
 end
