@@ -89,8 +89,9 @@ describe EventsController do
           Event.stub(:new).with({
             'these' => 'params', 
             'user_id' => controller.current_user.id, 
-            'pool_id' => pool.id}
-          ) { mock_event(:save => true) }
+            'pool_id' => pool.id,
+            'days'    => []
+          }) { mock_event(:save => true) }
           post :create, :event => {'these' => 'params'}
           assigns(:event).should be(mock_event)
         end
@@ -109,7 +110,8 @@ describe EventsController do
           Event.stub(:new).with({
             'these' => 'params', 
             'user_id' => controller.current_user.id,
-            'pool_id' => pool.id
+            'pool_id' => pool.id,
+            'days' => []
           }) { mock_event(:save => false) }
           post :create, :event => {'these' => 'params'}
           assigns(:event).should be(mock_event)

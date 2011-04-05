@@ -26,7 +26,8 @@ class EventsController < ApplicationController
   # POST /events
   def create
     pool = Pool.find_by_name('Default Pool')
-    @event = Event.new(params[:event].merge(:user_id => current_user.id, :pool_id => pool.id))
+    event_params = params[:event].merge(:user_id => current_user.id, :pool_id => pool.id)
+    @event = Event.new(event_params.merge(days_from_params(params)))
 
     if @event.save
       redirect_to(root_path, :notice => 'Event was successfully created.')
@@ -39,7 +40,8 @@ class EventsController < ApplicationController
   def update
     @event = Event.where(:id => params[:id], :user_id => current_user.id)[0]
     if @event
-      if @event.update_attributes(params[:event])
+      event_params = params[:event] || {}
+      if @event.update_attributes(event_params.merge(days_from_params(params)))
         redirect_to(root_path, :notice => 'Event was successfully updated.')
       else
         render :action => "edit"
@@ -59,4 +61,11 @@ class EventsController < ApplicationController
       redirect_to(root_path, :notice => "You don't have permissions to view that event.")
     end
   end
+  
+  private
+    def days_from_params(params)
+      day_list = params.map { |k,v| k =~ /^on_(sun|mon|tue|wed|thr|fri|sat)$/ ? v.to_i : nil }.select { |v| v }
+      return {:days => day_list}
+    end
+      
 end

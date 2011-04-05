@@ -62,6 +62,8 @@ describe Event do
       @event.alter_schedule(:day => [2,3,4], :minute_of_hour => [15])
       @event.schedule_str.should ==
         '12:15am on Tuesdays, Wednesdays, and Thursdays'
+      @event.alter_schedule(:day => [], :minute_of_hour => [15])
+      @event.schedule_str.should == '12:15am, but No Days Selected!'
       test_str = 'Weekly on the 8th hour of the day on Mondays, Tuesdays, Wednesdays, Thursdays, and Fridays on the 0th minute of the hour'      
       @event.schedule_str(test_str).should  ==
         '8:00am on Mondays, Tuesdays, Wednesdays, Thursdays, and Fridays'
@@ -71,12 +73,20 @@ describe Event do
       @event.time.should == '8:00am'
     end
 
-    it "should have time a time setter to it's schedule" do
+    it "should have a time setter to it's schedule" do
       @event.time = '9:00am'
       @event.time.should == '9:00am'
       @event.save
       @event.reload
       @event.time.should == '9:00am'
+    end
+
+    it "should have a days setter to it's schedule" do
+      @event.days = [2,3,4]
+      @event.days.should == [2,3,4]
+      @event.save
+      @event.reload
+      @event.days.should == [2,3,4]
     end
 
     it "should be able to tell us if it's scheduled on a particular day of the week" do

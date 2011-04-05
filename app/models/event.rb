@@ -41,7 +41,19 @@ class Event < ActiveRecord::Base
     self.alter_schedule(:hour_of_day => [hour], :minute_of_hour => [minute])
   end
   
-  def schedule_str(string = self.schedule.to_s)
+  def days
+    schedule.to_hash[:rrules][0][:validations][:day]
+  end
+
+  def days=(day_list)
+    self.alter_schedule(:day => day_list)
+  end
+  
+  def schedule_str(string = nil)
+    unless string
+      return self.time + ", but No Days Selected!" if days.empty?
+      string ||= self.schedule.to_s
+    end
     string.sub!(/Weekly/, '')
     string.sub!(/on the (\d+)\w+ minute of the hour/, '')
     minute = $1
