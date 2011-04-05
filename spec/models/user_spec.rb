@@ -66,4 +66,21 @@ describe User do
     user = Factory(:user, :title => 'Software Developer')
     user.title.should == 'Software Developer'
   end
+
+  it "updates it's events timezones when the user.time_zone is changes" do
+    pacific_time_zone = 'Pacific Time (US & Canada)'
+    mountain_time_zone = 'Mountain Time (US & Canada)'
+    user = Factory(:user, :time_zone => pacific_time_zone)
+    event = Factory(:event, :user_id => user.id)
+    event.schedule
+    event.save
+    event.reload
+
+    event.schedule.start_time.time_zone.to_s.should == "(GMT-08:00) " + pacific_time_zone
+    user.time_zone = mountain_time_zone
+    user.save
+    event.reload
+    event.schedule.start_time.time_zone.to_s.should == "(GMT-07:00) " + mountain_time_zone
+  end
+  
 end

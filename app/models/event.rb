@@ -19,7 +19,7 @@ class Event < ActiveRecord::Base
   validates_presence_of :name
   
   def schedule 
-    IceCube::Schedule.from_yaml(schedule_yaml || default_schedule.to_yaml)
+    IceCube::Schedule.from_yaml(self.schedule_yaml ||= default_schedule.to_yaml)
   end
   
   def time
