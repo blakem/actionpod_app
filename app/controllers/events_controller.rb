@@ -28,6 +28,7 @@ class EventsController < ApplicationController
     pool = Pool.find_by_name('Default Pool')
     event_params = params[:event].merge(:user_id => current_user.id, :pool_id => pool.id)
     @event = Event.new(event_params.merge(days_from_params(params)))
+    @event.alter_schedule(:start_date => Time.now.in_time_zone(current_user.time_zone).beginning_of_day)
 
     if @event.save
       redirect_to(root_path, :notice => 'Event was successfully created.')

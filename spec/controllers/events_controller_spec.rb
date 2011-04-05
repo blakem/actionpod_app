@@ -86,12 +86,16 @@ describe EventsController do
         it "assigns a newly created event as @event" do
           pool = Pool.find_by_name('Default Pool')
           pool.should be_a_kind_of(Pool)
+          mock_event(:save => true)
+          mock_event.should_receive(:alter_schedule).with(
+            :start_date => Time.now.in_time_zone(controller.current_user.time_zone).beginning_of_day
+          )
           Event.stub(:new).with({
             'these' => 'params', 
             'user_id' => controller.current_user.id, 
             'pool_id' => pool.id,
             'days'    => []
-          }) { mock_event(:save => true) }
+          }) { mock_event }
           post :create, :event => {'these' => 'params'}
           assigns(:event).should be(mock_event)
         end
