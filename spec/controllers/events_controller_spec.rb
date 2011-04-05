@@ -18,15 +18,16 @@ describe EventsController do
   describe "when logged in" do
     login_user
     before(:each) do
-      @event1 = Factory(:event, :user_id => controller.current_user.id)
-      @event2 = Factory(:event, :user_id => controller.current_user.id)
-      @event_other = Factory(:event)
+      @pool ||= Factory(:pool, :name => 'Default Pool')
+      @event1 ||= Factory(:event, :user_id => @current_user.id)
+      @event2 ||= Factory(:event, :user_id => @current_user.id)
+      @event_other ||= Factory(:event)
     end
 
     describe "GET index" do
 
       it "should be successful when logged in" do
-  	    controller.user_signed_in?.should be_true
+              controller.user_signed_in?.should be_true
         get :index
         response.should be_success
       end
@@ -83,7 +84,13 @@ describe EventsController do
     describe "POST create" do
       describe "with valid params" do
         it "assigns a newly created event as @event" do
-          Event.stub(:new).with({'these' => 'params', 'user_id' => controller.current_user.id}) { mock_event(:save => true) }
+          pool = Pool.find_by_name('Default Pool')
+          pool.should be_a_kind_of(Pool)
+          Event.stub(:new).with({
+            'these' => 'params', 
+            'user_id' => controller.current_user.id, 
+            'pool_id' => pool.id}
+          ) { mock_event(:save => true) }
           post :create, :event => {'these' => 'params'}
           assigns(:event).should be(mock_event)
         end
@@ -97,7 +104,13 @@ describe EventsController do
   
       describe "with invalid params" do
         it "assigns a newly created but unsaved event as @event" do
-          Event.stub(:new).with({'these' => 'params', 'user_id' => controller.current_user.id}) { mock_event(:save => false) }
+          pool = Pool.find_by_name('Default Pool')
+          pool.should be_a_kind_of(Pool)
+          Event.stub(:new).with({
+            'these' => 'params', 
+            'user_id' => controller.current_user.id,
+            'pool_id' => pool.id
+          }) { mock_event(:save => false) }
           post :create, :event => {'these' => 'params'}
           assigns(:event).should be(mock_event)
         end

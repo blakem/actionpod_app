@@ -43,18 +43,13 @@ class User < ActiveRecord::Base
   end
   validates_format_of :primary_phone, :with => /\A\+1\d{10}\Z/
 
-  after_initialize :init
-
   before_validation do
     if attribute_present?("primary_phone")
       self.primary_phone = primary_phone.gsub(/[^0-9]/, "")
       self.primary_phone = "1" + primary_phone unless primary_phone =~ /^1\d{10}$/
       self.primary_phone =  "+"  + primary_phone unless primary_phone =~ /^\+$/
     end
-  end
-
-  def init
-    self.time_zone ||= 'Pacific Time (US & Canada)'
+    self.time_zone = 'Pacific Time (US & Canada)' unless attribute_present?("time_zone")
   end
   
   def self.secret_invite_code

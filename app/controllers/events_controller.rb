@@ -25,7 +25,8 @@ class EventsController < ApplicationController
 
   # POST /events
   def create
-    @event = Event.new(params[:event].merge(:user_id => current_user.id))
+    pool = Pool.find_by_name('Default Pool')
+    @event = Event.new(params[:event].merge(:user_id => current_user.id, :pool_id => pool.id))
 
     if @event.save
       redirect_to(@event, :notice => 'Event was successfully created.')

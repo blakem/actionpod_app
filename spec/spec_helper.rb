@@ -113,14 +113,15 @@ end
 def login_user
   before(:each) do
     @request.env["devise.mapping"] = Devise.mappings[:user]
-    sign_in Factory.create(:user)
+    @current_user = Factory(:user)
+    sign_in @current_user
   end
 end
 
 def login_admin
   before(:each) do
     @request.env["devise.mapping"] = Devise.mappings[:user]
-    sign_in Factory.create(:user, :admin => true)
+    sign_in Factory(:user, :admin => true)
     controller.current_user.admin = true
     controller.current_user.save
   end
