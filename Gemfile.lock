@@ -58,6 +58,7 @@ GEM
       factory_girl (~> 1.3)
       railties (>= 3.0.0)
     fakeweb (1.3.0)
+    gravatar_image_tag (1.0.0)
     heroku (1.19.1)
       activesupport (>= 2.1.0)
       launchy (~> 0.3.2)
@@ -137,6 +138,7 @@ DEPENDENCIES
   devise
   factory_girl_rails
   fakeweb
+  gravatar_image_tag
   heroku_backup_task
   ice_cube
   pg

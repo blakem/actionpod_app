@@ -8,6 +8,8 @@ class PagesController < ApplicationController
   end
   
   def profile
+    @user = current_user
+    @title = @user.name
     @events = current_user.events
   end
   

@@ -1,17 +1,19 @@
-<h3>Welcome <%= current_user.name %></h3>
-<% if @events.any? %>
-  <h3>Your Scheduled Calls:</h3>
-  <ul>
-   <% @events.each do |event| %>
-   <li><b><%= link_to event.name, edit_event_path(event) %></b> at <%= event.schedule_str %></li>
-   <% end %>
-   <li><b><%= link_to "Create New Event", new_event_path %>
-   <li><b><%= link_to "Show existing call times", :action => :callcal %>
-  </ul>
-<% else %>
-  <h3>You don't have any scheduled calls</h3>
-   <ul>
-    <li><b><%= link_to "Create New Event", new_event_path %>
-	<li><b><%= link_to "Show existing call times", :action => :callcal %>
-   </ul>
-<% end %>
+<table class="profile" summary="Profile information">
+  <tr>
+	<td class="main">
+	  <h1>
+	    <%= gravatar_for @user %>
+	    <%= @user.name %>
+	  </h1>
+	  <ul>
+        <% @events.each do |event| %>
+    	  <li><b><%= link_to event.name, edit_event_path(event) %></b> at <%= event.schedule_str %></li>
+        <% end %>
+	  </ul>
+    </td>
+    <td class="sidebar round">
+      <strong><%= link_to "Create New Event", new_event_path %></strong><br/>
+  	  <strong><%= link_to "Show existing call times", :action => :callcal %></strong><br/>
+	</td>
+  </tr>
+</table>

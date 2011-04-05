@@ -10,6 +10,7 @@ gem 'ice_cube'
 gem 'pg'
 gem 'delayed_job'
 gem 'heroku_backup_task'
+gem 'gravatar_image_tag'
 
 group :test, :development do
   gem 'rspec-rails'
