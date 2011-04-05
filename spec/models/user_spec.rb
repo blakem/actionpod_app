@@ -1,9 +1,6 @@
 require 'spec_helper'
 
 describe User do
-  before(:each) do
-    User.all.each { |o| o.destroy }
-  end
   it "Should have a secret invite code" do
     User.secret_invite_code.should_not be_empty
   end

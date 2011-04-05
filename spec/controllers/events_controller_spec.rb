@@ -27,7 +27,7 @@ describe EventsController do
     describe "GET index" do
 
       it "should be successful when logged in" do
-              controller.user_signed_in?.should be_true
+        controller.user_signed_in?.should be_true
         get :index
         response.should be_success
       end
