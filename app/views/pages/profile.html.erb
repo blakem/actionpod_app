@@ -6,6 +6,7 @@
    <li><b><%= link_to event.name, edit_event_path(event) %></b> at <%= event.schedule_str %></li>
    <% end %>
    <li><b><%= link_to "Create New Event", new_event_path %>
+   <li><b><%= link_to "Show existing call times", :action => :callcal %>
   </ul>
 <% else %>
   <h3>You don't have any scheduled calls</h3>

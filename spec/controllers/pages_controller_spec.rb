@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe PagesController do
   render_views
-  describe "when not logged in" do
+  describe "GET /home when not logged in" do
     it "should show a welcome page" do
   	  controller.user_signed_in?.should be_false
       get :home
@@ -16,12 +16,12 @@ describe PagesController do
     end
   end
   
-  describe "success" do
+  describe "GET /home success" do
     login_user
  
     it "should be successful when logged in" do
 	    controller.user_signed_in?.should be_true
-      get 'home'
+      get :home
       response.should be_success
       response.should have_selector('title', :content => 'ActionPods')
     end   
@@ -32,7 +32,7 @@ describe PagesController do
       controller.current_user.admin = "true"
       controller.current_user.save
       controller.admin_signed_in?.should be_true      
-      get 'home'
+      get :home
       response.should be_success
       response.should have_selector('title', :content => 'ActionPods')
     end   
@@ -44,7 +44,7 @@ describe PagesController do
     it "should show 'You don't have any scheduled calls' when appropriate" do
       user = controller.current_user
       user.events.should be_empty
-      get 'home'
+      get :home
       response.should have_selector('h3', :content => "You don't have any scheduled calls")
     end
     
@@ -52,7 +52,7 @@ describe PagesController do
       user = controller.current_user
       event = Factory(:event, :user_id => user.id)
       
-      get 'home'
+      get :home
       response.should have_selector('h3', :content => "Your Scheduled Calls:")
       response.should have_selector('ul>li', :content => event.schedule_str)
       response.should have_selector('ul>li', :content => event.name)
@@ -61,9 +61,28 @@ describe PagesController do
     it "should show the Users name" do
       user = controller.current_user
       user.name.should_not be_empty
-      get 'home'
+      get :home
       response.should have_selector('h3', :content => "Welcome #{user.name}")
     end
+  end
 
+
+  describe "GET /callcal" do
+    describe "when not logged in" do
+      it "should redirect to the root path" do
+        controller.user_signed_in?.should be_false
+        get :callcal
+        response.should redirect_to(root_path)
+      end
+    end
+
+    describe "when logged in" do
+      login_user
+      it "should be a success" do
+        controller.user_signed_in?.should be_true
+        get :callcal
+        response.should be_success
+      end
+    end
   end
 end

@@ -1,0 +1,7 @@
+<h3>Existing Users have calls scheduled at:</h3>
+<table>
+  <tr><th>Data</th><th>User Count</th></tr>
+  <% @scheduled_events.each do |data| %>
+    <tr><td><%= data[0].strftime("%a %l:%M%p %Z") %></td><td><%= data[1] > 5 ? '>5' : data[1] %></td></tr>
+  <% end %>
+</table>
