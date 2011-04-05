@@ -26,8 +26,13 @@ class TwilioController < ApplicationController
     end
     
     def find_event_from_params(params)
-      call_sid = params[:CallSid]
-      call = Call.find_by_Sid(call_sid)
+      call = match_call_from_params(params)
       call ? Event.find_by_id(call.event_id) : nil
+    end
+    
+    def match_call_from_params(params)
+      call = Call.find_by_Sid(params[:CallSid])
+      return call if call
+      Call.where(:PhoneNumberSid => params[:PhoneNumberSid]).sort { |a,b| a.id <=> b.id }.last
     end
 end
