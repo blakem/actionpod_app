@@ -5,11 +5,13 @@ describe PagesController do
   describe "when not logged in" do
     it "should show a welcome page" do
   	  controller.user_signed_in?.should be_false
-      get 'home'
+      get :home
       response.should have_selector('h3', :content => 'Welcome')
     end
     
     it "should use a default Time.zone" do
+      Time.zone = 'UTC'
+      get :home
       Time.zone.to_s.should == '(GMT+00:00) UTC'
     end
   end
@@ -62,7 +64,6 @@ describe PagesController do
       get 'home'
       response.should have_selector('h3', :content => "Welcome #{user.name}")
     end
-    
 
   end
 end
