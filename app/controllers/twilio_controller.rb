@@ -10,6 +10,7 @@ class TwilioController < ApplicationController
   def join_conference
     event = find_event_from_params(params)
     @timelimit = event ? event.pool.timelimit : 30
+    @timelimit *= 60
   end
 
   def incoming

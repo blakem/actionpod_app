@@ -45,7 +45,7 @@ describe TwilioController do
       post :join_conference, :CallSid => '54321'
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => 'Joining a conference room')
-      response.should have_selector('response>dial', :timelimit => '33')
+      response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
       response.should have_selector('response>dial>conference', :content => 'MyRoom')
     end
   end
