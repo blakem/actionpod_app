@@ -84,9 +84,10 @@ class Event < ActiveRecord::Base
     super
   end
 
-  def save
+  def save(*args)
     destroy_delayed_jobs
-    rv = super
+    rv = super(*args)
+    return rv unless rv
     EventQueuer.new.queue_event(self)
     rv
   end

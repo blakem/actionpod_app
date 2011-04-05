@@ -6,7 +6,7 @@ describe PagesController do
     it "should show a welcome page" do
   	  controller.user_signed_in?.should be_false
       get :home
-      response.should have_selector('h3', :content => 'Welcome')
+      response.should have_selector('h1', :content => 'Welcome')
     end
     
     it "should use a default Time.zone" do

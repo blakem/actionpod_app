@@ -52,8 +52,9 @@ class User < ActiveRecord::Base
     self.time_zone = 'Pacific Time (US & Canada)' unless attribute_present?("time_zone")
   end
 
-  def save
-    rv = super
+  def save(*args)
+    rv = super(*args)
+    return rv unless rv
     self.events.each do |event|
       event.alter_schedule(:start_date => event.schedule.start_time.in_time_zone(self.time_zone).beginning_of_day)
       event.save
