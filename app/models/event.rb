@@ -78,7 +78,19 @@ class Event < ActiveRecord::Base
   def make_call
     TwilioCaller.new.start_call_for_event(self)
   end
-    
+
+  def destroy
+    destroy_delayed_jobs
+    super
+  end
+
+  def save
+    destroy_delayed_jobs
+    rv = super
+    EventQueuer.new.queue_event(self)
+    rv
+  end
+  
   def self.available_hours
     (1..11).to_a.map { |h| "#{h}:00am"} + ["12:00pm"] + (1..11).to_a.map { |h| "#{h}:00pm" } + ["12:00am"]
   end
@@ -100,4 +112,9 @@ class Event < ActiveRecord::Base
       hour = '12' if hour.to_i == 0
       "#{hour}:" + sprintf('%02i', minute) + ampm
     end
+
+    def destroy_delayed_jobs
+      DelayedJob.where(:obj_type => 'Event', :obj_id => self.id).each { |dj| dj.destroy }
+    end
+
 end

@@ -118,6 +118,37 @@ describe Event do
       @event.on_day(5).should be_true
       @event.on_day(6).should be_false
     end
-   
   end
+  
+  describe "managing it's scheduled events" do
+
+    it "should delete all scheduled events on destroy" do
+      event = Factory(:event)
+      dj = Factory(:delayed_job, :obj_type => 'Event', :obj_id => event.id)
+      dj_id = dj.id
+      event.destroy
+      DelayedJob.find_by_id(dj_id).should be_nil
+    end
+
+    it "should reschedule itself on edit" do
+      event = Factory(:event)
+      dj = Factory(:delayed_job, :obj_type => 'Event', :obj_id => event.id)
+      dj_id = dj.id
+      event.time = '4:00pm'
+      event.days = [0,1,2,3,4,5,6]
+      rv = event.save
+      rv.should == true
+      DelayedJob.find_by_id(dj_id).should be_nil
+      DelayedJob.where(:obj_type => 'Event', :obj_id => event.id).count.should == 1
+    end
+    
+    it "should schedule itself on create" do
+      user = Factory(:user)
+      pool = Factory(:pool)
+      event = Event.create(:name => 'TestCreateDJEvent', :user_id => user.id, :pool_id => pool.id)
+      DelayedJob.where(:obj_type => 'Event', :obj_id => event.id).count.should == 1
+    end
+    
+  end
+
 end

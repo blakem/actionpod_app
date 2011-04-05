@@ -43,3 +43,9 @@ Factory.define :pool do |pool|
   pool.association :user_id, :factory => :user
   pool.timelimit  45
 end
+
+Factory.define :delayed_job do |dj|
+  dj.obj_type    "User"
+  dj.obj_id      456
+  dj.obj_jobtype "pingme"
+end

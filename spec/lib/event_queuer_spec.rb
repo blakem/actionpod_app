@@ -11,6 +11,7 @@ describe EventQueuer do
     event1 = create_event_at(now + 5.minutes, @user)
     event2 = create_event_at(now + 23.hours, @user)
     event3 = create_event_at(now + 25.hours, @user)
+    DelayedJob.all.each { |dj| dj.destroy }
     rv = nil
     expect { 
       rv = EventQueuer.new.queue_events(Time.now.utc)
