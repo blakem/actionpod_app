@@ -13,19 +13,11 @@
 #
 
 class Event < ActiveRecord::Base
-  # include ScheduleAttributes
-
   belongs_to :user
   belongs_to :pool
-
-  after_initialize :init
-
-  def init
-    self.schedule_yaml ||= default_schedule.to_yaml
-  end
   
   def schedule 
-    IceCube::Schedule.from_yaml(schedule_yaml)
+    IceCube::Schedule.from_yaml(schedule_yaml || default_schedule.to_yaml)
   end
   
   def time
