@@ -131,6 +131,32 @@ describe TwilioCaller do
            "/2010-04-01/Accounts/AC2e57bf710b77d765d280786bc07dbacc/Conferences/CFc99129d1af6c8f04aa03962e9f66a0b8/Participants"}
       }]
     end
+    
+    describe "participants_on_hold_for_pool" do
+      it "works for one participant" do
+        response = mock('HTTPResponse')
+        response.should_receive(:body).twice.and_return(two_conference_response, one_participant_response)
+        account = mock('TwilioAccount', :request => response)
+        pool = mock('Pool', :id => 123)
+        participant_url = '/2010-04-01/Accounts/AC2e57bf710b77d765d280786bc07dbacc/Conferences/CFc99129d1af6c8f04aa03962e9f66a0b8/Participants.json'
+        account.should_receive(:request).with(@tc.conferences_in_progress_uri, 'GET')
+        account.should_receive(:request).with(participant_url, 'GET')
+        Twilio::RestAccount.should_receive(:new).with("AC2e57bf710b77d765d280786bc07dbacc", "fc9bd67bb8deee6befd3ab0da3973718").and_return(account)
+        participants = @tc.participants_on_hold_for_pool(pool)
+        participants.should == [{
+          "conference_sid"=>"CF0cb07a25bdaf64828850b784ea2d1aa7",
+          "account_sid"=>"AC2e57bf710b77d765d280786bc07dbacc",
+          "call_sid"=>"CA9fa67e8696b60ee1ca1e75ec81ef85e7",
+          "muted"=>false,
+          "end_conference_on_exit"=>false,
+          "start_conference_on_enter"=>true,
+          "date_created"=>"Wed, 06 Apr 2011 19:10:13 +0000",
+          "date_updated"=>"Wed, 06 Apr 2011 19:10:13 +0000",
+          "uri"=>
+            "/2010-04-01/Accounts/AC2e57bf710b77d765d280786bc07dbacc/Conferences/CF0cb07a25bdaf64828850b784ea2d1aa7/Participants/CA9fa67e8696b60ee1ca1e75ec81ef85e7.json"
+        }]
+      end
+    end
   end
 end
 
@@ -182,4 +208,8 @@ def two_conference_response
   '/2010-04-01/Accounts/AC2e57bf710b77d765d280786bc07dbacc/Conferences/CF4216d8a56720d7ad2b8c1f5dde920b06</Uri><SubresourceUris>' +
   '<Participants>/2010-04-01/Accounts/AC2e57bf710b77d765d280786bc07dbacc/Conferences/CF4216d8a56720d7ad2b8c1f5dde920b06/Participants' + 
   '</Participants></SubresourceUris></Conference></Conferences></TwilioResponse>'
+end
+
+def one_participant_response
+  '{"page":0,"num_pages":1,"page_size":50,"total":1,"start":0,"end":0,"uri":"\/2010-04-01\/Accounts\/AC2e57bf710b77d765d280786bc07dbacc\/Conferences\/CF0cb07a25bdaf64828850b784ea2d1aa7\/Participants.json","first_page_uri":"\/2010-04-01\/Accounts\/AC2e57bf710b77d765d280786bc07dbacc\/Conferences\/CF0cb07a25bdaf64828850b784ea2d1aa7\/Participants.json?Page=0&PageSize=50","previous_page_uri":null,"next_page_uri":null,"last_page_uri":"\/2010-04-01\/Accounts\/AC2e57bf710b77d765d280786bc07dbacc\/Conferences\/CF0cb07a25bdaf64828850b784ea2d1aa7\/Participants.json?Page=0&PageSize=50","participants":[{"conference_sid":"CF0cb07a25bdaf64828850b784ea2d1aa7","account_sid":"AC2e57bf710b77d765d280786bc07dbacc","call_sid":"CA9fa67e8696b60ee1ca1e75ec81ef85e7","muted":false,"end_conference_on_exit":false,"start_conference_on_enter":true,"date_created":"Wed, 06 Apr 2011 19:10:13 +0000","date_updated":"Wed, 06 Apr 2011 19:10:13 +0000","uri":"\/2010-04-01\/Accounts\/AC2e57bf710b77d765d280786bc07dbacc\/Conferences\/CF0cb07a25bdaf64828850b784ea2d1aa7\/Participants\/CA9fa67e8696b60ee1ca1e75ec81ef85e7.json"}]}'
 end
