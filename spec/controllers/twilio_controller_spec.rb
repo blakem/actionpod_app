@@ -16,13 +16,10 @@ describe TwilioController do
   end
 
   describe "greeting" do
-    it "should say hello" do
+    it "should say can't match this number when it can't find an event" do
       post :greeting
       response.content_type.should =~ /^application\/xml/
-      response.should have_selector('response>gather', :numdigits => '1')
-      response.should have_selector('response>gather', :action => 'http://actionpods.heroku.com/twilio/put_on_hold.xml')
-      response.should have_selector('response>gather>say', :content => 'Hello')
-      response.should have_selector('response>gather>say', :content => 'Please press 1')
+      response.should have_selector('response>say', :content => "I'm sorry")
     end
 
     it "should match up with the event being called" do
@@ -37,6 +34,12 @@ describe TwilioController do
   end
 
   describe "put_on_hold" do
+    it "should say can't match this number when it can't find an event" do
+      post :put_on_hold
+      response.content_type.should =~ /^application\/xml/
+      response.should have_selector('response>say', :content => "I'm sorry")
+    end
+
     it "should put on hold on CallSid" do
       user = Factory(:user)
       pool = Factory(:pool, :timelimit => 33)
@@ -93,22 +96,35 @@ describe TwilioController do
   end
   
   describe "incoming" do
-    it "should say hello" do
+    it "should say can't match this number when it can't find an event" do
       post :incoming
       response.content_type.should =~ /^application\/xml/
-      response.should have_selector('response>gather', :numdigits => '1')
-      response.should have_selector('response>gather', :action => 'http://actionpods.heroku.com/twilio/put_on_hold.xml')
-      response.should have_selector('response>gather>say', :content => 'Hello')
-      response.should have_selector('response>gather>say', :content => 'Please press 1')
+      response.should have_selector('response>say', :content => "I'm sorry")
     end
 
     it "should match up with the event being called" do
       user = Factory(:user)
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call')
+      event.days = [0,1,2,3,4,5,6]
+      event.save
       post :incoming, :From => user.primary_phone, :Direction => 'inbound' 
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>gather', :numdigits => '1')
       response.should have_selector('response>gather>say', :content => 'Hello, welcome to your Morning Call.')
+    end
+    
+    it "should create a call record" do
+      user = Factory(:user)
+      event = Factory(:event, :user_id => user.id, :name => 'Morning Call')
+      event.days = [0,1,2,3,4,5,6]
+      event.save
+      expect {
+        post :incoming, :From => user.primary_phone, :Direction => 'inbound', :CallSid => "CA462"
+      }.to change(Call, :count).by(1)
+      call = Call.find_by_Sid('CA462')
+      call.Direction.should == 'inbound'
+      call.From.should == user.primary_phone
+      call.event_id.should == event.id
     end
   end
 

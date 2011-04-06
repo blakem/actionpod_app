@@ -33,16 +33,7 @@ class TwilioCaller
     resp = account.request(start_call_uri, 'POST', post_args) # XXX need to handle failure condition
     response_hash = (Hash.from_xml resp.body).with_indifferent_access
     call_hash = response_hash[:TwilioResponse][:Call]
-    Call.create(
-      :event_id       => event.id,
-      :Sid            => call_hash[:Sid],
-      :DateCreated    => call_hash[:DateCreated],
-      :DateUpdated    => call_hash[:DateUpdated],
-      :To             => call_hash[:To],
-      :From           => call_hash[:From],
-      :PhoneNumberSid => call_hash[:PhoneNumberSid],
-      :Uri            => call_hash[:Uri]
-    )
+    TwilioCaller.create_call_from_call_hash(call_hash, event.id)
   end
   
   def conferences_in_progress
@@ -62,5 +53,19 @@ class TwilioCaller
 
   def conferences_in_progress_uri
     "/#{api_version}/Accounts/#{account_sid}/Conferences?Status=in-progress"
+  end
+  
+  def self.create_call_from_call_hash(call_hash, event_id)
+    Call.create(
+      :event_id       => event_id,
+      :Sid            => call_hash[:Sid],
+      :DateCreated    => call_hash[:DateCreated],
+      :DateUpdated    => call_hash[:DateUpdated],
+      :To             => call_hash[:To],
+      :From           => call_hash[:From],
+      :PhoneNumberSid => call_hash[:PhoneNumberSid],
+      :Uri            => call_hash[:Uri],
+      :Direction      => call_hash[:Direction]
+    )
   end
 end

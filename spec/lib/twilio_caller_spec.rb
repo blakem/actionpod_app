@@ -34,6 +34,7 @@ describe TwilioCaller do
       call.From.should == '+14157669865'
       call.PhoneNumberSid.should == 'PN7bc59ac941fb55880733ef2fe6295477'
       call.Uri.should == '/2010-04-01/Accounts/AC2e57bf710b77d765d280786bc07dbacc/Calls/CAd2cccd39bdc7f1b06250c4771a78bf4a'
+      call.Direction.should == 'outbound-api'
       call.event_id.should == event.id
     end
   end

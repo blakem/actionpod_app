@@ -3,22 +3,41 @@ class TwilioController < ApplicationController
   respond_to :html, :xml
   def greeting
     event = find_event_from_params(params)
-    @event_name = event ? event.name : "Call"
-    @postto = base_url + '/put_on_hold.xml'
+    unless event
+      self.say_sorry
+      render :action => :say_sorry
+    else
+      @event_name = event.name
+      @postto = base_url + '/put_on_hold.xml'
+    end
+  end
+  
+  def say_sorry
   end
 
   def put_on_hold
     event = find_event_from_params(params)
-    @timelimit = event ? event.pool.timelimit : 30
-    @pool = event.pool
-    @event = event
-    @timelimit *= 60
+    unless event
+      self.say_sorry
+      render :action => :say_sorry
+    else
+      @timelimit = event.pool.timelimit
+      @pool = event.pool 
+      @event = event
+      @timelimit *= 60
+    end
   end
 
   def incoming
     event = find_event_from_params(params)
-    @event_name = event ? event.name : "Call"
-    @postto = base_url + '/put_on_hold.xml'
+    unless event
+      self.say_sorry
+      render :action => :say_sorry
+    else
+      TwilioCaller.create_call_from_call_hash(params.merge(:Sid => params[:CallSid]), event.id)
+      @event_name = event.name
+      @postto = base_url + '/put_on_hold.xml'
+    end
   end
   
   def sms
