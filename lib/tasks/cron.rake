@@ -1,4 +1,5 @@
 require "heroku_backup_task"
+require 'heroku_san/tasks'
 
 desc "This task is called by the Heroku cron add-on"
 task :cron => [:environment, :queueevents, :herokubackupdb]
