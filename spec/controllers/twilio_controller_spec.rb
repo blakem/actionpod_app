@@ -20,7 +20,7 @@ describe TwilioController do
       post :greeting
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>gather', :numdigits => '1')
-      response.should have_selector('response>gather', :action => 'http://actionpods.heroku.com/twilio/join_conference.xml')
+      response.should have_selector('response>gather', :action => 'http://actionpods.heroku.com/twilio/put_on_hold.xml')
       response.should have_selector('response>gather>say', :content => 'Hello')
       response.should have_selector('response>gather>say', :content => 'Please press 1')
     end
@@ -36,13 +36,13 @@ describe TwilioController do
     end
   end
 
-  describe "join_conference" do
+  describe "put_on_hold" do
     it "should join a conference room on CallSid" do
       user = Factory(:user)
       pool = Factory(:pool, :timelimit => 33)
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
       Call.create(:Sid => '54321', :event_id => event.id)
-      post :join_conference, :CallSid => '54321'
+      post :put_on_hold, :CallSid => '54321'
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => 'Joining a conference room')
       response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
@@ -55,7 +55,7 @@ describe TwilioController do
       pool = Factory(:pool, :timelimit => 33)
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
       Call.create(:Sid => '54321', :PhoneNumberSid => 'PN123', :event_id => event.id)
-      post :join_conference, :PhoneNumberSid => 'PN123'
+      post :put_on_hold, :PhoneNumberSid => 'PN123'
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => 'Joining a conference room')
       response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
@@ -69,7 +69,7 @@ describe TwilioController do
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
       event.days = [0,1,2,3,4,5,6]
       event.save
-      post :join_conference, :From => user.primary_phone, :Direction => 'inbound' 
+      post :put_on_hold, :From => user.primary_phone, :Direction => 'inbound' 
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => 'Joining a conference room')
       response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
@@ -83,7 +83,7 @@ describe TwilioController do
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
       event.days = [0,1,2,3,4,5,6]
       event.save
-      post :join_conference, :To => user.primary_phone, :Direction => 'outbound-api' 
+      post :put_on_hold, :To => user.primary_phone, :Direction => 'outbound-api' 
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => 'Joining a conference room')
       response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
@@ -97,7 +97,7 @@ describe TwilioController do
       post :incoming
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>gather', :numdigits => '1')
-      response.should have_selector('response>gather', :action => 'http://actionpods.heroku.com/twilio/join_conference.xml')
+      response.should have_selector('response>gather', :action => 'http://actionpods.heroku.com/twilio/put_on_hold.xml')
       response.should have_selector('response>gather>say', :content => 'Hello')
       response.should have_selector('response>gather>say', :content => 'Please press 1')
     end

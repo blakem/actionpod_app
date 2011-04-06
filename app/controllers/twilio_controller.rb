@@ -4,10 +4,10 @@ class TwilioController < ApplicationController
   def greeting
     event = find_event_from_params(params)
     @event_name = event ? event.name : "Call"
-    @postto = base_url + '/join_conference.xml'
+    @postto = base_url + '/put_on_hold.xml'
   end
 
-  def join_conference
+  def put_on_hold
     event = find_event_from_params(params)
     @timelimit = event ? event.pool.timelimit : 30
     @timelimit *= 60
@@ -16,7 +16,7 @@ class TwilioController < ApplicationController
   def incoming
     event = find_event_from_params(params)
     @event_name = event ? event.name : "Call"
-    @postto = base_url + '/join_conference.xml'
+    @postto = base_url + '/put_on_hold.xml'
   end
   
   def sms
