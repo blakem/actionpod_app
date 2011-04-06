@@ -28,7 +28,7 @@ class TwilioCaller
         'From' => caller_id,
         'To' => event.user.primary_phone,
         'Url' => base_url + '/greeting.xml',
-    }
+    }  
     account = Twilio::RestAccount.new(account_sid, account_token)
     resp = account.request(start_call_uri, 'POST', post_args) # XXX need to handle failure condition
     response_hash = (Hash.from_xml resp.body).with_indifferent_access
@@ -43,5 +43,24 @@ class TwilioCaller
       :PhoneNumberSid => call_hash[:PhoneNumberSid],
       :Uri            => call_hash[:Uri]
     )
+  end
+  
+  def conferences_in_progress
+    account = Twilio::RestAccount.new(account_sid, account_token)
+    resp = account.request(conferences_in_progress_uri, 'GET') # XXX need to handle failure condition
+    response_hash = (Hash.from_xml resp.body).with_indifferent_access
+    conference_hash = response_hash[:TwilioResponse][:Conferences]
+    total = conference_hash[:total].to_i
+    conferences = []
+    if total == 1
+      conferences = [conference_hash[:Conference]]
+    elsif total > 1
+      conferences = conference_hash[:Conference]
+    end
+    conferences
+  end
+
+  def conferences_in_progress_uri
+    "/#{api_version}/Accounts/#{account_sid}/Conferences?Status=in-progress"
   end
 end
