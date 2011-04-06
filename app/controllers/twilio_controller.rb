@@ -14,6 +14,8 @@ class TwilioController < ApplicationController
   end
 
   def incoming
+    event = find_event_from_params(params)
+    @event_name = event ? event.name : "Call"
     @postto = base_url + '/join_conference.xml'
   end
   
