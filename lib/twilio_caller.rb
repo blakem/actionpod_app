@@ -36,6 +36,13 @@ class TwilioCaller
     TwilioCaller.create_call_from_call_hash(call_hash, event.id)
   end
   
+  # def merge_calls_for_pool(pool)
+  # end
+
+  def conferences_on_hold_for_pool(pool)
+    conferences_in_progress.select { |conference| conference[:FriendlyName] =~ /Pool#{pool.id}$/ }
+  end
+  
   def conferences_in_progress
     account = Twilio::RestAccount.new(account_sid, account_token)
     resp = account.request(conferences_in_progress_uri, 'GET') # XXX need to handle failure condition

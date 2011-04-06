@@ -84,7 +84,7 @@ describe TwilioCaller do
       conferences.should == [{
         "Sid"=>"CFc99129d1af6c8f04aa03962e9f66a0b8",
         "AccountSid"=>"AC2e57bf710b77d765d280786bc07dbacc",
-        "FriendlyName"=>"MyRoom",
+        "FriendlyName"=>"HoldEvent345Pool123",
         "Status"=>"completed",
         "DateCreated"=>"Wed, 06 Apr 2011 01:19:54 +0000",
         "ApiVersion"=>"2010-04-01",
@@ -96,7 +96,7 @@ describe TwilioCaller do
            "/2010-04-01/Accounts/AC2e57bf710b77d765d280786bc07dbacc/Conferences/CFc99129d1af6c8f04aa03962e9f66a0b8/Participants"}},
        {"Sid"=>"CF4216d8a56720d7ad2b8c1f5dde920b06",
         "AccountSid"=>"AC2e57bf710b77d765d280786bc07dbacc",
-        "FriendlyName"=>"MyRoom",
+        "FriendlyName"=>"HoldEvent455Pool1234",
         "Status"=>"completed",
         "DateCreated"=>"Wed, 06 Apr 2011 01:04:24 +0000",
         "ApiVersion"=>"2010-04-01",
@@ -106,6 +106,29 @@ describe TwilioCaller do
         "SubresourceUris"=>
          {"Participants"=>
            "/2010-04-01/Accounts/AC2e57bf710b77d765d280786bc07dbacc/Conferences/CF4216d8a56720d7ad2b8c1f5dde920b06/Participants"}
+      }]
+    end
+
+    it "conferences_on_hold_for_pool" do
+      response = mock('HTTPResponse', :body => two_conference_response)
+      account = mock('TwilioAccount', :request => response)
+      pool = mock('Pool', :id => 123)
+      account.should_receive(:request).with(@tc.conferences_in_progress_uri, 'GET')
+      Twilio::RestAccount.should_receive(:new).with("AC2e57bf710b77d765d280786bc07dbacc", "fc9bd67bb8deee6befd3ab0da3973718").and_return(account)
+      conferences = @tc.conferences_on_hold_for_pool(pool)
+      conferences.should == [{
+        "Sid"=>"CFc99129d1af6c8f04aa03962e9f66a0b8",
+        "AccountSid"=>"AC2e57bf710b77d765d280786bc07dbacc",
+        "FriendlyName"=>"HoldEvent345Pool123",
+        "Status"=>"completed",
+        "DateCreated"=>"Wed, 06 Apr 2011 01:19:54 +0000",
+        "ApiVersion"=>"2010-04-01",
+        "DateUpdated"=>"Wed, 06 Apr 2011 01:20:01 +0000",
+        "Uri"=>
+         "/2010-04-01/Accounts/AC2e57bf710b77d765d280786bc07dbacc/Conferences/CFc99129d1af6c8f04aa03962e9f66a0b8",
+        "SubresourceUris"=>
+         {"Participants"=>
+           "/2010-04-01/Accounts/AC2e57bf710b77d765d280786bc07dbacc/Conferences/CFc99129d1af6c8f04aa03962e9f66a0b8/Participants"}
       }]
     end
   end
@@ -149,12 +172,12 @@ def two_conference_response
   'uri="/2010-04-01/Accounts/AC2e57bf710b77d765d280786bc07dbacc/Conferences" ' +
   'firstpageuri="/2010-04-01/Accounts/AC2e57bf710b77d765d280786bc07dbacc/Conferences?Page=0&amp;PageSize=50" ' +
   'previouspageuri="" nextpageuri="" lastpageuri="/2010-04-01/Accounts/AC2e57bf710b77d765d280786bc07dbacc/Conferences?Page=0&amp;PageSize=50">' +
-  '<Conference><Sid>CFc99129d1af6c8f04aa03962e9f66a0b8</Sid><AccountSid>AC2e57bf710b77d765d280786bc07dbacc</AccountSid><FriendlyName>MyRoom</FriendlyName>' + 
+  '<Conference><Sid>CFc99129d1af6c8f04aa03962e9f66a0b8</Sid><AccountSid>AC2e57bf710b77d765d280786bc07dbacc</AccountSid><FriendlyName>HoldEvent345Pool123</FriendlyName>' + 
   '<Status>completed</Status><DateCreated>Wed, 06 Apr 2011 01:19:54 +0000</DateCreated><ApiVersion>2010-04-01</ApiVersion><DateUpdated>' +
   'Wed, 06 Apr 2011 01:20:01 +0000</DateUpdated><Uri>/2010-04-01/Accounts/AC2e57bf710b77d765d280786bc07dbacc/Conferences/CFc99129d1af6c8f04aa03962e9f66a0b8' +
   '</Uri><SubresourceUris><Participants>/2010-04-01/Accounts/AC2e57bf710b77d765d280786bc07dbacc/Conferences/CFc99129d1af6c8f04aa03962e9f66a0b8/Participants' +
   '</Participants></SubresourceUris></Conference><Conference><Sid>CF4216d8a56720d7ad2b8c1f5dde920b06</Sid><AccountSid>AC2e57bf710b77d765d280786bc07dbacc' + 
-  '</AccountSid><FriendlyName>MyRoom</FriendlyName><Status>completed</Status><DateCreated>Wed, 06 Apr 2011 01:04:24 +0000</DateCreated><ApiVersion>' +
+  '</AccountSid><FriendlyName>HoldEvent455Pool1234</FriendlyName><Status>completed</Status><DateCreated>Wed, 06 Apr 2011 01:04:24 +0000</DateCreated><ApiVersion>' +
   '2010-04-01</ApiVersion><DateUpdated>Wed, 06 Apr 2011 01:04:38 +0000</DateUpdated><Uri>' +
   '/2010-04-01/Accounts/AC2e57bf710b77d765d280786bc07dbacc/Conferences/CF4216d8a56720d7ad2b8c1f5dde920b06</Uri><SubresourceUris>' +
   '<Participants>/2010-04-01/Accounts/AC2e57bf710b77d765d280786bc07dbacc/Conferences/CF4216d8a56720d7ad2b8c1f5dde920b06/Participants' + 
