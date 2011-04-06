@@ -37,7 +37,7 @@ describe TwilioController do
   end
 
   describe "put_on_hold" do
-    it "should join a conference room on CallSid" do
+    it "should put on hold on CallSid" do
       user = Factory(:user)
       pool = Factory(:pool, :timelimit => 33)
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
@@ -46,11 +46,11 @@ describe TwilioController do
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => 'Joining a conference room')
       response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
-      response.should have_selector('response>dial>conference', :content => 'MyRoom')
+      response.should have_selector('response>dial>conference', :content => "HoldEvent#{event.id}Pool#{pool.id}")
       response.should have_selector('response>say', :content => 'Time is up. Goodbye.')
     end
 
-    it "should join a conference room on PhoneNumberSid" do
+    it "should put on hold on PhoneNumberSid" do
       user = Factory(:user)
       pool = Factory(:pool, :timelimit => 33)
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
@@ -59,11 +59,11 @@ describe TwilioController do
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => 'Joining a conference room')
       response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
-      response.should have_selector('response>dial>conference', :content => 'MyRoom')
+      response.should have_selector('response>dial>conference', :content => "HoldEvent#{event.id}Pool#{pool.id}")
       response.should have_selector('response>say', :content => 'Time is up. Goodbye.')
     end
 
-    it "should join a conference room on From" do
+    it "should put on hold on From" do
       user = Factory(:user)
       pool = Factory(:pool, :timelimit => 33)
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
@@ -73,11 +73,11 @@ describe TwilioController do
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => 'Joining a conference room')
       response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
-      response.should have_selector('response>dial>conference', :content => 'MyRoom')
+      response.should have_selector('response>dial>conference', :content => "HoldEvent#{event.id}Pool#{pool.id}")
       response.should have_selector('response>say', :content => 'Time is up. Goodbye.')
     end
 
-    it "should join a conference room on To" do
+    it "should put on hold on To" do
       user = Factory(:user)
       pool = Factory(:pool, :timelimit => 33)
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
@@ -87,7 +87,7 @@ describe TwilioController do
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => 'Joining a conference room')
       response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
-      response.should have_selector('response>dial>conference', :content => 'MyRoom')
+      response.should have_selector('response>dial>conference', :content => "HoldEvent#{event.id}Pool#{pool.id}")
       response.should have_selector('response>say', :content => 'Time is up. Goodbye.')
     end
   end

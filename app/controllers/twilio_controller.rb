@@ -10,6 +10,8 @@ class TwilioController < ApplicationController
   def put_on_hold
     event = find_event_from_params(params)
     @timelimit = event ? event.pool.timelimit : 30
+    @pool = event.pool
+    @event = event
     @timelimit *= 60
   end
 
