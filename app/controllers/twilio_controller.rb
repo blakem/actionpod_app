@@ -27,12 +27,23 @@ class TwilioController < ApplicationController
     
     def find_event_from_params(params)
       call = match_call_from_params(params)
-      call ? Event.find_by_id(call.event_id) : nil
+      return Event.find_by_id(call.event_id) if call
+      user = match_user_from_params(params)
+      return nil unless user
+      user.events.each do |event|
+        return event if event.schedule.occurs_on?(Time.now)
+      end
+      return nil
     end
     
     def match_call_from_params(params)
       call = Call.find_by_Sid(params[:CallSid])
       return call if call
       Call.where(:PhoneNumberSid => params[:PhoneNumberSid]).sort { |a,b| a.id <=> b.id }.last
+    end
+    
+    def match_user_from_params(params)
+      key = params[:Direction] == 'inbound' ? :From : :To
+      User.find_by_primary_phone(params[key])
     end
 end

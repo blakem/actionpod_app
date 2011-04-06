@@ -62,6 +62,34 @@ describe TwilioController do
       response.should have_selector('response>dial>conference', :content => 'MyRoom')
       response.should have_selector('response>say', :content => 'Time is up. Goodbye.')
     end
+
+    it "should join a conference room on From" do
+      user = Factory(:user)
+      pool = Factory(:pool, :timelimit => 33)
+      event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
+      event.days = [0,1,2,3,4,5,6]
+      event.save
+      post :join_conference, :From => user.primary_phone, :Direction => 'inbound' 
+      response.content_type.should =~ /^application\/xml/
+      response.should have_selector('response>say', :content => 'Joining a conference room')
+      response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
+      response.should have_selector('response>dial>conference', :content => 'MyRoom')
+      response.should have_selector('response>say', :content => 'Time is up. Goodbye.')
+    end
+
+    it "should join a conference room on To" do
+      user = Factory(:user)
+      pool = Factory(:pool, :timelimit => 33)
+      event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
+      event.days = [0,1,2,3,4,5,6]
+      event.save
+      post :join_conference, :To => user.primary_phone, :Direction => 'outbound-api' 
+      response.content_type.should =~ /^application\/xml/
+      response.should have_selector('response>say', :content => 'Joining a conference room')
+      response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
+      response.should have_selector('response>dial>conference', :content => 'MyRoom')
+      response.should have_selector('response>say', :content => 'Time is up. Goodbye.')
+    end
   end
   
   describe "incoming" do
