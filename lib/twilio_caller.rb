@@ -10,6 +10,10 @@ class TwilioCaller
   def api_version
     '2010-04-01'
   end
+  
+  def account_phone
+    '+14157669865'
+  end
 
   def base_url
      'http://www.15minutecalls.com/twilio'
@@ -33,6 +37,10 @@ class TwilioCaller
 
   def caller_uri(call_sid)
     twilio_base_url + "/Calls/#{call_sid}.json"
+  end
+
+  def sms_uri
+    twilio_base_url + '/SMS/Messages.json'
   end
 
   def twilio_account
@@ -83,7 +91,14 @@ class TwilioCaller
     response_hash = twilio_request(conferences_in_progress_uri, 'GET')
     response_hash[:conferences]
   end
-
+  
+  def send_sms(phone_number, text)
+    resp_hash = twilio_request(sms_uri, 'POST', {
+      :From => account_phone,
+      :To => phone_number,
+      :Body => text,
+    })
+  end
   
   def self.create_call_from_call_hash(call_hash, event_id)
     Call.create(

@@ -135,6 +135,34 @@ describe TwilioCaller do
       tc.merge_calls_for_pool(pool)
     end
   end
+  
+  describe "SMS" do
+    it "should have the right URI" do
+      @tc.sms_uri.should == "/2010-04-01/Accounts/AC2e57bf710b77d765d280786bc07dbacc/SMS/Messages.json"
+    end
+
+    it "send_sms" do
+      phone_number = '+12223334444'
+      text = 'Some random SMS Text'
+      response = mock('HTTPResponse')
+      response.should_receive(:body).and_return(sms_response)
+      account = mock('TwilioAccount', :request => response)
+      account.should_receive(:request).with(@tc.sms_uri, 'POST', {
+        :From => "+14157669865",
+        :To   => phone_number,
+        :Body => text,
+      })
+      Twilio::RestAccount.should_receive(:new).with("AC2e57bf710b77d765d280786bc07dbacc", "fc9bd67bb8deee6befd3ab0da3973718").and_return(account)
+      rv = @tc.send_sms(phone_number, text)
+      rv.should == {
+        "dont" => "currently handle this"
+      }
+    end
+  end
+end
+
+def sms_response
+  '{"dont":"currently handle this"}'
 end
 
 def successful_start_call_response

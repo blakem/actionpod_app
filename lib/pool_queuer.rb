@@ -16,9 +16,17 @@ class PoolQueuer
       :obj_jobtype => 'make_call',
     )
     if jobs.count == 1
-      jobs.first.destroy
-      # Send SMS
+      job = jobs.first
+      event = Event.find_by_id(job.obj_id)
+      if (event)
+        TwilioCaller.new.send_sms(
+          event.user.primary_phone, 
+          "Sorry.  No one else is scheduled for the #{event.time} slot.  This shouldn't happen after we reach a critical mass of users. ;-)"
+        )
+      end
+      job.destroy
+    else 
+      # Schedule the next piece
     end
-    # Schedule the next piece
   end
 end
