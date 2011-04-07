@@ -61,7 +61,7 @@ describe TwilioController do
   describe "callback" do
     it "should set the duration of the call" do
       call = Call.create(:Sid => '54321')
-      post :callback, :CallSid => '54321', :CallDuration => 33
+      post :callback, :CallSid => call.Sid, :CallDuration => 33
       call.reload
       call.Duration.should == 33
     end

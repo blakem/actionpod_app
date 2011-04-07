@@ -44,7 +44,8 @@ describe EventQueuer do
       :obj_id => event1.id, 
       :obj_jobtype => "make_call", 
       :run_at      => (now + 5.minutes - now.sec.seconds).utc.to_s,
-      :id          => event1_dj.id
+      :id          => event1_dj.id,
+      :pool_id     => event1.pool.id,
     }
     rv[1][:run_at] = rv[1][:run_at].to_s
     rv[1].should == {
@@ -52,7 +53,8 @@ describe EventQueuer do
       :obj_id => event2.id, 
       :obj_jobtype => "make_call", 
       :run_at      => (now + 23.hours - now.sec.seconds).utc.to_s,        
-      :id          => event2_dj.id
+      :id          => event2_dj.id,
+      :pool_id     => event2.pool.id,
     }
 
     # Skip jobs that are already queued

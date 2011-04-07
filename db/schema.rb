@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110407202424) do
+ActiveRecord::Schema.define(:version => 20110407224434) do
 
   create_table "calls", :force => true do |t|
     t.string   "Sid"
@@ -41,6 +41,7 @@ ActiveRecord::Schema.define(:version => 20110407202424) do
     t.string   "obj_type"
     t.integer  "obj_id"
     t.string   "obj_jobtype"
+    t.integer  "pool_id"
   end
 
   add_index "delayed_jobs", ["priority", "run_at"], :name => "delayed_jobs_priority"

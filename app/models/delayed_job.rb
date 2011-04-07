@@ -1,5 +1,5 @@
 # == Schema Information
-# Schema version: 20110404204609
+# Schema version: 20110407224434
 #
 # Table name: delayed_jobs
 #
@@ -17,6 +17,7 @@
 #  obj_type    :string(255)
 #  obj_id      :integer
 #  obj_jobtype :string(255)
+#  pool_id     :integer
 #
 
 class DelayedJob < ActiveRecord::Base

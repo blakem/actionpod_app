@@ -15,7 +15,8 @@ class EventQueuer
         :obj_type    => 'Event', 
         :obj_id      => event.id, 
         :obj_jobtype => 'make_call',
-        :run_at      => next_run_time
+        :run_at      => next_run_time,
+        :pool_id     => event.pool.id
       }
       return nil if DelayedJob.where(delay_args)[0]
       delayed_job = event.delay(delay_args).make_call
