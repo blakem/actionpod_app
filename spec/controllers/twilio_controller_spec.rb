@@ -33,7 +33,7 @@ describe TwilioController do
       response.should have_selector('response>gather', :action => 'http://www.15minutecalls.com/twilio/put_on_hold.xml')
       response.should have_selector('response>gather>say', :content => 'Welcome to your Morning Call. Press 1 to join the conference.')
       response.should have_selector('response>say', 
-        :content => 'Sorry, We didn\'t receive any input. You may dial into the conference directly at 415 766 9865.')
+        :content => 'Sorry, We didn\'t receive any input. You may dial into the conference directly at 4 1 5   7 6 6   9 8 6 5.')
     end
   end
 
