@@ -7,7 +7,7 @@ describe TwilioCaller do
 
   describe "Initiating a call" do
     it "should have a start_call_uri" do
-      @tc.start_call_uri.should == "/2010-04-01/Accounts/AC2e57bf710b77d765d280786bc07dbacc/Calls"
+      @tc.start_call_uri.should == "/2010-04-01/Accounts/AC2e57bf710b77d765d280786bc07dbacc/Calls.json"
     end
   
     it "should use Twilio::RestAccount to make a call" do
@@ -16,7 +16,7 @@ describe TwilioCaller do
       response = mock('HTTPResponse', :body => successful_start_call_response)
       account = mock('TwilioAccount', :request => response)
       account.should_receive(:request).with(
-        "/2010-04-01/Accounts/AC2e57bf710b77d765d280786bc07dbacc/Calls",
+        "/2010-04-01/Accounts/AC2e57bf710b77d765d280786bc07dbacc/Calls.json",
         "POST", 
         {"From" => "+14157669865",
          "To"   => user.primary_phone, 
@@ -27,13 +27,13 @@ describe TwilioCaller do
         @tc.start_call_for_event(event)
       }.to change(Call, :count).by(1)
       call = Call.find_by_event_id(event.id)
-      call.Sid.should == 'CAd2cccd39bdc7f1b06250c4771a78bf4a'
-      call.DateCreated.should == 'Mon, 04 Apr 2011 08:10:37 +0000'
-      call.DateUpdated.should == 'Mon, 04 Apr 2011 08:10:37 +0000'
+      call.Sid.should == 'CA6be8176371a8a7a096207feff1044b3e'
+      call.DateCreated.should == 'Thu, 07 Apr 2011 01:10:50 +0000'
+      call.DateUpdated.should == 'Thu, 07 Apr 2011 01:10:50 +0000'
       call.To.should == '+14153141222'
       call.From.should == '+14157669865'
-      call.PhoneNumberSid.should == 'PN7bc59ac941fb55880733ef2fe6295477'
-      call.Uri.should == '/2010-04-01/Accounts/AC2e57bf710b77d765d280786bc07dbacc/Calls/CAd2cccd39bdc7f1b06250c4771a78bf4a'
+      call.PhoneNumberSid.should == 'PN435c6e6362839f82d08fb3e6848cab84'
+      call.Uri.should == '/2010-04-01/Accounts/AC2e57bf710b77d765d280786bc07dbacc/Calls/CA6be8176371a8a7a096207feff1044b3e.json'
       call.Direction.should == 'outbound-api'
       call.event_id.should == event.id
     end
@@ -66,7 +66,6 @@ describe TwilioCaller do
            }
       }]
     end
-
 
     it "conferences_on_hold_for_pool" do
       response = mock('HTTPResponse', :body => two_conference_response)
@@ -121,14 +120,13 @@ describe TwilioCaller do
 end
 
 def successful_start_call_response
-  '<TwilioResponse><Call><Sid>CAd2cccd39bdc7f1b06250c4771a78bf4a</Sid><DateCreated>Mon, 04 Apr 2011 08:10:37 +0000</DateCreated><DateUpdated>' +
-  'Mon, 04 Apr 2011 08:10:37 +0000</DateUpdated><ParentCallSid/><AccountSid>AC2e57bf710b77d765d280786bc07dbacc</AccountSid><To>+14153141222</To>' +
-  '<From>+14157669865</From><PhoneNumberSid>PN7bc59ac941fb55880733ef2fe6295477</PhoneNumberSid><Status>queued</Status><StartTime/><EndTime/>' +
-  '<Duration/><Price/><Direction>outbound-api</Direction><AnsweredBy/><ApiVersion>2010-04-01</ApiVersion><Annotation/><ForwardedFrom/><GroupSid/>' +
-  '<CallerName/><Uri>/2010-04-01/Accounts/AC2e57bf710b77d765d280786bc07dbacc/Calls/CAd2cccd39bdc7f1b06250c4771a78bf4a</Uri><SubresourceUris>' +
-  '<Notifications>/2010-04-01/Accounts/AC2e57bf710b77d765d280786bc07dbacc/Calls/CAd2cccd39bdc7f1b06250c4771a78bf4a/Notifications</Notifications>' +
-  '<Recordings>/2010-04-01/Accounts/AC2e57bf710b77d765d280786bc07dbacc/Calls/CAd2cccd39bdc7f1b06250c4771a78bf4a/Recordings</Recordings>' +
-  '</SubresourceUris></Call></TwilioResponse>'
+  '{"sid":"CA6be8176371a8a7a096207feff1044b3e","date_created":"Thu, 07 Apr 2011 01:10:50 +0000","date_updated":"Thu, 07 Apr 2011 01:10:50 +0000",' +
+  '"parent_call_sid":null,"account_sid":"AC2e57bf710b77d765d280786bc07dbacc","to":"+14153141222","from":"+14157669865","phone_number_sid":' +
+  '"PN435c6e6362839f82d08fb3e6848cab84","status":"queued","start_time":null,"end_time":null,"duration":null,"price":null,"direction":"outbound-api",' +
+  '"answered_by":null,"api_version":"2010-04-01","annotation":null,"forwarded_from":null,"group_sid":null,"caller_name":null,' + 
+  '"uri":"\/2010-04-01\/Accounts\/AC2e57bf710b77d765d280786bc07dbacc\/Calls\/CA6be8176371a8a7a096207feff1044b3e.json",' + 
+  '"subresource_uris":{"notifications":"\/2010-04-01\/Accounts\/AC2e57bf710b77d765d280786bc07dbacc\/Calls\/CA6be8176371a8a7a096207feff1044b3e\/Notifications.json"' + 
+  ',"recordings":"\/2010-04-01\/Accounts\/AC2e57bf710b77d765d280786bc07dbacc\/Calls\/CA6be8176371a8a7a096207feff1044b3e\/Recordings.json"}}'
 end
 
 def conference_response
