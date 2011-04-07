@@ -17,7 +17,7 @@ describe TwilioController do
 
   describe "greeting" do
     it "should say can't match this number when it can't find an event" do
-      post :greeting
+      post :greeting, :content_type => 'application/xml'
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => "I'm sorry")
     end
@@ -26,10 +26,12 @@ describe TwilioController do
       user = Factory(:user)
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call')      
       Call.create(:Sid => '12345', :event_id => event.id)
-      post :greeting, :CallSid => '12345'
+      post :greeting, :CallSid => '12345', :content_type => 'application/xml'
       response.content_type.should =~ /^application\/xml/
-      response.should have_selector('response>gather', :numdigits => '1')
-      response.should have_selector('response>gather>say', :content => 'Hello, welcome to your Morning Call.')
+      response.should have_selector('response>gather', 'numDigits' => '1')
+      response.should have_selector('response>gather', 'finishOnKey' => '#')
+      response.should have_selector('response>gather', 'action' => 'http://www.15minutecalls.com/put_on_hold.xml')
+      response.should have_selector('response>gather>say', :content => 'Welcome to your Morning Call. Please press 1 to join the conference')
     end
   end
 
