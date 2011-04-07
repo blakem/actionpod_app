@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Response>
-  <Gather action="http://www.15minutecalls.com/twilio/put_on_hold.xml" numDigits="1" finishOnKey="#">
-    <Say>Welcome to your Testing Home Call. Please press 1 to join the conference</Say>
+  <Gather action="<%= @postto %>" numDigits="1" finishOnKey="#">
+    <Say>Welcome to your <%= @event_name %>. Please press 1 to join the conference</Say>
   </Gather>
 </Response>

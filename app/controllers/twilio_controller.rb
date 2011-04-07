@@ -5,14 +5,11 @@ class TwilioController < ApplicationController
     event = find_event_from_params(params)
     unless event
       self.say_sorry
-      output = render_to_string :action => :say_sorry
+      render :action => :say_sorry
     else
       @event_name = event.name
       @postto = base_url + '/put_on_hold.xml'
-      output  = render_to_string
     end
-    $stderr.puts output if Rails.env.production?
-    render :inline => output, :format => :xml
   end
   
   def say_sorry
