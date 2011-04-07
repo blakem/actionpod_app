@@ -1,5 +1,5 @@
 # == Schema Information
-# Schema version: 20110406063114
+# Schema version: 20110407202424
 #
 # Table name: calls
 #
@@ -15,6 +15,7 @@
 #  created_at     :datetime
 #  updated_at     :datetime
 #  Direction      :string(255)
+#  Duration       :integer
 #
 
 class Call < ActiveRecord::Base

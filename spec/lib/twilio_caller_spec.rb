@@ -18,9 +18,11 @@ describe TwilioCaller do
       account.should_receive(:request).with(
         "/2010-04-01/Accounts/AC2e57bf710b77d765d280786bc07dbacc/Calls.json",
         "POST", 
-        {"From" => "+14157669865",
-         "To"   => user.primary_phone, 
-         "Url"  => "http://www.15minutecalls.com/twilio/greeting.xml"
+        {"From"           => "+14157669865",
+         "To"             => user.primary_phone, 
+         "Url"            => "http://www.15minutecalls.com/twilio/greeting.xml",
+         "FallbackUrl"    => "http://www.15minutecalls.com/twilio/greeting_fallback.xml", 
+         "StatusCallback" => "http://www.15minutecalls.com/twilio/callback.xml"
         })
       Twilio::RestAccount.should_receive(:new).with("AC2e57bf710b77d765d280786bc07dbacc", "fc9bd67bb8deee6befd3ab0da3973718").and_return(account)
       expect {

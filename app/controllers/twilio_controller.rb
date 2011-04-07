@@ -12,6 +12,23 @@ class TwilioController < ApplicationController
     end
   end
   
+  def greeting_fallback
+    event = find_event_from_params(params)
+    unless event
+      self.say_sorry
+      render :action => :say_sorry
+    else
+      self.put_on_hold
+      render :action => :put_on_hold
+    end
+  end
+  
+  def callback
+    call = Call.find_by_Sid(params[:CallSid])
+    call.Duration = params[:CallDuration]
+    call.save
+  end
+
   def say_sorry
   end
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110406063114) do
+ActiveRecord::Schema.define(:version => 20110407202424) do
 
   create_table "calls", :force => true do |t|
     t.string   "Sid"
@@ -24,6 +24,7 @@ ActiveRecord::Schema.define(:version => 20110406063114) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "Direction"
+    t.integer  "Duration"
   end
 
   create_table "delayed_jobs", :force => true do |t|

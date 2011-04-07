@@ -37,6 +37,36 @@ describe TwilioController do
     end
   end
 
+  describe "greeting_fallback" do
+    it "should say can't match this number when it can't find an event" do
+      post :greeting_fallback
+      response.content_type.should =~ /^application\/xml/
+      response.should have_selector('response>say', :content => "I'm sorry")
+    end
+
+    it "should put on hold on CallSid" do
+      user = Factory(:user)
+      pool = Factory(:pool, :timelimit => 33)
+      event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
+      Call.create(:Sid => '54321', :event_id => event.id)
+      post :greeting_fallback, :CallSid => '54321'
+      response.content_type.should =~ /^application\/xml/
+      response.should have_selector('response>say', :content => 'Joining a conference room')
+      response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
+      response.should have_selector('response>dial>conference', :content => "HoldEvent#{event.id}Pool#{pool.id}")
+      response.should have_selector('response>say', :content => 'Time is up. Goodbye.')
+    end    
+  end
+
+  describe "callback" do
+    it "should set the duration of the call" do
+      call = Call.create(:Sid => '54321')
+      post :callback, :CallSid => '54321', :CallDuration => 33
+      call.reload
+      call.Duration.should == 33
+    end
+  end
+
   describe "put_on_hold" do
     it "should say can't match this number when it can't find an event" do
       post :put_on_hold

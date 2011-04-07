@@ -49,6 +49,8 @@ class TwilioCaller
       'From' => caller_id,
       'To' => event.user.primary_phone,
       'Url' => base_url + '/greeting.xml',
+      'FallbackUrl' => base_url + '/greeting_fallback.xml',
+      'StatusCallback' => base_url + '/callback.xml',
     })
     TwilioCaller.create_call_from_call_hash(call_hash, event.id)
   end
