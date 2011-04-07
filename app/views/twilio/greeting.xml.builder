@@ -1,7 +1,6 @@
 xml.instruct!
 xml.Response do
-  xml.Gather(:action => @postto, :numDigits => 2, :finishOnKey => '#') do
-    xml.Say "Hello, welcome to your #{@event_name}."
-    xml.Say "Please press 1 to join the conference" 
+  xml.Gather(:action => @postto, :numDigits => 1, :finishOnKey => '#') do
+    xml.Say "Welcome to your #{@event_name}. Please press 1 to join the conference" 
   end
 end
