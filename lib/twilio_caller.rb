@@ -24,19 +24,19 @@ class TwilioCaller
   end
 
   def conferences_in_progress_uri
-    "/#{api_version}/Accounts/#{account_sid}/Conferences?Status=in-progress"
+    "/#{api_version}/Accounts/#{account_sid}/Conferences.json?Status=in-progress"
   end
 
   def twilio_account
     @twilio_account ||= Twilio::RestAccount.new(account_sid, account_token)
   end
   
-  def twilio_request(*args)
+  def twilio_request_xml(*args)
     resp = twilio_account.request(*args) # XXX need to handle failure condition
     (Hash.from_xml resp.body).with_indifferent_access
   end
 
-  def twilio_request_json(*args)
+  def twilio_request(*args)
     resp = twilio_account.request(*args) # XXX need to handle failure condition
     ActiveSupport::JSON.decode(resp.body).with_indifferent_access
   end
@@ -47,7 +47,7 @@ class TwilioCaller
         'To' => event.user.primary_phone,
         'Url' => base_url + '/greeting.xml',
     }  
-    response_hash = twilio_request(start_call_uri, 'POST', post_args)
+    response_hash = twilio_request_xml(start_call_uri, 'POST', post_args)
     call_hash = response_hash[:TwilioResponse][:Call]
     TwilioCaller.create_call_from_call_hash(call_hash, event.id)
   end
@@ -59,8 +59,8 @@ class TwilioCaller
   def participants_on_hold_for_pool(pool)
     participants = []
     conferences_on_hold_for_pool(pool).each do |conference|
-      participant_uri = conference[:SubresourceUris][:Participants]
-      response_hash = twilio_request_json(participant_uri + '.json', 'GET')
+      participant_uri = conference[:subresource_uris][:participants]
+      response_hash = twilio_request(participant_uri , 'GET')
       participant_list = response_hash[:participants]
       participants += participant_list
     end
@@ -68,20 +68,12 @@ class TwilioCaller
   end
     
   def conferences_on_hold_for_pool(pool)
-    conferences_in_progress.select { |conference| conference[:FriendlyName] =~ /Pool#{pool.id}$/ }
+    conferences_in_progress.select { |conference| conference[:friendly_name] =~ /Pool#{pool.id}$/ }
   end
   
   def conferences_in_progress
     response_hash = twilio_request(conferences_in_progress_uri, 'GET')
-    conference_hash = response_hash[:TwilioResponse][:Conferences]
-    total = conference_hash[:total].to_i
-    conferences = []
-    if total == 1
-      conferences = [conference_hash[:Conference]]
-    elsif total > 1
-      conferences = conference_hash[:Conference]
-    end
-    conferences
+    response_hash[:conferences]
   end
 
   
