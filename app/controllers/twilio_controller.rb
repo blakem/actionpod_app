@@ -40,6 +40,11 @@ class TwilioController < ApplicationController
     end
   end
   
+  def place_in_conference
+    @timelimit = (params[:timelimit] || 15) * 60
+    @conference = params[:conference] || 'DefaultConference'
+  end
+  
   def sms
   end
 

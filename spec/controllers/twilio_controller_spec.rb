@@ -127,11 +127,29 @@ describe TwilioController do
       call.event_id.should == event.id
     end
   end
+  
+  describe "place_in_conference" do
+    it "should put the user into the conference room" do
+      post :place_in_conference, :conference => 'FooBar', :timelimit => 24
+      response.content_type.should =~ /^application\/xml/
+      response.should have_selector('response>say', :content => 'Welcome')
+      response.should have_selector('response>dial', :timelimit => (24 * 60).to_s)
+      response.should have_selector('response>dial>conference', :content => "FooBar")
+      response.should have_selector('response>say', :content => 'Time is up. Goodbye.')      
+    end
+
+    it "should default to a time limit of 15 and a room of DefaultConference" do
+      post :place_in_conference
+      response.content_type.should =~ /^application\/xml/
+      response.should have_selector('response>dial', :timelimit => (15 * 60).to_s)
+      response.should have_selector('response>dial>conference', :content => "DefaultConference")
+    end
+  end
 
   describe "sms" do
     it "should send back a welcome message" do
       post :sms
-      response.should have_selector('response>sms', :content => "Welcome to 15 Minute Calls.  See 15 Minute Calls Dot Com for more information.")
+      response.should have_selector('response>sms', :content => "Welcome to 15-Minute Calls.  See 15minutecalls.com for more information.")
     end
   end
 end
