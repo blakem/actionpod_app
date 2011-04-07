@@ -1,1 +1,0 @@
-require 'event_queuer'

@@ -42,7 +42,6 @@ end
 Spork.each_run do
   # This code will be run each time you run your specs.
   Dir.entries("#{Rails.root}/lib").each do |entry|
-    next if entry == 'schedule_atts.rb'
     load entry if entry =~ /.rb$/
   end
 end
