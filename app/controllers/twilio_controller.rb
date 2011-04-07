@@ -45,7 +45,7 @@ class TwilioController < ApplicationController
 
   private
     def base_url 
-      "http://actionpods.heroku.com/twilio"
+      "http://www.15minutecalls.com/twilio"
     end
     
     def find_event_from_params(params)

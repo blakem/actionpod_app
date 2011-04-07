@@ -131,7 +131,7 @@ describe TwilioController do
   describe "sms" do
     it "should send back a welcome message" do
       post :sms
-      response.should have_selector('response>sms', :content => "Welcome to ActionPods.  See actionpods.heroku.com for more information.")
+      response.should have_selector('response>sms', :content => "Welcome to 15 Minute Calls.  See 15 Minute Calls Dot Com for more information.")
     end
   end
 end

@@ -5,6 +5,7 @@ class ApplicationController < ActionController::Base
   before_filter :set_timezone
 
   def ensure_domain
+    return unless Rails.env.production?
     if request.env['HTTP_HOST'] != 'www.15minutecalls.com'
       redirect_to "http://www.15minutecalls.com", :status => 301
     end

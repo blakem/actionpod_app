@@ -12,7 +12,7 @@ class TwilioCaller
   end
 
   def base_url
-     'http://actionpods.heroku.com/twilio'
+     'http://www.15minutecalls.com/twilio'
   end
 
   def caller_id

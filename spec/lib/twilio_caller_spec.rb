@@ -20,7 +20,7 @@ describe TwilioCaller do
         "POST", 
         {"From" => "+14157669865",
          "To"   => user.primary_phone, 
-         "Url"  => "http://actionpods.heroku.com/twilio/greeting.xml"
+         "Url"  => "http://www.15minutecalls.com/twilio/greeting.xml"
         })
       Twilio::RestAccount.should_receive(:new).with("AC2e57bf710b77d765d280786bc07dbacc", "fc9bd67bb8deee6befd3ab0da3973718").and_return(account)
       expect {

@@ -23,7 +23,7 @@ describe PagesController do
 	    controller.user_signed_in?.should be_true
       get :home
       response.should be_success
-      response.should have_selector('title', :content => 'ActionPods')
+      response.should have_selector('title', :content => '15-Minute Calls')
     end   
 
     it "should be successful when logged in as admin" do
@@ -34,7 +34,7 @@ describe PagesController do
       controller.admin_signed_in?.should be_true      
       get :home
       response.should be_success
-      response.should have_selector('title', :content => 'ActionPods')
+      response.should have_selector('title', :content => '15-Minute Calls')
     end   
 
     it "should use the users time_zone" do
