@@ -31,6 +31,10 @@ class TwilioCaller
     twilio_base_url + '/Conferences.json?Status=in-progress'
   end
 
+  def caller_uri(call_sid)
+    twilio_base_url + "/Calls/#{call_sid}.json"
+  end
+
   def twilio_account
     @twilio_account ||= Twilio::RestAccount.new(account_sid, account_token)
   end
@@ -49,8 +53,14 @@ class TwilioCaller
     TwilioCaller.create_call_from_call_hash(call_hash, event.id)
   end
   
-  # def merge_calls_for_pool(pool)
-  # end
+  def merge_calls_for_pool(pool)
+    participants_on_hold_for_pool(pool).each do |participant|
+      conference_room = "Pool#{pool.id}Room1"
+      resp_hash = twilio_request(caller_uri(participant[:call_sid]), 'POST', {
+       'Url' => base_url + "/place_in_conference.xml?conference=#{conference_room}&timeout=#{pool.timelimit}",
+      })
+    end
+  end
 
   def participants_on_hold_for_pool(pool)
     participants = []
