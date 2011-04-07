@@ -71,7 +71,7 @@ describe User do
     pacific_time_zone = 'Pacific Time (US & Canada)'
     mountain_time_zone = 'Mountain Time (US & Canada)'
     user = Factory(:user, :time_zone => pacific_time_zone)
-    event = Factory(:event, :user_id => user.id)
+    event = Factory(:event, :user_id => user.id, :pool_id => Factory(:pool).id)
     event.schedule
     event.save
     event.reload

@@ -130,7 +130,7 @@ describe Event do
     end
 
     it "should reschedule itself on edit" do
-      event = Factory(:event)
+      event = Factory(:event, :pool_id => Factory(:pool).id)
       dj = Factory(:delayed_job, :obj_type => 'Event', :obj_id => event.id)
       dj_id = dj.id
       event.time = '4:00pm'

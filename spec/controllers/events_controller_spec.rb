@@ -19,9 +19,9 @@ describe EventsController do
     login_user
     before(:each) do
       @pool ||= Factory(:pool, :name => 'Default Pool')
-      @event1 ||= Factory(:event, :user_id => @current_user.id)
-      @event2 ||= Factory(:event, :user_id => @current_user.id)
-      @event_other ||= Factory(:event)
+      @event1 ||= Factory(:event, :user_id => @current_user.id, :pool_id => @pool.id)
+      @event2 ||= Factory(:event, :user_id => @current_user.id, :pool_id => @pool.id)
+      @event_other ||= Factory(:event, :pool_id => @pool.id)
     end
 
     describe "GET index" do
@@ -86,13 +86,13 @@ describe EventsController do
         it "assigns a newly created event as @event" do
           pool = Pool.find_by_name('Default Pool')
           pool.should be_a_kind_of(Pool)
-          mock_event(:save => true)
+          mock_event(:save => true, :pool => pool)
           mock_event.should_receive(:alter_schedule).with(
             :start_date => Time.now.in_time_zone(controller.current_user.time_zone).beginning_of_day
           )
           Event.stub(:new).with({
             'these' => 'params', 
-            'user_id' => controller.current_user.id, 
+            'user_id' => controller.current_user.id,
             'pool_id' => pool.id,
             'days'    => []
           }) { mock_event }

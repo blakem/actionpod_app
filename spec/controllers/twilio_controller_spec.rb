@@ -104,7 +104,7 @@ describe TwilioController do
 
     it "should match up with the event being called" do
       user = Factory(:user)
-      event = Factory(:event, :user_id => user.id, :name => 'Morning Call')
+      event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => Factory(:pool).id)
       event.days = [0,1,2,3,4,5,6]
       event.save
       post :incoming, :From => user.primary_phone, :Direction => 'inbound' 
@@ -115,7 +115,7 @@ describe TwilioController do
     
     it "should create a call record" do
       user = Factory(:user)
-      event = Factory(:event, :user_id => user.id, :name => 'Morning Call')
+      event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => Factory(:pool).id)
       event.days = [0,1,2,3,4,5,6]
       event.save
       expect {
