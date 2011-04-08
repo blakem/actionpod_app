@@ -25,22 +25,17 @@ class PoolQueuer
     end
   end
   
-  def queue_merge_calls_for_pool(pool, pool_runs_at, count = 1) # XXX Tests
+  def queue_merge_calls_for_pool(pool, pool_runs_at, count = 0) # XXX Tests
     return true if count > 180 # XXX compute 180 from times
-    twilio_caller = TwilioCaller.new
-    delay_args = {
+    TwilioCaller.new.merge_calls_for_pool(pool) if count > 0
+    self.delay(
       :obj_type    => 'Pool',
       :obj_id      => pool.id,
       :obj_jobtype => 'merge_calls_for_pool',
       :run_at      => pool_runs_at + (time_between_merges * count)
-    }
-    unless DelayedJob.where(delay_args)[0]
-      delayed_job = twilio_caller.delay(delay_args).merge_calls_for_pool(pool)
-    end
-    
-    queue_merge_calls_for_pool(pool, pool_runs_at, count+1)
+    ).queue_merge_calls_for_pool(pool, pool_runs_at, count + 1)
   end
-    
+  
   def check_before_calls_go_out(pool, pool_runs_at) # XXX Tests
     jobs = DelayedJob.where(
       :run_at => pool_runs_at,
