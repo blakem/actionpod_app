@@ -12,26 +12,22 @@ class PoolQueuer
     queue_check_before_calls_go_out(pool, run_time)
   end
   
-  def dequeue_pool(pool_id, run_time)
-    DelayedJob.where(
-      :obj_type    => 'PoolQueuer', 
-      :obj_jobtype => 'check_before_calls_go_out',
-      :run_at      => run_time - 10.minutes,
-      :pool_id     => pool_id,
-    ).each { |dj| dj.destroy }
-  end
-  
-  def queue_check_before_calls_go_out(pool, run_time)
-    delay_args = {
+  def args_for_check_before_calls_go_out(pool_id, run_time)
+    {
       :obj_type    => 'PoolQueuer', 
       :obj_jobtype => 'check_before_calls_go_out',
       :run_at      => run_time - time_before_calls_go_out,
-      :pool_id     => pool.id,
+      :pool_id     => pool_id,      
     }
-    existing_job = DelayedJob.where(delay_args)[0]
-    unless existing_job 
-      delayed_job = self.delay(delay_args).check_before_calls_go_out(pool, run_time)
-    end
+  end
+
+  def dequeue_pool(pool_id, run_time)
+    DelayedJob.where(args_for_check_before_calls_go_out(pool_id, run_time)).each { |dj| dj.destroy }
+  end
+  
+  def queue_check_before_calls_go_out(pool, run_time)
+    delay_args = args_for_check_before_calls_go_out(pool.id, run_time)
+    delay(delay_args).check_before_calls_go_out(pool, run_time) unless DelayedJob.where(delay_args)[0]
   end
   
   def check_before_calls_go_out(pool, pool_runs_at)
