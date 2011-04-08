@@ -116,7 +116,8 @@ class Event < ActiveRecord::Base
 
     def destroy_delayed_jobs
       DelayedJob.where(:obj_type => 'Event', :obj_id => self.id).each { |dj| dj.destroy }
-      next_run_time = self.schedule.next_occurrence.utc
+      sched = schedule_yaml_was && schedule_yaml_changed? ? IceCube::Schedule.from_yaml(schedule_yaml_was) : schedule
+      next_run_time = sched.next_occurrence.utc
       scheduled_events = DelayedJob.where(
         :obj_type    => 'Event',
         :obj_jobtype => 'make_call',

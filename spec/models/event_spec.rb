@@ -152,6 +152,16 @@ describe Event do
       expect{ event2.destroy }.to change(DelayedJob, :count).by(-2)    
     end
 
+    it "Pool dequeing on edit is based on the *old* values" do
+      pool = Factory(:pool)
+      event = Factory(:event, :user_id => Factory(:user).id, :pool_id => pool.id)
+      event.days = [0,1,2,3,4,5,6]
+      expect{ event.save }.to     change(DelayedJob, :count).by(2)
+      event.time = "3:03pm"
+      expect{ event.save }.to_not change(DelayedJob, :count)
+      expect{ event.destroy }.to  change(DelayedJob, :count).by(-2)
+    end
+
     it "should reschedule itself on edit" do
       event = Factory(:event, :pool_id => Factory(:pool).id)
       dj = Factory(:delayed_job, :obj_type => 'Event', :obj_id => event.id)
