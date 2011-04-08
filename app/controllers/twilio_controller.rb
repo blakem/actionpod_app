@@ -47,6 +47,7 @@ class TwilioController < ApplicationController
 
   def incoming
     event = find_event_from_params(params)
+    puts "Found Event:#{event}" if event
     unless event
       self.say_sorry
       render :action => :say_sorry
@@ -72,8 +73,10 @@ class TwilioController < ApplicationController
     
     def find_event_from_params(params)
       call = match_call_from_params(params)
+      puts "Found Call: #{call}" if call
       return Event.find_by_id(call.event_id) if call
       user = match_user_from_params(params)
+      puts "Found User: #{user}" if user
       return nil unless user
       user.events.each do |event|
         return event if event.schedule.occurs_on?(Time.now)
