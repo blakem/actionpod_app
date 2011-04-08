@@ -177,7 +177,7 @@ describe Event do
     it "should schedule itself on create" do
       user = Factory(:user)
       pool = Factory(:pool)
-      event = Event.create(:name => 'TestCreateDJEvent', :user_id => user.id, :pool_id => pool.id)
+      event = Event.create(:name => 'TestCreateDJEvent', :user_id => user.id, :pool_id => pool.id, :days => [0,1,2,3,4,5,6])
       DelayedJob.where(:obj_type => 'Event', :obj_id => event.id).count.should == 1
     end
     

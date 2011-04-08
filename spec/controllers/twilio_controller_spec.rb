@@ -146,6 +146,30 @@ describe TwilioController do
       response.should have_selector('response>gather', :numdigits => '1')
       response.should have_selector('response>gather>say', :content => 'Hello, welcome to your Morning Call.')
     end
+
+    it "should not match up with a user without a primary phone" do
+      user = Factory(:user)
+      user.primary_phone = nil
+      user.save(false)
+      User.find_by_primary_phone(nil).should == user
+      event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => Factory(:pool).id)
+      event.days = [0,1,2,3,4,5,6]
+      event.save
+      post :incoming, :From => nil, :Direction => 'inbound' 
+      response.content_type.should =~ /^application\/xml/
+      response.should have_selector('response>say', :content => "I'm sorry")
+    end
+
+    it "should not match up on calls with a null PhoneNumberSid or null Sid" do
+      user = Factory(:user)
+      event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => Factory(:pool).id)
+      event.days = [0,1,2,3,4,5,6]
+      event.save
+      Call.create(:event_id => event.id, :PhoneNumberSid => nil, :Sid => nil)
+      post :incoming, :From => 'SomeOtherPhone', :Direction => 'inbound' 
+      response.content_type.should =~ /^application\/xml/
+      response.should have_selector('response>say', :content => "I'm sorry")
+    end
     
     it "should create a call record" do
       user = Factory(:user)
