@@ -10,7 +10,7 @@ class PagesController < ApplicationController
   def profile
     @user = current_user
     @title = @user.name
-    @events = current_user.events
+    @events = current_user.events.sort { |a,b| a.minute_of_day <=> b.minute_of_day }
   end
   
   def callcal

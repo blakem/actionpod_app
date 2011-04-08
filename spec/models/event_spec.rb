@@ -79,6 +79,12 @@ describe Event do
       @event.reload
       @event.time.should == '9:00am'
     end
+    
+    it "should have time a minute_of_day accessor to it's schedule" do
+      @event.time = '4:07pm'
+      @event.minute_of_day.should == (4+12)*60+7
+    end
+    
 
     it "should be able to handle 12:00am" do
       @event.time = '12:00am'

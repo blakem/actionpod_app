@@ -42,6 +42,14 @@ class Event < ActiveRecord::Base
     self.alter_schedule(:hour_of_day => [hour], :minute_of_hour => [minute])
   end
   
+  def minute_of_day
+    sched_hash = schedule.to_hash
+    validations = sched_hash[:rrules][0][:validations]
+    hour = validations[:hour_of_day][0]
+    minute = validations[:minute_of_hour][0]
+    return hour*60+minute
+  end
+
   def days
     schedule.to_hash[:rrules][0][:validations][:day]
   end
