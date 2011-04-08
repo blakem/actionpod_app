@@ -63,7 +63,7 @@ class TwilioCaller
     TwilioCaller.create_call_from_call_hash(call_hash, event.id)
   end
   
-  def merge_calls_for_pool(pool)
+  def merge_calls_for_pool(pool, data)
     participants_on_hold_for_pool(pool).each do |participant|
       conference_room = "Pool#{pool.id}Room1"
       resp_hash = twilio_request(caller_uri(participant[:call_sid]), 'POST', {

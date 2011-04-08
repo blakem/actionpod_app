@@ -98,7 +98,7 @@ describe PoolQueuer do
       
     it "should call merge_calls_for_pool" do
       twilio_caller = mock('TwilioCaller')
-      twilio_caller.should_receive(:merge_calls_for_pool).with(@pool)
+      twilio_caller.should_receive(:merge_calls_for_pool).with(@pool, {})
       TwilioCaller.should_receive(:new).and_return(twilio_caller)
       expect {
         @pq.queue_merge_calls_for_pool(@pool, @now + 5.minutes, 1)

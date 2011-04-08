@@ -132,7 +132,7 @@ describe TwilioCaller do
       tc.should_receive(:twilio_request).with(@tc.caller_uri('CA9fa67e8696b60ee1ca1e75ec81ef85e7'), 'POST', {
         "Url" => "http://www.15minutecalls.com/twilio/place_in_conference.xml?conference=Pool#{pool.id}Room1&timeout=22"
       })
-      tc.merge_calls_for_pool(pool)
+      tc.merge_calls_for_pool(pool, {})
     end
   end
   
