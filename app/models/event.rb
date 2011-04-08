@@ -85,11 +85,11 @@ class Event < ActiveRecord::Base
   end
 
   def save(*args)
+    return super(*args) unless self.schedule_yaml_changed? or self.new_record?
     destroy_delayed_jobs
-    rv = super(*args)
-    return rv unless rv
+    return false unless super(*args)
     EventQueuer.new.queue_event(self)
-    rv
+    return true
   end
   
   def self.available_hours

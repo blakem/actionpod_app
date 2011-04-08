@@ -6,7 +6,7 @@ describe PoolQueuer do
   end
 
   it "time_before_calls_go_out" do
-    @pq.time_before_calls_go_out.should == 5.minutes
+    @pq.time_before_calls_go_out.should == 10.minutes
   end
 
   it "should respond to queue_pool" do

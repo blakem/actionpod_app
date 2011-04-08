@@ -1,7 +1,7 @@
 class PoolQueuer
   
   def time_before_calls_go_out
-    5.minutes
+    10.minutes
   end
   
   def queue_pool(pool, run_time)
