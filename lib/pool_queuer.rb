@@ -45,7 +45,7 @@ class PoolQueuer
     end
   end
   
-  def queue_merge_calls_for_pool(pool, pool_runs_at, count = 0) # XXX Tests
+  def queue_merge_calls_for_pool(pool, pool_runs_at, count = 0)
     return true if count > 180 # XXX compute 180 from times
     TwilioCaller.new.merge_calls_for_pool(pool) if count > 0
     count += 1

@@ -81,4 +81,42 @@ describe PoolQueuer do
       ).count.should == 1
     end
   end
+  
+  describe "queue_merge_calls_for_pool" do
+    before(:each) do
+      @pool = Factory(:pool)
+      @user = Factory(:user)
+      @event = Factory(:event, :pool_id => @pool.id, :user_id => @user.id)
+      @now = Time.now.utc
+      @delay_args = {
+        :obj_type    => 'Event',
+        :obj_jobtype => 'make_call',
+        :run_at      => @now + 5.minutes,
+        :pool_id     => @pool.id
+      }
+    end
+      
+    it "should call merge_calls_for_pool" do
+      twilio_caller = mock('TwilioCaller')
+      twilio_caller.should_receive(:merge_calls_for_pool).with(@pool)
+      TwilioCaller.should_receive(:new).and_return(twilio_caller)
+      expect {
+        @pq.queue_merge_calls_for_pool(@pool, @now + 5.minutes, 1)
+      }.to change(DelayedJob, :count).by(1)
+      DelayedJob.where(
+        :obj_type    => 'Pool',
+        :obj_id      => @pool.id,
+        :obj_jobtype => 'merge_calls_for_pool',
+        :run_at      => @now + 5.minutes + 10.seconds,
+      ).count.should == 1
+    end
+    
+    it "should exit on the 181st time" do
+      expect {
+        rv = @pq.queue_merge_calls_for_pool(@pool, @now + 5.minutes, 181)
+        rv.should == true
+      }.to_not change(DelayedJob, :count)
+    end
+
+  end
 end
