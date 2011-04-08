@@ -20,7 +20,7 @@ class EventQueuer
       }
       return nil if DelayedJob.where(delay_args)[0]
       delayed_job = event.delay(delay_args).make_call
-      PoolQueuer.new.queue_pool(event.pool, next_run_time.to_s)
+      PoolQueuer.new.queue_pool(event.pool, next_run_time)
       queue_merge_events_for_pool(event.pool, next_run_time)
       delay_args.merge({:id => delayed_job.id})
     end

@@ -13,11 +13,9 @@ describe EventQueuer do
     event3 = create_event_at(now + 25.hours, @user)
     DelayedJob.all.each { |dj| dj.destroy }
 
-    event1_run_time = now + 5.minutes - now.sec.seconds
-    event2_run_time = now + 23.hours - now.sec.seconds
     pool_queuer = mock('PoolQueuer')
-    pool_queuer.should_receive(:queue_pool).with(event1.pool, event1_run_time.utc.to_s)
-    pool_queuer.should_receive(:queue_pool).with(event2.pool, event2_run_time.utc.to_s)
+    pool_queuer.should_receive(:queue_pool).with(event1.pool, event1.schedule.next_occurrence.utc)
+    pool_queuer.should_receive(:queue_pool).with(event2.pool, event2.schedule.next_occurrence.utc)
     PoolQueuer.should_receive(:new).twice.and_return(pool_queuer)
 
     rv = nil
@@ -26,6 +24,8 @@ describe EventQueuer do
       rv.count.should == 2
     }.to change(DelayedJob, :count).by((180+1)*2)
 
+    event1_run_time = now + 5.minutes - now.sec.seconds
+    event2_run_time = now + 23.hours - now.sec.seconds
     event1_dj = DelayedJob.where(:obj_type => 'Event', :obj_id => event1.id, :obj_jobtype => 'make_call')[0]
     event2_dj = DelayedJob.where(:obj_type => 'Event', :obj_id => event2.id, :obj_jobtype => 'make_call')[0]
     event1_dj.run_at.utc.to_s.should == event1_run_time.utc.to_s
