@@ -146,18 +146,10 @@ describe Event do
       event1.days = [0,1,2,3,4,5,6]
       event2 = Factory(:event, :user_id => Factory(:user).id, :pool_id => pool.id)
       event2.days = [0,1,2,3,4,5,6]
-      expect {
-        event2.save
-      }.to change(DelayedJob, :count).by(2)
-      expect {
-        event1.save
-      }.to change(DelayedJob, :count).by(1)
-      expect{
-        event1.destroy
-      }.to change(DelayedJob, :count).by(-1)    
-      expect{
-        event2.destroy
-      }.to change(DelayedJob, :count).by(-2)    
+      expect{ event2.save }.to    change(DelayedJob, :count).by(2)
+      expect{ event1.save }.to    change(DelayedJob, :count).by(1)
+      expect{ event1.destroy }.to change(DelayedJob, :count).by(-1)    
+      expect{ event2.destroy }.to change(DelayedJob, :count).by(-2)    
     end
 
     it "should reschedule itself on edit" do
