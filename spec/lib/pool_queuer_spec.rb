@@ -30,66 +30,54 @@ describe PoolQueuer do
   end
 
   describe "check_before_calls_go_out" do
-    
-    it "deletes a queued make_call if it's the only one scheduled" do
-      pool = Factory(:pool)
-      now = Time.now.utc
-      dj = DelayedJob.create(
+    before(:each) do
+      @pool = Factory(:pool)
+      @user = Factory(:user)
+      @event = Factory(:event, :pool_id => @pool.id, :user_id => @user.id)
+      @now = Time.now.utc
+      @delay_args = {
         :obj_type    => 'Event',
         :obj_jobtype => 'make_call',
-        :pool_id     => pool.id,
-        :run_at      => now + 5.minutes,
-      )
+        :run_at      => @now + 5.minutes,
+        :pool_id     => @pool.id
+      }
+      
+    end
+    
+    it "deletes a queued make_call if it's the only one scheduled" do
+      dj = DelayedJob.create(@delay_args)
       dj_id = dj.id
       expect {
-        @pq.check_before_calls_go_out(pool, now + 5.minutes)
+        @pq.check_before_calls_go_out(@pool, @now + 5.minutes)
       }.to change(DelayedJob, :count).by(-1)
       DelayedJob.find_by_id(dj_id).should be_nil
     end
     
     it "Sends and SMS if it's the only one scheduled" do
-      pool = Factory(:pool)
-      now = Time.now.utc
-      user = Factory(:user)
-      event = Factory(:event, :user_id => user.id)
-      dj = DelayedJob.create(
-        :obj_type    => 'Event',
-        :obj_id      => event.id,
-        :obj_jobtype => 'make_call',
-        :pool_id     => pool.id,
-        :run_at      => now + 5.minutes,
-      )
+      dj = DelayedJob.create(@delay_args.merge(:obj_id => @event.id))
       response = mock('HTTPResponse')
       response.should_receive(:body).and_return('{"foo":"bar"}')
       account = mock('TwilioAccount', :request => response)
       account.should_receive(:request).with(TwilioCaller.new.sms_uri, 'POST', {
         :From => TwilioCaller.new.caller_id,
-        :To   => user.primary_phone, 
+        :To   => @user.primary_phone, 
         :Body => "Sorry.  No one else is scheduled for the 8:00am slot.  This shouldn't happen after we reach a critical mass of users. ;-)"        
       })
       Twilio::RestAccount.should_receive(:new).with("AC2e57bf710b77d765d280786bc07dbacc", "fc9bd67bb8deee6befd3ab0da3973718").and_return(account)
-      @pq.check_before_calls_go_out(pool, now + 5.minutes)
+      @pq.check_before_calls_go_out(@pool, @now + 5.minutes)
     end
     
     it "should queue merge_calls_for_pool on success" do
-      pool = Factory(:pool)
-      event = Factory(:event, :pool_id => pool.id)
-      now = Time.now.utc
-      delay_args = {
-        :obj_type    => 'Event',
-        :obj_id      => event.id,
-        :run_at      => now + 5.minutes,
-      }
-      DelayedJob.create(delay_args)
-      DelayedJob.create(delay_args)
+      DelayedJob.create(@delay_args.merge(:obj_id => @event.id))
+      DelayedJob.create(@delay_args.merge(:obj_id => @event.id))
       expect {
-        @pq.check_before_calls_go_out(pool, now + 5.minutes)
+        @pq.check_before_calls_go_out(@pool, @now + 5.minutes)
       }.to change(DelayedJob, :count).by(1)
       DelayedJob.where(
         :obj_type    => 'Pool',
-        :obj_id      => pool.id,
+        :obj_id      => @pool.id,
         :obj_jobtype => 'merge_calls_for_pool',
-        :run_at      => now + 5.minutes + 5.seconds
+        :run_at      => @now + 5.minutes + 5.seconds
       ).count.should == 1
     end
   end
