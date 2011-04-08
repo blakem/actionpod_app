@@ -28,12 +28,13 @@ class PoolQueuer
   def queue_merge_calls_for_pool(pool, pool_runs_at, count = 0) # XXX Tests
     return true if count > 180 # XXX compute 180 from times
     TwilioCaller.new.merge_calls_for_pool(pool) if count > 0
+    count += 1
     self.delay(
       :obj_type    => 'Pool',
       :obj_id      => pool.id,
       :obj_jobtype => 'merge_calls_for_pool',
       :run_at      => pool_runs_at + (time_between_merges * count)
-    ).queue_merge_calls_for_pool(pool, pool_runs_at, count + 1)
+    ).queue_merge_calls_for_pool(pool, pool_runs_at, count)
   end
   
   def check_before_calls_go_out(pool, pool_runs_at) # XXX Tests
@@ -47,10 +48,8 @@ class PoolQueuer
       job = jobs.first
       event = Event.find_by_id(job.obj_id)
       if (event)
-        TwilioCaller.new.send_sms(
-          event.user.primary_phone, 
-          "Sorry.  No one else is scheduled for the #{event.time} slot.  This shouldn't happen after we reach a critical mass of users. ;-)"
-        )
+        TwilioCaller.new.send_sms(event.user.primary_phone, 
+          "Sorry.  No one else is scheduled for the #{event.time} slot.  This shouldn't happen after we reach a critical mass of users. ;-)")
       end
       job.destroy
     else
