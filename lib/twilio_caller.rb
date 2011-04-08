@@ -63,12 +63,15 @@ class TwilioCaller
     TwilioCaller.create_call_from_call_hash(call_hash, event.id)
   end
   
+  def place_participant_in_conference(call_sid, conference, timelimit)
+    resp_hash = twilio_request(caller_uri(call_sid), 'POST', {
+     'Url' => base_url + "/place_in_conference.xml?conference=#{conference}&timeout=#{timelimit}",
+    })
+  end
+  
   def merge_calls_for_pool(pool, data)
     participants_on_hold_for_pool(pool).each do |participant|
-      conference_room = "Pool#{pool.id}Room1"
-      resp_hash = twilio_request(caller_uri(participant[:call_sid]), 'POST', {
-       'Url' => base_url + "/place_in_conference.xml?conference=#{conference_room}&timeout=#{pool.timelimit}",
-      })
+      place_participant_in_conference(participant[:call_sid], "Pool#{pool.id}Room1", pool.timelimit)
     end
   end
 
