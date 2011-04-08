@@ -26,7 +26,7 @@ class PoolQueuer
       :run_at => pool_runs_at,
       :pool_id => pool.id,
       :obj_type    => 'Event', 
-      :obj_jobtype => 'make_call'
+      :obj_jobtype => 'make_call',
     )
     if jobs.count == 1
       job = jobs.first
