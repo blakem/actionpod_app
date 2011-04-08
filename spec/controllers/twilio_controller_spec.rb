@@ -138,13 +138,32 @@ describe TwilioController do
 
     it "should match up with the event being called" do
       user = Factory(:user)
-      event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => Factory(:pool).id)
-      event.days = [0,1,2,3,4,5,6]
-      event.save
+
+      now = Time.now.in_time_zone(user.time_zone)
+      event1 = Factory(:event, :user_id => user.id, :name => 'Second Morning Call', :pool_id => Factory(:pool).id)
+      event1.days = [0,1,2,3,4,5,6]
+      event1.time = (now - 90.minutes).strftime("%I:%M%p")
+      event1.save
+
+      event2 = Factory(:event, :user_id => user.id, :name => 'Third Morning Call', :pool_id => Factory(:pool).id)
+      event2.days = [0,1,2,3,4,5,6]
+      event2.time = (now - 20.minutes).strftime("%I:%M%p")
+      event2.save
+
+      event3 = Factory(:event, :user_id => user.id, :name => 'First Morning Call', :pool_id => Factory(:pool).id)
+      event3.days = [0,1,2,3,4,5,6]
+      event3.time = (now - 200.minutes).strftime("%I:%M%p")
+      event3.save
+
+      event4 = Factory(:event, :user_id => user.id, :name => 'Fourth Morning Call', :pool_id => Factory(:pool).id)
+      event4.days = [0,1,2,3,4,5,6]
+      event4.time = (now + 20.minutes).strftime("%I:%M%p")
+      event4.save
+
       post :incoming, :From => user.primary_phone, :Direction => 'inbound' 
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>gather', :numdigits => '1')
-      response.should have_selector('response>gather>say', :content => 'Hello, welcome to your Morning Call.')
+      response.should have_selector('response>gather>say', :content => 'Hello, welcome to your Third Morning Call.')
     end
 
     it "should not match up with a user without a primary phone" do

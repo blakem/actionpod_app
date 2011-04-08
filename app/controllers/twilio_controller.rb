@@ -75,10 +75,7 @@ class TwilioController < ApplicationController
       return Event.find_by_id(call.event_id) if call
       user = match_user_from_params(params)
       return nil unless user
-      user.events.each do |event|
-        return event if event.schedule.occurs_on?(Time.now)
-      end
-      return nil
+      return pick_users_closest_event(user)
     end
     
     def match_call_from_params(params)
@@ -97,5 +94,16 @@ class TwilioController < ApplicationController
       key = params[:Direction] == 'inbound' ? :From : :To
       return nil if params[key].blank?
       User.find_by_primary_phone(params[key])
+    end
+    
+    def pick_users_closest_event(user)
+      user_time = Time.now.in_time_zone(user.time_zone)
+      beg_of_day = user_time.beginning_of_day
+      events = user.events.sort { |a,b| a.schedule.next_occurrence(beg_of_day) <=> b.schedule.next_occurrence(beg_of_day) }
+      closest_event = events[0]
+      events.each do |event|
+        closest_event = event if event.schedule.next_occurrence(beg_of_day) < user_time
+      end
+      closest_event
     end
 end
