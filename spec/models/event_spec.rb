@@ -129,6 +129,37 @@ describe Event do
       DelayedJob.find_by_id(dj_id).should be_nil
     end
 
+    it "should dequeue the queued check_before_calls_go_out if it's the only one scheduled" do
+      event = Factory(:event, :user_id => Factory(:user).id, :pool_id => Factory(:pool).id)
+      event.days = [0,1,2,3,4,5,6]
+      expect {
+        event.save
+      }.to change(DelayedJob, :count).by(2)
+      expect{
+        event.destroy
+      }.to change(DelayedJob, :count).by(-2)    
+    end
+
+    it "should not dequeue the queued check_before_calls_go_out if it's not the only one scheduled" do
+      pool = Factory(:pool)
+      event1 = Factory(:event, :user_id => Factory(:user).id, :pool_id => pool.id)
+      event1.days = [0,1,2,3,4,5,6]
+      event2 = Factory(:event, :user_id => Factory(:user).id, :pool_id => pool.id)
+      event2.days = [0,1,2,3,4,5,6]
+      expect {
+        event2.save
+      }.to change(DelayedJob, :count).by(2)
+      expect {
+        event1.save
+      }.to change(DelayedJob, :count).by(1)
+      expect{
+        event1.destroy
+      }.to change(DelayedJob, :count).by(-1)    
+      expect{
+        event2.destroy
+      }.to change(DelayedJob, :count).by(-2)    
+    end
+
     it "should reschedule itself on edit" do
       event = Factory(:event, :pool_id => Factory(:pool).id)
       dj = Factory(:delayed_job, :obj_type => 'Event', :obj_id => event.id)

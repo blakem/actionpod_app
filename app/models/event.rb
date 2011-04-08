@@ -116,6 +116,13 @@ class Event < ActiveRecord::Base
 
     def destroy_delayed_jobs
       DelayedJob.where(:obj_type => 'Event', :obj_id => self.id).each { |dj| dj.destroy }
+      next_run_time = self.schedule.next_occurrence.utc
+      scheduled_events = DelayedJob.where(
+        :obj_type    => 'Event',
+        :obj_jobtype => 'make_call',
+        :run_at      => next_run_time,
+        :pool_id     => self.pool_id
+      )
+      PoolQueuer.new.dequeue_pool(self.pool_id, next_run_time) if scheduled_events.empty?
     end
-
 end
