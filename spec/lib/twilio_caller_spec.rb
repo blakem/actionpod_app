@@ -120,19 +120,17 @@ describe TwilioCaller do
     end
   end
   
-  describe "merge_calls_for_pool" do
+  describe "place_participant_in_conference" do
     it "has a caller_uri" do
       @tc.caller_uri("Foo").should == "/2010-04-01/Accounts/AC2e57bf710b77d765d280786bc07dbacc/Calls/Foo.json"
     end
     
-    it "sends each participant into a room" do
+    it "sends the right request" do
       tc = TwilioCaller.new
-      pool = Factory(:pool, :timelimit => 22)
-      tc.should_receive(:participants_on_hold_for_pool).with(pool).and_return(participant_hash)
       tc.should_receive(:twilio_request).with(@tc.caller_uri('CA9fa67e8696b60ee1ca1e75ec81ef85e7'), 'POST', {
-        "Url" => "http://www.15minutecalls.com/twilio/place_in_conference.xml?conference=Pool#{pool.id}Room1&timeout=22"
+        "Url" => "http://www.15minutecalls.com/twilio/place_in_conference.xml?conference=Pool456Room8&timeout=22"
       })
-      tc.merge_calls_for_pool(pool, {})
+      tc.place_participant_in_conference('CA9fa67e8696b60ee1ca1e75ec81ef85e7', "Pool456Room8", 22)
     end
   end
   
@@ -214,8 +212,4 @@ def participant_response
   '"call_sid":"CA9fa67e8696b60ee1ca1e75ec81ef85e7","muted":false,"end_conference_on_exit":false,"start_conference_on_enter":true,' +
   '"date_created":"Wed, 06 Apr 2011 19:10:13 +0000","date_updated":"Wed, 06 Apr 2011 19:10:13 +0000","uri":"\/2010-04-01\/Accounts\/' +
   'AC2e57bf710b77d765d280786bc07dbacc\/Conferences\/CF0cb07a25bdaf64828850b784ea2d1aa7\/Participants\/CA9fa67e8696b60ee1ca1e75ec81ef85e7.json"}]}'
-end
-
-def participant_hash
-  ActiveSupport::JSON.decode(participant_response).with_indifferent_access[:participants]
 end
