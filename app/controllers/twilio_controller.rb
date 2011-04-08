@@ -102,7 +102,7 @@ class TwilioController < ApplicationController
       events = user.events.sort { |a,b| a.schedule.next_occurrence(beg_of_day) <=> b.schedule.next_occurrence(beg_of_day) }
       closest_event = events[0]
       events.each do |event|
-        closest_event = event if event.schedule.next_occurrence(beg_of_day) < user_time
+        closest_event = event if event.schedule.next_occurrence(beg_of_day) < user_time + 10.minutes
       end
       closest_event
     end

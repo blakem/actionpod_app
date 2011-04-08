@@ -145,9 +145,9 @@ describe TwilioController do
       event1.time = (now - 90.minutes).strftime("%I:%M%p")
       event1.save
 
-      event2 = Factory(:event, :user_id => user.id, :name => 'Third Morning Call', :pool_id => Factory(:pool).id)
+      event2 = Factory(:event, :user_id => user.id, :name => 'Bit After Morning Call', :pool_id => Factory(:pool).id)
       event2.days = [0,1,2,3,4,5,6]
-      event2.time = (now - 20.minutes).strftime("%I:%M%p")
+      event2.time = (now + 5.minutes).strftime("%I:%M%p")
       event2.save
 
       event3 = Factory(:event, :user_id => user.id, :name => 'First Morning Call', :pool_id => Factory(:pool).id)
@@ -160,10 +160,22 @@ describe TwilioController do
       event4.time = (now + 20.minutes).strftime("%I:%M%p")
       event4.save
 
+      event5 = Factory(:event, :user_id => user.id, :name => 'Bit Before Morning Call', :pool_id => Factory(:pool).id)
+      event5.days = [0,1,2,3,4,5,6]
+      event5.time = (now - 5.minutes).strftime("%I:%M%p")
+      event5.save
+
       post :incoming, :From => user.primary_phone, :Direction => 'inbound' 
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>gather', :numdigits => '1')
-      response.should have_selector('response>gather>say', :content => 'Hello, welcome to your Third Morning Call.')
+      response.should have_selector('response>gather>say', :content => 'Hello, welcome to your Bit After Morning Call.')
+      
+      event2.time = (now + 20.minutes).strftime("%I:%M%p")
+      event2.save
+      post :incoming, :From => user.primary_phone, :Direction => 'inbound' 
+      response.content_type.should =~ /^application\/xml/
+      response.should have_selector('response>gather', :numdigits => '1')
+      response.should have_selector('response>gather>say', :content => 'Hello, welcome to your Bit Before Morning Call.')      
     end
 
     it "should not match up with a user without a primary phone" do
