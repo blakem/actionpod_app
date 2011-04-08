@@ -21,8 +21,7 @@ class PoolQueuer
     end
   end
     
-  def check_before_calls_go_out(pool, pool_runs_at) 
-    # XXX Tests
+  def check_before_calls_go_out(pool, pool_runs_at)
     jobs = DelayedJob.where(
       :run_at => pool_runs_at,
       :pool_id => pool.id,
