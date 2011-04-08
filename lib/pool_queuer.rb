@@ -32,7 +32,7 @@ class PoolQueuer
       :obj_type    => 'Pool',
       :obj_id      => pool.id,
       :obj_jobtype => 'merge_calls_for_pool',
-      :run_at      => pool_runs_at + (time_between_merges * i)
+      :run_at      => pool_runs_at + (time_between_merges * count)
     }
     unless DelayedJob.where(delay_args)[0]
       delayed_job = twilio_caller.delay(delay_args).merge_calls_for_pool(pool)
