@@ -71,7 +71,26 @@ describe PoolQueuer do
       @pq.check_before_calls_go_out(pool, now + 5.minutes)
     end
     
-    it "should queue queue_merge_calls_for_pool on success"
-    
+    it "should queue merge_calls_for_pool on success" do
+      pool = Factory(:pool)
+      event = Factory(:event, :pool_id => pool.id)
+      now = Time.now.utc
+      delay_args = {
+        :obj_type    => 'Event',
+        :obj_id      => event.id,
+        :run_at      => now + 5.minutes,
+      }
+      DelayedJob.create(delay_args)
+      DelayedJob.create(delay_args)
+      expect {
+        @pq.check_before_calls_go_out(pool, now + 5.minutes)
+      }.to change(DelayedJob, :count).by(1)
+      DelayedJob.where(
+        :obj_type    => 'Pool',
+        :obj_id      => pool.id,
+        :obj_jobtype => 'merge_calls_for_pool',
+        :run_at      => now + 5.minutes + 5.seconds
+      ).count.should == 1
+    end
   end
 end
