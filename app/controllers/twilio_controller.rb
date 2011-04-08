@@ -88,6 +88,7 @@ class TwilioController < ApplicationController
       call = Call.find_by_Sid(params[:CallSid])
       puts "Found Call By Sid: #{call.inspect}" if call 
       return call if call
+      puts "PhoneNumberSid: #{params[:PhoneNumberSid].inspect}"
       call = Call.where(:PhoneNumberSid => params[:PhoneNumberSid]).sort { |a,b| a.id <=> b.id }.last
       puts "Found Call By PhoneNumberSid: #{call.inspect}" if call
       call
