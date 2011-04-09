@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110407224434) do
+ActiveRecord::Schema.define(:version => 20110409010517) do
 
   create_table "calls", :force => true do |t|
     t.string   "Sid"
@@ -55,6 +55,12 @@ ActiveRecord::Schema.define(:version => 20110407224434) do
     t.integer  "pool_id",       :null => false
   end
 
+  create_table "invite_codes", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "pools", :force => true do |t|
     t.string   "name"
     t.integer  "user_id",    :null => false
@@ -95,6 +101,7 @@ ActiveRecord::Schema.define(:version => 20110407224434) do
     t.string   "name"
     t.string   "primary_phone"
     t.string   "title"
+    t.string   "invite_code"
   end
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true

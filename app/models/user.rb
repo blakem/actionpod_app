@@ -1,5 +1,5 @@
 # == Schema Information
-# Schema version: 20110330005329
+# Schema version: 20110409010517
 #
 # Table name: users
 #
@@ -22,6 +22,7 @@
 #  name                 :string(255)
 #  primary_phone        :string(255)
 #  title                :string(255)
+#  invite_code          :string(255)
 #
 
 class User < ActiveRecord::Base
@@ -31,15 +32,15 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :validatable
 
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :email, :password, :password_confirmation, :remember_me, :invite_code, :time_zone, :name, :primary_phone, :title
-  attr_accessor :invite_code
-  
+  attr_accessible :email, :password, :password_confirmation, :remember_me, :invite_code, :time_zone, :name, :primary_phone, :title,
+                  :invite_code
+
   has_many :events
   has_many :pools
 
   validates_each :invite_code, :on => :create do |record, attr, value|
-      record.errors.add attr, "Please enter correct invite code (#{value})." unless
-        value && value == User.secret_invite_code
+      record.errors.add attr, "Please enter correct invite code." unless
+        value && (value == User.secret_invite_code || InviteCode.find_by_name(value.downcase))
   end
   validates_format_of :primary_phone, :with => /\A\+1\d{10}\Z/
 
@@ -62,7 +63,6 @@ class User < ActiveRecord::Base
     rv
   end
 
-  
   def self.secret_invite_code
     "acti0np0duser"
   end

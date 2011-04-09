@@ -127,3 +127,4 @@ def login_admin
 end
 
 FakeWeb.allow_net_connect = false
+InviteCode.create(:name => 'xyzzy') unless InviteCode.first
