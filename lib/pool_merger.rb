@@ -25,14 +25,14 @@ class PoolMerger
 
     if new_participants.count == 1
       participant = new_participants[0]
-      if data[:on_hold][participant['call_sid']] && data[:conferences].any?
+      if on_hold?(participant, data) && data[:conferences].any?
         room_name = data[:conferences].sort { |a,b| a[1][:members] <=> b[1][:members]}.first[0]
         place_into_conference(participant, room_name, pool.timelimit, data)
       else
-       put_on_hold(participant, data)
-     end
+        put_on_hold(participant, data)
+      end
     else
-      if data[:on_hold][new_participants[0]['call_sid']] || data[:on_hold][new_participants[1]['call_sid']]
+      if on_hold?(new_participants[0], data) || on_hold?(new_participants[1], data)
         create_new_group(new_participants, pool, data)
       else
         new_participants.each do |participant|
@@ -42,10 +42,14 @@ class PoolMerger
     end
     data
   end
-
+  
+  def on_hold?(participant, data)
+    data[:on_hold][participant['call_sid']] ? true : false
+  end
+  
   def sort_participants(participants, data)
-    participants.select { |p|  data[:on_hold][p['call_sid']] } +
-    participants.select { |p| !data[:on_hold][p['call_sid']] }
+    participants.select { |p|  on_hold?(p, data) } + 
+    participants.select { |p| !on_hold?(p, data) }
   end
 
   def put_on_hold(participant, data)
