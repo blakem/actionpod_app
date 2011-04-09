@@ -156,6 +156,25 @@ describe PoolMerger do
         }
       end
     end
+    
+    describe "Handle those who are on hold first" do
+      it "should put someone who's on hold at the front of the list" do
+        new_participants = participant_list(4)
+        @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
+        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX4", "Pool#{@pool.id}Room1", @pool.timelimit)
+        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1", "Pool#{@pool.id}Room1", @pool.timelimit)
+        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2", "Pool#{@pool.id}Room1", @pool.timelimit)
+        data = @pm.initialize_data({})
+        data[:on_hold] = {
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX4" => "CF0cb07a25bdaf64828850b784ea2d1aa7XXX4",         
+        }
+        @pm.merge_calls_for_pool(@pool, data).should == {
+          :next_room   => 2,
+          :conferences => { "Pool#{@pool.id}Room1" => {:name => "Pool#{@pool.id}Room1", :members => 3} }, 
+          :on_hold     => { "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX3" => "CF0cb07a25bdaf64828850b784ea2d1aa7XXX3" },
+        }
+      end
+    end
   end
 
   describe "initialize_data" do
