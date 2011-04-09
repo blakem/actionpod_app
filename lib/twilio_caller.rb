@@ -53,13 +53,18 @@ class TwilioCaller
   end
 
   def start_call_for_event(event)
-    call_hash = twilio_request(start_call_uri, 'POST', {
+    post_args = {
       'From' => caller_id,
       'To' => event.user.primary_phone,
       'Url' => base_url + '/greeting.xml',
       'FallbackUrl' => base_url + '/greeting_fallback.xml',
       'StatusCallback' => base_url + '/callback.xml',
-    })
+    }
+    if event.user.use_ifmachine
+      post_args['Url'] = base_url + '/put_on_hold.xml'
+      post_args['IfMachine'] = 'Hangup'
+    end
+    call_hash = twilio_request(start_call_uri, 'POST', post_args)
     TwilioCaller.create_call_from_call_hash(call_hash, event.id)
   end
   

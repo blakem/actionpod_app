@@ -1,5 +1,5 @@
 # == Schema Information
-# Schema version: 20110409010517
+# Schema version: 20110409013012
 #
 # Table name: users
 #
@@ -23,6 +23,7 @@
 #  primary_phone        :string(255)
 #  title                :string(255)
 #  invite_code          :string(255)
+#  use_ifmachine        :boolean
 #
 
 class User < ActiveRecord::Base

@@ -39,6 +39,29 @@ describe TwilioCaller do
       call.Direction.should == 'outbound-api'
       call.event_id.should == event.id
     end
+
+    it "should go straight to put_on_hold if user has use_ifmachine set" do
+      user = Factory(:user)
+      user.use_ifmachine = true
+      user.save
+      event = Factory(:event, :user_id => user.id)  
+      response = mock('HTTPResponse', :body => successful_start_call_response)
+      account = mock('TwilioAccount', :request => response)
+      account.should_receive(:request).with(
+        "/2010-04-01/Accounts/AC2e57bf710b77d765d280786bc07dbacc/Calls.json",
+        "POST", 
+        {"From"           => "+14157669865",
+         "To"             => user.primary_phone, 
+         "Url"            => "http://www.15minutecalls.com/twilio/put_on_hold.xml",
+         "IfMachine"      => "Hangup",
+         "FallbackUrl"    => "http://www.15minutecalls.com/twilio/greeting_fallback.xml", 
+         "StatusCallback" => "http://www.15minutecalls.com/twilio/callback.xml"
+        })
+      Twilio::RestAccount.should_receive(:new).with("AC2e57bf710b77d765d280786bc07dbacc", "fc9bd67bb8deee6befd3ab0da3973718").and_return(account)
+      expect {
+        @tc.start_call_for_event(event)
+      }.to change(Call, :count).by(1)
+    end
   end
 
   describe "Getting information about conferences" do
