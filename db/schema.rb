@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110409013012) do
+ActiveRecord::Schema.define(:version => 20110410071429) do
 
   create_table "calls", :force => true do |t|
     t.string   "Sid"
@@ -103,6 +103,7 @@ ActiveRecord::Schema.define(:version => 20110409013012) do
     t.string   "title"
     t.string   "invite_code"
     t.boolean  "use_ifmachine"
+    t.string   "primary_phone_string"
   end
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true

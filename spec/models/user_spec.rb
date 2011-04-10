@@ -44,20 +44,20 @@ describe User do
   end
 
   it "should have a primary_phone" do
-    user = Factory(:user, :primary_phone => '415-444-1234')
+    user = Factory(:user, :primary_phone_string => '415-444-1234')
     user.primary_phone.should == '+14154441234'
   end
 
-  it "should munge your primary phone into a standard format" do
-    user1 = User.create(:primary_phone => '+14154441234')
+  it "should munge your primary phone string into a standard format" do
+    user1 = User.create(:primary_phone_string => '+14154441234')
     user1.primary_phone.should == '+14154441234'
-    user2 = User.create(:primary_phone => '4154441234')
+    user2 = User.create(:primary_phone_string => '4154441234')
     user2.primary_phone.should == '+14154441234'
-    user3 = User.create(:primary_phone => '415-444-1234')
+    user3 = User.create(:primary_phone_string => '415-444-1234')
     user3.primary_phone.should == '+14154441234'
-    user3 = User.create(:primary_phone => '(415) 444.1234')
+    user3 = User.create(:primary_phone_string => '(415) 444.1234')
     user3.primary_phone.should == '+14154441234'
-    user3.primary_phone = '(415) 666.1234'
+    user3.primary_phone_string = '(415) 666.1234'
     user3.save
     user3.primary_phone.should == '+14156661234'
   end

@@ -1,5 +1,5 @@
 # == Schema Information
-# Schema version: 20110409013012
+# Schema version: 20110410071429
 #
 # Table name: users
 #
@@ -24,6 +24,7 @@
 #  title                :string(255)
 #  invite_code          :string(255)
 #  use_ifmachine        :boolean
+#  primary_phone_string :string(255)
 #
 
 class User < ActiveRecord::Base
@@ -34,7 +35,7 @@ class User < ActiveRecord::Base
 
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email, :password, :password_confirmation, :remember_me, :invite_code, :time_zone, :name, :primary_phone, :title,
-                  :invite_code
+                  :invite_code, :primary_phone_string
 
   has_many :events
   has_many :pools
@@ -48,12 +49,12 @@ class User < ActiveRecord::Base
   after_initialize :init
   
   def init
-    self.time_zone ||= 'Pacific Time (US & Canada)'
+    self.time_zone ||= default_time_zone
   end
 
   before_validation do
-    if attribute_present?("primary_phone")
-      self.primary_phone = primary_phone.gsub(/[^0-9]/, "")
+    if attribute_present?("primary_phone_string")
+      self.primary_phone = primary_phone_string.gsub(/[^0-9]/, "")
       self.primary_phone = "1" + primary_phone unless primary_phone =~ /^1\d{10}$/
       self.primary_phone =  "+"  + primary_phone unless primary_phone =~ /^\+$/
     end
@@ -72,4 +73,9 @@ class User < ActiveRecord::Base
   def self.secret_invite_code
     "acti0np0duser"
   end
+
+  private
+    def default_time_zone
+      'Pacific Time (US & Canada)'
+    end      
 end
