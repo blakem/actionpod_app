@@ -13,7 +13,7 @@ describe RailsAdmin::MainController do
   end
   
   describe "when logged in as a non-admin user" do
-    login_user
+    login_user_before_each
  
     it "should redirect to the login page" do
 	    controller.user_signed_in?.should be_true
@@ -25,7 +25,7 @@ describe RailsAdmin::MainController do
   end
   
   describe "when logged in as an admin user" do
-    login_admin
+    login_admin_before_each
     it "should be a success" do
       get 'index'
 	    controller.user_signed_in?.should be_true

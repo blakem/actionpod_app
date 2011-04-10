@@ -109,21 +109,25 @@ RSpec.configure do |config|
 
 end
 
+def login_user_before_each
+  before(:each) { login_user }
+end
+
+def login_admin_before_each
+  before(:each) { login_admin }
+end
+
 def login_user
-  before(:each) do
-    @request.env["devise.mapping"] = Devise.mappings[:user]
-    @current_user = Factory(:user)
-    sign_in @current_user
-  end
+  @request.env["devise.mapping"] = Devise.mappings[:user]
+  @current_user = Factory(:user)
+  sign_in @current_user
 end
 
 def login_admin
-  before(:each) do
-    @request.env["devise.mapping"] = Devise.mappings[:user]
-    sign_in Factory(:user, :admin => true)
-    controller.current_user.admin = true
-    controller.current_user.save
-  end
+  @request.env["devise.mapping"] = Devise.mappings[:user]
+  sign_in Factory(:user, :admin => true)
+  controller.current_user.admin = true
+  controller.current_user.save
 end
 
 FakeWeb.allow_net_connect = false

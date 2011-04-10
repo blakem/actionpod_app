@@ -17,7 +17,7 @@ describe PagesController do
   end
   
   describe "GET /home success" do
-    login_user
+    login_user_before_each
  
     it "should be successful when logged in" do
 	    controller.user_signed_in?.should be_true
@@ -69,7 +69,7 @@ describe PagesController do
     end
 
     describe "when logged in" do
-      login_user
+      login_user_before_each
       it "should be a success" do
         controller.user_signed_in?.should be_true
         get :callcal

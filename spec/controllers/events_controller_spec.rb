@@ -16,8 +16,9 @@ describe EventsController do
   end  
 
   describe "when logged in" do
-    login_user
     before(:each) do
+      User.all.each { |u| u.destroy }
+      login_user
       @pool ||= Factory(:pool, :name => 'Default Pool')
       @event1 ||= Factory(:event, :user_id => @current_user.id, :pool_id => @pool.id)
       @event2 ||= Factory(:event, :user_id => @current_user.id, :pool_id => @pool.id)

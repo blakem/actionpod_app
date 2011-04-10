@@ -43,14 +43,14 @@ class User < ActiveRecord::Base
 
   validates_each :invite_code, :on => :create do |record, attr, value|
       record.errors.add attr, "Please enter correct invite code." unless
-        value && (value == User.secret_invite_code || InviteCode.find_by_name(value.downcase))
+        value && (value == secret_invite_code || InviteCode.find_by_name(value.downcase))
   end
   validates_format_of :primary_phone, :with => /\A\+1\d{10}\Z/
 
   after_initialize :init
   
   def init
-    self.time_zone ||= default_time_zone
+    write_attribute(:time_zone, default_time_zone) unless read_attribute(:time_zone)
   end
 
   before_validation do
