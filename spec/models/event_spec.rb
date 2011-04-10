@@ -133,6 +133,10 @@ describe Event do
         @event.on_day(0).should be_false
         @event.days = [0]
         @event.on_day(0).should be_true
+        @event.days = []
+        @event.save
+        @event.on_day(0).should be_false
+        @event.destroy   
       end
       
     end
