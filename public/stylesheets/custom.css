@@ -16,11 +16,36 @@ ul.home li {
 	list-style: none;
 }
 
+/* Devise Menu */
+devise {
+	float: left;
+	background: white;
+	padding: 0 0.7em;
+	white-space: nowrap;
+}
+devise ul {
+	margin: 0;
+	padding: 0;
+}
+devise ul li {
+	list-style-type: none;
+	display: inline-block;
+	padding: 0.2em 0;
+}
+devise ul li a {
+	padding: 0 5px;
+	font-weight: bold;
+}
+devise ul li a:visited {
+	color: #09c;
+}
+devise ul li a:hover {
+	text-ecoration: underline;
+}
+
 
 
 /* From Sample App */
-
-
 
 .container {
 	width: 710px;
