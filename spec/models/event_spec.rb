@@ -123,6 +123,19 @@ describe Event do
       @event.on_day(5).should be_true
       @event.on_day(6).should be_false
     end
+
+    describe "empty schedule" do
+      it "should not have occurrences if it has not days" do
+        @event.days = []
+        @event.time = '8:00pm'
+        @event.schedule.next_occurrence.should be_nil
+        @event.minute_of_day.should == 20*60
+        @event.on_day(0).should be_false
+        @event.days = [0]
+        @event.on_day(0).should be_true
+      end
+      
+    end
   end
   
   describe "managing it's scheduled events" do

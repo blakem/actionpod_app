@@ -18,12 +18,12 @@ class Event < ActiveRecord::Base
 
   validates_presence_of :name
   
-  def schedule 
-    IceCube::Schedule.from_yaml(self.schedule_yaml ||= default_schedule.to_yaml)
+  def schedule
+    days.empty? ? empty_schedule : schedule_actual
   end
   
   def time
-    sched_hash = schedule.to_hash
+    sched_hash = schedule_actual.to_hash
     validations = sched_hash[:rrules][0][:validations]
     hour = validations[:hour_of_day][0]
     minute = validations[:minute_of_hour][0]
@@ -43,7 +43,7 @@ class Event < ActiveRecord::Base
   end
   
   def minute_of_day
-    sched_hash = schedule.to_hash
+    sched_hash = schedule_actual.to_hash
     validations = sched_hash[:rrules][0][:validations]
     hour = validations[:hour_of_day][0]
     minute = validations[:minute_of_hour][0]
@@ -51,7 +51,7 @@ class Event < ActiveRecord::Base
   end
 
   def days
-    schedule.to_hash[:rrules][0][:validations][:day]
+    schedule_actual.to_hash[:rrules][0][:validations][:day]
   end
 
   def days=(day_list)
@@ -73,14 +73,14 @@ class Event < ActiveRecord::Base
   end
   
   def alter_schedule(args)
-    sched_hash = schedule.to_hash
+    sched_hash = schedule_actual.to_hash
     sched_hash[:start_date] = args.delete(:start_date) if args[:start_date]
     sched_hash[:rrules][0][:validations].merge!(args)
     self.schedule_yaml = IceCube::Schedule.from_hash(sched_hash).to_yaml
   end
   
   def on_day(int)
-    schedule.to_hash[:rrules][0][:validations][:day].include?(int)
+    schedule_actual.to_hash[:rrules][0][:validations][:day].include?(int)
   end
 
   def make_call
@@ -106,12 +106,20 @@ class Event < ActiveRecord::Base
   
   private
     def default_schedule
-      time_zone = self.user ? self.user.time_zone : 'Pacific Time (US & Canada)'
-      sched = IceCube::Schedule.new(Time.now.in_time_zone(time_zone).beginning_of_day)
+      sched = empty_schedule
       sched.add_recurrence_rule IceCube::Rule.weekly(1).day(:monday, :tuesday, :wednesday, :thursday, :friday).hour_of_day(8).minute_of_hour(0)
       sched
     end
     
+    def empty_schedule
+      time_zone = self.user ? self.user.time_zone : 'Pacific Time (US & Canada)'
+      IceCube::Schedule.new(Time.now.in_time_zone(time_zone).beginning_of_day)
+    end
+    
+    def schedule_actual
+      IceCube::Schedule.from_yaml(self.schedule_yaml ||= default_schedule.to_yaml)
+    end
+
     def ampm_format(hour, minute)
       ampm = 'am'
       if hour.to_i >= 12
