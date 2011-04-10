@@ -9,22 +9,22 @@
   <p><%= f.label :email %><br />
   <%= f.text_field :email %></p>
 
-  <p><%= f.label :primary_phone %> <i>(eg: 222-333-4444)</i><br />
-  <%= f.text_field :primary_phone %></p>
+  <p><%= f.label :primary_phone_string, "Primary Phone" %> <i>(eg: 222-333-4444)</i><br />
+  <%= f.text_field :primary_phone_string %></p>
 
   <p><%= f.label :title %> <i>(Software Developer, Graphic Designer, Author, etc...)</i><br />
   <%= f.text_field :title %></p>
 
-  <p><%= f.label :time_zone %><br />
+  <p><%= f.label :time_zone, "Time Zone" %><br />
   <%= f.collection_select :time_zone, ActiveSupport::TimeZone.us_zones, :name, :to_s %>
 
   <p><%= f.label :password %> <i>(leave blank if you don't want to change it)</i><br />
   <%= f.password_field :password %></p>
 
-  <p><%= f.label :password_confirmation %><br />
+  <p><%= f.label :password_confirmation, "Password Confirmation" %><br />
   <%= f.password_field :password_confirmation %></p>
 
-  <p><%= f.label :current_password %> <i>(we need your current password to confirm your changes)</i><br />
+  <p><%= f.label :current_password, "Current Password" %> <i>(we need your current password to confirm your changes)</i><br />
   <%= f.password_field :current_password %></p>
 
   <p><%= f.submit "Update" %></p>
