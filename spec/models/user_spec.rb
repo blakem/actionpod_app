@@ -11,6 +11,13 @@ describe User do
     user.admin = true
     user.admin?.should be_true
   end
+
+  it "should have a soft delete" do
+    user = Factory(:user)
+    user.deleted_at.should     be_nil
+    user.soft_delete
+    user.deleted_at.should_not be_nil
+  end
   
   it "should have many events" do
     user = Factory(:user)

@@ -56,11 +56,13 @@ describe "Users" do
     end    
   
     describe "success" do
+      before(:each) do
+        @user = Factory(:user)
+      end
       it "should sign a user in and out" do
-        user = Factory(:user)
         visit new_user_session_path
-        fill_in "Email",      :with => user.email
-        fill_in "Password",   :with => user.password
+        fill_in "Email",      :with => @user.email
+        fill_in "Password",   :with => @user.password
         click_button
         controller.user_signed_in?.should be_true
         click_link "Logout"

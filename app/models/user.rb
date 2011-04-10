@@ -1,5 +1,5 @@
 # == Schema Information
-# Schema version: 20110410071429
+# Schema version: 20110410084841
 #
 # Table name: users
 #
@@ -25,6 +25,7 @@
 #  invite_code          :string(255)
 #  use_ifmachine        :boolean
 #  primary_phone_string :string(255)
+#  deleted_at           :datetime
 #
 
 class User < ActiveRecord::Base
@@ -68,6 +69,11 @@ class User < ActiveRecord::Base
       event.save
     end
     rv
+  end
+  
+  def soft_delete
+    self.deleted_at = Time.current
+    self.save
   end
 
   def self.secret_invite_code
