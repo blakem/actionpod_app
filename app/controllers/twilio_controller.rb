@@ -33,7 +33,7 @@ class TwilioController < ApplicationController
   end
 
   def apologize_no_other_participants
-    @other_participants = params[:participant_count] - 1
+    @other_participants = params[:participant_count].to_i - 1
     @people = @other_participants == 1 ? 'person' : 'people' 
   end
 
