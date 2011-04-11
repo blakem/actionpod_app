@@ -111,15 +111,24 @@ describe PoolQueuer do
     it "should call merge_calls_for_pool" do
       pool_merger = mock('PoolMerger')
       pool_merger.should_receive(:merge_calls_for_pool).with(@pool, {})
-      PoolMerger.should_receive(:new).and_return(pool_merger)
+      pool_merger.should_receive(:merge_calls_for_pool).with(@pool, nil)
+      PoolMerger.should_receive(:new).twice.and_return(pool_merger)
       expect {
         @pq.queue_merge_calls_for_pool(@pool, @now + 5.minutes, 1)
       }.to change(DelayedJob, :count).by(1)
+      djs = DelayedJob.where(
+        :obj_type    => 'Pool',
+        :obj_id      => @pool.id,
+        :obj_jobtype => 'merge_calls_for_pool',
+        :run_at      => @now + 5.minutes + @pq.time_before_first_merge + (@pq.time_between_merges * 1)
+      )
+      djs.count.should == 1
+      YAML.load(djs[0].handler).perform
       DelayedJob.where(
         :obj_type    => 'Pool',
         :obj_id      => @pool.id,
         :obj_jobtype => 'merge_calls_for_pool',
-        :run_at      => @now + 5.minutes + @pq.time_before_first_merge + @pq.time_between_merges
+        :run_at      => @now + 5.minutes + @pq.time_before_first_merge + (@pq.time_between_merges * 2)
       ).count.should == 1
     end
     

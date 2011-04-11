@@ -66,8 +66,7 @@ class PoolQueuer
       :obj_id      => pool.id,
       :obj_jobtype => 'merge_calls_for_pool',
       :run_at      => pool_runs_at + (time_between_merges * count) + time_before_first_merge
-    ).queue_merge_calls_for_pool(pool, pool_runs_at, count, data)
-    count += 1
+    ).queue_merge_calls_for_pool(pool, pool_runs_at, count+1, data)
   end
 
 end
