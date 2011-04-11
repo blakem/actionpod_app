@@ -63,8 +63,8 @@ task :data_integrity => :environment do
   puts "  ok - InviteCode Count: #{invites.count}"
   invites.each do |i|
     puts "ERROR: InviteCode'#{i.id}:#{i.name}' is invalid!" unless i.valid?
-    if i.name
-      puts "    ok - InviteCode'#{i.id}:#{i.name}' has a name"
+    if i.name && i.name == i.name.downcase
+      puts "    ok - InviteCode'#{i.id}:#{i.name}' has a lowercase name"
     else
       puts "ERROR: InviteCode'#{i.id}' has no name!"
     end
