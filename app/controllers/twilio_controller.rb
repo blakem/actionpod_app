@@ -72,6 +72,12 @@ class TwilioController < ApplicationController
   end
   
   def place_in_conference
+    @names = ''
+    if params[:events]
+      event_ids = params[:events].split(/,/).map { |s| s.to_i }
+      users = event_ids.map { |id| Event.find(id).user.name }
+      @names = users.to_sentence
+    end
     @timelimit = (params[:timelimit] || 15) * 60
     @conference = params[:conference] || 'DefaultConference'
   end

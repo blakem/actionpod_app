@@ -56,16 +56,17 @@ class PoolMerger
     data[:on_hold][participant['call_sid']] = participant['conference_sid']
   end
 
-  def place_into_conference(participant, room_name, timelimit, data)
-    @tc.place_participant_in_conference(participant[:call_sid], room_name, timelimit)
+  def place_into_conference(participant, room_name, timelimit, data, event_ids = [])
+    @tc.place_participant_in_conference(participant[:call_sid], room_name, timelimit, event_ids)
     data[:on_hold].delete(participant['call_sid'])
     data[:conferences][room_name][:members] += 1
   end
 
   def create_new_group(list, pool, data)
     room_name = next_room(pool, data)
+    event_ids = list.map { |p| p[:conference_friendly_name] =~ /Event(\d+)/; $1.to_i }
     list.each do |participant|
-      place_into_conference(participant, room_name, pool.timelimit, data)
+      place_into_conference(participant, room_name, pool.timelimit, data, event_ids)
     end
   end
 

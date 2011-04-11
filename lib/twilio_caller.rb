@@ -68,9 +68,10 @@ class TwilioCaller
     TwilioCaller.create_call_from_call_hash(call_hash, event.id)
   end
   
-  def place_participant_in_conference(call_sid, conference, timelimit)
+  def place_participant_in_conference(call_sid, conference, timelimit, event_ids)
+    events = event_ids.join(',')
     resp_hash = twilio_request(caller_uri(call_sid), 'POST', {
-     'Url' => base_url + "/place_in_conference.xml?conference=#{conference}&timeout=#{timelimit}",
+     'Url' => base_url + "/place_in_conference.xml?conference=#{conference}&timeout=#{timelimit}&events=#{events}",
     })
   end
   
@@ -80,6 +81,9 @@ class TwilioCaller
       participant_uri = conference[:subresource_uris][:participants]
       response_hash = twilio_request(participant_uri , 'GET')
       participant_list = response_hash[:participants]
+      participant_list.each do |participant|
+        participant[:conference_friendly_name] = conference[:friendly_name]
+      end
       participants += participant_list
     end
     participants
