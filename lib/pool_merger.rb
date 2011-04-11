@@ -90,16 +90,12 @@ class PoolMerger
   end
 
   def initialize_data(data)
-    if data.empty?
-      return {
-        :next_room => 1,
-        :conferences => {},
-        :on_hold => {},
-        :placed => {},
-      }
-    else
-      return  data
-    end
+    data = {} if data.empty?
+    data[:next_room]   = 1  unless data.has_key?(:next_room)
+    data[:conferences] = {} unless data.has_key?(:conferences)
+    data[:on_hold]     = {} unless data.has_key?(:on_hold)
+    data[:placed]      = {} unless data.has_key?(:placed)
+    data
   end
 
 end

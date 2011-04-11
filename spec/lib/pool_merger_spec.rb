@@ -18,6 +18,17 @@ describe PoolMerger do
         :placed      => {},
       }
     end
+
+    it "initializes the hash even when passed :total" do
+      @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(participant_list(0))
+      @pm.merge_calls_for_pool(@pool, {:total => 3}).should == {
+        :next_room   => 1,
+        :total => 3,
+        :conferences => {}, 
+        :on_hold     => {},
+        :placed      => {},
+      }
+    end
     
     describe "single participant" do      
       it "should carry over if we haven't seen them" do
