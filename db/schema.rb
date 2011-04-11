@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110410084841) do
+ActiveRecord::Schema.define(:version => 20110411193758) do
 
   create_table "calls", :force => true do |t|
     t.string   "Sid"
@@ -105,6 +105,7 @@ ActiveRecord::Schema.define(:version => 20110410084841) do
     t.boolean  "use_ifmachine"
     t.string   "primary_phone_string"
     t.datetime "deleted_at"
+    t.string   "location"
   end
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true

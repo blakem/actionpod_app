@@ -72,17 +72,28 @@ class TwilioController < ApplicationController
   end
   
   def place_in_conference
-    @names = ''
-    if params[:events]
-      event_ids = params[:events].split(/,/).map { |s| s.to_i }
-      users = event_ids.map { |id| Event.find(id).user.name }
-      @names = users.to_sentence
-    end
+    @names = build_intro_string(params[:events])
     @timelimit = (params[:timelimit] || 15) * 60
     @conference = params[:conference] || 'DefaultConference'
   end
   
   def sms
+  end
+
+  def build_intro_string(event_string)
+    return '' if event_string.blank?
+    event_ids = event_string.split(/,/).map { |s| s.to_i }
+    users = event_ids.map { |id| Event.find(id).user }.map { |u| intro_string_for_user(u) }
+    last_user = users.pop    
+    @names = users.join(', ') + ", and " + last_user
+  end
+
+  def intro_string_for_user(user)
+    return '' unless user
+    string = user.name
+    string = string + " a " + user.title unless user.title.blank?
+    string = string + " from " + user.location unless user.location.blank?
+    string
   end
 
   private

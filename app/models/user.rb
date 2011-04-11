@@ -1,5 +1,5 @@
 # == Schema Information
-# Schema version: 20110410084841
+# Schema version: 20110411193758
 #
 # Table name: users
 #
@@ -26,6 +26,7 @@
 #  use_ifmachine        :boolean
 #  primary_phone_string :string(255)
 #  deleted_at           :datetime
+#  location             :string(255)
 #
 
 class User < ActiveRecord::Base
@@ -36,7 +37,7 @@ class User < ActiveRecord::Base
 
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email, :password, :password_confirmation, :remember_me, :invite_code, :time_zone, :name, :primary_phone, :title,
-                  :invite_code, :primary_phone_string, :use_ifmachine
+                  :invite_code, :primary_phone_string, :use_ifmachine, :location
 
   has_many :events
   has_many :pools

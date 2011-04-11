@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+ <% if @names.blank? %>
+  <Say>Welcome. Joining a conference already in progress.</Say>
+ <% else %>
+  <Say>Welcome. On the call today we have <%= @names %></Say>
+ <% end %>
+  <Dial timeLimit="<%= @timelimit %>">
+	<Conference><%= @conference %></Conference>
+  </Dial>
+  <Say>Time is up. Goodbye.</Say>
+</Response>

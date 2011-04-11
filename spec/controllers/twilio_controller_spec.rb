@@ -240,10 +240,26 @@ describe TwilioController do
   end
   
   describe "place_in_conference" do
-    it "should put the user into the conference room" do
-      post :place_in_conference, :conference => 'FooBar', :timelimit => 24
+    it "should put the user into the conference room when it knows the other callers" do
+      user1 = Factory(:user, :name => 'Bobby')
+      user2 = Factory(:user, :name => 'Sally')
+      event1 = Factory(:event, :user_id => user1.id)
+      event2 = Factory(:event, :user_id => user2.id)
+      post :place_in_conference, :conference => 'FooBar', :timelimit => 24, :events => [event1.id, event2.id].join(',')
+      intro_string = TwilioController.new.build_intro_string("#{event1.id},#{event2.id}")
       response.content_type.should =~ /^application\/xml/
-      response.should have_selector('response>say', :content => 'Welcome')
+      response.should have_selector('response>say', :content => "Welcome. On the call today we have #{intro_string}")
+      response.should_not have_selector('response>say', :content => 'Welcome. Joining a conference already in progress.')
+      response.should have_selector('response>dial', :timelimit => (24 * 60).to_s)
+      response.should have_selector('response>dial>conference', :content => "FooBar")
+      response.should have_selector('response>say', :content => 'Time is up. Goodbye.')      
+    end
+
+    it "should put the user into the conference room when it doesn't know the other callers" do
+      post :place_in_conference, :conference => 'FooBar', :timelimit => 24, :events => ''
+      response.content_type.should =~ /^application\/xml/
+      response.should have_selector('response>say', :content => 'Welcome. Joining a conference already in progress.')
+      response.should_not have_selector('response>say', :content => 'Welcome. On the call today we have')
       response.should have_selector('response>dial', :timelimit => (24 * 60).to_s)
       response.should have_selector('response>dial>conference', :content => "FooBar")
       response.should have_selector('response>say', :content => 'Time is up. Goodbye.')      
@@ -254,6 +270,34 @@ describe TwilioController do
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>dial', :timelimit => (15 * 60).to_s)
       response.should have_selector('response>dial>conference', :content => "DefaultConference")
+    end
+  end
+  
+  describe "build_intro_string" do
+    it "builds nice strings" do
+      tc = TwilioController.new
+      tc.build_intro_string('').should == ''
+
+      pool = Factory(:pool)
+      user1 = Factory(:user, :name => 'Bobby', :title => '', :location => '')
+      user2 = Factory(:user, :name => 'Sally', :title => '', :location => '')
+      user3 = Factory(:user, :name => 'Jane', :title => '', :location => '')
+      event1 = Factory(:event, :user_id => user1.id, :pool_id => pool.id)
+      event2 = Factory(:event, :user_id => user2.id, :pool_id => pool.id)
+      event3 = Factory(:event, :user_id => user3.id, :pool_id => pool.id)
+      tc.build_intro_string("#{event1.id},#{event2.id}").should == 'Bobby, and Sally'
+      tc.build_intro_string("#{event1.id},#{event2.id},#{event3.id}").should == 'Bobby, Sally, and Jane'
+      
+      user1.title = 'Software Developer'
+      user1.save
+      tc.build_intro_string("#{event1.id},#{event2.id}").should == 'Bobby a Software Developer, and Sally'
+
+      user1.location = 'San Francisco'
+      user1.save
+
+      user2.location = 'Seattle'
+      user2.save
+      tc.build_intro_string("#{event1.id},#{event2.id}").should == 'Bobby a Software Developer from San Francisco, and Sally from Seattle'
     end
   end
 
