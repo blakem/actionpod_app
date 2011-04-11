@@ -31,8 +31,7 @@ class PoolMerger
         place_into_conference(participant, room_name, pool.timelimit, data)
       else
         if hold_count(participant, data) >= max_hold_count
-          take_off_hold(participant, data)
-          @tc.apologize_no_other_participants(participant[:call_sid], data[:total])
+          apologize_to_participant(participant, data)
         else
           put_on_hold(participant, data)
         end
@@ -48,7 +47,16 @@ class PoolMerger
     end
     data
   end
-  
+
+  def apologize_to_participant(participant, data)
+    take_off_hold(participant, data)
+    @tc.apologize_no_other_participants(participant[:call_sid], data[:total])
+    @tc.send_sms(
+      Event.find(participant_event_id(participant)).user.primary_phone,
+      "Sorry about that... I couldn't find anyone else for the call.  That shouldn't happen once we reach critical mass. ;-)",
+    )
+  end
+      
   def on_hold?(participant, data)
     hold_count(participant, data) == 0 ? false : true
   end
@@ -92,10 +100,15 @@ class PoolMerger
 
   def create_new_group(list, pool, data)
     room_name = next_room(pool, data)
-    event_ids = list.map { |p| p[:conference_friendly_name] =~ /Event(\d+)/; $1.to_i }
+    event_ids = list.map { |p| participant_event_id(p) }
     list.each do |participant|
       place_into_conference(participant, room_name, pool.timelimit, data, event_ids)
     end
+  end
+
+  def participant_event_id(participant)
+    participant[:conference_friendly_name] =~ /Event(\d+)/; 
+    $1.to_i
   end
 
   def next_room(pool, data)
