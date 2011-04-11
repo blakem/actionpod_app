@@ -49,7 +49,11 @@ class TwilioCaller
   
   def twilio_request(*args)
     resp = twilio_account.request(*args) # XXX need to handle failure condition
-    ActiveSupport::JSON.decode(resp.body).with_indifferent_access
+    hash = ActiveSupport::JSON.decode(resp.body).with_indifferent_access
+    if hash[:num_pages] && hash[:num_pages].to_i != 1
+      send_sms('+14153141222', 'WARNING: GOT A RESPONSE THAT NEED TO BE PAGED')
+    end
+    hash
   end
 
   def start_call_for_event(event)
