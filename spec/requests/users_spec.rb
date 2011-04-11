@@ -92,6 +92,7 @@ describe "Users" do
     describe "success" do
       it "should edit user attributes" do
         user = Factory(:user, :email => 'thisis3newrandomfoo@example.net', :password => 'foobarbaz')
+        user.use_ifmachine.should be_false
         visit new_user_session_path
         fill_in "Email",      :with => user.email
         fill_in "Password",   :with => user.password
@@ -101,10 +102,12 @@ describe "Users" do
         visit edit_user_registration_path
         fill_in "Email",              :with => "new@example.com"
         fill_in "Current Password",   :with => user.password
+        check "Go directly to conference"
         click_button
         response.should_not have_selector('div#error_explanation')
         user.reload
         user.email.should == "new@example.com"
+        user.use_ifmachine.should be_true
       end        
     end  
   end

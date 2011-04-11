@@ -20,6 +20,10 @@
   <p><%= f.label :time_zone, "Time Zone" %>:
   <%= f.collection_select :time_zone, ActiveSupport::TimeZone.us_zones, :name, :to_s %>
 
+  <p><%= f.label :use_ifmachine, "Go directly to conference" %>:
+  <%= f.check_box :use_ifmachine %><br />
+  <i>(Experimental: Use if your phone is having trouble sending keypresses)</i>
+
   <p><%= f.label :password %>: 
   <%= f.password_field :password %><br />
   <i>(leave blank if you don't want to change it)</i>

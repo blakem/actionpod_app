@@ -36,7 +36,7 @@ class User < ActiveRecord::Base
 
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email, :password, :password_confirmation, :remember_me, :invite_code, :time_zone, :name, :primary_phone, :title,
-                  :invite_code, :primary_phone_string
+                  :invite_code, :primary_phone_string, :use_ifmachine
 
   has_many :events
   has_many :pools
