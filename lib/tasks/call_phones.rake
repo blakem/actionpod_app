@@ -1,4 +1,4 @@
-desc "Schedule a call between home and cell in 2 minutes"
+desc "Schedule a call between home and cell in 1 minute"
 task :call_phones => :environment do
   user1 = User.find_by_email('blakem30@yahoo.com')
   user2 = User.find_by_email('blakem@blakem.com')
@@ -14,12 +14,14 @@ task :call_phones => :environment do
     event1.days = [0,1,2,3,4,5,6]
     event2.days = [0,1,2,3,4,5,6]
   
-    run_time = Time.now + 2.minutes
+    run_time = Time.now + 1.minute
     event1.time = run_time.in_time_zone(user1.time_zone).strftime("%I:%M%p")
     event2.time = run_time.in_time_zone(user2.time_zone).strftime("%I:%M%p")
   
     event1.save
     event2.save
+    
+    puts "Scheduled call for " + run_time.strftime("%I:%M%p")
   else
     puts "Oops.... Couldn't find users"
   end
