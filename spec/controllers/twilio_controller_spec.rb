@@ -51,7 +51,7 @@ describe TwilioController do
       Call.create(:Sid => '54321', :event_id => event.id)
       post :greeting_fallback, :CallSid => '54321'
       response.content_type.should =~ /^application\/xml/
-      response.should have_selector('response>say', :content => 'Joining a conference room')
+      response.should have_selector('response>say', :content => 'Waiting for the other participants')
       response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
       response.should have_selector('response>dial>conference', :content => "HoldEvent#{event.id}Pool#{pool.id}")
       response.should have_selector('response>say', :content => 'Time is up. Goodbye.')
@@ -82,7 +82,7 @@ describe TwilioController do
       post :go_directly_to_conference, :CallSid => '12345'
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => 'Welcome to your Morning Call.')
-      response.should have_selector('response>say', :content => 'Joining a conference room')
+      response.should have_selector('response>say', :content => 'Waiting for the other participants')
       response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
       response.should have_selector('response>dial>conference', :content => "HoldEvent#{event.id}Pool#{pool.id}")
       response.should have_selector('response>say', :content => 'Time is up. Goodbye.')
@@ -103,7 +103,7 @@ describe TwilioController do
       Call.create(:Sid => '54321', :event_id => event.id)
       post :put_on_hold, :CallSid => '54321'
       response.content_type.should =~ /^application\/xml/
-      response.should have_selector('response>say', :content => 'Joining a conference room')
+      response.should have_selector('response>say', :content => 'Waiting for the other participants')
       response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
       response.should have_selector('response>dial>conference', :content => "HoldEvent#{event.id}Pool#{pool.id}")
       response.should have_selector('response>say', :content => 'Time is up. Goodbye.')
@@ -116,7 +116,7 @@ describe TwilioController do
       Call.create(:Sid => '54321', :PhoneNumberSid => 'PN123', :event_id => event.id)
       post :put_on_hold, :PhoneNumberSid => 'PN123'
       response.content_type.should =~ /^application\/xml/
-      response.should have_selector('response>say', :content => 'Joining a conference room')
+      response.should have_selector('response>say', :content => 'Waiting for the other participants')
       response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
       response.should have_selector('response>dial>conference', :content => "HoldEvent#{event.id}Pool#{pool.id}")
       response.should have_selector('response>say', :content => 'Time is up. Goodbye.')
@@ -130,7 +130,7 @@ describe TwilioController do
       event.save
       post :put_on_hold, :From => user.primary_phone, :Direction => 'inbound' 
       response.content_type.should =~ /^application\/xml/
-      response.should have_selector('response>say', :content => 'Joining a conference room')
+      response.should have_selector('response>say', :content => 'Waiting for the other participants')
       response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
       response.should have_selector('response>dial>conference', :content => "HoldEvent#{event.id}Pool#{pool.id}")
       response.should have_selector('response>say', :content => 'Time is up. Goodbye.')
@@ -144,7 +144,7 @@ describe TwilioController do
       event.save
       post :put_on_hold, :To => user.primary_phone, :Direction => 'outbound-api' 
       response.content_type.should =~ /^application\/xml/
-      response.should have_selector('response>say', :content => 'Joining a conference room')
+      response.should have_selector('response>say', :content => 'Waiting for the other participants')
       response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
       response.should have_selector('response>dial>conference', :content => "HoldEvent#{event.id}Pool#{pool.id}")
       response.should have_selector('response>say', :content => 'Time is up. Goodbye.')

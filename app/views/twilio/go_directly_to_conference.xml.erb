@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Response>
   <Say>Welcome to your <%= @event_name %>.</Say>
-  <Say>Joining a conference room.</Say>
+  <Say>Waiting for the other participants.</Say>
   <Dial timeLimit="<%= @timelimit %>">
 	<Conference><%= "HoldEvent#{@event.id}Pool#{@pool.id}" %></Conference>
   </Dial>
