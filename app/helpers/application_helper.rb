@@ -1,6 +1,7 @@
 module ApplicationHelper
   def title
     base_title = "15-Minute Calls"
+    base_title = "(dev) " + base_title if Rails.env.development?
     if @title.nil?
       base_title
     else
