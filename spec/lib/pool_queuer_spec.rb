@@ -92,6 +92,13 @@ describe PoolQueuer do
         :run_at      => @now + 5.minutes + @pq.time_before_first_merge
       ).count.should == 1
     end
+
+    it "should send total to queue_merge_calls_for_pool" do
+      DelayedJob.create(@delay_args.merge(:obj_id => @event.id))
+      DelayedJob.create(@delay_args.merge(:obj_id => @event.id))
+      @pq.should_receive(:queue_merge_calls_for_pool).with(@pool, @now + 5.minutes, 0, {:total => 2})
+      @pq.check_before_calls_go_out(@pool, @now + 5.minutes)
+    end
   end
   
   describe "queue_merge_calls_for_pool" do
@@ -114,7 +121,7 @@ describe PoolQueuer do
       pool_merger.should_receive(:merge_calls_for_pool).with(@pool, {:foo => 'foo'})
       PoolMerger.should_receive(:new).twice.and_return(pool_merger)
       expect {
-        @pq.queue_merge_calls_for_pool(@pool, @now + 5.minutes, 1)
+        @pq.queue_merge_calls_for_pool(@pool, @now + 5.minutes, 1, {})
       }.to change(DelayedJob, :count).by(1)
       djs = DelayedJob.where(
         :obj_type    => 'Pool',
@@ -137,7 +144,7 @@ describe PoolQueuer do
       pool_merger.should_receive(:merge_calls_for_pool).with(@pool, {})
       PoolMerger.should_receive(:new).and_return(pool_merger)
       expect {
-        @pq.queue_merge_calls_for_pool(@pool, @now + 5.minutes, 177)
+        @pq.queue_merge_calls_for_pool(@pool, @now + 5.minutes, 177, {})
       }.to change(DelayedJob, :count).by(1)
       DelayedJob.where(
         :obj_type    => 'Pool',
@@ -149,7 +156,7 @@ describe PoolQueuer do
 
     it "should exit on the 178th time" do
       expect {
-        rv = @pq.queue_merge_calls_for_pool(@pool, @now + 5.minutes, 178)
+        rv = @pq.queue_merge_calls_for_pool(@pool, @now + 5.minutes, 178, {})
         rv.should == true
       }.to_not change(DelayedJob, :count)
     end

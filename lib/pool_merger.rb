@@ -62,7 +62,8 @@ class PoolMerger
   end
 
   def put_on_hold(participant, data)
-    data[:on_hold][participant['call_sid']] = participant['conference_sid']
+    data[:on_hold][participant['call_sid']] ||= 0
+    data[:on_hold][participant['call_sid']] += 1 
   end
 
   def place_into_conference(participant, room_name, timelimit, data, event_ids = [])

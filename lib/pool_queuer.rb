@@ -54,11 +54,11 @@ class PoolQueuer
       end
       job.destroy
     else
-      queue_merge_calls_for_pool(pool, pool_runs_at)
+      queue_merge_calls_for_pool(pool, pool_runs_at, 0, {:total => jobs.count})
     end
   end
   
-  def queue_merge_calls_for_pool(pool, pool_runs_at, count = 0, data = {})
+  def queue_merge_calls_for_pool(pool, pool_runs_at, count, data)
     return true if count > ((call_duration - time_before_first_merge) / time_between_merges)
     data = PoolMerger.new.merge_calls_for_pool(pool, data) if count > 0  
     self.delay(
