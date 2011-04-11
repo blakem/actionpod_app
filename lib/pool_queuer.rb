@@ -7,6 +7,14 @@ class PoolQueuer
   def time_between_merges
     5.seconds
   end
+
+  def time_before_first_merge
+    15.seconds
+  end
+
+  def call_duration
+    15.minutes
+  end
   
   def queue_pool(pool, run_time)
     queue_check_before_calls_go_out(pool, run_time)
@@ -51,15 +59,15 @@ class PoolQueuer
   end
   
   def queue_merge_calls_for_pool(pool, pool_runs_at, count = 0, data = {})
-    return true if count > 180 # XXX compute 180 from times
+    return true if count > ((call_duration - time_before_first_merge) / time_between_merges)
     data = PoolMerger.new.merge_calls_for_pool(pool, data) if count > 0  
-    count += 1
     self.delay(
       :obj_type    => 'Pool',
       :obj_id      => pool.id,
       :obj_jobtype => 'merge_calls_for_pool',
-      :run_at      => pool_runs_at + (time_between_merges * count)
+      :run_at      => pool_runs_at + (time_between_merges * count) + time_before_first_merge
     ).queue_merge_calls_for_pool(pool, pool_runs_at, count, data)
+    count += 1
   end
 
 end

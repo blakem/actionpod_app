@@ -66,6 +66,18 @@ describe PoolQueuer do
       Twilio::RestAccount.should_receive(:new).with("AC2e57bf710b77d765d280786bc07dbacc", "fc9bd67bb8deee6befd3ab0da3973718").and_return(account)
       @pq.check_before_calls_go_out(@pool, @now + 5.minutes)
     end
+
+    it "should have a call_duration" do
+      @pq.call_duration.should == 15.minutes
+    end
+
+    it "should have a time_between_merges" do
+      @pq.time_between_merges.should == 5.seconds
+    end
+    
+    it "should have a time_before_first_merge" do
+      @pq.time_before_first_merge.should == 15.seconds
+    end
     
     it "should queue merge_calls_for_pool on success" do
       DelayedJob.create(@delay_args.merge(:obj_id => @event.id))
@@ -77,7 +89,7 @@ describe PoolQueuer do
         :obj_type    => 'Pool',
         :obj_id      => @pool.id,
         :obj_jobtype => 'merge_calls_for_pool',
-        :run_at      => @now + 5.minutes + 5.seconds
+        :run_at      => @now + 5.minutes + @pq.time_before_first_merge
       ).count.should == 1
     end
   end
@@ -107,13 +119,28 @@ describe PoolQueuer do
         :obj_type    => 'Pool',
         :obj_id      => @pool.id,
         :obj_jobtype => 'merge_calls_for_pool',
-        :run_at      => @now + 5.minutes + 10.seconds,
+        :run_at      => @now + 5.minutes + @pq.time_before_first_merge + @pq.time_between_merges
       ).count.should == 1
     end
     
-    it "should exit on the 181st time" do
+    it "should run on the 177th time" do
+      pool_merger = mock('PoolMerger')
+      pool_merger.should_receive(:merge_calls_for_pool).with(@pool, {})
+      PoolMerger.should_receive(:new).and_return(pool_merger)
       expect {
-        rv = @pq.queue_merge_calls_for_pool(@pool, @now + 5.minutes, 181)
+        @pq.queue_merge_calls_for_pool(@pool, @now + 5.minutes, 177)
+      }.to change(DelayedJob, :count).by(1)
+      DelayedJob.where(
+        :obj_type    => 'Pool',
+        :obj_id      => @pool.id,
+        :obj_jobtype => 'merge_calls_for_pool',
+        :run_at      => @now + 5.minutes + @pq.time_before_first_merge + (@pq.time_between_merges * 177)
+      ).count.should == 1
+    end
+
+    it "should exit on the 178th time" do
+      expect {
+        rv = @pq.queue_merge_calls_for_pool(@pool, @now + 5.minutes, 178)
         rv.should == true
       }.to_not change(DelayedJob, :count)
     end
