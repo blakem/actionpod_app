@@ -32,6 +32,11 @@ class TwilioController < ApplicationController
   def say_sorry
   end
 
+  def apologize_no_other_participants
+    @other_participants = params[:participant_count] - 1
+    @people = @other_participants == 1 ? 'person' : 'people' 
+  end
+
   def go_directly_to_conference
     event = find_event_from_params(params)
     unless event

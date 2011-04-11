@@ -30,7 +30,12 @@ class PoolMerger
         room_name = data[:conferences].sort { |a,b| a[1][:members] <=> b[1][:members]}.first[0]
         place_into_conference(participant, room_name, pool.timelimit, data)
       else
-        put_on_hold(participant, data)
+        if hold_count(participant, data) >= max_hold_count
+          take_off_hold(participant, data)
+          @tc.apologize_no_other_participants(participant[:call_sid], data[:total])
+        else
+          put_on_hold(participant, data)
+        end
       end
     else
       if on_hold?(new_participants[0], data) || on_hold?(new_participants[1], data)
@@ -45,7 +50,15 @@ class PoolMerger
   end
   
   def on_hold?(participant, data)
-    data[:on_hold][participant['call_sid']] ? true : false
+    hold_count(participant, data) == 0 ? false : true
+  end
+  
+  def max_hold_count
+    4
+  end
+
+  def hold_count(participant, data)
+    data[:on_hold][participant['call_sid']] || 0
   end
 
   def placed?(participant, data)
@@ -65,10 +78,14 @@ class PoolMerger
     data[:on_hold][participant['call_sid']] ||= 0
     data[:on_hold][participant['call_sid']] += 1 
   end
-
+  
+  def take_off_hold(participant, data)
+    data[:on_hold].delete(participant['call_sid'])
+  end
+      
   def place_into_conference(participant, room_name, timelimit, data, event_ids = [])
     @tc.place_participant_in_conference(participant[:call_sid], room_name, timelimit, event_ids)
-    data[:on_hold].delete(participant['call_sid'])
+    take_off_hold(participant, data)
     data[:placed][participant['call_sid']] = room_name
     data[:conferences][room_name][:members] += 1
   end

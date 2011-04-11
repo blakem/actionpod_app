@@ -301,6 +301,20 @@ describe TwilioController do
     end
   end
 
+  describe "apologize_no_other_participants" do
+    it "should say sorry and give the number of total participants called" do
+      post :apologize_no_other_participants, :participant_count => 2
+      response.content_type.should =~ /^application\/xml/
+      response.should have_selector('response>say', :content => "I'm sorry. I called 1 other person but they didn't answer. Goodbye.")
+    end
+
+    it "should say sorry and give the number of total participants called" do
+      post :apologize_no_other_participants, :participant_count => 3
+      response.content_type.should =~ /^application\/xml/
+      response.should have_selector('response>say', :content => "I'm sorry. I called 2 other people but they didn't answer. Goodbye.")
+    end
+  end
+
   describe "sms" do
     it "should send back a welcome message" do
       post :sms

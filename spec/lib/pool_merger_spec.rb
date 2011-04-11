@@ -44,7 +44,7 @@ describe PoolMerger do
         }
       end
 
-      it "should carry over if there is no existing conference room even if hes old" do
+      it "should carry over if there is no existing conference room even if he's old" do
         new_participants = participant_list(1)
         @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
         data = @pm.initialize_data({})
@@ -59,6 +59,35 @@ describe PoolMerger do
           },
           :placed      => {},
         }
+      end
+
+      it "should tell him sorry and end call if he's been waiting a long time" do
+        new_participants = participant_list(1)
+        @tc.should_receive(:participants_on_hold_for_pool).twice.with(@pool).and_return(new_participants)
+        @tc.should_receive(:apologize_no_other_participants).with('CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1', 2)
+        data = @pm.initialize_data({})
+        data[:on_hold] = {
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 3,
+        }
+        data[:total] = 2
+        data = @pm.merge_calls_for_pool(@pool, data)
+        data.should == {
+          :total       => 2,
+          :next_room   => 1,
+          :conferences => {}, 
+          :on_hold     => {
+            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 4,
+          },
+          :placed      => {},
+        }
+        data = @pm.merge_calls_for_pool(@pool, data)
+        data.should == {
+          :total       => 2,
+          :next_room   => 1,
+          :conferences => {}, 
+          :on_hold     => {},
+          :placed      => {},
+        }        
       end
 
       it "should put him in the smallest conference room if he's old" do

@@ -74,6 +74,12 @@ class TwilioCaller
      'Url' => base_url + "/place_in_conference.xml?conference=#{conference}&timeout=#{timelimit}&events=#{events}",
     })
   end
+
+  def apologize_no_other_participants(call_sid, participant_count)
+    resp_hash = twilio_request(caller_uri(call_sid), 'POST', {
+     'Url' => base_url + "/apologize_no_other_participants.xml?participant_count=#{participant_count}",
+    })
+  end
   
   def participants_on_hold_for_pool(pool)
     participants = []
