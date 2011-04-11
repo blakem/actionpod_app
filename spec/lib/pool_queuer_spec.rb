@@ -110,8 +110,8 @@ describe PoolQueuer do
       
     it "should call merge_calls_for_pool" do
       pool_merger = mock('PoolMerger')
-      pool_merger.should_receive(:merge_calls_for_pool).with(@pool, {})
-      pool_merger.should_receive(:merge_calls_for_pool).with(@pool, nil)
+      pool_merger.should_receive(:merge_calls_for_pool).with(@pool, {}).and_return({:foo => 'foo'})
+      pool_merger.should_receive(:merge_calls_for_pool).with(@pool, {:foo => 'foo'})
       PoolMerger.should_receive(:new).twice.and_return(pool_merger)
       expect {
         @pq.queue_merge_calls_for_pool(@pool, @now + 5.minutes, 1)
