@@ -10,4 +10,7 @@
 #
 
 class InviteCode < ActiveRecord::Base
+  before_validation do
+    self.name.downcase! if attribute_present?(:name)
+  end
 end
