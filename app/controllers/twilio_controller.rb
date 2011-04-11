@@ -32,6 +32,20 @@ class TwilioController < ApplicationController
   def say_sorry
   end
 
+  def go_directly_to_conference
+    event = find_event_from_params(params)
+    unless event
+      self.say_sorry
+      render :action => :say_sorry
+    else
+      @event_name = event.name
+      @timelimit = event.pool.timelimit
+      @pool = event.pool 
+      @event = event
+      @timelimit *= 60
+    end
+  end
+
   def put_on_hold
     event = find_event_from_params(params)
     unless event

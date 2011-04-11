@@ -67,6 +67,28 @@ describe TwilioController do
     end
   end
 
+  describe "go_directly_to_conference" do
+    it "should say can't match this number when it can't find an event" do
+      post :go_directly_to_conference
+      response.content_type.should =~ /^application\/xml/
+      response.should have_selector('response>say', :content => "I'm sorry")
+    end
+
+    it "should match up with the event being called" do
+      user = Factory(:user)
+      pool = Factory(:pool, :timelimit => 33)
+      event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
+      Call.create(:Sid => '12345', :event_id => event.id)
+      post :go_directly_to_conference, :CallSid => '12345'
+      response.content_type.should =~ /^application\/xml/
+      response.should have_selector('response>say', :content => 'Welcome to your Morning Call.')
+      response.should have_selector('response>say', :content => 'Joining a conference room')
+      response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
+      response.should have_selector('response>dial>conference', :content => "HoldEvent#{event.id}Pool#{pool.id}")
+      response.should have_selector('response>say', :content => 'Time is up. Goodbye.')
+    end
+  end
+
   describe "put_on_hold" do
     it "should say can't match this number when it can't find an event" do
       post :put_on_hold

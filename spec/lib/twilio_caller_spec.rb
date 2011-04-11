@@ -52,7 +52,7 @@ describe TwilioCaller do
         "POST", 
         {"From"           => "+14157669865",
          "To"             => user.primary_phone, 
-         "Url"            => "http://www.15minutecalls.com/twilio/put_on_hold.xml",
+         "Url"            => "http://www.15minutecalls.com/twilio/go_directly_to_conference.xml",
          "IfMachine"      => "Hangup",
          "FallbackUrl"    => "http://www.15minutecalls.com/twilio/greeting_fallback.xml", 
          "StatusCallback" => "http://www.15minutecalls.com/twilio/callback.xml"

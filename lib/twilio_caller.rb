@@ -61,7 +61,7 @@ class TwilioCaller
       'StatusCallback' => base_url + '/callback.xml',
     }
     if event.user.use_ifmachine
-      post_args['Url'] = base_url + '/put_on_hold.xml'
+      post_args['Url'] = base_url + '/go_directly_to_conference.xml'
       post_args['IfMachine'] = 'Hangup'
     end
     call_hash = twilio_request(start_call_uri, 'POST', post_args)
