@@ -254,12 +254,13 @@ describe PoolMerger do
       it "should put someone who's on hold at the front of the list" do
         new_participants = participant_list(4)
         @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
-        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX4", "Pool#{@pool.id}Room1", @pool.timelimit, [4, 1, 2])
-        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1", "Pool#{@pool.id}Room1", @pool.timelimit, [4, 1, 2])
-        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2", "Pool#{@pool.id}Room1", @pool.timelimit, [4, 1, 2])
+        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX4", "Pool#{@pool.id}Room1", @pool.timelimit, [4, 1, 2]).ordered
+        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1", "Pool#{@pool.id}Room1", @pool.timelimit, [4, 1, 2]).ordered
+        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2", "Pool#{@pool.id}Room1", @pool.timelimit, [4, 1, 2]).ordered
         data = @pm.initialize_data({})
         data[:on_hold] = {
-          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX4" => 1,         
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX4" => 2,
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 1,
         }
         @pm.merge_calls_for_pool(@pool, data).should == {
           :next_room   => 2,

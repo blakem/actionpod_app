@@ -70,7 +70,7 @@ class PoolMerger
   end
   
   def sort_participants(participants, data)
-    participants.select { |p|  on_hold?(p, data) } + 
+    participants.select { |p|  on_hold?(p, data) }.sort{ |a,b| hold_count(b, data) <=> hold_count(a, data) } + 
     participants.select { |p| !on_hold?(p, data) }
   end
 
