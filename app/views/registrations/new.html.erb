@@ -17,9 +17,13 @@
   <%= f.text_field :primary_phone_string %><br />
   <i>(This is the number we will call for your 15-minute calls)</i></p>
 
-  <p><%= f.label :title %>: 
+  <p><%= f.label :title %>: (optional)
   <%= f.text_field :title %><br />
   <i>(Software Developer, Graphic Designer, Author, etc...)</i></p>
+
+  <p><%= f.label :location %>: (optional) 
+  <%= f.text_field :location %><br />
+  <i>(San Francisco, Seattle, etc.)</i></p>
 
   <p><%= f.label :time_zone, "Time Zone"%>:
   <%= f.collection_select :time_zone, ActiveSupport::TimeZone.us_zones, :name, :to_s %>
