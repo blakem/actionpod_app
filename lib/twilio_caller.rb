@@ -49,7 +49,7 @@ class TwilioCaller
   
   def twilio_request(*args)
     resp = twilio_account.request(*args)
-    unless resp.kind_of?(Net::HTTPOK)
+    unless (resp.kind_of?(Net::HTTPOK) or resp.kind_of?(Net::HTTPSuccess))
       resp = twilio_account.request(*args)
       send_error_to_blake("Retrying twilio_request: ResponseCode:#{resp.class}") unless args[0] == sms_uri
       unless resp.respond_to?('body')

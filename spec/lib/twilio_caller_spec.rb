@@ -22,7 +22,7 @@ describe TwilioCaller do
 
       it "retries after an error from twilio" do
         response1 = mock('HTTPResponse')
-        response1.should_receive(:kind_of?).and_return(false)
+        response1.should_receive(:kind_of?).twice.and_return(false)
         response2 = mock('HTTPResponse', :body => '{"foo":"bar"}', :responds_to? => true)
         response2.should_not_receive(:kind_of?)
         account = mock('TwilioAccount')
@@ -35,7 +35,7 @@ describe TwilioCaller do
 
       it "two errors in a row" do
         response = mock('HTTPResponse')
-        response.should_receive(:kind_of?).and_return(false)
+        response.should_receive(:kind_of?).twice.and_return(false)
         account = mock('TwilioAccount')
         account.should_receive(:request).twice.with('http://foo.com', 'POST').and_return(response)
         Twilio::RestAccount.should_receive(:new).with("AC2e57bf710b77d765d280786bc07dbacc", "fc9bd67bb8deee6befd3ab0da3973718").and_return(account)
