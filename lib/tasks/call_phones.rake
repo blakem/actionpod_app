@@ -6,10 +6,10 @@ task :call_phones => :environment do
     event1 = Event.find_by_name_and_user_id('With Home', user1.id)
     event2 = Event.find_by_name_and_user_id('With Cell', user2.id)
     if event1.nil?
-      Event.create(:name => 'With Home', :user_id => user1.id, :pool_id => Pool.find_by_name('Default Pool'))
+      event1 = Event.create(:name => 'With Home', :user_id => user1.id, :pool_id => Pool.find_by_name('Default Pool'))
     end
     if event2.nil?
-      Event.create(:name => 'With Cell', :user_id => user2.id, :pool_id => Pool.find_by_name('Default Pool'))
+      event2 = Event.create(:name => 'With Cell', :user_id => user2.id, :pool_id => Pool.find_by_name('Default Pool'))
     end
     event1.days = [0,1,2,3,4,5,6]
     event2.days = [0,1,2,3,4,5,6]
