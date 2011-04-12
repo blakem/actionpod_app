@@ -27,8 +27,7 @@ class PoolMerger
     if new_participants.count == 1
       participant = new_participants[0]
       if on_hold?(participant, data) && data[:conferences].any?
-        room_name = data[:conferences].sort { |a,b| a[1][:members] <=> b[1][:members]}.first[0]
-        place_into_conference(participant, room_name, pool.timelimit, data)
+        add_single_participant_to_conference(participant, pool, data)
       else
         if hold_count(participant, data) >= max_hold_count
           apologize_to_participant(participant, data)
@@ -94,7 +93,10 @@ class PoolMerger
   def place_into_conference(participant, room_name, timelimit, data, event_ids = [])
     @tc.place_participant_in_conference(participant[:call_sid], room_name, timelimit, event_ids)
     take_off_hold(participant, data)
-    data[:placed][participant['call_sid']] = room_name
+    data[:placed][participant['call_sid']] = {
+      :room_name => room_name,
+      :event_id  => participant_event_id(participant)
+    }
     data[:conferences][room_name][:members] += 1
   end
 
@@ -104,6 +106,20 @@ class PoolMerger
     list.each do |participant|
       place_into_conference(participant, room_name, pool.timelimit, data, event_ids)
     end
+  end
+
+  def add_single_participant_to_conference(participant, pool, data)
+    room_name = smallest_conference_room(data)
+    event_ids = [participant_event_id(participant)] + event_ids_for_conference_room(room_name, data)
+    place_into_conference(participant, room_name, pool.timelimit, data, event_ids)
+  end
+  
+  def smallest_conference_room(data)
+    data[:conferences].sort { |a,b| a[1][:members] <=> b[1][:members]}.first[0]
+  end    
+
+  def event_ids_for_conference_room(room_name, data)
+    data[:placed].select{ |k,v| v[:room_name] == room_name }.values.map{ |p| p[:event_id] }
   end
 
   def participant_event_id(participant)
