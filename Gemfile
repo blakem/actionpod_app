@@ -12,9 +12,9 @@ gem 'delayed_job'
 gem 'heroku_backup_task'
 gem 'gravatar_image_tag'
 gem 'heroku_san'
+gem 'faker'
 
 group :test, :development do
-  gem 'faker'
   gem 'rspec-rails'
   gem 'annotate-models'
   gem 'rspec'
