@@ -74,10 +74,13 @@ end
 desc "Show information about currently Delayed Jobs"
 task :delayed_jobs => :environment do
   DelayedJob.all.sort { |a,b| a.run_at <=> b.run_at }.each do |j|
-    obj = Kernel.const_get(j.obj_type).find_by_id(j.obj_id)
-    string = obj.name
-    if obj.respond_to?('user')
-      string += " (#{obj.user.name})"
+    string = ''
+    if (j.obj_id)
+      obj = Kernel.const_get(j.obj_type).find_by_id(j.obj_id)
+      string = obj.name
+      if obj.respond_to?('user')
+        string += " (#{obj.user.name})"
+      end
     end
     puts "#{j.id}:#{j.pool_id} #{j.run_at} #{sprintf('%-11s', j.obj_type)} #{sprintf('%-25s',j.obj_jobtype)} #{j.obj_id} #{string}"
   end
