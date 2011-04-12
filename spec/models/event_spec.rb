@@ -80,11 +80,26 @@ describe Event do
       @event.time.should == '9:00am'
     end
     
-    it "should have time a minute_of_day accessor to it's schedule" do
+    it "should have a minute_of_day accessor to it's schedule" do
       @event.time = '4:07pm'
       @event.minute_of_day.should == (4+12)*60+7
     end
-    
+
+    it "should have an hour_of_day accessor to it's schedule" do
+      @event.time = '4:07pm'
+      @event.hour_of_day.should == (4+12)
+      @event.time = '12:07pm'
+      @event.hour_of_day.should == 12
+      @event.time = '12:07am'
+      @event.hour_of_day.should == 0
+    end
+
+    it "should have a minute_of_hour accessor to it's schedule" do
+      @event.time = '4:07pm'
+      @event.minute_of_hour.should == 7
+      @event.time = '4:00pm'
+      @event.minute_of_hour.should == 0
+    end    
 
     it "should be able to handle 12:00am" do
       @event.time = '12:00am'

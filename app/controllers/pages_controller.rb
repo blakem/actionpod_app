@@ -27,6 +27,7 @@ class PagesController < ApplicationController
       start_time = Time.now.beginning_of_week + 6.days
       end_time = start_time + 7.days
       Event.all.each do |event|
+        next unless (event.minute_of_hour == 0 or current_user.admin?)
         event.schedule.occurrences_between(start_time, end_time).each do |occurrence|
           occurrence = occurrence.in_time_zone(current_user.time_zone)
           hash[occurrence] ||= 0

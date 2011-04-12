@@ -23,11 +23,7 @@ class Event < ActiveRecord::Base
   end
   
   def time
-    sched_hash = schedule_actual.to_hash
-    validations = sched_hash[:rrules][0][:validations]
-    hour = validations[:hour_of_day][0]
-    minute = validations[:minute_of_hour][0]
-    ampm_format(hour, minute)
+    ampm_format(hour_of_day, minute_of_hour)
   end
 
   def time=(string)
@@ -42,16 +38,20 @@ class Event < ActiveRecord::Base
     self.alter_schedule(:hour_of_day => [hour], :minute_of_hour => [minute])
   end
   
+  def minute_of_hour
+    schedule_validations[:minute_of_hour][0]
+  end
+
+  def hour_of_day
+    schedule_validations[:hour_of_day][0]
+  end
+
   def minute_of_day
-    sched_hash = schedule_actual.to_hash
-    validations = sched_hash[:rrules][0][:validations]
-    hour = validations[:hour_of_day][0]
-    minute = validations[:minute_of_hour][0]
-    return hour*60+minute
+    return hour_of_day*60 + minute_of_hour
   end
 
   def days
-    schedule_actual.to_hash[:rrules][0][:validations][:day]
+    schedule_validations[:day]
   end
 
   def days=(day_list)
@@ -80,7 +80,7 @@ class Event < ActiveRecord::Base
   end
   
   def on_day(int)
-    schedule_actual.to_hash[:rrules][0][:validations][:day].include?(int)
+    days.include?(int)
   end
 
   def make_call
@@ -105,6 +105,11 @@ class Event < ActiveRecord::Base
   end
   
   private
+    def schedule_validations
+      sched_hash = schedule_actual.to_hash
+      validations = sched_hash[:rrules][0][:validations]
+    end
+
     def default_schedule
       sched = empty_schedule
       sched.add_recurrence_rule IceCube::Rule.weekly(1).day(:monday, :tuesday, :wednesday, :thursday, :friday).hour_of_day(8).minute_of_hour(0)
