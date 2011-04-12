@@ -1,5 +1,6 @@
 class PagesController < ApplicationController
-
+  before_filter :authenticate_user!, :except => :home
+  
   def home
     if user_signed_in?
       self.profile
@@ -14,7 +15,6 @@ class PagesController < ApplicationController
   end
   
   def callcal
-    redirect_to(root_path) unless user_signed_in?
     @scheduled_events = build_scheduled_events
   end
   

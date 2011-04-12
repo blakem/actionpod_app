@@ -64,7 +64,7 @@ describe PagesController do
       it "should redirect to the root path" do
         controller.user_signed_in?.should be_false
         get :callcal
-        response.should redirect_to(root_path)
+        response.should redirect_to(new_user_session_path)
       end
     end
 
