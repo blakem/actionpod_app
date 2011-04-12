@@ -96,6 +96,26 @@ describe Event do
       @event.time.should == '12:00am'
     end
 
+    it "should be able to handle 12:19AM" do
+      @event.time = '12:19AM'
+      @event.schedule.to_hash[:rrules][0][:validations][:hour_of_day][0].should == 0
+      @event.time.should == '12:19am'
+      @event.save
+      @event.reload
+      @event.schedule.to_hash[:rrules][0][:validations][:hour_of_day][0].should == 0
+      @event.time.should == '12:19am'
+    end
+
+    it "should be able to handle 12:19am" do
+      @event.time = '12:19am'
+      @event.schedule.to_hash[:rrules][0][:validations][:hour_of_day][0].should == 0
+      @event.time.should == '12:19am'
+      @event.save
+      @event.reload
+      @event.schedule.to_hash[:rrules][0][:validations][:hour_of_day][0].should == 0
+      @event.time.should == '12:19am'
+    end
+
     it "should be able to handle 12:00pm" do
       @event.time = '12:00pm'
       @event.schedule.to_hash[:rrules][0][:validations][:hour_of_day][0].should == 12
@@ -104,6 +124,26 @@ describe Event do
       @event.reload
       @event.schedule.to_hash[:rrules][0][:validations][:hour_of_day][0].should == 12
       @event.time.should == '12:00pm'
+    end
+
+    it "should be able to handle 12:19pm" do
+      @event.time = '12:19pm'
+      @event.schedule.to_hash[:rrules][0][:validations][:hour_of_day][0].should == 12
+      @event.time.should == '12:19pm'
+      @event.save
+      @event.reload
+      @event.schedule.to_hash[:rrules][0][:validations][:hour_of_day][0].should == 12
+      @event.time.should == '12:19pm'
+    end
+
+    it "should be able to handle 12:19PM" do
+      @event.time = '12:19PM'
+      @event.schedule.to_hash[:rrules][0][:validations][:hour_of_day][0].should == 12
+      @event.time.should == '12:19pm'
+      @event.save
+      @event.reload
+      @event.schedule.to_hash[:rrules][0][:validations][:hour_of_day][0].should == 12
+      @event.time.should == '12:19pm'
     end
 
     it "should have a days setter to it's schedule" do

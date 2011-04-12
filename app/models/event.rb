@@ -38,7 +38,7 @@ class Event < ActiveRecord::Base
     hour = hour.to_i
     minute = minute.to_i
     hour += 12 if ampm =~ /^pm$/i and hour != 12
-    hour = 0 if hour == 12 and ampm =~ /^am$/
+    hour = 0 if hour == 12 and ampm =~ /^am$/i
     self.alter_schedule(:hour_of_day => [hour], :minute_of_hour => [minute])
   end
   
