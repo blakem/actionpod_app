@@ -370,7 +370,7 @@ describe PoolMerger do
     end
 
     it "should leave existing values alone" do
-      data = {:next_room => 1, :conferences => {1 => 2}, :on_hold => {2 => 3}}
+      data = {:next_room => 1, :placed => {1 => 2}, :on_hold => {2 => 3}}
       @pm.initialize_data(data).should == data
     end
   end
