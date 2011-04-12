@@ -13,7 +13,6 @@ describe PoolMerger do
       @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(participant_list(0))
       @pm.merge_calls_for_pool(@pool, {}).should == {
         :next_room   => 1,
-        :conferences => {}, 
         :on_hold     => {},
         :placed      => {},
       }
@@ -24,7 +23,6 @@ describe PoolMerger do
       @pm.merge_calls_for_pool(@pool, {:total => 3}).should == {
         :next_room   => 1,
         :total => 3,
-        :conferences => {}, 
         :on_hold     => {},
         :placed      => {},
       }
@@ -36,7 +34,6 @@ describe PoolMerger do
         @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
         @pm.merge_calls_for_pool(@pool, {}).should == {
           :next_room   => 1,
-          :conferences => {}, 
           :on_hold     => {
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 1,
           },
@@ -53,7 +50,6 @@ describe PoolMerger do
         }
         @pm.merge_calls_for_pool(@pool, data).should == {
           :next_room   => 1,
-          :conferences => {}, 
           :on_hold     => {
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 2,
           },
@@ -80,7 +76,6 @@ describe PoolMerger do
         data.should == {
           :total       => 2,
           :next_room   => 1,
-          :conferences => {}, 
           :on_hold     => {
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 4,
           },
@@ -90,7 +85,6 @@ describe PoolMerger do
         data.should == {
           :total       => 2,
           :next_room   => 1,
-          :conferences => {}, 
           :on_hold     => {},
           :placed      => {},
         }        
@@ -99,51 +93,65 @@ describe PoolMerger do
       it "should put him in the smallest conference room if he's old" do
         new_participants = participant_list(1)
         @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
-        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1", "Pool#{@pool.id}Room3", @pool.timelimit, [1, 2, 3])
+        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1", "Pool#{@pool.id}Room3", @pool.timelimit, [1, 32, 33])
         data = {
           :on_hold => {"CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 1},
-          :conferences => { 
-            "Pool#{@pool.id}Room1" => {:name => "Pool#{@pool.id}Room1", :members => 3},
-            "Pool#{@pool.id}Room2" => {:name => "Pool#{@pool.id}Room2", :members => 3},
-            "Pool#{@pool.id}Room3" => {:name => "Pool#{@pool.id}Room3", :members => 2},
-            "Pool#{@pool.id}Room4" => {:name => "Pool#{@pool.id}Room4", :members => 3},
-          },
           :next_room => 5,
           :placed      => {
-            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2" => {
-              :room_name => "Pool#{@pool.id}Room3",
-              :event_id => 2,
+            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX11" => {
+              :room_name => "Pool#{@pool.id}Room1",
+              :event_id => 11,
             },
-            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX3" => {
+            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX12" => {
+              :room_name => "Pool#{@pool.id}Room1",
+              :event_id => 12,
+            },
+            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX13" => {
+              :room_name => "Pool#{@pool.id}Room1",
+              :event_id => 13,
+            },
+            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX21" => {
+              :room_name => "Pool#{@pool.id}Room2",
+              :event_id => 21,
+            },
+            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX22" => {
+              :room_name => "Pool#{@pool.id}Room2",
+              :event_id => 22,
+            },
+            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX23" => {
+              :room_name => "Pool#{@pool.id}Room2",
+              :event_id => 23,
+            },
+            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX32" => {
               :room_name => "Pool#{@pool.id}Room3",
-              :event_id => 3,
+              :event_id => 32,
+            },
+            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX33" => {
+              :room_name => "Pool#{@pool.id}Room3",
+              :event_id => 33,
+            },
+            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX41" => {
+              :room_name => "Pool#{@pool.id}Room4",
+              :event_id => 41,
+            },
+            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX42" => {
+              :room_name => "Pool#{@pool.id}Room4",
+              :event_id => 42,
+            },
+            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX43" => {
+              :room_name => "Pool#{@pool.id}Room4",
+              :event_id => 43,
             },
           },
         }
-        @pm.merge_calls_for_pool(@pool, data).should == {
-          :next_room   => 5,
-          :conferences => { 
-            "Pool#{@pool.id}Room1" => {:name => "Pool#{@pool.id}Room1", :members => 3},
-            "Pool#{@pool.id}Room2" => {:name => "Pool#{@pool.id}Room2", :members => 3},
-            "Pool#{@pool.id}Room3" => {:name => "Pool#{@pool.id}Room3", :members => 3},
-            "Pool#{@pool.id}Room4" => {:name => "Pool#{@pool.id}Room4", :members => 3},
-          },
-          :on_hold     => {},
-          :placed      => {
-            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => {
-              :room_name => "Pool#{@pool.id}Room3",
-              :event_id => 1,
-            },
-            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2" => {
-              :room_name => "Pool#{@pool.id}Room3",
-              :event_id => 2,
-            },
-            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX3" => {
-              :room_name => "Pool#{@pool.id}Room3",
-              :event_id => 3,
-            },
-          },
+        got = @pm.merge_calls_for_pool(@pool, data)
+        expected = data
+        expected[:placed]["CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1"] = {
+          :room_name => "Pool#{@pool.id}Room3",
+          :event_id => 1,          
         }
+        expected[:on_hold] = {}
+        got.should == expected
       end
     end
     
@@ -154,7 +162,6 @@ describe PoolMerger do
         @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
         @pm.merge_calls_for_pool(@pool, {}).should == {
           :next_room   => 1,
-          :conferences => {}, 
           :on_hold     => {
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 1,
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2" => 1,
@@ -174,7 +181,6 @@ describe PoolMerger do
         @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2", "Pool#{@pool.id}Room1", @pool.timelimit, [1, 2])
         @pm.merge_calls_for_pool(@pool, data).should == {
           :next_room   => 2,
-          :conferences => { "Pool#{@pool.id}Room1" => {:name => "Pool#{@pool.id}Room1", :members => 2} }, 
           :on_hold     => {},
           :placed      => {
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => {
@@ -201,7 +207,6 @@ describe PoolMerger do
         @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2", "Pool#{@pool.id}Room1", @pool.timelimit, [1, 2])
         @pm.merge_calls_for_pool(@pool, data).should == {
           :next_room   => 2,
-          :conferences => { "Pool#{@pool.id}Room1" => {:name => "Pool#{@pool.id}Room1", :members => 2} }, 
           :on_hold     => {},
           :placed      => {
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => {
@@ -226,7 +231,6 @@ describe PoolMerger do
         @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX3", "Pool#{@pool.id}Room1", @pool.timelimit, [1, 2, 3])
         @pm.merge_calls_for_pool(@pool, {}).should == {
           :next_room   => 2,
-          :conferences => { "Pool#{@pool.id}Room1" => {:name => "Pool#{@pool.id}Room1", :members => 3} }, 
           :on_hold     => {},
           :placed      => {
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => {
@@ -256,10 +260,6 @@ describe PoolMerger do
         @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX6", "Pool#{@pool.id}Room2", @pool.timelimit, [4, 5, 6])
         @pm.merge_calls_for_pool(@pool, {}).should == {
           :next_room   => 3,
-          :conferences => { 
-            "Pool#{@pool.id}Room1" => {:name => "Pool#{@pool.id}Room1", :members => 3},
-            "Pool#{@pool.id}Room2" => {:name => "Pool#{@pool.id}Room2", :members => 3},
-          }, 
           :on_hold     => {},
           :placed      => {
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => {
@@ -307,7 +307,6 @@ describe PoolMerger do
         @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2", "Pool#{@pool.id}Room1", @pool.timelimit, [1, 2])
         @pm.merge_calls_for_pool(@pool, data).should == {
           :next_room   => 2,
-          :conferences => { "Pool#{@pool.id}Room1" => {:name => "Pool#{@pool.id}Room1", :members => 2} }, 
           :on_hold     => {},
           :placed      => {
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX3" => {
@@ -341,7 +340,6 @@ describe PoolMerger do
         }
         @pm.merge_calls_for_pool(@pool, data).should == {
           :next_room   => 2,
-          :conferences => { "Pool#{@pool.id}Room1" => {:name => "Pool#{@pool.id}Room1", :members => 3} }, 
           :on_hold     => { "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX3" => 1 },
           :placed      => {
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX4" => {
@@ -366,7 +364,6 @@ describe PoolMerger do
     it "should initialize the empty hash" do
       @pm.initialize_data({}).should == {
         :next_room   => 1,
-        :conferences => {},
         :on_hold     => {},
         :placed      => {},
       }

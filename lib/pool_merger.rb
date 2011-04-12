@@ -26,7 +26,7 @@ class PoolMerger
 
     if new_participants.count == 1
       participant = new_participants[0]
-      if on_hold?(participant, data) && data[:conferences].any?
+      if on_hold?(participant, data) && data[:placed].any?
         add_single_participant_to_conference(participant, pool, data)
       else
         if hold_count(participant, data) >= max_hold_count
@@ -97,7 +97,6 @@ class PoolMerger
       :room_name => room_name,
       :event_id  => participant_event_id(participant)
     }
-    data[:conferences][room_name][:members] += 1
   end
 
   def create_new_group(list, pool, data)
@@ -115,7 +114,13 @@ class PoolMerger
   end
   
   def smallest_conference_room(data)
-    data[:conferences].sort { |a,b| a[1][:members] <=> b[1][:members]}.first[0]
+    conferences = {}
+    data[:placed].each_value do |v|
+      conferences[v[:room_name]] ||= {}
+      conferences[v[:room_name]][:members] ||= 0
+      conferences[v[:room_name]][:members] += 1
+    end
+    conferences.sort { |a,b| a[1][:members] <=> b[1][:members]}.first[0]
   end    
 
   def event_ids_for_conference_room(room_name, data)
@@ -131,14 +136,12 @@ class PoolMerger
     room_number = data[:next_room]
     data[:next_room] += 1
     conference_name = "Pool#{pool.id}Room#{room_number}"
-    data[:conferences][conference_name] = { :name => conference_name, :members => 0 }
     conference_name
   end
 
   def initialize_data(data)
     data = {} if data.empty?
     data[:next_room]   = 1  unless data.has_key?(:next_room)
-    data[:conferences] = {} unless data.has_key?(:conferences)
     data[:on_hold]     = {} unless data.has_key?(:on_hold)
     data[:placed]      = {} unless data.has_key?(:placed)
     data
