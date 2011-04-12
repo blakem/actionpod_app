@@ -46,19 +46,19 @@ describe Event do
 
     it "pretty prints with schedule_str and can be modified with alter_schedule" do
       @event.schedule_str.should ==
-        '8:00am on Mondays, Tuesdays, Wednesdays, Thursdays, and Fridays'
+        '8:00am on Weekdays'
       @event.alter_schedule(:hour_of_day => [10])
       @event.schedule_str.should ==
-        '10:00am on Mondays, Tuesdays, Wednesdays, Thursdays, and Fridays'
+        '10:00am on Weekdays'
       @event.alter_schedule(:hour_of_day => [14], :minute_of_hour => [15])
       @event.schedule_str.should ==
-        '2:15pm on Mondays, Tuesdays, Wednesdays, Thursdays, and Fridays'
+        '2:15pm on Weekdays'
       @event.alter_schedule(:hour_of_day => [12], :minute_of_hour => [15])
       @event.schedule_str.should ==
-        '12:15pm on Mondays, Tuesdays, Wednesdays, Thursdays, and Fridays'
+        '12:15pm on Weekdays'
       @event.alter_schedule(:hour_of_day => [0], :minute_of_hour => [15])
       @event.schedule_str.should ==
-        '12:15am on Mondays, Tuesdays, Wednesdays, Thursdays, and Fridays'
+        '12:15am on Weekdays'
       @event.alter_schedule(:day => [2,3,4], :minute_of_hour => [15])
       @event.schedule_str.should ==
         '12:15am on Tuesdays, Wednesdays, and Thursdays'
