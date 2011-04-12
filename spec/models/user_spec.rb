@@ -90,4 +90,18 @@ describe User do
     event.schedule.start_time.time_zone.to_s.should == "(GMT-07:00) " + mountain_time_zone
   end
   
+  it "has a first_name" do
+    user = Factory(:user, :name => "Bob Jones", :email => 'abc@123.com')
+    user.first_name.should == 'Bob'
+    user.name = 'Sally'
+    user.first_name.should == 'Sally'
+    user.name = ' sally smith'
+    user.first_name.should == 'Sally'
+    user.name = nil
+    user.first_name.should == 'abc'
+    user.name = ''
+    user.first_name.should == 'abc'
+    user.email.should == 'abc@123.com'
+  end
+  
 end

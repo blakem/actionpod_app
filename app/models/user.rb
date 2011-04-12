@@ -83,6 +83,10 @@ class User < ActiveRecord::Base
   def self.secret_invite_code
     "acti0np0duser"
   end
+  
+  def first_name
+    name.blank? ? self.email.sub(/@.*/,'') : name.split[0].titlecase
+  end
 
   private
     def default_time_zone

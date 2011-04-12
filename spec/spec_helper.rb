@@ -120,13 +120,16 @@ end
 def login_user
   @request.env["devise.mapping"] = Devise.mappings[:user]
   @current_user = Factory(:user)
+  @current_user.confirmed_at = Time.now
+  @current_user.save
   sign_in @current_user
 end
 
 def login_admin
   @request.env["devise.mapping"] = Devise.mappings[:user]
-  sign_in Factory(:user, :admin => true)
+  sign_in Factory(:user, :admin => true, :confirmed_at => Time.now)
   controller.current_user.admin = true
+  controller.current_user.confirmed_at = Time.now
   controller.current_user.save
 end
 

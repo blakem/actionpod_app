@@ -36,7 +36,7 @@ describe "Users" do
           fill_in "Password Confirmation",  :with => "a"*10
           click_button
           response.should have_selector('div.flash.notice', :content => 'You have signed up successfully')
-          response.should render_template('pages/profile')
+          response.should render_template('sessions/new')
         end.should change(User, :count).by(1)
       end
     end
@@ -57,7 +57,7 @@ describe "Users" do
   
     describe "success" do
       it "should sign a user in and out" do
-        user = Factory(:user, :email => 'thisisnewrandomfoo@example.net')
+        user = Factory(:user, :email => 'thisisnewrandomfoo@example.net', :confirmed_at => Time.now)
         visit new_user_session_path
         fill_in "Email",      :with => user.email
         fill_in "Password",   :with => user.password
@@ -72,7 +72,7 @@ describe "Users" do
   describe "edit" do
     describe "failure" do
       it "should not edit user" do
-        user = Factory(:user, :email => 'thisis2newrandomfoo@example.net', :password => 'foobarbaz')
+        user = Factory(:user, :email => 'thisis2newrandomfoo@example.net', :password => 'foobarbaz', :confirmed_at => Time.now)
         visit new_user_session_path
         fill_in "Email",      :with => user.email
         fill_in "Password",   :with => user.password
@@ -91,7 +91,7 @@ describe "Users" do
   
     describe "success" do
       it "should edit user attributes" do
-        user = Factory(:user, :email => 'thisis3newrandomfoo@example.net', :password => 'foobarbaz')
+        user = Factory(:user, :email => 'thisis3newrandomfoo@example.net', :password => 'foobarbaz', :confirmed_at => Time.now)
         user.use_ifmachine.should be_false
         visit new_user_session_path
         fill_in "Email",      :with => user.email

@@ -23,13 +23,14 @@ Factory.sequence :pool_name do |n|
 end
 
 Factory.define :user do |user|
-  user.sequence(:email)  { Factory.next(:email) }
-  user.sequence(:name)  { Factory.next(:user_name) }
-  user.sequence(:title)  { Factory.next(:user_title) }
+  user.sequence(:email)         { Factory.next(:email) }
+  user.sequence(:name)          { Factory.next(:user_name) }
+  user.sequence(:title)         { Factory.next(:user_title) }
   user.sequence(:primary_phone) { Factory.next(:phone) }
-  user.time_zone         "Pacific Time (US & Canada)"
-  user.password          "foobar"
-  user.invite_code       User.secret_invite_code
+  user.time_zone                "Pacific Time (US & Canada)"
+  user.password                 "foobar"
+  user.invite_code              User.secret_invite_code
+  user.confirmed_at             (Time.now - 5.minutes)
 end
 
 Factory.define :event do |event|

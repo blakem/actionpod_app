@@ -7,7 +7,7 @@ describe "Events" do
     describe "failure" do
       it "should not create a new event" do
         lambda do
-          user = Factory(:user, :email => 'purple@example.com')
+          user = Factory(:user, :email => 'purple@example.com', :confirmed_at => Time.now)
           visit new_user_session_path
           fill_in "Email",      :with => user.email
           fill_in "Password",   :with => user.password
@@ -26,7 +26,7 @@ describe "Events" do
     describe "success" do
       it "should create a new event / edit an existing event / delete an existing event" do
         # log in
-        user = Factory(:user, :email => 'green@example.com')
+        user = Factory(:user, :email => 'green@example.com', :confirmed_at => Time.now)
         visit new_user_session_path
         fill_in "Email",      :with => user.email
         fill_in "Password",   :with => user.password
