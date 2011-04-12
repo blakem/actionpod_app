@@ -51,8 +51,12 @@ class TwilioCaller
     resp = twilio_account.request(*args)
     unless resp.kind_of?(Net::HTTPOK)
       resp = twilio_account.request(*args)
-      send_error_to_blake("Retrying twilio_request: ResponseCode:#{resp.class}")
-    end      
+      send_error_to_blake("Retrying twilio_request: ResponseCode:#{resp.class}") unless args[0] == sms_uri
+      unless resp.respond_to?('body')
+        send_error_to_blake("Fatal twilio_request not retrying: ResponseCode:#{resp.class}") unless args[0] == sms_uri
+        return {}
+      end
+    end
     hash = ActiveSupport::JSON.decode(resp.body).with_indifferent_access
     if (hash[:num_pages] and hash[:num_pages].to_i > 1)
       send_error_to_blake("WARNING: GOT A RESPONSE THAT NEED TO BE PAGED: #{hash[:num_pages]}")
@@ -61,6 +65,7 @@ class TwilioCaller
   end
   
   def send_error_to_blake(error)
+    send_sms('+14153141222', error)
   end
 
   def start_call_for_event(event)

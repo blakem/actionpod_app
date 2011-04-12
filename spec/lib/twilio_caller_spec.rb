@@ -3,6 +3,84 @@ require 'spec_helper'
 describe TwilioCaller do
   before(:each) do
     @tc = TwilioCaller.new
+    @tc.stub(:send_error_to_blake)
+  end
+
+  describe "twilio_request" do
+
+    it "handles the succes case and returns decoded json hash" do
+      response = mock('HTTPResponse', :body => '{"foo":"bar"}')
+      response.should_receive(:kind_of?).and_return(true)
+      account = mock('TwilioAccount')
+      account.should_receive(:request).with('http://foo.com', 'POST').and_return(response)
+      Twilio::RestAccount.should_receive(:new).with("AC2e57bf710b77d765d280786bc07dbacc", "fc9bd67bb8deee6befd3ab0da3973718").and_return(account)
+      hash = @tc.twilio_request('http://foo.com', 'POST')
+      hash.should == {"foo" =>"bar"}
+    end
+    
+    describe "HTTP Errors" do
+
+      it "retries after an error from twilio" do
+        response1 = mock('HTTPResponse')
+        response1.should_receive(:kind_of?).and_return(false)
+        response2 = mock('HTTPResponse', :body => '{"foo":"bar"}', :responds_to? => true)
+        response2.should_not_receive(:kind_of?)
+        account = mock('TwilioAccount')
+        account.should_receive(:request).with('http://foo.com', 'POST').and_return(response1, response2)
+        Twilio::RestAccount.should_receive(:new).with("AC2e57bf710b77d765d280786bc07dbacc", "fc9bd67bb8deee6befd3ab0da3973718").and_return(account)
+        @tc.should_receive('send_error_to_blake').with("Retrying twilio_request: ResponseCode:#{response1.class}")
+        hash = @tc.twilio_request('http://foo.com', 'POST')
+        hash.should == {"foo" =>"bar"}
+      end
+
+      it "two errors in a row" do
+        response = mock('HTTPResponse')
+        response.should_receive(:kind_of?).and_return(false)
+        account = mock('TwilioAccount')
+        account.should_receive(:request).twice.with('http://foo.com', 'POST').and_return(response)
+        Twilio::RestAccount.should_receive(:new).with("AC2e57bf710b77d765d280786bc07dbacc", "fc9bd67bb8deee6befd3ab0da3973718").and_return(account)
+        @tc.should_receive('send_error_to_blake').with("Retrying twilio_request: ResponseCode:#{response.class}")
+        @tc.should_receive('send_error_to_blake').with("Fatal twilio_request not retrying: ResponseCode:#{response.class}")
+        hash = @tc.twilio_request('http://foo.com', 'POST')
+        hash.should == {}
+      end
+    end
+
+    describe "num_pages" do
+
+      it "no warning if num_pages = 0" do
+        response = mock('HTTPResponse', :body => '{"num_pages":"0"}')
+        response.should_receive(:kind_of?).and_return(true)
+        account = mock('TwilioAccount')
+        account.should_receive(:request).with('http://foo.com', 'POST').and_return(response)
+        Twilio::RestAccount.should_receive(:new).with("AC2e57bf710b77d765d280786bc07dbacc", "fc9bd67bb8deee6befd3ab0da3973718").and_return(account)
+        @tc.should_not_receive('send_error_to_blake')
+        hash = @tc.twilio_request('http://foo.com', 'POST')
+        hash.should == {"num_pages" => "0"}
+      end
+    
+      it "no warning if num_pages = 1" do
+        response = mock('HTTPResponse', :body => '{"num_pages":"1"}')
+        response.should_receive(:kind_of?).and_return(true)
+        account = mock('TwilioAccount')
+        account.should_receive(:request).with('http://foo.com', 'POST').and_return(response)
+        Twilio::RestAccount.should_receive(:new).with("AC2e57bf710b77d765d280786bc07dbacc", "fc9bd67bb8deee6befd3ab0da3973718").and_return(account)
+        @tc.should_not_receive('send_error_to_blake')
+        hash = @tc.twilio_request('http://foo.com', 'POST')
+        hash.should == {"num_pages" => "1"}
+      end
+
+      it "sends me a warning if num_pages > 1" do
+        response = mock('HTTPResponse', :body => '{"num_pages":"2"}')
+        response.should_receive(:kind_of?).and_return(true)
+        account = mock('TwilioAccount')
+        account.should_receive(:request).with('http://foo.com', 'POST').and_return(response)
+        Twilio::RestAccount.should_receive(:new).with("AC2e57bf710b77d765d280786bc07dbacc", "fc9bd67bb8deee6befd3ab0da3973718").and_return(account)
+        @tc.should_receive('send_error_to_blake').with("WARNING: GOT A RESPONSE THAT NEED TO BE PAGED: 2")
+        hash = @tc.twilio_request('http://foo.com', 'POST')
+        hash.should == {"num_pages" => "2"}
+      end
+    end
   end
 
   describe "Initiating a call" do
@@ -197,6 +275,12 @@ describe TwilioCaller do
       rv.should == {
         "dont" => "currently handle this"
       }
+    end
+
+    it "send_error_to_blake" do
+      tc = TwilioCaller.new
+      tc.should_receive(:send_sms).with('+14153141222', "Error Message")
+      tc.send_error_to_blake("Error Message")
     end
   end
 end
