@@ -1,5 +1,5 @@
 # == Schema Information
-# Schema version: 20110411193758
+# Schema version: 20110412071458
 #
 # Table name: users
 #
@@ -27,12 +27,15 @@
 #  primary_phone_string :string(255)
 #  deleted_at           :datetime
 #  location             :string(255)
+#  confirmation_token   :string(255)
+#  confirmed_at         :datetime
+#  confirmation_sent_at :datetime
 #
 
 class User < ActiveRecord::Base
   # Include default devise modules. Others available are:
   # :token_authenticatable, :confirmable, :lockable and :timeoutable
-  devise :database_authenticatable, :registerable,
+  devise :database_authenticatable, :registerable, :confirmable,
          :recoverable, :rememberable, :trackable, :validatable
 
   # Setup accessible (or protected) attributes for your model
