@@ -13,7 +13,7 @@ describe TwilioCaller do
     it "should use Twilio::RestAccount to make a call" do
       user = Factory(:user)
       event = Factory(:event, :user_id => user.id)  
-      response = mock('HTTPResponse', :body => successful_start_call_response, :success? => true)
+      response = mock('HTTPResponse', :body => successful_start_call_response)
       account = mock('TwilioAccount', :request => response)
       account.should_receive(:request).with(
         "/2010-04-01/Accounts/AC2e57bf710b77d765d280786bc07dbacc/Calls.json",
@@ -45,7 +45,7 @@ describe TwilioCaller do
       user.use_ifmachine = true
       user.save
       event = Factory(:event, :user_id => user.id)  
-      response = mock('HTTPResponse', :body => successful_start_call_response, :success? => true)
+      response = mock('HTTPResponse', :body => successful_start_call_response)
       account = mock('TwilioAccount', :request => response)
       account.should_receive(:request).with(
         "/2010-04-01/Accounts/AC2e57bf710b77d765d280786bc07dbacc/Calls.json",
@@ -70,7 +70,7 @@ describe TwilioCaller do
     end
   
     it "conferences_in_progress" do
-      response = mock('HTTPResponse', :body => conference_response, :success? => true)
+      response = mock('HTTPResponse', :body => conference_response)
       account = mock('TwilioAccount', :request => response)
       account.should_receive(:request).with(@tc.conferences_in_progress_uri, 'GET')
       Twilio::RestAccount.should_receive(:new).with("AC2e57bf710b77d765d280786bc07dbacc", "fc9bd67bb8deee6befd3ab0da3973718").and_return(account)
@@ -93,7 +93,7 @@ describe TwilioCaller do
     end
 
     it "conferences_on_hold_for_pool" do
-      response = mock('HTTPResponse', :body => two_conference_response, :success? => true)
+      response = mock('HTTPResponse', :body => two_conference_response)
       account = mock('TwilioAccount', :request => response)
       pool = mock('Pool', :id => 123)
       account.should_receive(:request).with(@tc.conferences_in_progress_uri, 'GET')
@@ -118,7 +118,7 @@ describe TwilioCaller do
     
     describe "participants_on_hold_for_pool" do
       it "works for one participant" do
-        response = mock('HTTPResponse', :success? => true)
+        response = mock('HTTPResponse')
         response.should_receive(:body).twice.and_return(two_conference_response, participant_response)
         account = mock('TwilioAccount', :request => response)
         pool = mock('Pool', :id => 123)
@@ -184,7 +184,7 @@ describe TwilioCaller do
     it "send_sms" do
       phone_number = '+12223334444'
       text = 'Some random SMS Text'
-      response = mock('HTTPResponse', :success? => true)
+      response = mock('HTTPResponse')
       response.should_receive(:body).and_return(sms_response)
       account = mock('TwilioAccount', :request => response)
       account.should_receive(:request).with(@tc.sms_uri, 'POST', {

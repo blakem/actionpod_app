@@ -55,7 +55,7 @@ describe PoolQueuer do
     
     it "Sends and SMS if it's the only one scheduled" do
       dj = DelayedJob.create(@delay_args.merge(:obj_id => @event.id))
-      response = mock('HTTPResponse', :success? => true)
+      response = mock('HTTPResponse')
       response.should_receive(:body).and_return('{"foo":"bar"}')
       account = mock('TwilioAccount', :request => response)
       account.should_receive(:request).with(TwilioCaller.new.sms_uri, 'POST', {
