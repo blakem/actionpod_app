@@ -13,4 +13,8 @@ git add .
 echo; echo "************ git commit -m \"$comment\""
 git commit -m "$comment"
 
-script/deploy.sh
+echo; echo "************ git push"
+git push
+
+script/migrate_all_databases.sh
+

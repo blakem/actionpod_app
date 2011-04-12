@@ -14,11 +14,8 @@ class PagesController < ApplicationController
   end
   
   def callcal
-    if user_signed_in?
-      @scheduled_events = build_scheduled_events
-    else
-      redirect_to(root_path) unless user_signed_in?
-    end
+    redirect_to(root_path) unless user_signed_in?
+    @scheduled_events = build_scheduled_events
   end
   
   private

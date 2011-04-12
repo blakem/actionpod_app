@@ -19,7 +19,12 @@ namespace :show do
   task :users => :environment do
     User.all.sort { |a,b| a.id <=> b.id }.each do |u|
       event_count = u.events.count
-      puts "#{u.id}:#{sprintf('%20s',u.name)} has #{sprintf('%-2s',event_count)} Events."
+      admin = u.admin? ? '*' : ' '
+      not_confirmed = u.confirmed_at.blank? ? 'NC' : '  '
+      time = event_count == 1 ? u.events.first.time : ''
+        
+      puts "#{sprintf('%3s',u.id)}:#{admin}#{not_confirmed} #{sprintf('%-25s',u.name)} " +
+           "has #{sprintf('%2s',event_count)}e #{sprintf('%-27s',u.time_zone)} #{sprintf('%7s',time)}"
     end
   end
 end

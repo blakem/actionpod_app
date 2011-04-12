@@ -14,6 +14,7 @@ gem 'gravatar_image_tag'
 gem 'heroku_san'
 
 group :test, :development do
+  gem 'faker'
   gem 'rspec-rails'
   gem 'annotate-models'
   gem 'rspec'
