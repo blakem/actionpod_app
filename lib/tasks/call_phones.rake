@@ -16,6 +16,10 @@ task :call_phones => :environment do
   
     run_time = Time.now + 1.minute
     event1.time = run_time.in_time_zone(user1.time_zone).strftime("%I:%M%p")
+    if event1.minute_of_hour == 0
+      run_time = run_time + 1.minute
+      event1.time = run_time.in_time_zone(user1.time_zone).strftime("%I:%M%p")
+    end
     event2.time = run_time.in_time_zone(user2.time_zone).strftime("%I:%M%p")
 
     DelayedJob.where(:obj_jobtype => 'merge_calls_for_pool', :pool_id => event1.pool.id).each { |dj| dj.destroy }
