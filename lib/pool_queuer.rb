@@ -62,10 +62,10 @@ class PoolQueuer
     return true if count > ((call_duration - time_before_first_merge) / time_between_merges)
     data = PoolMerger.new.merge_calls_for_pool(pool, data) if count > 0  
     self.delay(
-      :obj_type    => 'Pool',
-      :obj_id      => pool.id,
+      :obj_type    => 'PoolMerger',
       :obj_jobtype => 'merge_calls_for_pool',
-      :run_at      => pool_runs_at + (time_between_merges * count) + time_before_first_merge
+      :run_at      => pool_runs_at + (time_between_merges * count) + time_before_first_merge,
+      :pool_id     => pool.id,
     ).queue_merge_calls_for_pool(pool, pool_runs_at, count+1, data)
   end
 

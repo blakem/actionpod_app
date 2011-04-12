@@ -86,8 +86,8 @@ describe PoolQueuer do
         @pq.check_before_calls_go_out(@pool, @now + 5.minutes)
       }.to change(DelayedJob, :count).by(1)
       DelayedJob.where(
-        :obj_type    => 'Pool',
-        :obj_id      => @pool.id,
+        :obj_type    => 'PoolMerger',
+        :pool_id     => @pool.id,
         :obj_jobtype => 'merge_calls_for_pool',
         :run_at      => @now + 5.minutes + @pq.time_before_first_merge
       ).count.should == 1
@@ -124,16 +124,16 @@ describe PoolQueuer do
         @pq.queue_merge_calls_for_pool(@pool, @now + 5.minutes, 1, {})
       }.to change(DelayedJob, :count).by(1)
       djs = DelayedJob.where(
-        :obj_type    => 'Pool',
-        :obj_id      => @pool.id,
+        :obj_type    => 'PoolMerger',
+        :pool_id     => @pool.id,
         :obj_jobtype => 'merge_calls_for_pool',
         :run_at      => @now + 5.minutes + @pq.time_before_first_merge + (@pq.time_between_merges * 1)
       )
       djs.count.should == 1
       YAML.load(djs[0].handler).perform
       DelayedJob.where(
-        :obj_type    => 'Pool',
-        :obj_id      => @pool.id,
+        :obj_type    => 'PoolMerger',
+        :pool_id     => @pool.id,
         :obj_jobtype => 'merge_calls_for_pool',
         :run_at      => @now + 5.minutes + @pq.time_before_first_merge + (@pq.time_between_merges * 2)
       ).count.should == 1
@@ -147,8 +147,8 @@ describe PoolQueuer do
         @pq.queue_merge_calls_for_pool(@pool, @now + 5.minutes, 177, {})
       }.to change(DelayedJob, :count).by(1)
       DelayedJob.where(
-        :obj_type    => 'Pool',
-        :obj_id      => @pool.id,
+        :obj_type    => 'PoolMerger',
+        :pool_id     => @pool.id,
         :obj_jobtype => 'merge_calls_for_pool',
         :run_at      => @now + 5.minutes + @pq.time_before_first_merge + (@pq.time_between_merges * 177)
       ).count.should == 1
