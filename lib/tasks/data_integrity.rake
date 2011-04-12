@@ -82,7 +82,7 @@ task :delayed_jobs => :environment do
         string += " (#{obj.user.name})"
       end
     end
-    puts "#{j.id}:#{j.pool_id} #{j.run_at.in_time_zone('Pacific Time (US & Canada)')} " +
+    puts "#{sprintf('%6s',j.id)}:#{sprintf('%-2s',j.pool_id)} #{j.run_at.in_time_zone('Pacific Time (US & Canada)')} " +
          "#{sprintf('%-11s', j.obj_type)} #{sprintf('%-25s',j.obj_jobtype)} #{sprintf('%3s',j.obj_id)} #{string}"
   end
 end
