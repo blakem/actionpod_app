@@ -77,7 +77,7 @@ task :delayed_jobs => :environment do
     obj = Kernel.const_get(j.obj_type).find_by_id(j.obj_id)
     string = obj.name
     if obj.respond_to?('user')
-      string .= " (#{obj.user.name})"
+      string += " (#{obj.user.name})"
     end
     puts "#{j.id}:#{j.pool_id} #{j.run_at} #{sprintf('%-11s', j.obj_type)} #{sprintf('%-25s',j.obj_jobtype)} #{j.obj_id} #{string}"
   end
