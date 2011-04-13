@@ -36,7 +36,7 @@ describe "Events" do
 
         # create event
         lambda do
-          click_link 'Create New Event'
+          click_link 'Create a new time slot'
           response.should render_template('events/new')
           fill_in "Name",       :with => "Fancy Good Name"
           click_button

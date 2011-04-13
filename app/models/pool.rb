@@ -19,5 +19,9 @@ class Pool < ActiveRecord::Base
   def init
     self.timelimit ||= 15
   end
+
+  def self.default_pool
+    self.where(:name => 'Default Pool').sort{ |a,b| a.id <=> b.id }.first  
+  end
   
 end

@@ -12,7 +12,13 @@ class PagesController < ApplicationController
     @user = current_user
     @title = @user.name
     @events = current_user.events.sort { |a,b| a.minute_of_day <=> b.minute_of_day }
-    @timeslots = [{:name => '10', :string => '10am on Weekdays'}]
+    @timeslots = build_timeslots
+  end
+  
+  def join
+    event = Event.create(:user_id => current_user.id, :pool_id => Pool.default_pool.id, :time => params[:time])
+    run_at_date = event.schedule.next_occurrence.strftime("%A at %l:%M%p").sub(/AM/,'am').sub(/PM/,'pm')
+    redirect_to(root_path, :notice => "Great! We'll call you on #{run_at_date}. ;-)")
   end
   
   def callcal
@@ -20,6 +26,18 @@ class PagesController < ApplicationController
   end
   
   private
+    def build_timeslots
+      slots = []
+      build_scheduled_events.each do |occurrence|
+        slot = occurrence[0].strftime('%l:%M%p').downcase.strip
+        slots.push(slot) unless slots.include?(slot)
+      end
+      current_user.events.each do |event|
+        slots.delete(event.time.downcase.strip)
+      end
+      slots.map{ |s| {:time => s, :string => "#{s} on Weekdays"} }
+    end
+    
     def build_scheduled_events
       hash = {}
       start_time = Time.now.beginning_of_week + 6.days
