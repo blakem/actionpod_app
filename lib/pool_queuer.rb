@@ -51,6 +51,13 @@ class PoolQueuer
       if (event)
         TwilioCaller.new.send_sms(event.user.primary_phone, 
           "Sorry.  No one else is scheduled for the #{event.time} slot.  This shouldn't happen after we reach a critical mass of users. ;-)")
+        conference = Conference.create(
+          :pool_id => event.pool_id, 
+          :started_at => pool_runs_at, 
+          :ended_at => pool_runs_at, 
+          :status => 'only_one_scheduled',
+        )
+        conference.users = [event.user]
       end
       job.destroy
     else
@@ -63,7 +70,7 @@ class PoolQueuer
       create_conferences(pool, pool_runs_at, data)
       return true
     end
-    data = PoolMerger.new.merge_calls_for_pool(pool, data) if count > 0  
+    data = PoolMerger.new.merge_calls_for_pool(pool, pool_runs_at, data) if count > 0  
     self.delay(
       :obj_type    => 'PoolMerger',
       :obj_jobtype => 'merge_calls_for_pool',

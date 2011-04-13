@@ -14,7 +14,7 @@ class PoolMerger
        # if either is old unite them
        # if they are both new leave them there
 
-  def merge_calls_for_pool(pool, data)
+  def merge_calls_for_pool(pool, pool_runs_at, data)
     @tc = TwilioCaller.new
     data = initialize_data(data)
     new_participants = filter_new_participants_that_have_been_placed(@tc.participants_on_hold_for_pool(pool), data)
@@ -30,7 +30,7 @@ class PoolMerger
         add_single_participant_to_conference(participant, pool, data)
       else
         if hold_count(participant, data) >= max_hold_count
-          apologize_to_participant(participant, data)
+          apologize_to_participant(participant, pool, pool_runs_at, data)
         else
           put_on_hold(participant, data)
         end
@@ -47,13 +47,21 @@ class PoolMerger
     data
   end
 
-  def apologize_to_participant(participant, data)
+  def apologize_to_participant(participant, pool, pool_runs_at, data)
     take_off_hold(participant, data)
     @tc.apologize_no_other_participants(participant[:call_sid], data[:total])
     @tc.send_sms(
       Event.find(participant_event_id(participant)).user.primary_phone,
       "Sorry about that... I couldn't find anyone else for the call.  That shouldn't happen once we reach critical mass. ;-)",
     )
+    event = Event.find(participant_event_id(participant))
+    conference = Conference.create(
+      :pool_id    => pool.id,
+      :started_at => pool_runs_at,
+      :ended_at   => Time.now,
+      :status     => 'only_one_answered'
+    )
+    conference.users = [event.user]
   end
       
   def on_hold?(participant, data)

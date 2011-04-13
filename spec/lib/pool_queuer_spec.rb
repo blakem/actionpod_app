@@ -64,7 +64,10 @@ describe PoolQueuer do
         :Body => "Sorry.  No one else is scheduled for the 8:00am slot.  This shouldn't happen after we reach a critical mass of users. ;-)"        
       })
       Twilio::RestAccount.should_receive(:new).with("AC2e57bf710b77d765d280786bc07dbacc", "fc9bd67bb8deee6befd3ab0da3973718").and_return(account)
-      @pq.check_before_calls_go_out(@pool, @now + 5.minutes)
+      pool_runs_at = @now + 5.minutes
+      @pq.check_before_calls_go_out(@pool, pool_runs_at)
+      conference = Conference.where(:pool_id => @pool.id, :started_at => pool_runs_at, :ended_at => pool_runs_at, :status => 'only_one_scheduled')[0]
+      conference.users.should == [@user]
     end
 
     it "should have a call_duration" do
