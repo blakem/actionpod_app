@@ -17,8 +17,8 @@ class PoolMerger
   def merge_calls_for_pool(pool, data)
     @tc = TwilioCaller.new
     data = initialize_data(data)
-    new_participants = sort_participants(@tc.participants_on_hold_for_pool(pool), data)
-    new_participants = filter_new_participants_that_have_been_placed(new_participants, data)
+    new_participants = filter_new_participants_that_have_been_placed(@tc.participants_on_hold_for_pool(pool), data)
+    new_participants = sort_participants(new_participants, data)
     while new_participants.count > 2 do
       create_new_group(new_participants.shift(3), pool, data)
     end
@@ -77,8 +77,10 @@ class PoolMerger
   end
   
   def sort_participants(participants, data)
-    participants.select { |p|  on_hold?(p, data) }.sort{ |a,b| hold_count(b, data) <=> hold_count(a, data) } + 
-    participants.select { |p| !on_hold?(p, data) }
+    participants.sort{ |a,b| 
+      first_check = hold_count(b, data) <=> hold_count(a, data)
+      first_check != 0 ? first_check : participant_event_id(a) <=> participant_event_id(b)
+    }
   end
 
   def put_on_hold(participant, data)

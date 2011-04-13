@@ -249,8 +249,8 @@ describe PoolMerger do
         }
       end
 
-      it "with six we should get two new conferences" do
-        new_participants = participant_list(6)
+      it "with six we should get two new conferences ordered by event_id" do
+        new_participants = participant_list(6).reverse # reverse tests the sorting by event_id
         @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
         @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1", "Pool#{@pool.id}Room1", @pool.timelimit, [1, 2, 3])
         @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2", "Pool#{@pool.id}Room1", @pool.timelimit, [1 ,2 ,3])
