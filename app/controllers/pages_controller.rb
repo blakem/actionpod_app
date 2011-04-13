@@ -13,6 +13,7 @@ class PagesController < ApplicationController
     @title = @user.name
     @events = current_user.events.sort { |a,b| a.minute_of_day <=> b.minute_of_day }
     @timeslots = build_timeslots
+    @nextcalls = build_nextcalls
   end
   
   def join
@@ -26,6 +27,18 @@ class PagesController < ApplicationController
   end
   
   private
+    def build_nextcalls
+      calls = []
+      start_time = Time.now
+      end_time = start_time + 7.days
+      current_user.events.each do |event|
+        event.schedule.occurrences_between(start_time, end_time).each do |occurrence|
+          calls.push(occurrence.in_time_zone(current_user.time_zone))
+        end
+      end
+      calls = calls.sort{ |a,b| a <=> b }.map { |c| c.strftime("%l:%M%p on %A").sub(/AM/,'am').sub(/PM/,'pm') }
+      calls[0..4]
+    end
     def build_timeslots
       slots = []
       build_scheduled_events.each do |occurrence|

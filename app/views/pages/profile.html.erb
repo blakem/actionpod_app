@@ -16,7 +16,7 @@
         <% end %>
 	  </ul>
 	<% else %>
-	Thanks for joining. Below is a list of existing time-slots that other users have scheduled.  Simply click the 'Join' button to add yourself to the call. ;-)
+	Below is a list of existing time-slots that other users have scheduled.  Simply <b>click the 'Join'</b> button to add yourself to the call. ;-)
 	<% end %>
 	<% if @timeslots.any? %>
 	  <ul class="home">
@@ -31,7 +31,17 @@
 	  </ul>
     </td>
     <td class="sidebar round">
-  	  <strong><%= link_to "Show existing call times", :action => :callcal %></strong><br/>
+      <% if current_user.admin? %>
+      <p><strong><%= link_to "Show existing call times", :action => :callcal %></strong></p>
+      <% end %>
+      <% if @nextcalls.any? %>
+        <p><strong>Your next <%= @nextcalls.count == 1 ? 'call' : "#{@nextcalls.count} calls" %>:</strong><br/>
+        <% @nextcalls.each do |call| %>
+        <%= call %><br/>
+        <% end %>
+        </p>
+      <% end %>
+      </p>
 	</td>
   </tr>
 </table>
