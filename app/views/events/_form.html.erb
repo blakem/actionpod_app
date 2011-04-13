@@ -10,14 +10,12 @@
       </ul>
     </div>
   <% end %>
+  <p></p>
+  <p><%= f.label :time, "Time we should call you:" %>
+  <%= f.collection_select :time, Event.available_hours, :to_s, :to_s %></p>
 
-  <p><%= f.label :name %><br />
-  <%= f.text_field :name %></p>
-
-  <p><%= f.label :time %><br />
-  <%= f.collection_select :time, Event.available_hours, :to_s, :to_s %>
-
-  <p> <%= check_box_tag 'on_sun', 0, @event.on_day(0) %> Sunday <br/>
+  <p><label>Days we should call you:</label><br/>
+      <%= check_box_tag 'on_sun', 0, @event.on_day(0) %> Sunday <br/>
       <%= check_box_tag 'on_mon', 1, @event.on_day(1) %> Monday <br/>
       <%= check_box_tag 'on_tue', 2, @event.on_day(2) %> Tuesday <br/>
       <%= check_box_tag 'on_wed', 3, @event.on_day(3) %> Wednesday <br/>
@@ -25,7 +23,12 @@
       <%= check_box_tag 'on_fri', 5, @event.on_day(5) %> Friday <br/>
       <%= check_box_tag 'on_sat', 6, @event.on_day(6) %> Saturday </p>
 
+  <p><%= f.label :name, "Name of this call:" %> 
+     <%= f.text_field :name %></br>
+     <i>(This name is just used for you to refer to later)</i></p>
+
+
   <div class="actions">
-    <%= f.submit %>
+    <%= f.submit "Update Your Availability" %>
   </div>
 <% end %>

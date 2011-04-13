@@ -2,10 +2,12 @@ require 'spec_helper'
 
 describe Event do
   
-  it "should require a name" do
-    event = Event.new
+  it "should generate a name if it isn't given one" do
+    user = Factory(:user, :name => 'Bob Jones')
+    event = Factory(:event, :user_id => user.id, :name => '')
     event.valid?
-    event.errors[:name].should include("can't be blank")
+    event.errors[:name].should be_empty
+    event.name.should == "Bob's 8:00am Call"
   end
   
   it "should have a user" do

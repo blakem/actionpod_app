@@ -17,6 +17,13 @@ class Event < ActiveRecord::Base
   belongs_to :pool
 
   validates_presence_of :name
+
+  before_validation do
+    if self.name.blank?
+      self.name = (self.user.first_name + "'s " + self.time + " Call")
+    end
+  end
+
   
   def schedule
     days.empty? ? empty_schedule : schedule_actual

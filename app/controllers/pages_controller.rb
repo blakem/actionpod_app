@@ -12,6 +12,7 @@ class PagesController < ApplicationController
     @user = current_user
     @title = @user.name
     @events = current_user.events.sort { |a,b| a.minute_of_day <=> b.minute_of_day }
+    @timeslots = [{:name => '10', :string => '10am on Weekdays'}]
   end
   
   def callcal

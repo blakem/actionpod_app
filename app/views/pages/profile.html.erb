@@ -5,10 +5,24 @@
 	    <%= gravatar_for @user %>
 	    <%= @user.name %>
 	  </h1>
-	  <ul>
+	<% if @events.any? %>
+	  <ul class="home">
+	    <li><b>Your existing time slots:</b></li>
         <% @events.each do |event| %>
-    	  <li><b><%= link_to event.name, edit_event_path(event) %></b> at <%= event.schedule_str %></li>
+    	  <li><i><%= event.name %></i> : <%= event.schedule_str %> | <%= link_to "Edit", edit_event_path(event) %></li>
         <% end %>
+	  </ul>
+	<% end %>
+	<% if @timeslots.any? %>
+	  <ul class="home">
+	    <li><b>Join an existing time slot:</b></li>
+        <% @timeslots.each do |ts| %>
+  	       <li><%= ts[:string] %> <b> | <%= link_to 'Join', "/foo#{ts[:name]}" %></b></li>
+        <% end %>
+	  </ul>
+	<% end %>
+	  <ul class="home">
+	    <li><b><%= link_to "Create a new time slot.", new_event_path %></b></li>
 	  </ul>
     </td>
     <td class="sidebar round">
