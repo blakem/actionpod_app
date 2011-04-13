@@ -59,7 +59,10 @@ class PoolQueuer
   end
   
   def queue_merge_calls_for_pool(pool, pool_runs_at, count, data)
-    return true if count > ((call_duration - time_before_first_merge) / time_between_merges)
+    if count > ((call_duration - time_before_first_merge) / time_between_merges)
+      create_conferences(pool, pool_runs_at, data)
+      return true
+    end
     data = PoolMerger.new.merge_calls_for_pool(pool, data) if count > 0  
     self.delay(
       :obj_type    => 'PoolMerger',
@@ -69,4 +72,27 @@ class PoolQueuer
     ).queue_merge_calls_for_pool(pool, pool_runs_at, count+1, data)
   end
 
+  def create_conferences(pool, started_at, data)
+    conferences = {}
+    data[:placed].each_value do |p|
+      event = Event.find_by_id(p[:event_id])
+      next unless event
+      user_id = event.user.id
+      conferences[p[:room_name]] ||= {}
+      conferences[p[:room_name]][:user_ids] ||= []
+      conferences[p[:room_name]][:user_ids].push(user_id)
+      conferences[p[:room_name]][:room_name] = p[:room_name]
+    end
+    ended_at = Time.now
+    conferences.each do |k,v|
+      conference = Conference.create(
+        :room_name => v[:room_name], 
+        :status => 'completed',
+        :pool_id => pool.id,
+        :started_at => started_at,
+        :ended_at => ended_at,
+      )
+      conference.users = v[:user_ids].map{ |user_id| User.find(user_id) }
+    end 
+  end
 end

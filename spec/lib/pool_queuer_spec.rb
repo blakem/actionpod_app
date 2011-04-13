@@ -154,12 +154,51 @@ describe PoolQueuer do
       ).count.should == 1
     end
 
-    it "should exit on the 178th time" do
-      expect {
-        rv = @pq.queue_merge_calls_for_pool(@pool, @now + 5.minutes, 178, {})
+    it "should exit and create a conference on the 178th time" do
+      user1 = Factory(:user)
+      user2 = Factory(:user)
+      user3 = Factory(:user)
+      user4 = Factory(:user)
+      event1 = Factory(:event, :user_id => user1.id)
+      event2 = Factory(:event, :user_id => user2.id)
+      event3 = Factory(:event, :user_id => user3.id)
+      event4 = Factory(:event, :user_id => user4.id)
+      data = {
+        :on_hold => {},
+        :next_room => 5,
+        :placed      => {
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX11" => {
+            :room_name => "Pool#{@pool.id}Room1",
+            :event_id => event1.id,
+          },
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX12" => {
+            :room_name => "Pool#{@pool.id}Room1",
+            :event_id => event2.id,
+          },
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX21" => {
+            :room_name => "Pool#{@pool.id}Room2",
+            :event_id => event3.id,
+          },
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX22" => {
+            :room_name => "Pool#{@pool.id}Room2",
+            :event_id => event4.id,
+          },
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX22999" => {
+            :room_name => "Pool#{@pool.id}Room2",
+            :event_id => 7788990,
+          },
+        },
+      }
+      ran_at = @now + 5.minutes
+      expect { expect {
+        rv = @pq.queue_merge_calls_for_pool(@pool, ran_at, 178, data)
         rv.should == true
-      }.to_not change(DelayedJob, :count)
-    end
+      }.to_not change(DelayedJob, :count)}.to change(Conference, :count).by(2)
+      conference1 = Conference.where(:pool_id => @pool.id, :started_at => ran_at, :room_name => "Pool#{@pool.id}Room1", :status => 'completed')[0]
+      conference2 = Conference.where(:pool_id => @pool.id, :started_at => ran_at, :room_name => "Pool#{@pool.id}Room2", :status => 'completed')[0]
 
+      conference1.users.should include(user1, user2)
+      conference2.users.should include(user3, user4)
+    end
   end
 end

@@ -44,6 +44,7 @@ class User < ActiveRecord::Base
 
   has_many :events
   has_many :pools
+  has_and_belongs_to_many :conferences
 
   validates_each :invite_code, :on => :create do |record, attr, value|
       record.errors.add attr, "Please enter correct invite code." unless

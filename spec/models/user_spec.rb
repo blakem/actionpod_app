@@ -104,4 +104,12 @@ describe User do
     user.email.should == 'abc@123.com'
   end
   
+  it "has many conferences" do
+    conference1 = Conference.create
+    conference2 = Conference.create
+    user = Factory(:user)
+    user.conferences = [conference1, conference2]
+    user.conferences.should include(conference1, conference2)
+  end
+  
 end
