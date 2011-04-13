@@ -14,7 +14,7 @@ namespace :show do
            "#{sprintf('%-11s', j.obj_type)} #{sprintf('%-25s',j.obj_jobtype)} #{sprintf('%3s',j.obj_id)} #{string}"
     end
   end
-  
+
   desc "Show information about current Users"
   task :users => :environment do
     User.all.sort { |a,b| a.id <=> b.id }.each do |u|
@@ -25,6 +25,13 @@ namespace :show do
         
       puts "#{sprintf('%3s',u.id)}:#{admin}#{not_confirmed} #{sprintf('%-25s',u.name)} " +
            "has #{sprintf('%2s',event_count)}e #{sprintf('%-27s',u.time_zone)} #{sprintf('%7s',time)}"
+    end
+  end
+
+  desc "Show information about current InviteCodes"
+  task :invitecodes => :environment do
+    InviteCode.all.each do |i|
+      puts "#{i.id}: #{i.name}"
     end
   end
 end
