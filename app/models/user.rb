@@ -52,6 +52,8 @@ class User < ActiveRecord::Base
         value && (value == secret_invite_code || InviteCode.find_by_name(value.downcase))
   end
   validates_format_of :primary_phone, :with => /\A\+1\d{10}\Z/
+  validates_format_of :handle,        :with => /\A[0-9a-z]+\Z/i, :message => "can only be letters and numbers."
+  validates_uniqueness_of :handle
 
   after_initialize :init
   
