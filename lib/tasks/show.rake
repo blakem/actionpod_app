@@ -45,7 +45,8 @@ namespace :show do
       users = c.users
       names = users.map(&:name).join(',')
       date = c.started_at.strftime("%a %b %e")
-      puts "#{sprintf("%3s", c.id)}: #{date} #{c.started_at.strftime("%l:%M%p").downcase}-#{c.ended_at.strftime("%l:%M%p").downcase} " + 
+      ended_at_time = c.ended_at ? c.ended_at.strftime("%l:%M%p").downcase : 'Not Yet Ended'
+      puts "#{sprintf("%3s", c.id)}: #{date} #{c.started_at.strftime("%l:%M%p").downcase}-#{ended_at_time} " + 
            "#{sprintf("%-18s", c.status)} #{sprintf("%-12s", c.room_name)} P:#{users.count} #{names}"
     end
   end
