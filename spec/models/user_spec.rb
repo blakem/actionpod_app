@@ -112,4 +112,27 @@ describe User do
     user.conferences.should include(conference1, conference2)
   end
   
+  describe "handle" do
+    it "can be generated from the email address" do
+      user1 = Factory(:user, :email => 'foobar@example.com')
+      user1.handle.should == 'foobar'
+      user2 = Factory(:user, :email => 'foobar@example.net')
+      user2.handle.should == 'foobar2'
+    end
+
+    it "doesn't get overwritten when they change their email" do
+      user1 = Factory(:user, :email => 'foo-Bar@example.com')
+      user1.handle.should == 'foobar'
+      user1.email = 'bob@example.com'
+      user1.save
+      user1.reload
+      user1.handle.should == 'foobar'
+      user2 = Factory(:user, :email => 'foo-Bar@example.net')
+      user2.handle.should == 'foobar2'      
+      user2.email = 'sally@example.com'
+      user2.save
+      user2.reload
+      user2.handle.should == 'foobar2'      
+    end
+  end
 end

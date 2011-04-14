@@ -1,5 +1,5 @@
 # == Schema Information
-# Schema version: 20110412071458
+# Schema version: 20110414191944
 #
 # Table name: users
 #
@@ -30,6 +30,7 @@
 #  confirmation_token   :string(255)
 #  confirmed_at         :datetime
 #  confirmation_sent_at :datetime
+#  handle               :string(255)
 #
 
 class User < ActiveRecord::Base
@@ -40,7 +41,7 @@ class User < ActiveRecord::Base
 
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email, :password, :password_confirmation, :remember_me, :invite_code, :time_zone, :name, :primary_phone, :title,
-                  :invite_code, :primary_phone_string, :use_ifmachine, :location
+                  :invite_code, :primary_phone_string, :use_ifmachine, :location, :handle
 
   has_many :events
   has_many :pools
@@ -63,6 +64,9 @@ class User < ActiveRecord::Base
       self.primary_phone = primary_phone_string.gsub(/[^0-9]/, "")
       self.primary_phone = "1" + primary_phone unless primary_phone =~ /^1\d{10}$/
       self.primary_phone =  "+"  + primary_phone unless primary_phone =~ /^\+$/
+    end
+    if attribute_present?("email") && !attribute_present?("handle")
+      self.handle = self.generate_handle_from_email
     end
   end
 
@@ -87,6 +91,17 @@ class User < ActiveRecord::Base
   
   def first_name
     name.blank? ? self.email.sub(/@.*/,'') : name.split[0].titlecase
+  end
+  
+  def generate_handle_from_email
+    genhandle = self.email.sub(/@.*/,'').downcase
+    genhandle.gsub!(/[^0-9a-z]+/i, '')
+    find_unique_handle(genhandle)
+  end
+
+  def find_unique_handle(genhandle, count=1)
+    genhandle = genhandle + count.to_s if count > 1
+    self.class.find_by_handle(genhandle) ? find_unique_handle(genhandle, count+1) : genhandle
   end
 
   private
