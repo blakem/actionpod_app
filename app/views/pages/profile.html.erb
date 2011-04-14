@@ -4,6 +4,7 @@
       <%= render 'user_link' %>
       Title: <%= @user.title.blank? ? 'None' : @user.title %><br/>
       From: <%= @user.location.blank? ? 'None' : @user.location %><br/>
+	  <%= render 'show_conferences'%>
     </td>
     <td class="sidebar round">
 	  <%= render 'sidebar' %>

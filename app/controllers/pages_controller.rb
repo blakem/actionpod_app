@@ -12,14 +12,18 @@ class PagesController < ApplicationController
     @user = current_user
     @title = @user.name
     @events = current_user.events.sort { |a,b| a.minute_of_day <=> b.minute_of_day }
+    @conferences = current_user.conferences
     @timeslots = build_timeslots
     @nextcalls = build_nextcalls
+    @your = 'Your'
   end
   
   def profile
     @user = User.find_by_handle(params[:handle])
+    @conferences = @user.conferences
     @title = @user.name
     @nextcalls = build_nextcalls
+    @your = @user.first_name + "'s"
   end
   
   def join
