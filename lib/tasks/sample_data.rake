@@ -17,7 +17,7 @@ def make_users
 
   admin = User.create!(
     :invite_code => invite_code.name,
-    :name => "Example User",
+    :name => "Blake Mills",
     :email => 'blakem30@yahoo.com',
     :primary_phone_string => '415 314 1222',
     :password => 'foobar',
