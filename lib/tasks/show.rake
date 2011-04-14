@@ -41,7 +41,7 @@ namespace :show do
       users = c.users
       names = users.map(&:name).join(',')
       date = c.started_at.strftime("%a %b %e")
-      puts "#{c.id}: #{date} #{c.started_at.strftime("%l:%M%p").downcase}-#{c.ended_at.strftime("%l:%M%p").downcase} " + 
+      puts "#{sprintf("%3s", c.id)}: #{date} #{c.started_at.strftime("%l:%M%p").downcase}-#{c.ended_at.strftime("%l:%M%p").downcase} " + 
            "#{sprintf("%-18s", c.status)} #{sprintf("%-12s", c.room_name)} P:#{users.count} #{names}"
     end
   end
@@ -57,7 +57,8 @@ namespace :show do
         event = Event.find_by_id(c.event_id)
         user = event.user.name if event
       end
-      puts "#{c.id}: #{date} #{time.strftime("%l:%M:%S%p").downcase} #{c.To} #{c.From} #{sprintf("%-12s", c.Direction)} #{sprintf("%-4s", c.Duration)} #{user}"
+      puts "#{sprintf("%3s", c.id)}: #{date} #{time.strftime("%l:%M:%S%p").downcase} #{c.To} #{c.From} " +
+           "#{sprintf("%-12s", c.Direction)} #{sprintf("%-4s", c.Duration)} #{user}"
     end
   end
 end
