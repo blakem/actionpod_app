@@ -50,13 +50,14 @@ namespace :show do
   task :calls => :environment do
     calls = Call.all.sort{ |a,b| a.created_at <=> b.created_at }
     calls[-20..-1].each do |c|
-      date = c.created_at.strftime("%a %b %e")
+      time = c.created_at.in_time_zone('Pacific Time (US & Canada)')
+      date = time.strftime("%a %b %e")
       user = ''
       if c.event_id
         event = Event.find_by_id(c.event_id)
         user = event.user.name if event
       end
-      puts "#{c.id}: #{date} #{c.created_at.strftime("%l:%M%p")} #{c.To} #{c.From} #{sprintf("%-12s", c.Direction)} #{sprintf("%-4s", c.Duration)} #{user}"
+      puts "#{c.id}: #{date} #{time.strftime("%l:%M%p")} #{c.To} #{c.From} #{sprintf("%-12s", c.Direction)} #{sprintf("%-4s", c.Duration)} #{user}"
     end
   end
 end
