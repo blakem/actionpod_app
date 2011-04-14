@@ -7,7 +7,7 @@ class TwilioController < ApplicationController
       self.say_sorry
       render :action => :say_sorry
     else
-      @event_name = event.name
+      @event_name = event.name_in_second_person
       @postto = base_url + '/put_on_hold.xml'
     end
   end
@@ -43,7 +43,7 @@ class TwilioController < ApplicationController
       self.say_sorry
       render :action => :say_sorry
     else
-      @event_name = event.name
+      @event_name = event.name_in_second_person
       @timelimit = event.pool.timelimit
       @pool = event.pool 
       @event = event
@@ -71,7 +71,7 @@ class TwilioController < ApplicationController
       render :action => :say_sorry
     else
       TwilioCaller.create_call_from_call_hash(params.merge(:Sid => params[:CallSid]), event.id)
-      @event_name = event.name
+      @event_name = event.name_in_second_person
       @postto = base_url + '/put_on_hold.xml'
     end
   end

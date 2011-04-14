@@ -23,7 +23,6 @@ class Event < ActiveRecord::Base
       self.name = (self.user.first_name + "'s " + self.time + " Call")
     end
   end
-
   
   def schedule
     days.empty? ? empty_schedule : schedule_actual
@@ -89,6 +88,10 @@ class Event < ActiveRecord::Base
   
   def on_day(int)
     days.include?(int)
+  end
+
+  def name_in_second_person
+    name.sub(/#{user.first_name}'s/, 'Your')
   end
 
   def make_call
