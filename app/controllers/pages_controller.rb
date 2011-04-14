@@ -21,10 +21,14 @@ class PagesController < ApplicationController
   
   def profile
     @user = User.find_by_handle(params[:handle])
-    @conferences = @user.conferences
-    @title = @user.name
-    @nextcalls = build_nextcalls
-    @your = @user.first_name + "'s"
+    if (@user)
+      @conferences = @user.conferences
+      @title = @user.name
+      @nextcalls = build_nextcalls
+      @your = @user.first_name + "'s"
+    else
+      redirect_to(root_path, :alert => "There is no handle by that name")
+    end
   end
   
   def join
