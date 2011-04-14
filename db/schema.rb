@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110414191944) do
+ActiveRecord::Schema.define(:version => 20110414212032) do
 
   create_table "calls", :force => true do |t|
     t.string   "Sid"
@@ -125,6 +125,7 @@ ActiveRecord::Schema.define(:version => 20110414191944) do
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
     t.string   "handle"
+    t.boolean  "hide_email",                          :default => false
   end
 
   add_index "users", ["confirmation_token"], :name => "index_users_on_confirmation_token", :unique => true
