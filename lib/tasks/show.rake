@@ -42,7 +42,7 @@ namespace :show do
       names = users.map(&:name).join(',')
       date = c.started_at.strftime("%a %b %e")
       puts "#{c.id}: #{date} #{c.started_at.strftime("%l:%M%p")}-#{c.ended_at.strftime("%l:%M%p")} " + 
-           "#{c.status} #{c.room_name} P:#{users.count} #{names}"
+           "#{sprintf("%18s", c.status)} #{c.room_name} P:#{users.count} #{names}"
     end
   end
 end
