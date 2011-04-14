@@ -34,4 +34,15 @@ namespace :show do
       puts "#{i.id}: #{i.name}"
     end
   end
+
+  desc "Show information about conferences"
+  task :conferences => :environment do
+    Conferences.all.sort{ |a,b| b.start_time <=> a.start_time }.each do |c|
+      users = c.participants
+      names = users.map(&:name).join(',')
+      date = c.started_at.strftime("%a %b %e")
+      puts "#{c.id}: #{date} #{c.started_at.strftime("%l:%M%p")}-#{c.ended_at.strftime("%l:%M%p")} " + 
+           "#{c.status} #{c.room_name} P:#{users.count} #{names}"
+    end
+  end
 end
