@@ -57,7 +57,7 @@ namespace :show do
         event = Event.find_by_id(c.event_id)
         user = event.user.name if event
       end
-      puts "#{c.id}: #{date} #{time.strftime("%l:%M%p")} #{c.To} #{c.From} #{sprintf("%-12s", c.Direction)} #{sprintf("%-4s", c.Duration)} #{user}"
+      puts "#{c.id}: #{date} #{time.strftime("%l:%M:%S%p")} #{c.To} #{c.From} #{sprintf("%-12s", c.Direction)} #{sprintf("%-4s", c.Duration)} #{user}"
     end
   end
 end
