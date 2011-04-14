@@ -27,7 +27,7 @@ describe Event do
     event = Factory(:event, :user_id => user.id, :name => 'My 8am Event for Bob')
     event.name_in_second_person.should == 'My 8am Event for Bob'
     event.name = "Bob's 8:00am Call"
-    event.name_in_second_person.should == "Your 8:00am Call"    
+    event.name_in_second_person.should == "8:00am Call"    
   end
 
   describe "it's schedule" do

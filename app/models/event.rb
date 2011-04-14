@@ -91,7 +91,7 @@ class Event < ActiveRecord::Base
   end
 
   def name_in_second_person
-    name.sub(/#{user.first_name}'s/, 'Your')
+    name.sub(/#{user.first_name}'s\s+/, '')
   end
 
   def make_call
