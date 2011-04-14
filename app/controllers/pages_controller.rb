@@ -6,6 +6,7 @@ class PagesController < ApplicationController
       self.my_profile
       render :action => 'my_profile'
     end
+    @title = 'Accountability Calls You Can Count On'
   end
   
   def my_profile
