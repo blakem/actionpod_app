@@ -27,7 +27,8 @@ namespace :show do
       time = event_count == 1 ? u.events.first.time : ''
         
       puts "#{sprintf('%3s',u.id)}:#{admin}#{not_confirmed} #{sprintf('%-25s',u.name)} " +
-           "has #{sprintf('%2s',event_count)}e #{sprintf('%-27s',u.time_zone)} #{sprintf('%7s',time)} #{u.invite_code}"
+           "has #{sprintf('%2s',event_count)}e #{sprintf('%-27s',u.time_zone)} #{sprintf('%7s',time)} " +
+           "#{sprintf("%10s", u.invite_code)} #{u.handle}"
     end
   end
 
