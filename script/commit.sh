@@ -4,9 +4,6 @@ else
 	comment="$@"
 fi
 
-echo; echo "************ annotate"
-annotate
-
 echo; echo "************ git add ."
 git add .
 
