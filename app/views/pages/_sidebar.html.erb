@@ -1,0 +1,12 @@
+<% if current_user.admin? %>
+  <p><strong><%= link_to "Show existing call times", :action => :callcal %></strong></p>
+<% end %>
+<% if @nextcalls.any? %>
+  <p><strong>Your next <%= @nextcalls.count == 1 ? 'call' : "#{@nextcalls.count} calls" %>:</strong><br/>
+  <% @nextcalls.each do |call| %>
+    <%= call %><br/>
+  <% end %>
+  </p>
+<% else %>
+  <p><strong>Your have no calls scheduled.</strong></p>
+<% end %>
