@@ -2,7 +2,7 @@
 <% if conferences.any? %>
   <hr>
   <p><b>Your 15-Minute Calls:</b></p>
-  <% current_user.conferences.sort_by(&:started_at).each do |conference| %>
+  <% current_user.conferences.sort_by(&:started_at).reverse.each do |conference| %>
     <p>
     <%= conference.started_at.strftime("%a %b %e") %> <%= conference.started_at.strftime("%l:%M%p").downcase %>:
     <%= conference.status.titleize %>
