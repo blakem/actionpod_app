@@ -3,16 +3,22 @@ class PagesController < ApplicationController
   
   def home
     if user_signed_in?
-      self.profile
-      render :action => 'profile'
+      self.my_profile
+      render :action => 'my_profile'
     end
   end
   
-  def profile
+  def my_profile
     @user = current_user
     @title = @user.name
     @events = current_user.events.sort { |a,b| a.minute_of_day <=> b.minute_of_day }
     @timeslots = build_timeslots
+    @nextcalls = build_nextcalls
+  end
+  
+  def profile
+    @user = User.find_by_handle(params[:handle])
+    @title = @user.name
     @nextcalls = build_nextcalls
   end
   

@@ -59,6 +59,19 @@ describe PagesController do
   end
 
 
+  describe "GET /u/handle success" do
+    login_user_before_each
+ 
+    it "should be successful when logged in" do
+	    controller.user_signed_in?.should be_true
+      user2 = Factory(:user)
+      get :profile, :handle => user2.handle 
+      response.should be_success
+      response.should have_selector('h1', :content => user2.name )
+      response.should have_selector('title', :content => '15-Minute Calls')
+    end   
+  end
+
   describe "GET /callcal" do
     describe "when not logged in" do
       it "should redirect to the root path" do

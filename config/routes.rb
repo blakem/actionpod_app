@@ -9,6 +9,9 @@ ActionpodApp::Application.routes.draw do
       # excluded if admin_data
       !request.path.starts_with?("/admin_data")     
   }
+
+  match 'u/:handle' => 'pages#profile'
+
   #match ':controller(/:action(/:id(.:format)))'
   
   # The priority is based upon order of creation:
