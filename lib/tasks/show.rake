@@ -45,4 +45,18 @@ namespace :show do
            "#{sprintf("%-18s", c.status)} #{sprintf("%-12s", c.room_name)} P:#{users.count} #{names}"
     end
   end
+
+  desc "Show information about calls"
+  task :calls => :environment do
+    calls = Call.all.sort{ |a,b| a.created_at <=> b.created_at }
+    calls[-20..-1].each do |c|
+      date = c.created_at.strftime("%a %b %e")
+      user = ''
+      if c.event_id
+        event = Event.find_by_id(c.event_id)
+        user = event.user.name if event
+      end
+      puts "#{c.id}: #{date} #{c.To} #{c.From} #{c.Direction} #{c.Duration} #{user}"
+    end
+  end
 end
