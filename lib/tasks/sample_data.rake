@@ -73,6 +73,34 @@ def make_users
     event.time = '10:00am'
     event.save
   end
-  
   ActiveRecord::Base.connection.execute("update users set confirmed_at=NOW()")
+  
+  now = Time.now
+  conference = Conference.create(
+    :started_at => now-30.minutes,
+    :ended_at => now-15.minutes,
+    :pool_id => pool.id,
+    :room_name => "Pool1Room1",
+    :status => 'completed',
+  )
+  all_users = User.all.sort_by(&:id)
+  conference.users = all_users[0..2]
+
+  conference = Conference.create(
+    :started_at => now-90.minutes,
+    :ended_at => now - 90.minutes + 20.seconds,
+    :pool_id => pool.id,
+    :room_name => "Pool1Room1",
+    :status => 'only_one_answered',
+  )
+  conference.users = [all_users.first]
+
+  conference = Conference.create(
+    :started_at => now-290.minutes,
+    :ended_at => now - 290.minutes,
+    :pool_id => pool.id,
+    :status => 'only_one_scheduled',
+  )
+  conference.users = [all_users.first]
+  
 end
