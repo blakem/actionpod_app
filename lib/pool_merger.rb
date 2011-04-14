@@ -20,14 +20,14 @@ class PoolMerger
     new_participants = filter_new_participants_that_have_been_placed(@tc.participants_on_hold_for_pool(pool), data)
     new_participants = sort_participants(new_participants, data)
     while new_participants.count > 2 do
-      create_new_group(new_participants.shift(3), pool, data)
+      create_new_group(new_participants.shift(3), pool, pool_runs_at, data)
     end
     return data if new_participants.empty?
 
     if new_participants.count == 1
       participant = new_participants[0]
       if on_hold?(participant, data) && data[:placed].any?
-        add_single_participant_to_conference(participant, pool, data)
+        add_single_participant_to_conference(participant, pool, pool_runs_at, data)
       else
         if hold_count(participant, data) >= max_hold_count
           apologize_to_participant(participant, pool, pool_runs_at, data)
@@ -37,7 +37,7 @@ class PoolMerger
       end
     else
       if on_hold?(new_participants[0], data) || on_hold?(new_participants[1], data)
-        create_new_group(new_participants, pool, data)
+        create_new_group(new_participants, pool, pool_runs_at, data)
       else
         new_participants.each do |participant|
           put_on_hold(participant, data)
@@ -109,18 +109,29 @@ class PoolMerger
     }
   end
 
-  def create_new_group(list, pool, data)
+  def create_new_group(list, pool, pool_runs_at, data)
     room_name = next_room(pool, data)
     event_ids = list.map { |p| participant_event_id(p) }
+    conference = Conference.create(
+      :room_name  => room_name,
+      :status     => 'inprogress',
+      :pool_id    => pool.id,
+      :started_at => pool_runs_at,
+    )
+    conference.users = event_ids.map{ |eid| event = Event.find_by_id(eid); event ? event.user : nil }.select{ |u| u }
     list.each do |participant|
       place_into_conference(participant, room_name, pool.timelimit, data, event_ids)
     end
   end
 
-  def add_single_participant_to_conference(participant, pool, data)
+  def add_single_participant_to_conference(participant, pool, pool_runs_at, data)
     room_name = smallest_conference_room(data)
-    event_ids = [participant_event_id(participant)] + event_ids_for_conference_room(room_name, data)
+    participant_event_id = participant_event_id(participant)
+    event_ids = [participant_event_id] + event_ids_for_conference_room(room_name, data)
     place_into_conference(participant, room_name, pool.timelimit, data, event_ids)
+    conference = Conference.where(:room_name => room_name, :status => 'inprogress', :pool_id => pool.id, :started_at => pool_runs_at)[0]
+    event = Event.find_by_id(participant_event_id)
+    conference.users << event.user if event
   end
   
   def smallest_conference_room(data)

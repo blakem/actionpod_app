@@ -100,9 +100,19 @@ describe PoolMerger do
       end
 
       it "should put him in the smallest conference room if he's old" do
+        user = Factory(:user, :primary_phone => '+12223334444')
+        event = Factory(:event, :user_id => user.id, :pool_id => @pool.id)
         new_participants = participant_list(1)
+        new_participants[0][:conference_friendly_name] = "HoldEvent#{event.id}Pool555"
+        conference = Conference.create(
+          :room_name  => "Pool#{@pool.id}Room3",
+          :pool_id    => @pool.id,
+          :started_at => @pool_runs_at,
+          :status     => 'inprogress'
+        )
+        conference.users = [Factory(:user), Factory(:user)]
         @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
-        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1", "Pool#{@pool.id}Room3", @pool.timelimit, [1, 32, 33])
+        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1", "Pool#{@pool.id}Room3", @pool.timelimit, [event.id, 32, 33])
         data = {
           :on_hold => {"CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 1},
           :next_room => 5,
@@ -161,6 +171,9 @@ describe PoolMerger do
         }
         expected[:on_hold] = {}
         got.should == expected
+        conference.reload
+        conference.users.should include(user)
+        conference.users.count.should == 3
       end
     end
     
@@ -180,28 +193,41 @@ describe PoolMerger do
       end
 
       it "should join them together if we've seen one of them before" do
+        user1  = Factory(:user)
+        event1 = Factory(:event, :user_id => user1.id, :pool_id => @pool.id)
+        user2  = Factory(:user)
+        event2 = Factory(:event, :user_id => user2.id, :pool_id => @pool.id)
         new_participants = participant_list(2)
+        new_participants[0][:conference_friendly_name] = "HoldEvent#{event1.id}Pool555"
+        new_participants[1][:conference_friendly_name] = "HoldEvent#{event2.id}Pool555"
         @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
         data = @pm.initialize_data({})
         data[:on_hold] = {
           "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 1,          
         }
-        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1", "Pool#{@pool.id}Room1", @pool.timelimit, [1, 2])
-        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2", "Pool#{@pool.id}Room1", @pool.timelimit, [1, 2])
+        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1", "Pool#{@pool.id}Room1", @pool.timelimit, [event1.id, event2.id])
+        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2", "Pool#{@pool.id}Room1", @pool.timelimit, [event1.id, event2.id])
         @pm.merge_calls_for_pool(@pool, @pool_runs_at, data).should == {
           :next_room   => 2,
           :on_hold     => {},
           :placed      => {
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => {
               :room_name => "Pool#{@pool.id}Room1",
-              :event_id => 1,
+              :event_id => event1.id,
             },
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2" => {
               :room_name => "Pool#{@pool.id}Room1",
-              :event_id => 2,
+              :event_id => event2.id,
             }
           },
         }
+        conference = Conference.where(
+          :room_name  => "Pool#{@pool.id}Room1",
+          :pool_id    => @pool.id,
+          :started_at => @pool_runs_at,
+          :status     => 'inprogress'
+        )[0]
+        conference.users.should include(user1, user2)
       end
 
       it "should join them together if we've seen both of them before" do
