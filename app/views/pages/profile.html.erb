@@ -2,8 +2,8 @@
   <tr>
 	<td class="main">
       <%= render 'user_link' %>
-      Title: <%= @user.title || 'None' %><br/>
-      From: <%= @user.location || 'None' %><br/>
+      Title: <%= @user.title.blank? ? 'None' : @user.title %><br/>
+      From: <%= @user.location.blank? ? 'None' : @user.location %><br/>
     </td>
     <td class="sidebar round">
 	  <%= render 'sidebar' %>
