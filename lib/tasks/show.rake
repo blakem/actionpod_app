@@ -37,7 +37,7 @@ namespace :show do
 
   desc "Show information about conferences"
   task :conferences => :environment do
-    Conferences.all.sort{ |a,b| b.start_time <=> a.start_time }.each do |c|
+    Conference.all.sort{ |a,b| b.started_at <=> a.started_at }.each do |c|
       users = c.participants
       names = users.map(&:name).join(',')
       date = c.started_at.strftime("%a %b %e")
