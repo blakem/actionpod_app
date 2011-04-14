@@ -11,7 +11,7 @@ namespace :show do
         end
       end
       run_time = j.run_at.in_time_zone('Pacific Time (US & Canada)')
-      puts "#{sprintf('%6s',j.id)}:#{sprintf('%-2s',j.pool_id)} #{run_time.strftime("%a %b %e")} #{run_time.strftime("%l:%M:%S%p").downcase} " +
+      puts "#{sprintf('%6s',j.id)}:#{sprintf('%-2s',j.pool_id)} #{run_time.strftime("%a %b %e")} #{run_time.strftime("%l:%M%p").downcase} " +
            "#{sprintf('%-11s', j.obj_type)} #{sprintf('%-25s',j.obj_jobtype)} #{sprintf('%3s',j.obj_id)} #{string}"
     end
   end
