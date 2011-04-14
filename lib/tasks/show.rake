@@ -1,7 +1,9 @@
 namespace :show do
   desc "Show information about currently Delayed Jobs"
   task :delayed_jobs => :environment do
-    DelayedJob.all.sort { |a,b| a.run_at <=> b.run_at }.each do |j|
+    jobs = DelayedJob.all
+    puts "No DelayedJobs...." if jobs.empty?
+    jobs.sort { |a,b| a.run_at <=> b.run_at }.each do |j|
       string = ''
       if (j.obj_id)
         obj = Kernel.const_get(j.obj_type).find_by_id(j.obj_id)
