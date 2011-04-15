@@ -53,8 +53,12 @@ class User < ActiveRecord::Base
       record.errors.add attr, "Please enter correct invite code." unless
         value && (value == secret_invite_code || InviteCode.find_by_name(value.downcase))
   end
-  validates_format_of :primary_phone, :with => /\A\+1\d{10}\Z/
-  validates_format_of :handle,        :with => /\A[0-9a-z]+\Z/i, :message => "can only be letters and numbers."
+  validates_each :primary_phone, do |record, attr, value|
+     record.errors.add :primary_phone_string, 'is invalid' unless
+        value && value =~ /\A\+1\d{10}\Z/
+  end
+  validates_format_of :handle, :with => /\A[0-9a-z]+\Z/i, :message => "can only be letters and numbers."
+  validates_presence_of :name
   validates_uniqueness_of :handle
 
   after_initialize :init
@@ -106,6 +110,12 @@ class User < ActiveRecord::Base
   def find_unique_handle(genhandle, count=1)
     genhandle = genhandle + count.to_s if count > 1
     self.class.find_by_handle(genhandle) ? find_unique_handle(genhandle, count+1) : genhandle
+  end
+  
+  def self.human_attribute_name(attribute_key_name, options = {})
+    return "Primary Phone" if options[:default] == 'Primary phone string'
+    return "" if options[:default] == 'Invite code'
+    return super(attribute_key_name, options)
   end
 
   private

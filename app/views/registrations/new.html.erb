@@ -2,42 +2,54 @@
 <%= form_for(resource, :as => resource_name, :url => registration_path(resource_name)) do |f| %>
   <%= devise_error_messages! %>
 
-  <p><%= f.label :invite_code, "Invite Code" %>: 
+<div class="field">
+  <p><%= f.label :invite_code, "Invite Code:" %> 
   <%= f.text_field :invite_code %><br />
   <i>(email support@15minutecalls.com for your invite code)</i></p>
-
-  <p><%= f.label :name, "Full Name" %>:
+</div>
+<div class="field">
+  <p><%= f.label :name, "Full Name:" %>
   <%= f.text_field :name %></p>
-
-  <p><%= f.label :email %>:
+</div>
+<div class="field">
+  <p><%= f.label :email, "Email:" %>
   <%= f.text_field :email %></p>
-
-  <p><%= f.label :primary_phone_string, "Primary Phone" %>: 
+</div>
+<div class="field">
+  <p><%= f.label :primary_phone_string, "Primary Phone:" %> 
   <%= f.text_field :primary_phone_string %><br />
   <i>(This is the number we will call for your 15-minute calls)</i></p>
-
-  <p><%= f.label :title %>: (optional)
+</div>
+<div class="field">
+  <p><%= f.label :title, "Title:" %> (optional)
   <%= f.text_field :title %><br />
   <i>(Software Developer, Graphic Designer, Author, etc...)</i></p>
-
-  <p><%= f.label :location %>: (optional) 
+</div>
+<div class="field">
+  <p><%= f.label :location, "Location:" %> (optional) 
   <%= f.text_field :location %><br />
   <i>(San Francisco, Seattle, etc.)</i></p>
-
+</div>
+<div class="field">
   <newuser>
-  <p><%= f.label :about, "A sentence or two about what you want from your calls" %>: (optional)<br/>
+  <p><%= f.label :about, "A sentence or two about what you want from your calls:" %> (optional)<br/>
   <%= f.text_area :about, :size => "6x60" %></p>
   </newuser>
-
-  <p><%= f.label :time_zone, "Time Zone"%>:
+</div>
+<div class="field">
+  <p><%= f.label :time_zone, "Time Zone:"%>
   <%= f.collection_select :time_zone, ActiveSupport::TimeZone.us_zones, :name, :to_s %>
-
-  <p><%= f.label :password %>:
+</div>
+<div class="field">
+  <p><%= f.label :password, "Password:" %>
   <%= f.password_field :password %></p>
-
-  <p><%= f.label :password_confirmation, "Password Confirmation" %>:
+</div>
+<div class="field">
+  <p><%= f.label :password_confirmation, "Password Confirmation:" %>
   <%= f.password_field :password_confirmation %></p>
-
+</div>
+<div class="actions">
   <p><%= f.submit "Sign up" %></p>
+</div>
 <% end %>
 
