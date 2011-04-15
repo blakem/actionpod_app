@@ -3,7 +3,7 @@
   <Say>Welcome to your <%= @event_name %>.</Say>
   <Say>Waiting for the other participants.</Say>
   <Dial timeLimit="<%= @timelimit %>">
-	<Conference><%= "HoldEvent#{@event.id}Pool#{@pool.id}" %></Conference>
+	<Conference><%= "HoldEvent#{@event.id}User#{@user.id}Pool#{@pool.id}" %></Conference>
   </Dial>
   <Say>Time is up. Goodbye.</Say>
 </Response>

@@ -173,13 +173,13 @@ describe PoolQueuer do
         :pool_id => @pool.id, 
         :started_at => ran_at, 
         :room_name => "Pool#{@pool.id}Room1", 
-        :status => 'inprogress'
+        :status => 'in_progress'
       )
       conference2 = Conference.create(
         :pool_id => @pool.id, 
         :started_at => ran_at, 
         :room_name => "Pool#{@pool.id}Room2", 
-        :status => 'inprogress'
+        :status => 'in_progress'
       )
       data = {
         :on_hold => {},

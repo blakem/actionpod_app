@@ -45,7 +45,8 @@ class TwilioController < ApplicationController
     else
       @event_name = event.name_in_second_person
       @timelimit = event.pool.timelimit
-      @pool = event.pool 
+      @pool = event.pool
+      @user = event.user
       @event = event
       @timelimit *= 60
     end
@@ -60,6 +61,7 @@ class TwilioController < ApplicationController
       @timelimit = event.pool.timelimit
       @pool = event.pool 
       @event = event
+      @user = event.user
       @timelimit *= 60
     end
   end

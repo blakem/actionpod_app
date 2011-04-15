@@ -108,7 +108,7 @@ describe PoolMerger do
           :room_name  => "Pool#{@pool.id}Room3",
           :pool_id    => @pool.id,
           :started_at => @pool_runs_at,
-          :status     => 'inprogress'
+          :status     => 'in_progress'
         )
         conference.users = [Factory(:user), Factory(:user)]
         @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
@@ -225,7 +225,7 @@ describe PoolMerger do
           :room_name  => "Pool#{@pool.id}Room1",
           :pool_id    => @pool.id,
           :started_at => @pool_runs_at,
-          :status     => 'inprogress'
+          :status     => 'in_progress'
         )[0]
         conference.users.should include(user1, user2)
       end

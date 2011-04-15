@@ -114,7 +114,7 @@ class PoolMerger
     event_ids = list.map { |p| participant_event_id(p) }
     conference = Conference.create(
       :room_name  => room_name,
-      :status     => 'inprogress',
+      :status     => 'in_progress',
       :pool_id    => pool.id,
       :started_at => pool_runs_at,
     )
@@ -129,7 +129,7 @@ class PoolMerger
     participant_event_id = participant_event_id(participant)
     event_ids = [participant_event_id] + event_ids_for_conference_room(room_name, data)
     place_into_conference(participant, room_name, pool.timelimit, data, event_ids)
-    conference = Conference.where(:room_name => room_name, :status => 'inprogress', :pool_id => pool.id, :started_at => pool_runs_at)[0]
+    conference = Conference.where(:room_name => room_name, :status => 'in_progress', :pool_id => pool.id, :started_at => pool_runs_at)[0]
     event = Event.find_by_id(participant_event_id)
     conference.users << event.user if event
   end

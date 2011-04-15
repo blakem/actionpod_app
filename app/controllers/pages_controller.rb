@@ -15,8 +15,9 @@ class PagesController < ApplicationController
     @events = current_user.events.sort { |a,b| a.minute_of_day <=> b.minute_of_day }
     @conferences = current_user.conferences
     @timeslots = build_timeslots
-    @nextcalls = build_nextcalls
+    @nextcalls = build_nextcalls(@user)
     @your = 'Your'
+    @you = 'You'
   end
   
   def profile
@@ -24,8 +25,9 @@ class PagesController < ApplicationController
     if (@user)
       @conferences = @user.conferences
       @title = @user.name
-      @nextcalls = build_nextcalls
+      @nextcalls = build_nextcalls(@user)
       @your = @user.first_name + "'s"
+      @you = @your
     else
       redirect_to(root_path, :alert => "There is no handle by that name")
     end
@@ -42,11 +44,11 @@ class PagesController < ApplicationController
   end
   
   private
-    def build_nextcalls
+    def build_nextcalls(user)
       calls = []
       start_time = Time.now
       end_time = start_time + 7.days
-      current_user.events.each do |event|
+      user.events.each do |event|
         event.schedule.occurrences_between(start_time, end_time).each do |occurrence|
           calls.push(occurrence.in_time_zone(current_user.time_zone))
         end

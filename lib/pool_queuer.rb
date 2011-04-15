@@ -88,7 +88,7 @@ class PoolQueuer
     room_names.each do |room_name|
       conference = Conference.where(
         :room_name => room_name, 
-        :status => 'inprogress',
+        :status => 'in_progress',
         :pool_id => pool.id,
         :started_at => started_at,
       )[0]
