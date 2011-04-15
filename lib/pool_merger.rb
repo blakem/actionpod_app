@@ -137,7 +137,9 @@ class PoolMerger
   end
 
   def add_single_participant_to_conference(participant, pool, pool_runs_at, data)
-    room_name = smallest_conference_room(data)
+    room_name = placed?(participant, data) ? 
+      data[:placed][participant[:call_sid]][:room_name] : 
+      smallest_conference_room(data)
     participant_event_id = participant_event_id(participant)
     event_ids = event_ids_for_conference_room(room_name, data)
     event_ids = [participant_event_id] + event_ids unless event_ids.include?(participant_event_id) 
