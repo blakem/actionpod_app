@@ -87,7 +87,7 @@ class PoolMerger
   def sort_participants(participants, data)
     participants.sort{ |a,b| 
       first_check = hold_count(b, data) <=> hold_count(a, data)
-      first_check != 0 ? first_check : participant_event_id(a) <=> participant_event_id(b)
+      first_check != 0 ? first_check : participant_user_id(a) <=> participant_user_id(b)
     }
   end
 
@@ -150,6 +150,11 @@ class PoolMerger
 
   def participant_event_id(participant)
     participant[:conference_friendly_name] =~ /Event(\d+)/; 
+    $1.to_i
+  end
+
+  def participant_user_id(participant)
+    participant[:conference_friendly_name] =~ /User(\d+)/; 
     $1.to_i
   end
 
