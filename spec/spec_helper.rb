@@ -41,6 +41,7 @@ end
 
 Spork.each_run do
   # This code will be run each time you run your specs.
+  # load "spec/factories.rb"
   Dir.entries("#{Rails.root}/lib").each do |entry|
     load entry if entry =~ /.rb$/
   end

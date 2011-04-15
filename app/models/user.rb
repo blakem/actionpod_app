@@ -58,7 +58,7 @@ class User < ActiveRecord::Base
         value && value =~ /\A\+1\d{10}\Z/
   end
   validates_format_of :handle, :with => /\A[0-9a-z]+\Z/i, :message => "can only be letters and numbers."
-  validates_presence_of :name
+  validates_presence_of :name, :primary_phone_string
   validates_uniqueness_of :handle
 
   after_initialize :init

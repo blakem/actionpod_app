@@ -73,6 +73,12 @@ describe User do
     user3.primary_phone_string = '(415) 666.1234'
     user3.save
     user3.primary_phone.should == '+14156661234'
+    user3.primary_phone_string = 'xyzzy'
+    user3.valid?.should be_false
+    user3.errors[:primary_phone_string].should include("is invalid")
+    user3.primary_phone_string = ''
+    user3.valid?.should be_false
+    user3.errors[:primary_phone_string].should include("can't be blank")
   end
 
   it "should have a title" do

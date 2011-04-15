@@ -27,6 +27,7 @@ Factory.define :user do |user|
   user.sequence(:name)          { Factory.next(:user_name) }
   user.sequence(:title)         { Factory.next(:user_title) }
   user.sequence(:primary_phone) { Factory.next(:phone) }
+  user.primary_phone_string     "444 555 6666"
   user.time_zone                "Pacific Time (US & Canada)"
   user.password                 "foobar"
   user.invite_code              User.secret_invite_code
