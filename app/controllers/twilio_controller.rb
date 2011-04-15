@@ -74,7 +74,11 @@ class TwilioController < ApplicationController
     else
       TwilioCaller.create_call_from_call_hash(params.merge(:Sid => params[:CallSid]), event.id)
       @event_name = event.name_in_second_person
-      @postto = base_url + '/put_on_hold.xml'
+      @timelimit = event.pool.timelimit
+      @pool = event.pool
+      @user = event.user
+      @event = event
+      @timelimit *= 60
     end
   end
   
