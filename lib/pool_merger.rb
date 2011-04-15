@@ -18,35 +18,56 @@ class PoolMerger
     @tc = TwilioCaller.new
     data = initialize_data(data)
     participants_on_hold_for_pool = @tc.participants_on_hold_for_pool(pool)
-    new_participants = filter_new_participants_that_have_been_placed(participants_on_hold_for_pool, data)
+    (new_participants, placed_participants) = filter_new_participants_that_have_been_placed(participants_on_hold_for_pool, data)
     new_participants = sort_participants(new_participants, data)
-    increment_on_hold_count_for_filtered_participants(participants_on_hold_for_pool, data)
-    while new_participants.count > 2 do
-      create_new_group(new_participants.shift(3), pool, pool_runs_at, data)
-    end
-    return data if new_participants.empty?
+    handle_placed_participants(placed_participants, pool, pool_runs_at, data)
+    handle_new_participants(new_participants, pool, pool_runs_at, data)
+  end
 
-    if new_participants.count == 1
-      participant = new_participants[0]
-      if on_hold?(participant, data) && data[:placed].any?
-        add_single_participant_to_conference(participant, pool, pool_runs_at, data)
-      else
-        if hold_count(participant, data) >= max_hold_count
-          apologize_to_participant(participant, pool, pool_runs_at, data)
-        else
-          put_on_hold(participant, data)
-        end
-      end
+  def handle_new_participants(participants, pool, pool_runs_at, data)
+    while participants.count > 2 do
+      (three_participants, participants) = pick_three_participants(participants)
+      handle_three_new_participants(three_participants, pool, pool_runs_at, data)
+    end
+    return data if participants.empty?
+
+    if participants.count == 1
+      handle_one_new_participant(participants[0], pool, pool_runs_at, data)
     else
-      if on_hold?(new_participants[0], data) || on_hold?(new_participants[1], data)
-        create_new_group(new_participants, pool, pool_runs_at, data)
-      else
-        new_participants.each do |participant|
-          put_on_hold(participant, data)
-        end
-      end
+      handle_two_new_participants(participants, pool, pool_runs_at, data)
     end
     data
+  end
+
+  def handle_one_new_participant(participant, pool, pool_runs_at, data)
+    if on_hold?(participant, data) && data[:placed].any?
+      add_single_participant_to_conference(participant, pool, pool_runs_at, data)
+    else
+      if hold_count(participant, data) >= max_hold_count
+        apologize_to_participant(participant, pool, pool_runs_at, data)
+      else
+        put_on_hold(participant, data)
+      end
+    end
+  end
+  
+  def handle_two_new_participants(participants, pool, pool_runs_at, data)
+    if on_hold?(participants[0], data) || on_hold?(participants[1], data)
+      create_new_group(participants, pool, pool_runs_at, data)
+    else
+      participants.each do |participant|
+        put_on_hold(participant, data)
+      end
+    end
+  end
+
+  def handle_three_new_participants(participants, pool, pool_runs_at, data)
+    create_new_group(participants.shift(3), pool, pool_runs_at, data)
+  end
+
+  def pick_three_participants(participants)
+    picked = participants.shift(3)
+    return [picked, participants]
   end
 
   def apologize_to_participant(participant, pool, pool_runs_at, data)
@@ -86,14 +107,18 @@ class PoolMerger
     participant['conference_friendly_name'] =~ /Incoming/
   end
 
-  def increment_on_hold_count_for_filtered_participants(participants, data)
-    participants.select { |p| (incoming?(p) && hold_count(p, data) <= 1)}.each do |p|
-      put_on_hold(p, data)
+  def handle_placed_participants(participants, pool, pool_runs_at, data)
+    participants.each do |participant|
+      if hold_count(participant, data) > 1
+        add_single_participant_to_conference(participant, pool, pool_runs_at, data)
+      else
+        put_on_hold(participant, data)
+      end
     end
   end
   
   def filter_new_participants_that_have_been_placed(participants, data)
-    participants.select { |p| !placed?(p, data) || (incoming?(p) && hold_count(p, data) > 1)}
+    return [participants.select { |p| !placed?(p, data) }, participants.select { |p| placed?(p, data) }] 
   end
   
   def sort_participants(participants, data)
