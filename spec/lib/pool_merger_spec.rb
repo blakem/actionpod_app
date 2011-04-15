@@ -62,7 +62,7 @@ describe PoolMerger do
         user = Factory(:user, :primary_phone => '+12223334444')
         event = Factory(:event, :user_id => user.id, :pool_id => @pool.id)
         new_participants = participant_list(1)
-        new_participants[0][:conference_friendly_name] = "HoldEvent#{event.id}Pool555"
+        new_participants[0][:conference_friendly_name] = "HoldEvent#{event.id}User#{user.id}Pool555"
         @tc.should_receive(:participants_on_hold_for_pool).twice.with(@pool).and_return(new_participants)
         @tc.should_receive(:apologize_no_other_participants).with('CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1', 2)
         @tc.should_receive(:send_sms).with(user.primary_phone,
@@ -103,7 +103,7 @@ describe PoolMerger do
         user = Factory(:user, :primary_phone => '+12223334444')
         event = Factory(:event, :user_id => user.id, :pool_id => @pool.id)
         new_participants = participant_list(1)
-        new_participants[0][:conference_friendly_name] = "HoldEvent#{event.id}Pool555"
+        new_participants[0][:conference_friendly_name] = "HoldEvent#{event.id}User#{user.id}Pool555"
         conference = Conference.create(
           :room_name  => "Pool#{@pool.id}Room3",
           :pool_id    => @pool.id,
@@ -198,8 +198,8 @@ describe PoolMerger do
         user2  = Factory(:user)
         event2 = Factory(:event, :user_id => user2.id, :pool_id => @pool.id)
         new_participants = participant_list(2)
-        new_participants[0][:conference_friendly_name] = "HoldEvent#{event1.id}Pool555"
-        new_participants[1][:conference_friendly_name] = "HoldEvent#{event2.id}Pool555"
+        new_participants[0][:conference_friendly_name] = "HoldEvent#{event1.id}User#{user1.id}Pool555"
+        new_participants[1][:conference_friendly_name] = "HoldEvent#{event2.id}User#{user1.id}Pool555"
         @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
         data = @pm.initialize_data({})
         data[:on_hold] = {
@@ -429,7 +429,7 @@ def participant_list(participant_count)
     participant = stub_participant.dup
     participant[:call_sid] += "XXX" + i.to_s
     participant[:conference_sid] += "XXX" + i.to_s
-    participant[:conference_friendly_name] = "HoldEvent#{i}Pool555"
+    participant[:conference_friendly_name] = "HoldEvent#{i}User#{i}Pool555"
     list << participant
   end
   list

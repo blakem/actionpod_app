@@ -156,7 +156,7 @@ describe TwilioCaller do
       conferences.should == [{
         "sid"=>"CFd69aa0e4fe673292932492f68ba94d3f",
         "account_sid"=>"AC2e57bf710b77d765d280786bc07dbacc",
-        "friendly_name"=>"HoldEvent4Pool1",
+        "friendly_name"=>"HoldEvent4User7Pool1",
         "status"=>"in-progress",
         "date_created"=>"Thu, 07 Apr 2011 00:02:16 +0000",
         "api_version"=>"Thu, 01 Apr 2010".to_date,
@@ -180,7 +180,7 @@ describe TwilioCaller do
       conferences.should == [{
         "sid"=>"CFXXXaa0e4fe673292932492f68ba94d3f",
         "account_sid"=>"AC2e57bf710b77d765d280786bc07dbacc",
-        "friendly_name"=>"HoldEvent4Pool123",
+        "friendly_name"=>"HoldEvent4User7Pool123",
         "status"=>"in-progress",
         "date_created"=>"Thu, 07 Apr 2011 00:02:16 +0000",
         "api_version"=>"Thu, 01 Apr 2010".to_date,
@@ -207,7 +207,7 @@ describe TwilioCaller do
         participants = @tc.participants_on_hold_for_pool(pool)
         participants.should == [{
           "conference_sid"=>"CF0cb07a25bdaf64828850b784ea2d1aa7",
-          "conference_friendly_name"=>"HoldEvent4Pool123",
+          "conference_friendly_name"=>"HoldEvent4User7Pool123",
           "account_sid"=>"AC2e57bf710b77d765d280786bc07dbacc",
           "call_sid"=>"CA9fa67e8696b60ee1ca1e75ec81ef85e7",
           "muted"=>false,
@@ -304,7 +304,7 @@ def conference_response
   '"uri":"\/2010-04-01\/Accounts\/AC2e57bf710b77d765d280786bc07dbacc\/Conferences.json?Status=in-progress",' +
   '"first_page_uri":"\/2010-04-01\/Accounts\/AC2e57bf710b77d765d280786bc07dbacc\/Conferences.json?Page=0&PageSize=50",' +
   '"previous_page_uri":null,"next_page_uri":null,"last_page_uri":"\/2010-04-01\/Accounts\/AC2e57bf710b77d765d280786bc07dbacc\/Conferences.json?Page=0&PageSize=50",' +
-  '"conferences":[{"sid":"CFd69aa0e4fe673292932492f68ba94d3f","account_sid":"AC2e57bf710b77d765d280786bc07dbacc","friendly_name":"HoldEvent4Pool1",' +
+  '"conferences":[{"sid":"CFd69aa0e4fe673292932492f68ba94d3f","account_sid":"AC2e57bf710b77d765d280786bc07dbacc","friendly_name":"HoldEvent4User7Pool1",' +
   '"status":"in-progress","date_created":"Thu, 07 Apr 2011 00:02:16 +0000","api_version":"2010-04-01","date_updated":"Thu, 07 Apr 2011 00:02:17 +0000",' +
   '"uri":"\/2010-04-01\/Accounts\/AC2e57bf710b77d765d280786bc07dbacc\/Conferences\/CFd69aa0e4fe673292932492f68ba94d3f.json",' +
   '"subresource_uris":{"participants":"\/2010-04-01\/Accounts\/AC2e57bf710b77d765d280786bc07dbacc\/Conferences\/' +
@@ -316,12 +316,12 @@ def two_conference_response
   '"uri":"\/2010-04-01\/Accounts\/AC2e57bf710b77d765d280786bc07dbacc\/Conferences.json?Status=in-progress",' +
   '"first_page_uri":"\/2010-04-01\/Accounts\/AC2e57bf710b77d765d280786bc07dbacc\/Conferences.json?Page=0&PageSize=50",' +
   '"previous_page_uri":null,"next_page_uri":null,"last_page_uri":"\/2010-04-01\/Accounts\/AC2e57bf710b77d765d280786bc07dbacc\/Conferences.json?Page=0&PageSize=50",' +
-  '"conferences":[{"sid":"CFd69aa0e4fe673292932492f68ba94d3f","account_sid":"AC2e57bf710b77d765d280786bc07dbacc","friendly_name":"HoldEvent123Pool1234",' +
+  '"conferences":[{"sid":"CFd69aa0e4fe673292932492f68ba94d3f","account_sid":"AC2e57bf710b77d765d280786bc07dbacc","friendly_name":"HoldEvent123User7Pool1234",' +
   '"status":"in-progress","date_created":"Thu, 07 Apr 2011 00:02:16 +0000","api_version":"2010-04-01","date_updated":"Thu, 07 Apr 2011 00:02:17 +0000",' +
   '"uri":"\/2010-04-01\/Accounts\/AC2e57bf710b77d765d280786bc07dbacc\/Conferences\/CFd69aa0e4fe673292932492f68ba94d3f.json",' +
   '"subresource_uris":{"participants":"\/2010-04-01\/Accounts\/AC2e57bf710b77d765d280786bc07dbacc\/Conferences\/' +
   'CFd69aa0e4fe673292932492f68ba94d3f\/Participants.json"}},' +
-  '{"sid":"CFXXXaa0e4fe673292932492f68ba94d3f","account_sid":"AC2e57bf710b77d765d280786bc07dbacc","friendly_name":"HoldEvent4Pool123"' +
+  '{"sid":"CFXXXaa0e4fe673292932492f68ba94d3f","account_sid":"AC2e57bf710b77d765d280786bc07dbacc","friendly_name":"HoldEvent4User7Pool123"' +
   ',"status":"in-progress","date_created":"Thu, 07 Apr 2011 00:02:16 +0000","api_version":"2010-04-01","date_updated":"Thu, 07 Apr 2011 00:02:17 +0000"' +
   ',"uri":"\/2010-04-01\/Accounts\/AC2e57bf710b77d765d280786bc07dbacc\/Conferences\/CFXXXaa0e4fe673292932492f68ba94d3f.json"' +
   ',"subresource_uris":' +

@@ -17,7 +17,7 @@ class PagesController < ApplicationController
     @timeslots = build_timeslots
     @nextcalls = build_nextcalls(@user)
     @your = 'Your'
-    @you = 'You'
+    @youhave = 'You have'
   end
   
   def profile
@@ -27,7 +27,7 @@ class PagesController < ApplicationController
       @title = @user.name
       @nextcalls = build_nextcalls(@user)
       @your = @user.first_name + "'s"
-      @you = @your
+      @youhave = @user.first_name + " has"
     else
       redirect_to(root_path, :alert => "There is no handle by that name")
     end
