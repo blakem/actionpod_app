@@ -42,6 +42,9 @@ class EventsController < ApplicationController
     @event = Event.where(:id => params[:id], :user_id => current_user.id)[0]
     if @event
       event_params = params[:event] || {}
+      if event_params[:time] != @event.time and event_params[:name] == @event.name
+        event_params[:name].sub!(/\d+(:\d{2})?(am|pm)/i, event_params[:time])
+      end
       if @event.update_attributes(event_params.merge(days_from_params(params)))
         redirect_to(root_path, :notice => 'Event was successfully updated.')
       else
