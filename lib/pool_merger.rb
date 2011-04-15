@@ -143,7 +143,9 @@ class PoolMerger
     place_into_conference(participant, room_name, pool.timelimit, data, event_ids)
     conference = Conference.where(:room_name => room_name, :status => 'in_progress', :pool_id => pool.id, :started_at => pool_runs_at)[0]
     event = Event.find_by_id(participant_event_id)
-    conference.users << event.user if event
+    if (event and conference)
+      conference.users << event.user unless conference.users.include?(event.user)
+    end
   end
   
   def smallest_conference_room(data)

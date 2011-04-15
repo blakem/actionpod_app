@@ -111,8 +111,8 @@ describe PoolMerger do
           :status     => 'in_progress'
         )
         conference.users = [Factory(:user), Factory(:user)]
-        @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
-        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1", "Pool#{@pool.id}Room3", @pool.timelimit, [event.id, 32, 33])
+        @tc.should_receive(:participants_on_hold_for_pool).twice.with(@pool).and_return(new_participants)
+        @tc.should_receive(:place_participant_in_conference).twice.with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1", "Pool#{@pool.id}Room3", @pool.timelimit, [event.id, 32, 33])
         data = {
           :on_hold => {"CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 1},
           :next_room => 5,
@@ -163,14 +163,21 @@ describe PoolMerger do
             },
           },
         }
+        data2 = Marshal.load(Marshal.dump(data))
+        expected = Marshal.load(Marshal.dump(data))
         got = @pm.merge_calls_for_pool(@pool, @pool_runs_at, data)
-        expected = data
         expected[:placed]["CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1"] = {
           :room_name => "Pool#{@pool.id}Room3",
-          :event_id => 1,          
+          :event_id => event.id,          
         }
         expected[:on_hold] = {}
         got.should == expected
+        conference.reload
+        conference.users.should include(user)
+        conference.users.count.should == 3
+
+        # Don't add them to the conference object twice
+        @pm.merge_calls_for_pool(@pool, @pool_runs_at, data2)
         conference.reload
         conference.users.should include(user)
         conference.users.count.should == 3
