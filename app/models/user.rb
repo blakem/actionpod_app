@@ -1,5 +1,5 @@
 # == Schema Information
-# Schema version: 20110414212032
+# Schema version: 20110415064957
 #
 # Table name: users
 #
@@ -32,6 +32,7 @@
 #  confirmation_sent_at :datetime
 #  handle               :string(255)
 #  hide_email           :boolean
+#  about                :text
 #
 
 class User < ActiveRecord::Base
@@ -42,7 +43,7 @@ class User < ActiveRecord::Base
 
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email, :password, :password_confirmation, :remember_me, :invite_code, :time_zone, :name, :primary_phone, :title,
-                  :invite_code, :primary_phone_string, :use_ifmachine, :location, :handle, :hide_email
+                  :invite_code, :primary_phone_string, :use_ifmachine, :location, :handle, :hide_email, :about
 
   has_many :events
   has_many :pools

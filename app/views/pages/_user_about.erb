@@ -1,0 +1,3 @@
+<% if @user.about %>
+  <span class="quote"><%= simple_format('&#8220;' + h(@user.about.strip) + '&#8221;') %></span>
+<% end %>

@@ -16,6 +16,15 @@ ul.home li {
 	list-style: none;
 }
 
+/* Quotation Marks */
+.quote {
+    float: left;
+    font-size: 120%;
+    color: #09c;
+}
+
+newuser textarea { width: 415px; height: 50px; padding:5px; }
+
 /* Devise Menu */
 devise {
 	float: left;
