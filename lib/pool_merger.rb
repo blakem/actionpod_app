@@ -17,8 +17,10 @@ class PoolMerger
   def merge_calls_for_pool(pool, pool_runs_at, data)
     @tc = TwilioCaller.new
     data = initialize_data(data)
-    new_participants = filter_new_participants_that_have_been_placed(@tc.participants_on_hold_for_pool(pool), data)
+    participants_on_hold_for_pool = @tc.participants_on_hold_for_pool(pool)
+    new_participants = filter_new_participants_that_have_been_placed(participants_on_hold_for_pool, data)
     new_participants = sort_participants(new_participants, data)
+    increment_on_hold_count_for_filtered_participants(participants_on_hold_for_pool, data)
     while new_participants.count > 2 do
       create_new_group(new_participants.shift(3), pool, pool_runs_at, data)
     end
@@ -79,9 +81,19 @@ class PoolMerger
   def placed?(participant, data)
     data[:placed][participant['call_sid']] ? true : false
   end
+
+  def incoming?(participant)
+    participant['conference_friendly_name'] =~ /Incoming/
+  end
+
+  def increment_on_hold_count_for_filtered_participants(participants, data)
+    participants.select { |p| (incoming?(p) && hold_count(p, data) <= 1)}.each do |p|
+      put_on_hold(p, data)
+    end
+  end
   
   def filter_new_participants_that_have_been_placed(participants, data)
-    participants.select { |p| !placed?(p, data)}
+    participants.select { |p| !placed?(p, data) || (incoming?(p) && hold_count(p, data) > 1)}
   end
   
   def sort_participants(participants, data)

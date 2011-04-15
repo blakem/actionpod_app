@@ -359,6 +359,83 @@ describe PoolMerger do
           },
         }
       end
+
+      it "should skip participants that have already been placed and are Incoming when they're on hold for 1" do
+        new_participants = participant_list(3)
+        new_participants[2][:conference_friendly_name] = "HoldEvent3User3Pool#{@pool.id}Incoming"
+        @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
+        data = @pm.initialize_data({})
+        data[:on_hold] = {
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 1,          
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX3" => 1,
+        }
+        data[:placed] = {
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX3" => {
+            :room_name => "Pool34Room1",          
+            :event_id => 3,
+          },
+        }
+        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1", "Pool#{@pool.id}Room1", @pool.timelimit, [1, 2])
+        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2", "Pool#{@pool.id}Room1", @pool.timelimit, [1, 2])
+        @pm.merge_calls_for_pool(@pool, @pool_runs_at, data).should == {
+          :next_room   => 2,
+          :on_hold     => {
+            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX3" => 2,
+          },
+          :placed      => {
+            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX3" => {
+              :room_name => "Pool34Room1",
+              :event_id => 3,
+            },
+            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => {
+              :room_name => "Pool#{@pool.id}Room1",
+              :event_id => 1,
+            },
+            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2" => {
+              :room_name => "Pool#{@pool.id}Room1",
+              :event_id => 2,
+            },
+          },
+        }
+      end
+
+      it "should place participants that have already been placed and are Incoming when they're on hold for 2" do
+        new_participants = participant_list(3)
+        new_participants[2][:conference_friendly_name] = "HoldEvent3User3Pool#{@pool.id}Incoming"
+        @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
+        data = @pm.initialize_data({})
+        data[:on_hold] = {
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 1,          
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX3" => 2,
+        }
+        data[:placed] = {
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX3" => {
+            :room_name => "Pool34Event123",          
+            :event_id => 3,
+          },
+        }
+        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1", "Pool#{@pool.id}Room1", @pool.timelimit, [3, 1, 2])
+        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2", "Pool#{@pool.id}Room1", @pool.timelimit, [3, 1, 2])
+        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX3", "Pool#{@pool.id}Room1", @pool.timelimit, [3, 1, 2])
+        @pm.merge_calls_for_pool(@pool, @pool_runs_at, data).should == {
+          :next_room   => 2,
+          :on_hold     => {},
+          :placed      => {
+            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX3" => {
+              :room_name => "Pool#{@pool.id}Room1",
+              :event_id => 3,
+            },
+            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => {
+              :room_name => "Pool#{@pool.id}Room1",
+              :event_id => 1,
+            },
+            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2" => {
+              :room_name => "Pool#{@pool.id}Room1",
+              :event_id => 2,
+            },
+          },
+        }
+      end
     end
     
     describe "Handle those who are on hold first" do
