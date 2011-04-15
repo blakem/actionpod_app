@@ -23,7 +23,7 @@ class PagesController < ApplicationController
   def profile
     @user = User.find_by_handle(params[:handle])
     if (@user)
-      @conferences = @user.conferences
+      @conferences = @user.conferences.select{ |c| c.started_at.strftime("%M") == "00"}
       @title = @user.name
       @nextcalls = build_nextcalls(@user)
       @your = @user.first_name + "'s"
