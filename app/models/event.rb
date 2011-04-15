@@ -75,8 +75,14 @@ class Event < ActiveRecord::Base
       5 => 'Fridays',
       6 => 'Saturdays'
     }
-    day_string = days == [1,2,3,4,5] ? 'Weekdays' : days.sort.map { |k| hash[k] }.to_sentence
-    return self.time + " on " + day_string
+    if days == [0,1,2,3,4,5,6]
+      day_string = 'Everyday'
+    elsif days == [1,2,3,4,5]
+      day_string = 'on Weekdays'
+    else
+      day_string = 'on ' + days.sort.map { |k| hash[k] }.to_sentence
+    end
+    return self.time + ' ' + day_string
   end
   
   def alter_schedule(args)

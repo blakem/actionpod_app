@@ -76,6 +76,8 @@ describe Event do
       @event.schedule_str.should == '12:15am on Tuesdays and Wednesdays'
       @event.alter_schedule(:day => [], :minute_of_hour => [15])
       @event.schedule_str.should == '12:15am, but No Days Selected!'
+      @event.alter_schedule(:day => [0,1,2,3,4,5,6], :minute_of_hour => [15])
+      @event.schedule_str.should == '12:15am Everyday'
     end
     
     it "should have time a time accessor to it's schedule" do
