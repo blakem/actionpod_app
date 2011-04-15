@@ -79,6 +79,8 @@ class Event < ActiveRecord::Base
       day_string = 'Everyday'
     elsif days == [1,2,3,4,5]
       day_string = 'on Weekdays'
+    elsif days == [0,6]
+      day_string = 'on Weekends'
     else
       day_string = 'on ' + days.sort.map { |k| hash[k] }.to_sentence
     end
