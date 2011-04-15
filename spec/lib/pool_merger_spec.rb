@@ -29,6 +29,22 @@ describe PoolMerger do
       }
     end
     
+    describe "zero participants" do
+      it "should clear out the on_hold status of anyone who's not currently there" do
+        new_participants = participant_list(0)
+        data = @pm.initialize_data({})
+        data[:on_hold] = {
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 1,          
+        }
+        @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
+        @pm.merge_calls_for_pool(@pool, @pool_runs_at, data).should == {
+          :next_room   => 1,
+          :on_hold     => {},
+          :placed      => {},
+        }
+      end
+    end
+    
     describe "single participant" do      
       it "should carry over if we haven't seen them" do
         new_participants = participant_list(1)

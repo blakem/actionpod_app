@@ -18,10 +18,19 @@ class PoolMerger
     @tc = TwilioCaller.new
     data = initialize_data(data)
     participants_on_hold_for_pool = @tc.participants_on_hold_for_pool(pool)
+    remove_stale_on_hold_records(participants_on_hold_for_pool, data)
     (new_participants, placed_participants) = filter_new_participants_that_have_been_placed(participants_on_hold_for_pool, data)
     new_participants = sort_participants(new_participants, data)
     handle_placed_participants(placed_participants, pool, pool_runs_at, data)
     handle_new_participants(new_participants, pool, pool_runs_at, data)
+  end
+
+  def remove_stale_on_hold_records(participants, data)
+    participants_on_hold = data[:on_hold].keys
+    new_participant_sids = participants.map{ |p| p[:call_sid] }
+    participants_on_hold.each do |sid|
+      data[:on_hold].delete(sid) unless new_participant_sids.include?(sid)
+    end
   end
 
   def handle_new_participants(participants, pool, pool_runs_at, data)
