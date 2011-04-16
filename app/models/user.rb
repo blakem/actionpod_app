@@ -1,5 +1,5 @@
 # == Schema Information
-# Schema version: 20110415064957
+# Schema version: 20110415220244
 #
 # Table name: users
 #
@@ -20,11 +20,9 @@
 #  admin                :boolean
 #  time_zone            :string(255)
 #  name                 :string(255)
-#  primary_phone        :string(255)
 #  title                :string(255)
 #  invite_code          :string(255)
 #  use_ifmachine        :boolean
-#  primary_phone_string :string(255)
 #  deleted_at           :datetime
 #  location             :string(255)
 #  confirmation_token   :string(255)
@@ -33,6 +31,7 @@
 #  handle               :string(255)
 #  hide_email           :boolean
 #  about                :text
+#  primary_phone_id     :integer
 #
 
 class User < ActiveRecord::Base
@@ -47,6 +46,7 @@ class User < ActiveRecord::Base
 
   has_many :events
   has_many :pools
+  has_many :phones
   has_and_belongs_to_many :conferences
 
   validates_each :invite_code, :on => :create do |record, attr, value|
@@ -68,23 +68,23 @@ class User < ActiveRecord::Base
   end
 
   before_validation do
-    if attribute_present?("primary_phone_string")
-      self.primary_phone = primary_phone_string.gsub(/[^0-9]/, "")
-      self.primary_phone = "1" + primary_phone unless primary_phone =~ /^1\d{10}$/
-      self.primary_phone =  "+"  + primary_phone unless primary_phone =~ /^\+$/
-    end
     if attribute_present?("email") && !attribute_present?("handle")
       self.handle = self.generate_handle_from_email
     end
   end
 
   def save(*args)
+    primary_phone_obj.save
+    primary_phone_obj.reload
+    self.primary_phone_id = primary_phone_obj.id
     rv = super(*args)
     return rv unless rv
     self.events.each do |event|
       event.alter_schedule(:start_date => event.schedule.start_time.in_time_zone(self.time_zone).beginning_of_day)
       event.save
     end
+    primary_phone_obj.user_id = self.id
+    primary_phone_obj.save
     rv
   end
   
@@ -118,6 +118,31 @@ class User < ActiveRecord::Base
     return super(attribute_key_name, options)
   end
 
+  def primary_phone_obj
+    @phone_obj ||= self.primary_phone_id ? Phone.find(self.primary_phone_id) : Phone.new(:user_id => self.id)
+  end
+  
+  def primary_phone
+    primary_phone_obj.phone_number
+  end
+
+  def primary_phone=(string)
+    primary_phone_obj.phone_number = string
+  end
+
+  def self.find_by_primary_phone(phone_number)
+    phone = Phone.find_by_phone_number(phone_number)
+    phone ? phone.user : nil
+  end
+  
+  def primary_phone_string
+    primary_phone_obj.phone_number_string
+  end
+
+  def primary_phone_string=(string)
+    primary_phone_obj.phone_number_string = string
+  end
+  
   private
     def default_time_zone
       'Pacific Time (US & Canada)'
