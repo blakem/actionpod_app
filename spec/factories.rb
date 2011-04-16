@@ -1,3 +1,5 @@
+# XXX RESTART SPORK XXX #
+
 Factory.sequence :email do |n|
   "person-#{n+1}@example.com"
 end
@@ -5,6 +7,8 @@ end
 Factory.sequence :phone do |n|
   "+1415#{sprintf( '%07i', n+1 )}"
 end
+
+# XXX RESTART SPORK XXX #
 
 Factory.sequence :event_name do |n|
   "TestEvent#{n+1}"
@@ -14,6 +18,8 @@ Factory.sequence :user_name do |n|
   "TestName#{n+1}"
 end
 
+# XXX RESTART SPORK XXX #
+
 Factory.sequence :user_title do |n|
   "TestTitle#{n+1}"
 end
@@ -21,6 +27,8 @@ end
 Factory.sequence :pool_name do |n|
   "TestPool#{n+1}"
 end
+
+# XXX RESTART SPORK XXX #
 
 Factory.define :user do |user|
   user.sequence(:email)         { Factory.next(:email) }
@@ -34,6 +42,8 @@ Factory.define :user do |user|
   user.confirmed_at             (Time.now - 5.minutes)
 end
 
+# XXX RESTART SPORK XXX #
+
 Factory.define :event do |event|
   event.sequence(:name)  { Factory.next(:event_name) }
   event.association :user_id, :factory => :user
@@ -45,6 +55,8 @@ Factory.define :pool do |pool|
   pool.association :user_id, :factory => :user
   pool.timelimit  45
 end
+
+# XXX RESTART SPORK XXX #
 
 Factory.define :delayed_job do |dj|
   dj.obj_type    "User"
