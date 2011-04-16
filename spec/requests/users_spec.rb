@@ -92,8 +92,6 @@ describe "Users" do
     describe "success" do
       it "should edit user attributes" do
         user = Factory(:user, :email => 'thisis3newrandomfoo@example.net', :password => 'foobarbaz', :confirmed_at => Time.now)
-        user.primary_phone_string = '444 666 9999'
-        user.save
         user.use_ifmachine.should be_false
         visit new_user_session_path
         fill_in "Email",      :with => user.email

@@ -75,9 +75,7 @@ describe PoolMerger do
       end
 
       it "should tell him sorry and end call if he's been waiting a long time" do
-        user = Factory(:user)
-        user.primary_phone = '+12223334444'
-        user.save
+        user = Factory(:user, :primary_phone => '+12223334444')
         event = Factory(:event, :user_id => user.id, :pool_id => @pool.id)
         new_participants = participant_list(1)
         new_participants[0][:conference_friendly_name] = "HoldEvent#{event.id}User#{user.id}Pool555"

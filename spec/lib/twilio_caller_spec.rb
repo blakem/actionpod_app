@@ -90,8 +90,6 @@ describe TwilioCaller do
   
     it "should use Twilio::RestAccount to make a call" do
       user = Factory(:user)
-      user.primary_phone = '+15553141222'
-      user.save
       event = Factory(:event, :user_id => user.id)  
       response = mock('HTTPResponse', :body => successful_start_call_response)
       account = mock('TwilioAccount', :request => response)

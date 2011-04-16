@@ -124,10 +124,6 @@ describe TwilioController do
 
     it "should put on hold on From" do
       user = Factory(:user)
-      user.save
-      phone = Phone.find(user.primary_phone_id)
-      phone.phone_number = '+1119998888'
-      phone.save
       pool = Factory(:pool, :timelimit => 33)
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
       event.days = [0,1,2,3,4,5,6]
@@ -142,11 +138,6 @@ describe TwilioController do
 
     it "should put on hold on To" do
       user = Factory(:user)
-      user.save
-      phone = Phone.find(user.primary_phone_id)
-      phone.phone_number = '+1119998888'
-      phone.save
-
       pool = Factory(:pool, :timelimit => 33)
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
       event.days = [0,1,2,3,4,5,6]
@@ -169,11 +160,6 @@ describe TwilioController do
 
     it "should match up with the event being called" do
       user = Factory(:user)
-      user.save
-      phone = Phone.find(user.primary_phone_id)
-      phone.phone_number = '+1119998888'
-      phone.save
-
 
       now = Time.now.in_time_zone(user.time_zone)
       event1 = Factory(:event, :user_id => user.id, :name => 'Second Morning Call', :pool_id => Factory(:pool).id)
@@ -222,11 +208,8 @@ describe TwilioController do
 
     it "should not match up with a user without a primary phone" do
       user = Factory(:user)
-      user.save
-      phone = Phone.find(user.primary_phone_id)
-      phone.phone_number = nil
-      phone.save(false)
-      
+      user.primary_phone = nil
+      user.save(false)
       User.find_by_primary_phone(nil).should == user
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => Factory(:pool).id)
       event.days = [0,1,2,3,4,5,6]
@@ -249,11 +232,6 @@ describe TwilioController do
     
     it "should create a call record" do
       user = Factory(:user)
-      user.save
-      phone = Phone.find(user.primary_phone_id)
-      phone.phone_number = '+1119998888'
-      phone.save
-
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => Factory(:pool).id)
       event.days = [0,1,2,3,4,5,6]
       event.save

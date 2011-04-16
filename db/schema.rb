@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110415220244) do
+ActiveRecord::Schema.define(:version => 20110415064957) do
 
   create_table "calls", :force => true do |t|
     t.string   "Sid"
@@ -76,14 +76,6 @@ ActiveRecord::Schema.define(:version => 20110415220244) do
     t.datetime "updated_at"
   end
 
-  create_table "phones", :force => true do |t|
-    t.integer  "user_id"
-    t.string   "phone_number"
-    t.string   "phone_number_string"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "pools", :force => true do |t|
     t.string   "name"
     t.integer  "user_id",    :null => false
@@ -122,9 +114,11 @@ ActiveRecord::Schema.define(:version => 20110415220244) do
     t.boolean  "admin",                               :default => false
     t.string   "time_zone"
     t.string   "name"
+    t.string   "primary_phone"
     t.string   "title"
     t.string   "invite_code"
     t.boolean  "use_ifmachine"
+    t.string   "primary_phone_string"
     t.datetime "deleted_at"
     t.string   "location"
     t.string   "confirmation_token"
@@ -133,7 +127,6 @@ ActiveRecord::Schema.define(:version => 20110415220244) do
     t.string   "handle"
     t.boolean  "hide_email",                          :default => false
     t.text     "about"
-    t.integer  "primary_phone_id"
   end
 
   add_index "users", ["confirmation_token"], :name => "index_users_on_confirmation_token", :unique => true

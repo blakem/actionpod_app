@@ -33,8 +33,6 @@ describe PoolQueuer do
     before(:each) do
       @pool = Factory(:pool)
       @user = Factory(:user)
-      @user.primary_phone = '+15551112222'
-      @user.save
       @event = Factory(:event, :pool_id => @pool.id, :user_id => @user.id)
       @now = Time.now.utc
       @delay_args = {
