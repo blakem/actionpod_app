@@ -19,11 +19,12 @@ def make_users
     :invite_code => invite_code.name,
     :name => "Blake Mills",
     :email => 'blakem30@yahoo.com',
-    :primary_phone_string => '415 314 1222',
     :password => 'foobar',
   )
   admin.toggle!(:admin)
   admin.save!
+  Phone.create!(:user_id => admin.id, :string => '415 314 1222', :primary => true)
+  Phone.create!(:user_id => admin.id, :string => '415 111 2222')
   pool = Pool.create!(:name => 'Default Pool', :user_id => admin.id)
   event = Event.create!(:name => "Test Event 1", :user_id => admin.id, :pool_id => pool.id)
 
@@ -36,9 +37,10 @@ def make_users
       :name => name,
       :email => email, 
       :password => password,
-      :primary_phone_string => '222 333 4444',
     ) 
     user.save!
+    Phone.create!(:user_id => user.id, :string => "415 314 122#{n}", :primary => true)
+    Phone.create!(:user_id => user.id, :string => "415 111 222#{n}")
     event = Event.create!(:name => "Test Event #{n+2}", :user_id => user.id, :pool_id => pool.id)
   end
 
@@ -51,8 +53,9 @@ def make_users
       :name => name,
       :email => email, 
       :password => password,
-      :primary_phone_string => '222 333 4444',
     )
+    Phone.create!(:user_id => user.id, :string => "415 314 123#{n}", :primary => true)
+    Phone.create!(:user_id => user.id, :string => "415 111 223#{n}")
     event = Event.create!(:name => "Test Event #{n+2+5}", :user_id => user.id, :pool_id => pool.id)
     event.time = '9:00am'
     event.save
@@ -66,9 +69,10 @@ def make_users
       :name => name,
       :email => email, 
       :password => password,
-      :primary_phone_string => '222 333 4444',
       :time_zone => 'Mountain Time (US & Canada)',
     )
+    Phone.create!(:user_id => user.id, :string => "415 314 124#{n}", :primary => true)
+    Phone.create!(:user_id => user.id, :string => "415 111 224#{n}")
     event = Event.create!(:name => "Test Event #{n+2+5+3}", :user_id => user.id, :pool_id => pool.id)
     event.time = '10:00am'
     event.save

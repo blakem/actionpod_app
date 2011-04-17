@@ -83,7 +83,7 @@ class PoolMerger
     take_off_hold(participant, data)
     @tc.apologize_no_other_participants(participant[:call_sid], data[:total])
     @tc.send_sms(
-      Event.find(participant_event_id(participant)).user.primary_phone,
+      Event.find(participant_event_id(participant)).user.primary_phone.number,
       "Sorry about that... I couldn't find anyone else for the call.  That shouldn't happen once we reach critical mass. ;-)",
     )
     event = Event.find(participant_event_id(participant))

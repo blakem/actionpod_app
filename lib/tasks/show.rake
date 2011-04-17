@@ -25,10 +25,17 @@ namespace :show do
       admin = u.admin? ? '*' : ' '
       not_confirmed = u.confirmed_at.blank? ? 'NC' : '  '
       time = event_count == 1 ? u.events.first.time : ''
+      primary_phones = Phone.where(:user_id => u.id, :primary => true)
+      if primary_phones.count > 1
+        puts "ERROR: #{u.name} has multiple primary phones"
+      elsif primary_phones.count == 0
+        puts "ERROR: #{u.name} has no primary phone"
+      end
+      phones = Phone.where(:user_id => u.id)
         
       puts "#{sprintf('%3s',u.id)}:#{admin}#{not_confirmed} #{sprintf('%-25s',u.name)} " +
            "has #{sprintf('%2s',event_count)}e #{sprintf('%-27s',u.time_zone)} #{sprintf('%7s',time)} " +
-           "#{sprintf("%10s", u.invite_code)} #{u.handle}"
+           "#{phones.count}p #{primary_phones[0].number} #{sprintf("%10s", u.invite_code)} #{u.handle}"
     end
   end
 
@@ -36,6 +43,14 @@ namespace :show do
   task :invitecodes => :environment do
     InviteCode.all.each do |i|
       puts "#{i.id}: #{i.name}"
+    end
+  end
+
+  desc "Show information about current Phones"
+  task :phones => :environment do
+    Phone.all.each do |p|
+      primary = p.primary ? '*' : ' '
+      puts "#{sprintf"%3s",p.id}:#{primary} #{p.number} #{p.string} #{p.user_id}:#{p.user.name}"
     end
   end
 

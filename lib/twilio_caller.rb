@@ -71,7 +71,7 @@ class TwilioCaller
   def start_call_for_event(event)
     post_args = {
       'From' => caller_id,
-      'To' => event.user.primary_phone,
+      'To' => event.user.primary_phone.number,
       'Url' => base_url + '/greeting.xml',
       'FallbackUrl' => base_url + '/greeting_fallback.xml',
       'StatusCallback' => base_url + '/callback.xml',

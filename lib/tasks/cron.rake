@@ -11,7 +11,7 @@ task :queueevents => :environment do
   queue_rv.each do |hash|
     event = Event.find(hash[:obj_id])
     puts "  #{hash[:run_at]},#{hash[:run_at].in_time_zone('Pacific Time (US & Canada)')}: " +
-         "#{hash[:id]} '#{event.user.name}' '#{event.name}' '#{hash[:obj_jobtype]}' '#{event.user.primary_phone}'"
+         "#{hash[:id]} '#{event.user.name}' '#{event.name}' '#{hash[:obj_jobtype]}' '#{event.user.primary_phone.number}'"
   end
   puts "Finished queuing #{queue_rv.count} events at: " + Time.now.to_s
 end

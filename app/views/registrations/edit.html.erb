@@ -1,6 +1,6 @@
 <h3>Update Your Profile</h3>
 
-<%= form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => { :method => :put }) do |f| %>
+<%= form_for(resource.with_phone, :as => resource_name, :url => registration_path(resource_name), :html => { :method => :put }) do |f| %>
   <%= devise_error_messages! %>
 <div class="field">
   <p><%= f.label :name, "Full Name:" %>
@@ -11,8 +11,11 @@
   <%= f.text_field :email %></p>
 </div>
 <div class="field">
-  <p><%= f.label :primary_phone_string, "Primary Phone:" %>
-  <%= f.text_field :primary_phone_string %></p>
+<%= f.fields_for :phones do |pf| %>
+  <p><%= pf.label :string, "Primary Phone:" %>
+  <%= pf.text_field :string %></p>
+  <%= pf.hidden_field :primary, :value => true %>
+<% end %>
 </div>
 <div class="field">
   <p><%= f.label :about, "Introductory text:" %><br/>

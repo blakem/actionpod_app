@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110415064957) do
+ActiveRecord::Schema.define(:version => 20110417055418) do
 
   create_table "calls", :force => true do |t|
     t.string   "Sid"
@@ -76,6 +76,15 @@ ActiveRecord::Schema.define(:version => 20110415064957) do
     t.datetime "updated_at"
   end
 
+  create_table "phones", :force => true do |t|
+    t.string   "number"
+    t.string   "string"
+    t.boolean  "primary",    :default => false
+    t.integer  "user_id",                       :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "pools", :force => true do |t|
     t.string   "name"
     t.integer  "user_id",    :null => false
@@ -114,11 +123,9 @@ ActiveRecord::Schema.define(:version => 20110415064957) do
     t.boolean  "admin",                               :default => false
     t.string   "time_zone"
     t.string   "name"
-    t.string   "primary_phone"
     t.string   "title"
     t.string   "invite_code"
     t.boolean  "use_ifmachine"
-    t.string   "primary_phone_string"
     t.datetime "deleted_at"
     t.string   "location"
     t.string   "confirmation_token"

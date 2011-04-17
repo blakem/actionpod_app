@@ -73,6 +73,7 @@ describe "Users" do
     describe "failure" do
       it "should not edit user" do
         user = Factory(:user, :email => 'thisis2newrandomfoo@example.net', :password => 'foobarbaz', :confirmed_at => Time.now)
+        phone = Factory(:phone, :user_id => user.id, :primary => true)
         visit new_user_session_path
         fill_in "Email",      :with => user.email
         fill_in "Password",   :with => user.password
@@ -92,6 +93,7 @@ describe "Users" do
     describe "success" do
       it "should edit user attributes" do
         user = Factory(:user, :email => 'thisis3newrandomfoo@example.net', :password => 'foobarbaz', :confirmed_at => Time.now)
+        phone = Factory(:phone, :user_id => user.id, :primary => true)
         user.use_ifmachine.should be_false
         visit new_user_session_path
         fill_in "Email",      :with => user.email

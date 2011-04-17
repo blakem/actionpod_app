@@ -90,6 +90,7 @@ describe TwilioCaller do
   
     it "should use Twilio::RestAccount to make a call" do
       user = Factory(:user)
+      phone = Factory(:phone, :user_id => user.id, :primary => true)
       event = Factory(:event, :user_id => user.id)  
       response = mock('HTTPResponse', :body => successful_start_call_response)
       account = mock('TwilioAccount', :request => response)
@@ -97,7 +98,7 @@ describe TwilioCaller do
         "/2010-04-01/Accounts/AC2e57bf710b77d765d280786bc07dbacc/Calls.json",
         "POST", 
         {"From"           => "+14157669865",
-         "To"             => user.primary_phone, 
+         "To"             => user.primary_phone.number, 
          "Url"            => "http://www.15minutecalls.com/twilio/greeting.xml",
          "FallbackUrl"    => "http://www.15minutecalls.com/twilio/greeting_fallback.xml", 
          "StatusCallback" => "http://www.15minutecalls.com/twilio/callback.xml"
@@ -120,6 +121,7 @@ describe TwilioCaller do
 
     it "should go straight to put_on_hold if user has use_ifmachine set" do
       user = Factory(:user)
+      phone = Factory(:phone, :user_id => user.id, :primary => true)
       user.use_ifmachine = true
       user.save
       event = Factory(:event, :user_id => user.id)  
@@ -129,7 +131,7 @@ describe TwilioCaller do
         "/2010-04-01/Accounts/AC2e57bf710b77d765d280786bc07dbacc/Calls.json",
         "POST", 
         {"From"           => "+14157669865",
-         "To"             => user.primary_phone, 
+         "To"             => user.primary_phone.number, 
          "Url"            => "http://www.15minutecalls.com/twilio/go_directly_to_conference.xml",
          "IfMachine"      => "Hangup",
          "FallbackUrl"    => "http://www.15minutecalls.com/twilio/greeting_fallback.xml", 

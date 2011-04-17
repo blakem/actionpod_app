@@ -5,6 +5,24 @@ describe User do
     User.secret_invite_code.should_not be_empty
   end
 
+  it "has many phones and a primary_phone" do
+    user = Factory(:user)
+    phone1 = Factory(:phone, :user_id => user.id)
+    phone2 = Factory(:phone, :user_id => user.id, :primary => true)
+    user.phones.should include(phone1, phone2)
+    user.primary_phone.should == phone2
+    user.primary_phone.number.should == phone2.number
+    user.primary_phone.string.should == phone2.string
+  end
+  
+  it "has with_phone" do
+    user = Factory(:user)
+    user.phones.should be_empty
+    user = user.with_phone
+    user.phones[0].kind_of?(Phone)
+    user.phones[0].user_id.should == user.id
+  end
+
   it "requires a name" do
     user = User.new
     user.valid?
@@ -54,31 +72,6 @@ describe User do
   it "should have a name" do
     user = Factory(:user, :name => 'Bob Jones')
     user.name.should == 'Bob Jones'
-  end
-
-  it "should have a primary_phone" do
-    user = Factory(:user, :primary_phone_string => '415-444-1234')
-    user.primary_phone.should == '+14154441234'
-  end
-
-  it "should munge your primary phone string into a standard format" do
-    user1 = User.create(:primary_phone_string => '+14154441234')
-    user1.primary_phone.should == '+14154441234'
-    user2 = User.create(:primary_phone_string => '4154441234')
-    user2.primary_phone.should == '+14154441234'
-    user3 = User.create(:primary_phone_string => '415-444-1234')
-    user3.primary_phone.should == '+14154441234'
-    user3 = User.create(:primary_phone_string => '(415) 444.1234')
-    user3.primary_phone.should == '+14154441234'
-    user3.primary_phone_string = '(415) 666.1234'
-    user3.save
-    user3.primary_phone.should == '+14156661234'
-    user3.primary_phone_string = 'xyzzy'
-    user3.valid?.should be_false
-    user3.errors[:primary_phone_string].should include("is invalid")
-    user3.primary_phone_string = ''
-    user3.valid?.should be_false
-    user3.errors[:primary_phone_string].should include("can't be blank")
   end
 
   it "should have a title" do

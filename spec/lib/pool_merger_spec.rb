@@ -75,13 +75,14 @@ describe PoolMerger do
       end
 
       it "should tell him sorry and end call if he's been waiting a long time" do
-        user = Factory(:user, :primary_phone => '+12223334444')
+        user = Factory(:user)
+        phone = Factory(:phone, :user_id => user.id, :primary => true)
         event = Factory(:event, :user_id => user.id, :pool_id => @pool.id)
         new_participants = participant_list(1)
         new_participants[0][:conference_friendly_name] = "HoldEvent#{event.id}User#{user.id}Pool555"
         @tc.should_receive(:participants_on_hold_for_pool).twice.with(@pool).and_return(new_participants)
         @tc.should_receive(:apologize_no_other_participants).with('CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1', 2)
-        @tc.should_receive(:send_sms).with(user.primary_phone,
+        @tc.should_receive(:send_sms).with(phone.number,
           "Sorry about that... I couldn't find anyone else for the call.  That shouldn't happen once we reach critical mass. ;-)"
         )
         data = @pm.initialize_data({})
@@ -116,7 +117,8 @@ describe PoolMerger do
       end
 
       it "should put him in the smallest conference room if he's old" do
-        user = Factory(:user, :primary_phone => '+12223334444')
+        user = Factory(:user)
+        phone = Factory(:phone, :user_id => user.id, :primary => true)
         event = Factory(:event, :user_id => user.id, :pool_id => @pool.id)
         new_participants = participant_list(1)
         new_participants[0][:conference_friendly_name] = "HoldEvent#{event.id}User#{user.id}Pool555"

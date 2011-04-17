@@ -124,11 +124,13 @@ describe TwilioController do
 
     it "should put on hold on From" do
       user = Factory(:user)
+      phone1 = Factory(:phone, :user_id => user.id, :primary => true)
+      phone2 = Factory(:phone, :user_id => user.id, :primary => false)
       pool = Factory(:pool, :timelimit => 33)
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
       event.days = [0,1,2,3,4,5,6]
       event.save
-      post :put_on_hold, :From => user.primary_phone, :Direction => 'inbound' 
+      post :put_on_hold, :From => phone1.number, :Direction => 'inbound' 
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => 'Waiting for the other participants')
       response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
@@ -136,13 +138,47 @@ describe TwilioController do
       response.should have_selector('response>say', :content => 'Time is up. Goodbye.')
     end
 
-    it "should put on hold on To" do
+    it "should put on hold on From using a non primary phone" do
       user = Factory(:user)
+      phone1 = Factory(:phone, :user_id => user.id, :primary => true)
+      phone2 = Factory(:phone, :user_id => user.id, :primary => false)
       pool = Factory(:pool, :timelimit => 33)
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
       event.days = [0,1,2,3,4,5,6]
       event.save
-      post :put_on_hold, :To => user.primary_phone, :Direction => 'outbound-api' 
+      post :put_on_hold, :From => phone2.number, :Direction => 'inbound' 
+      response.content_type.should =~ /^application\/xml/
+      response.should have_selector('response>say', :content => 'Waiting for the other participants')
+      response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
+      response.should have_selector('response>dial>conference', :content => "HoldEvent#{event.id}User#{user.id}Pool#{pool.id}")
+      response.should have_selector('response>say', :content => 'Time is up. Goodbye.')
+    end
+    
+    it "should put on hold on To" do
+      user = Factory(:user)
+      phone1 = Factory(:phone, :user_id => user.id, :primary => true)
+      phone2 = Factory(:phone, :user_id => user.id, :primary => false)
+      pool = Factory(:pool, :timelimit => 33)
+      event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
+      event.days = [0,1,2,3,4,5,6]
+      event.save
+      post :put_on_hold, :To => phone1.number, :Direction => 'outbound-api' 
+      response.content_type.should =~ /^application\/xml/
+      response.should have_selector('response>say', :content => 'Waiting for the other participants')
+      response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
+      response.should have_selector('response>dial>conference', :content => "HoldEvent#{event.id}User#{user.id}Pool#{pool.id}")
+      response.should have_selector('response>say', :content => 'Time is up. Goodbye.')
+    end
+
+    it "should put on hold on To using a non primary phone" do
+      user = Factory(:user)
+      phone1 = Factory(:phone, :user_id => user.id, :primary => true)
+      phone2 = Factory(:phone, :user_id => user.id, :primary => false)
+      pool = Factory(:pool, :timelimit => 33)
+      event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
+      event.days = [0,1,2,3,4,5,6]
+      event.save
+      post :put_on_hold, :To => phone2.number, :Direction => 'outbound-api' 
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => 'Waiting for the other participants')
       response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
@@ -160,6 +196,7 @@ describe TwilioController do
 
     it "should match up with the event being called" do
       user = Factory(:user)
+      phone = Factory(:phone, :user_id => user)
 
       now = Time.now.in_time_zone(user.time_zone)
       event1 = Factory(:event, :user_id => user.id, :name => 'Second Morning Call', :pool_id => Factory(:pool).id)
@@ -187,7 +224,7 @@ describe TwilioController do
       event5.time = (now - 5.minutes).strftime("%I:%M%p")
       event5.save
 
-      post :incoming, :From => user.primary_phone, :Direction => 'inbound' 
+      post :incoming, :From => phone.number, :Direction => 'inbound' 
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => 'Hello, welcome to your Bit After Morning Call.')
       response.should have_selector('response>say', :content => 'Waiting for the other participants')
@@ -197,7 +234,7 @@ describe TwilioController do
       
       event2.time = (now + 20.minutes).strftime("%I:%M%p")
       event2.save
-      post :incoming, :From => user.primary_phone, :Direction => 'inbound' 
+      post :incoming, :From => user.phone.number, :Direction => 'inbound' 
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => 'Hello, welcome to your Bit Before Morning Call.')
       response.should have_selector('response>say', :content => 'Waiting for the other participants')
@@ -208,9 +245,9 @@ describe TwilioController do
 
     it "should not match up with a user without a primary phone" do
       user = Factory(:user)
-      user.primary_phone = nil
-      user.save(false)
-      User.find_by_primary_phone(nil).should == user
+      phone = Factory(:phone, :user_id => user.id)
+      phone.number = nil
+      phone.save(false)
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => Factory(:pool).id)
       event.days = [0,1,2,3,4,5,6]
       event.save
@@ -232,15 +269,16 @@ describe TwilioController do
     
     it "should create a call record" do
       user = Factory(:user)
+      phone = Factory(:phone, :user_id => user.id, :primary => true)
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => Factory(:pool).id)
       event.days = [0,1,2,3,4,5,6]
       event.save
       expect {
-        post :incoming, :From => user.primary_phone, :Direction => 'inbound', :CallSid => "CA462"
+        post :incoming, :From => phone.number, :Direction => 'inbound', :CallSid => "CA462"
       }.to change(Call, :count).by(1)
       call = Call.find_by_Sid('CA462')
       call.Direction.should == 'inbound'
-      call.From.should == user.primary_phone
+      call.From.should == user.primary_phone.number
       call.event_id.should == event.id
     end
   end

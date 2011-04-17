@@ -135,7 +135,8 @@ class TwilioController < ApplicationController
     def match_user_from_params(params)
       key = params[:Direction] == 'inbound' ? :From : :To
       return nil if params[key].blank?
-      User.find_by_primary_phone(params[key])
+      phone = Phone.find_by_number(params[key])
+      phone ? phone.user : nil
     end
     
     def pick_users_closest_event(user)

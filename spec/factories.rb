@@ -34,8 +34,6 @@ Factory.define :user do |user|
   user.sequence(:email)         { Factory.next(:email) }
   user.sequence(:name)          { Factory.next(:user_name) }
   user.sequence(:title)         { Factory.next(:user_title) }
-  user.sequence(:primary_phone) { Factory.next(:phone) }
-  user.primary_phone_string     "444 555 6666"
   user.time_zone                "Pacific Time (US & Canada)"
   user.password                 "foobar"
   user.invite_code              User.secret_invite_code
@@ -48,6 +46,12 @@ Factory.define :event do |event|
   event.sequence(:name)  { Factory.next(:event_name) }
   event.association :user_id, :factory => :user
   event.association :pool_id, :factory => :pool
+end
+
+Factory.define :phone do |phone|
+  phone.sequence(:number)     { Factory.next(:phone) }
+  phone.string                "444 555 6666"
+  phone.association :user_id, :factory => :user
 end
 
 Factory.define :pool do |pool|

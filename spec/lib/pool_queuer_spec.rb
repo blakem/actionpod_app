@@ -33,6 +33,7 @@ describe PoolQueuer do
     before(:each) do
       @pool = Factory(:pool)
       @user = Factory(:user)
+      @phone = Factory(:phone, :user_id => @user.id, :primary => true)
       @event = Factory(:event, :pool_id => @pool.id, :user_id => @user.id)
       @now = Time.now.utc
       @delay_args = {
@@ -60,7 +61,7 @@ describe PoolQueuer do
       account = mock('TwilioAccount', :request => response)
       account.should_receive(:request).with(TwilioCaller.new.sms_uri, 'POST', {
         :From => TwilioCaller.new.caller_id,
-        :To   => @user.primary_phone, 
+        :To   => @user.primary_phone.number, 
         :Body => "Sorry.  No one else is scheduled for the 8:00am slot.  This shouldn't happen after we reach a critical mass of users. ;-)"        
       })
       Twilio::RestAccount.should_receive(:new).with("AC2e57bf710b77d765d280786bc07dbacc", "fc9bd67bb8deee6befd3ab0da3973718").and_return(account)

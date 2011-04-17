@@ -1,5 +1,5 @@
 # == Schema Information
-# Schema version: 20110415064957
+# Schema version: 20110417055418
 #
 # Table name: users
 #
@@ -20,11 +20,9 @@
 #  admin                :boolean
 #  time_zone            :string(255)
 #  name                 :string(255)
-#  primary_phone        :string(255)
 #  title                :string(255)
 #  invite_code          :string(255)
 #  use_ifmachine        :boolean
-#  primary_phone_string :string(255)
 #  deleted_at           :datetime
 #  location             :string(255)
 #  confirmation_token   :string(255)
@@ -42,23 +40,22 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :validatable
 
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :email, :password, :password_confirmation, :remember_me, :invite_code, :time_zone, :name, :primary_phone, :title,
-                  :invite_code, :primary_phone_string, :use_ifmachine, :location, :handle, :hide_email, :about
+  attr_accessible :email, :password, :password_confirmation, :remember_me, :invite_code, :time_zone, :name, :title,
+                  :invite_code, :use_ifmachine, :location, :handle, :hide_email, :about, :phones_attributes
 
   has_many :events
   has_many :pools
+  has_many :phones
   has_and_belongs_to_many :conferences
+  accepts_nested_attributes_for :phones, :allow_destroy => true
 
   validates_each :invite_code, :on => :create do |record, attr, value|
       record.errors.add attr, "Please enter correct invite code." unless
         value && (value == secret_invite_code || InviteCode.find_by_name(value.downcase))
   end
-  validates_each :primary_phone, do |record, attr, value|
-     record.errors.add :primary_phone_string, 'is invalid' unless
-        value && value =~ /\A\+1\d{10}\Z/
-  end
+
   validates_format_of :handle, :with => /\A[0-9a-z]+\Z/i, :message => "can only be letters and numbers."
-  validates_presence_of :name, :primary_phone_string
+  validates_presence_of :name
   validates_uniqueness_of :handle
 
   after_initialize :init
@@ -68,31 +65,31 @@ class User < ActiveRecord::Base
   end
 
   before_validation do
-    if attribute_present?("primary_phone_string")
-      self.primary_phone = primary_phone_string.gsub(/[^0-9]/, "")
-      self.primary_phone = "1" + primary_phone unless primary_phone =~ /^1\d{10}$/
-      self.primary_phone =  "+"  + primary_phone unless primary_phone =~ /^\+$/
-    end
     if attribute_present?("email") && !attribute_present?("handle")
       self.handle = self.generate_handle_from_email
     end
   end
 
   def save(*args)
-    rv = super(*args)
-    return rv unless rv
-    self.events.each do |event|
-      event.alter_schedule(:start_date => event.schedule.start_time.in_time_zone(self.time_zone).beginning_of_day)
-      event.save
-    end
-    rv
-  end
+     rv = super(*args)
+     return rv unless rv
+     self.events.each do |event|
+       event.alter_schedule(:start_date => event.schedule.start_time.in_time_zone(self.time_zone).beginning_of_day)
+       event.save
+     end
+     rv
+   end
   
   def soft_delete
     self.deleted_at = Time.current
     self.save
   end
-
+  
+  def with_phone
+    self.phones.build if self.phones.empty?
+    self
+  end
+  
   def self.secret_invite_code
     "acti0np0duser"
   end
@@ -107,13 +104,17 @@ class User < ActiveRecord::Base
     find_unique_handle(genhandle)
   end
 
+  def primary_phone
+    Phone.where(:user_id => self.id, :primary => true)[0]
+  end
+
   def find_unique_handle(genhandle, count=1)
     genhandle = genhandle + count.to_s if count > 1
     self.class.find_by_handle(genhandle) ? find_unique_handle(genhandle, count+1) : genhandle
   end
   
   def self.human_attribute_name(attribute_key_name, options = {})
-    return "Primary Phone" if options[:default] == 'Primary phone string'
+    return "Primary Phone" if attribute_key_name.to_s == 'phones.string'
     return "" if options[:default] == 'Invite code'
     return super(attribute_key_name, options)
   end
