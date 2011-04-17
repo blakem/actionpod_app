@@ -115,6 +115,7 @@ class User < ActiveRecord::Base
   
   def self.human_attribute_name(attribute_key_name, options = {})
     return "Primary Phone" if attribute_key_name.to_s == 'phones.string'
+    return "Primary Phone" if attribute_key_name.to_s == 'phones.number'
     return "" if options[:default] == 'Invite code'
     return super(attribute_key_name, options)
   end
