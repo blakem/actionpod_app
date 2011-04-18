@@ -354,7 +354,7 @@ describe TwilioController do
       user2 = Factory(:user, :name => 'Sally')
       event1 = Factory(:event, :user_id => user1.id)
       event2 = Factory(:event, :user_id => user2.id)
-      post :place_in_conference, :conference => 'FooBar', :timelimit => 24, :events => [event1.id, event2.id].join(',')
+      post :place_in_conference, :conference => 'FooBar', :timelimit => '24', :events => [event1.id, event2.id].join(',')
       intro_string = TwilioController.new.build_intro_string("#{event1.id},#{event2.id}")
       response.content_type.should =~ /^application\/xml/
       hash = (Hash.from_xml response.body).with_indifferent_access
@@ -370,7 +370,7 @@ describe TwilioController do
     end
 
     it "should put the user into the conference room when it doesn't know the other callers" do
-      post :place_in_conference, :conference => 'FooBar', :timelimit => 24, :events => ''
+      post :place_in_conference, :conference => 'FooBar', :timelimit => '24', :events => ''
       hash = (Hash.from_xml response.body).with_indifferent_access
       hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/

@@ -5,7 +5,7 @@
  <% else %>
   <Say>Welcome. On the call today we have <%= @names %></Say>
  <% end %>
- <Dial timeLimit="<%= @timelimit - 60 %>">
+ <Dial timeLimit="<%= (@timelimit.to_i - 60).to_s %>">
 	<Conference><%= @conference %></Conference>
  </Dial>
  <Say>1 Minute Remaining.</Say>
