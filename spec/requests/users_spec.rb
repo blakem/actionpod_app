@@ -25,19 +25,33 @@ describe "Users" do
     
     describe "success" do
       it "should make a new user" do
-        lambda do
+        expect { expect {
           visit new_user_registration_path
           fill_in "Invite Code",            :with => "xyzzy"
           fill_in "Full Name",              :with => "Example User"
-          fill_in "Email",                  :with => "example@example.org"
+          fill_in "Email",                  :with => "newuserpurple@example.org"
           fill_in "Primary Phone",          :with => "415 111 2222"
+          fill_in "Title",                  :with => 'mytitle'
+          fill_in "Location",               :with => 'mylocation'
+          fill_in "A sentence or two about what you want from your calls", :with => 'Some jellybeans.'
           fill_in "Time Zone",              :with => "Pacific Time (US & Canada)"
           fill_in "Password",               :with => "a"*10
           fill_in "Password Confirmation",  :with => "a"*10
           click_button
           response.should have_selector('div.flash.notice', :content => 'You have signed up successfully')
           response.should render_template('sessions/new')
-        end.should change(User, :count).by(1)
+        }.should change(User, :count).by(1)}.should change(Phone, :count).by(1)
+        user = User.find_by_email('newuserpurple@example.org')
+        user.name.should == "Example User"
+        user.email.should == "newuserpurple@example.org"
+        user.primary_phone.number.should == '+14151112222'
+        user.title.should == 'mytitle'
+        user.location.should == 'mylocation'
+        user.about.should == 'Some jellybeans.'
+        user.time_zone.should == 'Pacific Time (US & Canada)'
+        user.hide_email.should be_false
+        user.use_ifmachine.should be_false
+        user.handle.should == 'newuserpurple'
       end
     end
   end
@@ -81,7 +95,7 @@ describe "Users" do
         controller.user_signed_in?.should be_true
 
         visit edit_user_registration_path
-        fill_in "Email",      :with => "newemail@example.com"
+        fill_in "Email",        :with => "newemail@example.com"
         click_button
         response.should have_selector('div#error_explanation')
         response.should render_template('sessions/new')
@@ -95,6 +109,8 @@ describe "Users" do
         user = Factory(:user, :email => 'thisis3newrandomfoo@example.net', :password => 'foobarbaz', :confirmed_at => Time.now)
         phone = Factory(:phone, :user_id => user.id, :primary => true)
         user.use_ifmachine.should be_false
+        user.hide_email.should be_false
+        user.time_zone.should == 'Pacific Time (US & Canada)'
         visit new_user_session_path
         fill_in "Email",      :with => user.email
         fill_in "Password",   :with => user.password
@@ -102,13 +118,30 @@ describe "Users" do
         controller.user_signed_in?.should be_true
 
         visit edit_user_registration_path
+        fill_in "Full Name",          :with => 'Bubby Bob'
         fill_in "Email",              :with => "new@example.com"
+        fill_in "Primary Phone",      :with => '415 222 5555'
+        fill_in "Introductory text", :with => 'I like jellybeans.'
+        fill_in "Handle",            :with => 'newhandle'
+        fill_in "Title",              :with => 'newtitle'
+        fill_in "Location",          :with => 'newlocation'
+        fill_in "Time Zone",          :with => 'Mountain Time (US & Canada)'
+        check   "Hide my email address from other users"
+        check   "Go directly to conference"
         fill_in "Current Password",   :with => user.password
-        check "Go directly to conference"
         click_button
+
         response.should_not have_selector('div#error_explanation')
         user.reload
+        user.name.should == 'Bubby Bob'
         user.email.should == "new@example.com"
+        user.primary_phone.number.should == '+14152225555'
+        user.about.should == 'I like jellybeans.'
+        user.handle.should == 'newhandle'
+        user.title.should == 'newtitle'
+        user.location.should == 'newlocation'
+        user.time_zone.should == 'Mountain Time (US & Canada)'
+        user.hide_email.should be_true
         user.use_ifmachine.should be_true
       end        
     end  
