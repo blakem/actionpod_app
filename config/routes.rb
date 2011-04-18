@@ -2,6 +2,7 @@ ActionpodApp::Application.routes.draw do
   root :to => 'pages#home'
   devise_for :users, :controllers => { :registrations => 'registrations' }
   resources :events
+  resources :phones
 
   # Callme routes
   match ':controller(/:action(.:format))'
