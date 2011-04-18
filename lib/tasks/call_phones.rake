@@ -1,6 +1,6 @@
 desc "Schedule a call between home and cell in 1 minute"
 task :call_phones => :environment do
-  user1 = User.find_by_email('blakem30@yahoo.com')
+  user1 = User.find_by_email('blakem@15minutecalls.com')
   user2 = User.find_by_email('blakem@blakem.com')
   if (user1 and user2)
     event1 = Event.find_by_name_and_user_id('With Home', user1.id)
