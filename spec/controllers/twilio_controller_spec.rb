@@ -10,6 +10,8 @@ describe TwilioController do
     it "should be success" do
   	  controller.user_signed_in?.should be_false
       post :greeting
+      hash = (Hash.from_xml response.body).with_indifferent_access
+      hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
       response.should be_success
     end
@@ -18,6 +20,8 @@ describe TwilioController do
   describe "greeting" do
     it "should say can't match this number when it can't find an event" do
       post :greeting
+      hash = (Hash.from_xml response.body).with_indifferent_access
+      hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => "I'm sorry")
     end
@@ -27,6 +31,8 @@ describe TwilioController do
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call')      
       Call.create(:Sid => '12345', :event_id => event.id)
       post :greeting, :CallSid => '12345'
+      hash = (Hash.from_xml response.body).with_indifferent_access
+      hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>gather', :numdigits => '1')
       response.should have_selector('response>gather', :finishonkey => '#')
@@ -40,6 +46,8 @@ describe TwilioController do
   describe "greeting_fallback" do
     it "should say can't match this number when it can't find an event" do
       post :greeting_fallback
+      hash = (Hash.from_xml response.body).with_indifferent_access
+      hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => "I'm sorry")
     end
@@ -50,6 +58,8 @@ describe TwilioController do
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
       Call.create(:Sid => '54321', :event_id => event.id)
       post :greeting_fallback, :CallSid => '54321'
+      hash = (Hash.from_xml response.body).with_indifferent_access
+      hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => 'Waiting for the other participants')
       response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
@@ -62,6 +72,9 @@ describe TwilioController do
     it "should set the duration of the call" do
       call = Call.create(:Sid => '54321')
       post :callback, :CallSid => call.Sid, :CallDuration => 33
+      hash = (Hash.from_xml response.body).with_indifferent_access
+      hash[:Response].should be_true
+      response.content_type.should =~ /^application\/xml/
       call.reload
       call.Duration.should == 33
     end
@@ -70,6 +83,8 @@ describe TwilioController do
   describe "go_directly_to_conference" do
     it "should say can't match this number when it can't find an event" do
       post :go_directly_to_conference
+      hash = (Hash.from_xml response.body).with_indifferent_access
+      hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => "I'm sorry")
     end
@@ -80,6 +95,8 @@ describe TwilioController do
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
       Call.create(:Sid => '12345', :event_id => event.id)
       post :go_directly_to_conference, :CallSid => '12345'
+      hash = (Hash.from_xml response.body).with_indifferent_access
+      hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => 'Welcome to your Morning Call.')
       response.should have_selector('response>say', :content => 'Waiting for the other participants')
@@ -92,6 +109,8 @@ describe TwilioController do
   describe "put_on_hold" do
     it "should say can't match this number when it can't find an event" do
       post :put_on_hold
+      hash = (Hash.from_xml response.body).with_indifferent_access
+      hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => "I'm sorry")
     end
@@ -102,6 +121,8 @@ describe TwilioController do
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
       Call.create(:Sid => '54321', :event_id => event.id)
       post :put_on_hold, :CallSid => '54321'
+      hash = (Hash.from_xml response.body).with_indifferent_access
+      hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => 'Waiting for the other participants')
       response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
@@ -115,6 +136,8 @@ describe TwilioController do
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
       Call.create(:Sid => '54321', :PhoneNumberSid => 'PN123', :event_id => event.id)
       post :put_on_hold, :PhoneNumberSid => 'PN123'
+      hash = (Hash.from_xml response.body).with_indifferent_access
+      hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => 'Waiting for the other participants')
       response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
@@ -131,6 +154,8 @@ describe TwilioController do
       event.days = [0,1,2,3,4,5,6]
       event.save
       post :put_on_hold, :From => phone1.number, :Direction => 'inbound' 
+      hash = (Hash.from_xml response.body).with_indifferent_access
+      hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => 'Waiting for the other participants')
       response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
@@ -147,6 +172,8 @@ describe TwilioController do
       event.days = [0,1,2,3,4,5,6]
       event.save
       post :put_on_hold, :From => phone2.number, :Direction => 'inbound' 
+      hash = (Hash.from_xml response.body).with_indifferent_access
+      hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => 'Waiting for the other participants')
       response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
@@ -163,6 +190,8 @@ describe TwilioController do
       event.days = [0,1,2,3,4,5,6]
       event.save
       post :put_on_hold, :To => phone1.number, :Direction => 'outbound-api' 
+      hash = (Hash.from_xml response.body).with_indifferent_access
+      hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => 'Waiting for the other participants')
       response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
@@ -179,6 +208,8 @@ describe TwilioController do
       event.days = [0,1,2,3,4,5,6]
       event.save
       post :put_on_hold, :To => phone2.number, :Direction => 'outbound-api' 
+      hash = (Hash.from_xml response.body).with_indifferent_access
+      hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => 'Waiting for the other participants')
       response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
@@ -190,6 +221,8 @@ describe TwilioController do
   describe "incoming" do
     it "should say can't match this number when it can't find an event" do
       post :incoming
+      hash = (Hash.from_xml response.body).with_indifferent_access
+      hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => "I'm sorry")
     end
@@ -216,7 +249,7 @@ describe TwilioController do
 
       event4 = Factory(:event, :user_id => user.id, :name => 'Fourth Morning Call', :pool_id => Factory(:pool).id)
       event4.days = [0,1,2,3,4,5,6]
-      event4.time = (now + 12.minutes).strftime("%I:%M%p")
+      event4.time = (now + 14.minutes).strftime("%I:%M%p")
       event4.save
 
       event5 = Factory(:event, :user_id => user.id, :name => 'Bit Before Morning Call', :pool_id => Factory(:pool).id)
@@ -225,6 +258,8 @@ describe TwilioController do
       event5.save
 
       post :incoming, :From => phone.number, :Direction => 'inbound' 
+      hash = (Hash.from_xml response.body).with_indifferent_access
+      hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => 'Hello, welcome to your Bit After Morning Call.')
       response.should have_selector('response>say', :content => 'Waiting for the other participants')
@@ -232,9 +267,11 @@ describe TwilioController do
       response.should have_selector('response>dial>conference', :content => "HoldEvent#{event2.id}User#{user.id}Pool#{event2.pool.id}Incoming")
       response.should have_selector('response>say', :content => 'Time is up. Goodbye.')
       
-      event2.time = (now + 11.minutes).strftime("%I:%M%p")
+      event2.time = (now + 13.minutes).strftime("%I:%M%p")
       event2.save
       post :incoming, :From => phone.number, :Direction => 'inbound' 
+      hash = (Hash.from_xml response.body).with_indifferent_access
+      hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => 'Hello, welcome to your Bit Before Morning Call.')
       response.should have_selector('response>say', :content => 'Waiting for the other participants')
@@ -254,6 +291,8 @@ describe TwilioController do
       event1.save
 
       post :incoming, :From => phone.number, :Direction => 'inbound' 
+      hash = (Hash.from_xml response.body).with_indifferent_access
+      hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => 'Hello, welcome to your Yesterdays Call.')
       response.should have_selector('response>say', :content => 'Waiting for the other participants')
@@ -271,6 +310,8 @@ describe TwilioController do
       event.days = [0,1,2,3,4,5,6]
       event.save
       post :incoming, :From => nil, :Direction => 'inbound' 
+      hash = (Hash.from_xml response.body).with_indifferent_access
+      hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => "I'm sorry")
     end
@@ -282,6 +323,8 @@ describe TwilioController do
       event.save
       Call.create(:event_id => event.id, :PhoneNumberSid => nil, :Sid => nil)
       post :incoming, :From => 'SomeOtherPhone', :Direction => 'inbound' 
+      hash = (Hash.from_xml response.body).with_indifferent_access
+      hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => "I'm sorry")
     end
@@ -295,6 +338,9 @@ describe TwilioController do
       expect {
         post :incoming, :From => phone.number, :Direction => 'inbound', :CallSid => "CA462"
       }.to change(Call, :count).by(1)
+      hash = (Hash.from_xml response.body).with_indifferent_access
+      hash[:Response].should be_true
+      response.content_type.should =~ /^application\/xml/
       call = Call.find_by_Sid('CA462')
       call.Direction.should == 'inbound'
       call.From.should == user.primary_phone.number
@@ -311,27 +357,40 @@ describe TwilioController do
       post :place_in_conference, :conference => 'FooBar', :timelimit => 24, :events => [event1.id, event2.id].join(',')
       intro_string = TwilioController.new.build_intro_string("#{event1.id},#{event2.id}")
       response.content_type.should =~ /^application\/xml/
+      hash = (Hash.from_xml response.body).with_indifferent_access
+      hash[:Response][:Say].count.should == 3
+      hash[:Response][:Dial].count.should == 2
       response.should have_selector('response>say', :content => "Welcome. On the call today we have #{intro_string}")
       response.should_not have_selector('response>say', :content => 'Welcome. Joining a conference already in progress.')
-      response.should have_selector('response>dial', :timelimit => (24 * 60).to_s)
+      response.should have_selector('response>dial', :timelimit => (23 * 60).to_s)
       response.should have_selector('response>dial>conference', :content => "FooBar")
+      response.should have_selector('response>say', :content => '1 Minute Remaining.')      
+      response.should have_selector('response>dial', :timelimit => 60.to_s)
       response.should have_selector('response>say', :content => 'Time is up. Goodbye.')      
     end
 
     it "should put the user into the conference room when it doesn't know the other callers" do
       post :place_in_conference, :conference => 'FooBar', :timelimit => 24, :events => ''
+      hash = (Hash.from_xml response.body).with_indifferent_access
+      hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => 'Welcome. Joining a conference already in progress.')
       response.should_not have_selector('response>say', :content => 'Welcome. On the call today we have')
-      response.should have_selector('response>dial', :timelimit => (24 * 60).to_s)
+      response.should have_selector('response>dial', :timelimit => (23 * 60).to_s)
       response.should have_selector('response>dial>conference', :content => "FooBar")
+      response.should have_selector('response>say', :content => '1 Minute Remaining.')      
+      response.should have_selector('response>dial', :timelimit => 60.to_s)
       response.should have_selector('response>say', :content => 'Time is up. Goodbye.')      
     end
 
     it "should default to a time limit of 15 and a room of DefaultConference" do
       post :place_in_conference
+      hash = (Hash.from_xml response.body).with_indifferent_access
+      hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
-      response.should have_selector('response>dial', :timelimit => (15 * 60).to_s)
+      response.should have_selector('response>dial', :timelimit => (14 * 60).to_s)
+      response.should have_selector('response>say', :content => '1 Minute Remaining.')      
+      response.should have_selector('response>dial', :timelimit => 60.to_s)
       response.should have_selector('response>dial>conference', :content => "DefaultConference")
     end
   end
@@ -369,12 +428,16 @@ describe TwilioController do
   describe "apologize_no_other_participants" do
     it "should say sorry and give the number of total participants called" do
       post :apologize_no_other_participants, :participant_count => '2'
+      hash = (Hash.from_xml response.body).with_indifferent_access
+      hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => "I'm sorry. I called 1 other person but they didn't answer. Goodbye.")
     end
 
     it "should say sorry and give the number of total participants called" do
       post :apologize_no_other_participants, :participant_count => '3'
+      hash = (Hash.from_xml response.body).with_indifferent_access
+      hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => "I'm sorry. I called 2 other people but they didn't answer. Goodbye.")
     end
@@ -383,6 +446,9 @@ describe TwilioController do
   describe "sms" do
     it "should send back a welcome message" do
       post :sms
+      hash = (Hash.from_xml response.body).with_indifferent_access
+      hash[:Response].should be_true
+      response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>sms', :content => "Welcome to 15-Minute Calls.  See 15minutecalls.com for more information.")
     end
   end

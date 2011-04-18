@@ -5,8 +5,12 @@
  <% else %>
   <Say>Welcome. On the call today we have <%= @names %></Say>
  <% end %>
-  <Dial timeLimit="<%= @timelimit %>">
+ <Dial timeLimit="<%= @timelimit - 60 %>">
 	<Conference><%= @conference %></Conference>
-  </Dial>
+ </Dial>
+ <Say>1 Minute Remaining.</Say>
+ <Dial timeLimit="<%= 60 %>">
+	<Conference><%= @conference %></Conference>
+ </Dial>
   <Say>Time is up. Goodbye.</Say>
 </Response>
