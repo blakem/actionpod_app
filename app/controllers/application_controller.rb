@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
 
   def ensure_domain
     return unless Rails.env.production?
-    if request.env['HTTP_HOST'] != 'www.15minutecalls.com'
+    if (request.env['HTTP_HOST'] != 'www.15minutecalls.com' && request.env['HTTP_HOST'] != 'actionpods-staging.heroku.com')
       redirect_to "http://www.15minutecalls.com", :status => 301
     end
   end
