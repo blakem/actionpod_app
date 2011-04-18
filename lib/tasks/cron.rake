@@ -22,7 +22,7 @@ task :herokubackupdb => :environment do
 end
 
 desc "Cleans up functional testing data"
-task :clean_functional_testing_data
+task :clean_functional_testing_data => :environment do
   user = User.find_by_email('blakem@blakem.com')
-  user.conferences.each { |c| c.status='completed'; c.save } if user
+  user.conferences.select { |c| c.status == 'in_progress' }.map { |c| c.status = 'completed'; c.save } if user
 end
