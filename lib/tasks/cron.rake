@@ -2,7 +2,7 @@ require "heroku_backup_task"
 require 'heroku_san/tasks'
 
 desc "This task is called by the Heroku cron add-on"
-task :cron => [:environment, :queueevents, :herokubackupdb]
+task :cron => [:environment, :queueevents, :herokubackupdb, :clean_functional_testing_data]
 
 desc "Queue up the scheduled events for the next 24 hours using delayed jobs"
 task :queueevents => :environment do
@@ -19,4 +19,10 @@ end
 desc "Rotate the Heroku DB"
 task :herokubackupdb => :environment do
   HerokuBackupTask.execute if Rails.env.production?
+end
+
+desc "Cleans up functional testing data"
+task :clean_functional_testing_data
+  user = User.find_by_email('blakem@blakem.com')
+  user.conferences.each { |c| c.status='completed'; c.save } if user
 end
