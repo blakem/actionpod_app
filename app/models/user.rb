@@ -45,7 +45,7 @@ class User < ActiveRecord::Base
 
   has_many :events
   has_many :pools
-  has_many :phones
+  has_many :phones, :dependent => :destroy
   has_and_belongs_to_many :conferences
   accepts_nested_attributes_for :phones, :allow_destroy => true
 

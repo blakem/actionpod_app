@@ -13,6 +13,13 @@ describe User do
     user.primary_phone.should == phone2
     user.primary_phone.number.should == phone2.number
     user.primary_phone.string.should == phone2.string
+
+    # Should delete phones on user destroy
+    phone1_id = phone1.id
+    phone2_id = phone2.id
+    user.destroy
+    Phone.find_by_id(phone1_id).should be_nil
+    Phone.find_by_id(phone2_id).should be_nil    
   end
   
   it "has with_phone" do
