@@ -14,7 +14,7 @@ task :call_phones => :environment do
     event1.days = [0,1,2,3,4,5,6]
     event2.days = [0,1,2,3,4,5,6]
   
-    run_time = Time.now + 10.minutes
+    run_time = Time.now + 1.minute
     event1.time = run_time.in_time_zone(user1.time_zone).strftime("%I:%M%p")
     if event1.minute_of_hour == 0
       run_time = run_time + 1.minute
