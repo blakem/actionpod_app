@@ -196,7 +196,7 @@ class PoolMerger
   end    
 
   def event_ids_for_conference_room(room_name, data)
-    data[:placed].select{ |k,v| v[:room_name] == room_name }.values.map{ |p| p[:event_id] }
+    data[:placed].select{ |k,v| v[:room_name] == room_name }.values.map{ |p| p[:event_id] }.uniq
   end
 
   def participant_event_id(participant)

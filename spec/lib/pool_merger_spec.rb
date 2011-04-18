@@ -445,6 +445,10 @@ describe PoolMerger do
             :room_name => "Pool#{@pool.id}Room1",
             :event_id => 4,
           },
+          "CAThisGuyCalledBackFromADifferentPhoneXXX4" => {
+            :room_name => "Pool#{@pool.id}Room1",
+            :event_id => 4,
+          },
           "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX5" => {
             :room_name => "Pool#{@pool.id}Room1",
             :event_id => 5,
@@ -470,6 +474,10 @@ describe PoolMerger do
               :event_id => 3,
             },
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX4" => {
+              :room_name => "Pool#{@pool.id}Room1",
+              :event_id => 4,
+            },
+            "CAThisGuyCalledBackFromADifferentPhoneXXX4" => {
               :room_name => "Pool#{@pool.id}Room1",
               :event_id => 4,
             },
