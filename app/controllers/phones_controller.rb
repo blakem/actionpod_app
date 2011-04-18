@@ -1,83 +1,61 @@
 class PhonesController < ApplicationController
+  before_filter :authenticate_user!
+  
   # GET /phones
-  # GET /phones.xml
   def index
-    @phones = Phone.all
-
-    respond_to do |format|
-      format.html # index.html.erb
-      format.xml  { render :xml => @phones }
-    end
+    @phones = Phone.where(:user_id => current_user.id)
   end
 
   # GET /phones/1
-  # GET /phones/1.xml
   def show
-    @phone = Phone.find(params[:id])
-
-    respond_to do |format|
-      format.html # show.html.erb
-      format.xml  { render :xml => @phone }
-    end
+    @phone = Phone.where(:id => params[:id], :user_id => current_user.id )[0]
+    redirect_to(root_path, :notice => "You don't have permissions to view that phone.") unless @phone
   end
 
   # GET /phones/new
-  # GET /phones/new.xml
   def new
     @phone = Phone.new
-
-    respond_to do |format|
-      format.html # new.html.erb
-      format.xml  { render :xml => @phone }
-    end
   end
 
   # GET /phones/1/edit
   def edit
-    @phone = Phone.find(params[:id])
+    @phone = Phone.where(:id => params[:id], :user_id => current_user.id)[0]
+    redirect_to(root_path, :notice => "You don't have permissions to view that phone.") unless @phone
   end
 
   # POST /phones
-  # POST /phones.xml
   def create
-    @phone = Phone.new(params[:phone])
-
-    respond_to do |format|
-      if @phone.save
-        format.html { redirect_to(@phone, :notice => 'Phone was successfully created.') }
-        format.xml  { render :xml => @phone, :status => :created, :location => @phone }
-      else
-        format.html { render :action => "new" }
-        format.xml  { render :xml => @phone.errors, :status => :unprocessable_entity }
-      end
+    @phone = Phone.new(params[:phone].merge(:user_id => current_user.id))
+    if @phone.save
+      redirect_to(@phone, :notice => 'Phone was successfully created.')
+    else
+      render :action => "new"
     end
   end
 
   # PUT /phones/1
-  # PUT /phones/1.xml
   def update
-    @phone = Phone.find(params[:id])
+    @phone = Phone.where(:id => params[:id], :user_id => current_user.id)[0]
 
-    respond_to do |format|
+    if @phone
       if @phone.update_attributes(params[:phone])
-        format.html { redirect_to(@phone, :notice => 'Phone was successfully updated.') }
-        format.xml  { head :ok }
+        redirect_to(root_path, :notice => 'Phone was successfully updated.')
       else
-        format.html { render :action => "edit" }
-        format.xml  { render :xml => @phone.errors, :status => :unprocessable_entity }
+        render :action => "edit"
       end
+    else
+      redirect_to(root_path, :notice => "You don't have permissions to view that phone.")
     end
   end
 
   # DELETE /phones/1
-  # DELETE /phones/1.xml
   def destroy
-    @phone = Phone.find(params[:id])
-    @phone.destroy
-
-    respond_to do |format|
-      format.html { redirect_to(phones_url) }
-      format.xml  { head :ok }
+    @phone = Phone.where(:id => params[:id], :user_id => current_user.id)[0]
+    if @phone
+      @phone.destroy
+      redirect_to(phones_path, :notice => 'Phone was successfully deleted.')
+    else
+      redirect_to(root_path, :notice => "You don't have permissions to view that phone.")
     end
   end
 end

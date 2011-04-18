@@ -1,12 +1,13 @@
 <footer>
   <nav class="round">
     <ul>
-      <li><%= link_to "Home", root_path %></li>
-      <%= render 'devise/menu/registration_items' %>
+      <li><%= link_to "Home", root_path %></li> |
+      <%= render 'devise/menu/registration_items' %> |
+      <li><%= link_to "Add or Delete Phones", phones_path %> |
 	  <%= render 'devise/menu/login_items' %>
       <% if controller.admin_signed_in? %>
-      <li><%= link_to "Admin", '/admin' %></li>
-	  <li><%= link_to "Data", '/admin_data' %></li>
+      | <li><%= link_to "Admin", '/admin' %></li> 
+	  | <li><%= link_to "Data", '/admin_data' %></li>
       <% end %>	</ul>
   </nav>
 </footer>
