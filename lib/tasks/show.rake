@@ -54,6 +54,15 @@ namespace :show do
     end
   end
 
+  desc "Show information about current Events"
+  task :events => :environment do
+    Event.all.each do |e|
+      sms = e.send_sms_reminder ? 'sms' : '   '
+      puts "#{sprintf"%3s",e.id}:#{sprintf"%-2s",e.pool_id} #{sprintf"%-15s",e.name} #{sprintf"%7s",e.time}:" +
+           "#{sprintf"%-7s",e.days.join('')} #{sms} #{sprintf"%3s",e.user.id}:#{sprintf"%-15s",e.user.name}"
+    end
+  end
+
   desc "Show information about conferences"
   task :conferences => :environment do
     Conference.all.sort{ |a,b| a.started_at <=> b.started_at }.each do |c|

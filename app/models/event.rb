@@ -1,15 +1,16 @@
 # == Schema Information
-# Schema version: 20110330183523
+# Schema version: 20110418153156
 #
 # Table name: events
 #
-#  id            :integer         not null, primary key
-#  name          :string(255)
-#  schedule_yaml :text
-#  user_id       :integer         not null
-#  created_at    :datetime
-#  updated_at    :datetime
-#  pool_id       :integer         not null
+#  id                :integer         not null, primary key
+#  name              :string(255)
+#  schedule_yaml     :text
+#  user_id           :integer         not null
+#  created_at        :datetime
+#  updated_at        :datetime
+#  pool_id           :integer         not null
+#  send_sms_reminder :boolean         default(TRUE)
 #
 
 class Event < ActiveRecord::Base

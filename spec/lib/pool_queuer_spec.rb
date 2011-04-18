@@ -34,7 +34,7 @@ describe PoolQueuer do
       @pool = Factory(:pool)
       @user = Factory(:user)
       @phone = Factory(:phone, :user_id => @user.id, :primary => true)
-      @event = Factory(:event, :pool_id => @pool.id, :user_id => @user.id)
+      @event = Factory(:event, :pool_id => @pool.id, :user_id => @user.id, :send_sms_reminder => false)
       @now = Time.now.utc
       @delay_args = {
         :obj_type    => 'Event',
@@ -54,7 +54,7 @@ describe PoolQueuer do
       DelayedJob.find_by_id(dj_id).should be_nil
     end
     
-    it "Sends and SMS if it's the only one scheduled" do
+    it "Sends an SMS apology if it's the only one scheduled" do
       dj = DelayedJob.create(@delay_args.merge(:obj_id => @event.id))
       response = mock('HTTPResponse')
       response.should_receive(:body).and_return('{"foo":"bar"}')
@@ -69,6 +69,29 @@ describe PoolQueuer do
       @pq.check_before_calls_go_out(@pool, pool_runs_at)
       conference = Conference.where(:pool_id => @pool.id, :started_at => pool_runs_at, :ended_at => pool_runs_at, :status => 'only_one_scheduled')[0]
       conference.users.should == [@user]
+    end
+
+    # XXX Start here by writing this test
+    it "Sends an SMS reminder if it's successful and the event has sms_reminder_message turned on" do
+      user2 = Factory(:user)
+      phone2 = Factory(:phone, :user_id => user2.id, :primary => true)
+      event1 = @event
+      event2 = Factory(:event, :pool_id => @pool.id, :user_id => user2.id, :send_sms_reminder => true)
+      event1.send_sms_reminder.should == false
+      event2.send_sms_reminder.should == true
+      dj1 = DelayedJob.create(@delay_args.merge(:obj_id => event1.id))
+      dj2 = DelayedJob.create(@delay_args.merge(:obj_id => event2.id))
+      response = mock('HTTPResponse')
+      response.should_receive(:body).and_return('{"foo":"bar"}')
+      account = mock('TwilioAccount', :request => response)
+      account.should_receive(:request).with(TwilioCaller.new.sms_uri, 'POST', {
+        :From => TwilioCaller.new.caller_id,
+        :To   => @user.primary_phone.number, 
+        :Body => "Your #{event2.name_in_second_person} will begin at 8:00am.  Expect a call in 10 minutes."        
+      })
+      Twilio::RestAccount.should_receive(:new).with("AC2e57bf710b77d765d280786bc07dbacc", "fc9bd67bb8deee6befd3ab0da3973718").and_return(account)
+      pool_runs_at = @now + 5.minutes
+      @pq.check_before_calls_go_out(@pool, pool_runs_at)
     end
 
     it "should have a call_duration" do

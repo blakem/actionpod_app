@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110417055418) do
+ActiveRecord::Schema.define(:version => 20110418153156) do
 
   create_table "calls", :force => true do |t|
     t.string   "Sid"
@@ -64,10 +64,11 @@ ActiveRecord::Schema.define(:version => 20110417055418) do
   create_table "events", :force => true do |t|
     t.string   "name"
     t.text     "schedule_yaml"
-    t.integer  "user_id",       :null => false
+    t.integer  "user_id",                             :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "pool_id",       :null => false
+    t.integer  "pool_id",                             :null => false
+    t.boolean  "send_sms_reminder", :default => true
   end
 
   create_table "invite_codes", :force => true do |t|

@@ -23,6 +23,9 @@
       <%= check_box_tag 'on_fri', 5, @event.on_day(5) %> Friday <br/>
       <%= check_box_tag 'on_sat', 6, @event.on_day(6) %> Saturday </p>
 
+  <p><%= f.label :send_sms_reminder, "Send me an SMS reminder 10 minutes prior to call:" %>
+	 <%= f.check_box :send_sms_reminder %><br />
+
   <p><%= f.label :name, "Name of this call:" %> 
      <%= f.text_field :name %></br>
      <i>(This name is just used for you to refer to later)</i></p>

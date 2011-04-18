@@ -45,11 +45,12 @@ class PoolQueuer
       :obj_type    => 'Event', 
       :obj_jobtype => 'make_call',
     )
+    twilio_caller = TwilioCaller.new
     if jobs.count == 1
       job = jobs.first
       event = Event.find_by_id(job.obj_id)
       if (event)
-        TwilioCaller.new.send_sms(event.user.primary_phone.number, 
+        twilio_caller.send_sms(event.user.primary_phone.number, 
           "Sorry.  No one else is scheduled for the #{event.time} slot.  This shouldn't happen after we reach a critical mass of users. ;-)")
         conference = Conference.create(
           :pool_id => event.pool_id, 
@@ -61,6 +62,13 @@ class PoolQueuer
       end
       job.destroy
     else
+      jobs.each do |job|
+        event = Event.find_by_id(job.obj_id)
+        if (event and event.send_sms_reminder)
+          twilio_caller.send_sms(event.user.primary_phone.number, 
+            "Your #{event.name_in_second_person} will begin at #{event.time}.  Expect a call in 10 minutes.")
+        end
+      end
       queue_merge_calls_for_pool(pool, pool_runs_at, 0, {:total => jobs.count})
     end
   end

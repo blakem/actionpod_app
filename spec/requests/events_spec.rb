@@ -38,22 +38,67 @@ describe "Events" do
         lambda do
           click_link 'Create a new time slot'
           response.should render_template('events/new')
-          fill_in "Name",       :with => "Fancy Good Name"
           click_button
           response.should render_template('events/new')
           response.should have_selector('div.flash.notice', :content => 'Event was successfully created.')
         end.should change(Event, :count).by(1)
+        event_name = user.first_name + "'s 8:00am Call"
+        event = Event.find_by_name(event_name)
+        event.send_sms_reminder.should == true
+        event.time.should == '8:00am'
+        event.days.should == [1,2,3,4,5]
+        event.name.should == event_name
+
+        # edit event time with default name 
+        click_link 'Edit'
+        fill_in "Time we should call you", :with => "10:00am"
+        response.should render_template('events/edit')
+        click_button
+        response.should render_template('events/new')
+        response.should have_selector('div.flash.notice', :content => 'Event was successfully updated.')
+        event_name = user.first_name + "'s 10:00am Call"
+        event.reload
+        event.name.should == event_name
 
         # edit event
-        event = Event.find_by_name("Fancy Good Name")
         click_link 'Edit'
         response.should render_template('events/edit')
-        fill_in "Name",       :with => "New Name"
+        fill_in   "Name of this call", :with => "New Name"
+        check     "on_sat"
+        check     "on_sun"
+        uncheck   "on_mon"
+        uncheck   "on_tue"
+        uncheck   "on_wed"
+        uncheck   "on_thr"
+        uncheck   "on_fri"
+        uncheck   "Send me an SMS reminder 10 minutes prior to call"
         click_button
         response.should render_template('events/new')
         response.should have_selector('div.flash.notice', :content => 'Event was successfully updated.')
         event.reload
         event.name.should == 'New Name'
+        event.send_sms_reminder.should == false
+        event.days.should == [0,6]
+
+        # edit event back
+        click_link 'Edit'
+        response.should render_template('events/edit')
+        fill_in   "Name of this call", :with => "Newer Name"
+        uncheck   "on_sat"
+        uncheck   "on_sun"
+        check     "on_mon"
+        check     "on_tue"
+        check     "on_wed"
+        check     "on_thr"
+        check     "on_fri"
+        check     "Send me an SMS reminder 10 minutes prior to call"
+        click_button
+        response.should render_template('events/new')
+        response.should have_selector('div.flash.notice', :content => 'Event was successfully updated.')
+        event.reload
+        event.name.should == 'Newer Name'
+        event.send_sms_reminder.should == true
+        event.days.should == [1,2,3,4,5]
 
         # delete event - Can't figure out how to make this work with web-rat and javascript
         lambda do

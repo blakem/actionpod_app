@@ -5,33 +5,39 @@
 <div class="field">
   <p><%= f.label :invite_code, "Invite Code:" %> 
   <%= f.text_field :invite_code %><br />
-  <i>(email support@15minutecalls.com for your invite code)</i></p>
+  <i>(email support@15minutecalls.com for your invite code)</i>
+  </p>
 </div>
 <div class="field">
   <p><%= f.label :name, "Full Name:" %>
-  <%= f.text_field :name %></p>
+  <%= f.text_field :name %>
+  </p>
 </div>
 <div class="field">
   <p><%= f.label :email, "Email:" %>
-  <%= f.text_field :email %></p>
+  <%= f.text_field :email %>
+  </p>
 </div>
 <div class="field">
 <% f.fields_for :phones do |pf| %>
   <p><%= pf.label :string, "Primary Phone:" %> 
   <%= pf.text_field :string %><br />
+  <i>(This is the number we will call for your 15-minute calls)</i>
+  </p>
   <%= pf.hidden_field :primary, :value => true %>
-  <i>(This is the number we will call for your 15-minute calls)</i></p>
 <% end %>
 </div>
 <div class="field">
   <p><%= f.label :title, "Title:" %> (optional)
   <%= f.text_field :title %><br />
-  <i>(Software Developer, Graphic Designer, Author, etc...)</i></p>
+  <i>(Software Developer, Graphic Designer, Author, etc...)</i>
+  </p>
 </div>
 <div class="field">
   <p><%= f.label :location, "Location:" %> (optional) 
   <%= f.text_field :location %><br />
-  <i>(San Francisco, Seattle, etc.)</i></p>
+  <i>(San Francisco, Seattle, etc.)</i>
+  </p>
 </div>
 <div class="field">
   <newuser>
@@ -42,6 +48,7 @@
 <div class="field">
   <p><%= f.label :time_zone, "Time Zone:"%>
   <%= f.collection_select :time_zone, ActiveSupport::TimeZone.us_zones, :name, :to_s %>
+  </p>
 </div>
 <div class="field">
   <p><%= f.label :password, "Password:" %>
