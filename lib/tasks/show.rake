@@ -40,7 +40,7 @@ namespace :show do
   end
 
   desc "Show information about current InviteCodes"
-  task :invitecodes => :environment do
+  task :invite_codes => :environment do
     InviteCode.all.each do |i|
       puts "#{i.id}: #{i.name}"
     end
