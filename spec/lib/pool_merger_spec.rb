@@ -87,7 +87,7 @@ describe PoolMerger do
         )
         data = @pm.initialize_data({})
         data[:on_hold] = {
-          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 3,
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 7,
         }
         data[:total] = 2
         data = @pm.merge_calls_for_pool(@pool, @pool_runs_at, data)
@@ -95,7 +95,7 @@ describe PoolMerger do
           :total       => 2,
           :next_room   => 1,
           :on_hold     => {
-            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 4,
+            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 8,
           },
           :placed      => {},
         }

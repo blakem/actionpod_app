@@ -101,7 +101,7 @@ class PoolMerger
   end
   
   def max_hold_count
-    4
+    8
   end
 
   def hold_count(participant, data)
