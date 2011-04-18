@@ -245,7 +245,7 @@ describe TwilioCaller do
     it "sends the right request" do
       tc = TwilioCaller.new
       tc.should_receive(:twilio_request).with(@tc.caller_uri('CA9fa67e8696b60ee1ca1e75ec81ef85e7'), 'POST', {
-        "Url" => "http://www.15minutecalls.com/twilio/place_in_conference.xml?conference=Pool456Room8&timeout=22&events="
+        "Url" => "http://www.15minutecalls.com/twilio/place_in_conference.xml?conference=Pool456Room8&timelimit=22&events="
       })
       tc.place_participant_in_conference('CA9fa67e8696b60ee1ca1e75ec81ef85e7', "Pool456Room8", 22, [])
     end
@@ -253,7 +253,7 @@ describe TwilioCaller do
     it "sends the event ids to the url" do
       tc = TwilioCaller.new
       tc.should_receive(:twilio_request).with(@tc.caller_uri('CA9fa67e8696b60ee1ca1e75ec81ef85e7'), 'POST', {
-        "Url" => "http://www.15minutecalls.com/twilio/place_in_conference.xml?conference=Pool456Room8&timeout=22&events=3,4,5"
+        "Url" => "http://www.15minutecalls.com/twilio/place_in_conference.xml?conference=Pool456Room8&timelimit=22&events=3,4,5"
       })
       tc.place_participant_in_conference('CA9fa67e8696b60ee1ca1e75ec81ef85e7', "Pool456Room8", 22, [3,4,5])
     end

@@ -87,7 +87,7 @@ class TwilioCaller
   def place_participant_in_conference(call_sid, conference, timelimit, event_ids)
     events = event_ids.join(',')
     resp_hash = twilio_request(caller_uri(call_sid), 'POST', {
-     'Url' => base_url + "/place_in_conference.xml?conference=#{conference}&timeout=#{timelimit}&events=#{events}",
+     'Url' => base_url + "/place_in_conference.xml?conference=#{conference}&timelimit=#{timelimit}&events=#{events}",
     })
   end
 
