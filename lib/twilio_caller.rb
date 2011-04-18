@@ -112,7 +112,7 @@ class TwilioCaller
   end
     
   def conferences_on_hold_for_pool(pool)
-    conferences_in_progress.select { |conference| conference[:friendly_name] =~ /Pool#{pool.id}($|\D)/ }
+    conferences_in_progress.select { |conference| conference[:friendly_name] =~ /^Hold.*Pool#{pool.id}($|\D)/ }
   end
   
   def conferences_in_progress

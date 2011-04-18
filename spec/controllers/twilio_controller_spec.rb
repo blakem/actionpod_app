@@ -361,6 +361,8 @@ describe TwilioController do
       user2.location = 'Seattle'
       user2.save
       tc.build_intro_string("#{event1.id},#{event2.id}").should == 'Bobby a Software Developer from San Francisco, and Sally from Seattle'
+
+      tc.build_intro_string("0,888,44466,33377,,xyzzy,#{event1.id},#{event2.id}").should == 'Bobby a Software Developer from San Francisco, and Sally from Seattle'
     end
   end
 

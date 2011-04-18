@@ -93,8 +93,7 @@ class TwilioController < ApplicationController
 
   def build_intro_string(event_string)
     return '' if event_string.blank?
-    event_ids = event_string.split(/,/).map { |s| s.to_i }
-    users = event_ids.map { |id| Event.find(id).user }.map { |u| intro_string_for_user(u) }
+    users = event_string.split(/,/).map { |s| Event.find_by_id(s.to_i) }.select{ |e| e }.map { |e| intro_string_for_user(e.user) }
     last_user = users.pop    
     @names = users.join(', ') + ", and " + last_user
   end

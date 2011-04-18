@@ -173,7 +173,7 @@ describe TwilioCaller do
     end
 
     it "conferences_on_hold_for_pool" do
-      response = mock('HTTPResponse', :body => three_conference_response)
+      response = mock('HTTPResponse', :body => four_conference_response)
       account = mock('TwilioAccount', :request => response)
       pool = mock('Pool', :id => 123)
       account.should_receive(:request).with(@tc.conferences_in_progress_uri, 'GET')
@@ -344,7 +344,7 @@ def two_conference_response
   ']}'
 end
 
-def three_conference_response
+def four_conference_response
   '{"page":0,"num_pages":1,"page_size":50,"total":1,"start":0,"end":0,' +
   '"uri":"\/2010-04-01\/Accounts\/AC2e57bf710b77d765d280786bc07dbacc\/Conferences.json?Status=in-progress",' +
   '"first_page_uri":"\/2010-04-01\/Accounts\/AC2e57bf710b77d765d280786bc07dbacc\/Conferences.json?Page=0&PageSize=50",' +
@@ -355,6 +355,11 @@ def three_conference_response
   '"subresource_uris":{"participants":"\/2010-04-01\/Accounts\/AC2e57bf710b77d765d280786bc07dbacc\/Conferences\/' +
   'CFd69aa0e4fe673292932492f68ba94d3f\/Participants.json"}},' +
   '{"sid":"CFXXXaa0e4fe673292932492f68ba94d3f","account_sid":"AC2e57bf710b77d765d280786bc07dbacc","friendly_name":"HoldEvent4User7Pool123Incoming"' +
+  ',"status":"in-progress","date_created":"Thu, 07 Apr 2011 00:02:16 +0000","api_version":"2010-04-01","date_updated":"Thu, 07 Apr 2011 00:02:17 +0000"' +
+  ',"uri":"\/2010-04-01\/Accounts\/AC2e57bf710b77d765d280786bc07dbacc\/Conferences\/CFXXXaa0e4fe673292932492f68ba94d3f.json"' +
+  ',"subresource_uris":' +
+  '{"participants":"\/2010-04-01\/Accounts\/AC2e57bf710b77d765d280786bc07dbacc\/Conferences\/CFXXXaa0e4fe673292932492f68ba94d3f\/Participants.json"}},' +
+  '{"sid":"CFXXXaa0e4fe673292932492f68ba94d3f","account_sid":"AC2e57bf710b77d765d280786bc07dbacc","friendly_name":"Pool123Room6"' +
   ',"status":"in-progress","date_created":"Thu, 07 Apr 2011 00:02:16 +0000","api_version":"2010-04-01","date_updated":"Thu, 07 Apr 2011 00:02:17 +0000"' +
   ',"uri":"\/2010-04-01\/Accounts\/AC2e57bf710b77d765d280786bc07dbacc\/Conferences\/CFXXXaa0e4fe673292932492f68ba94d3f.json"' +
   ',"subresource_uris":' +
