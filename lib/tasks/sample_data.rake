@@ -3,12 +3,12 @@ require 'faker'
 namespace :db do
   desc "Fill database with sample data"
   task :populate => :environment do
-    if Rails.env.development?
+    # if Rails.env.development?
       Rake::Task['db:reset'].invoke
       make_users
-    else
-      puts "DONT RUN OUTSIDE OF DEVELOPMENT!"
-    end
+    # else
+    #   puts "DONT RUN OUTSIDE OF DEVELOPMENT!"
+    # end
   end
 end
 
