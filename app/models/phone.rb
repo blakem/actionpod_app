@@ -29,4 +29,11 @@ class Phone < ActiveRecord::Base
       self.number =  "+"  + number unless number =~ /^\+$/
     end
   end
+  
+  def self.human_attribute_name(attribute_key_name, options = {})
+    return "Phone Number" if attribute_key_name.to_s == 'string'
+    return "Phone Number" if attribute_key_name.to_s == 'number'
+    return super(attribute_key_name, options)
+  end
+  
 end

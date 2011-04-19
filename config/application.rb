@@ -43,6 +43,18 @@ module ActionpodApp
     # For admin_data
     config.serve_static_assets = true
     
+    # Put spans around error instead of Divs
+    config.action_view.field_error_proc = Proc.new do |html_tag, instance|
+      if html_tag =~ /<(input|label|textarea|select)/
+        error_class = 'field_error round'
+        nodes = Hpricot(html_tag)
+        nodes.each_child { |node| node[:class] = node.classes.push(error_class).join(' ') unless !node.elem? || node[:type] == 'hidden' || node.classes.include?(error_class) }
+        nodes.to_html.html_safe
+      else
+        html_tag
+      end
+    end
+
     if Rails.env.test?
       initializer :after => :initialize_dependency_mechanism do
         # Work around initializer in railties/lib/rails/application/bootstrap.rb

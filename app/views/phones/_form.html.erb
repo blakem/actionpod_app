@@ -1,16 +1,15 @@
 <%= form_for(@phone) do |f| %>
-  <% if @phone.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@phone.errors.count, "error") %> prohibited this phone from being saved:</h2>
+<%= pretty_object_error_messages(@phone) %>
 
-      <ul>
-      <% @phone.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
-      <% end %>
-      </ul>
-    </div>
-  <% end %>
-
+  <div class="field">
+    <%= f.label :string, "Phone Number:" %>
+    <%= f.text_field :string %>
+  </div>
+  <div class="field">
+    <%= f.label :primary, " Primary " %>
+    <%= f.check_box :primary %><br>
+    <i>(If checked, this phone will be the default selection for any new events you may create)</i>
+  </div>
   <div class="actions">
     <%= f.submit %>
   </div>

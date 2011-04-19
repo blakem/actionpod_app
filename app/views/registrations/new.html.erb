@@ -1,6 +1,7 @@
 <h3>Sign Up</h3>
 <%= form_for(resource.with_phone, :as => resource_name, :url => registration_path(resource_name)) do |f| %>
-  <%= devise_error_messages! %>
+
+<%= pretty_object_error_messages(resource) %>
 
 <div class="field">
   <p><%= f.label :invite_code, "Invite Code:" %> 

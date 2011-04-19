@@ -18,7 +18,7 @@ describe "Users" do
           fill_in "Password Confirmation",  :with => ""
           click_button
           response.should render_template('registrations/new')
-          response.should have_selector('div#error_explanation')
+          response.should have_selector('div.flash.alert', :content => 'error')
         end.should_not change(User, :count)
       end
     end
@@ -97,7 +97,7 @@ describe "Users" do
         visit edit_user_registration_path
         fill_in "Email",        :with => "newemail@example.com"
         click_button
-        response.should have_selector('div#error_explanation')
+        response.should have_selector('div.flash.alert', :content => 'error')
         response.should render_template('sessions/new')
         user.reload
         user.email.should == 'thisis2newrandomfoo@example.net'
@@ -131,7 +131,7 @@ describe "Users" do
         fill_in "Current Password",   :with => user.password
         click_button
 
-        response.should_not have_selector('div#error_explanation')
+        response.should_not have_selector('div.flash.alert', :content => 'error')
         user.reload
         user.name.should == 'Bubby Bob'
         user.email.should == "new@example.com"

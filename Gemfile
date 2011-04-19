@@ -13,6 +13,7 @@ gem 'heroku_backup_task'
 gem 'gravatar_image_tag'
 gem 'heroku_san'
 gem 'faker'
+gem 'hpricot'
 
 group :test, :development do
   gem 'rspec-rails'

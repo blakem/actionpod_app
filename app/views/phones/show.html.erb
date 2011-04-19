@@ -1,5 +1,15 @@
 <p id="notice"><%= notice %></p>
 
+<p>
+  <b>String:</b>
+  <%= @phone.string %>
+</p>
+
+<p>
+  <b>Primary:</b>
+  <%= @phone.primary %>
+</p>
+
 
 <%= link_to 'Edit', edit_phone_path(@phone) %> |
 <%= link_to 'Back', phones_path %>
