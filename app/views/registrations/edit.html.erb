@@ -12,8 +12,10 @@
 </div>
 <div class="field">
 <%= f.fields_for :phones do |pf| %>
+  <% if pf.object.primary %>
   <p><%= pf.label :string, "Phone Number:" %>
   <%= pf.text_field :string %></p>
+  <% end %>
 <% end %>
 </div>
 <div class="field">
