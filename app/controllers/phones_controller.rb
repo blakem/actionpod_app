@@ -27,6 +27,13 @@ class PhonesController < ApplicationController
   def create
     @phone = Phone.new(params[:phone].merge(:user_id => current_user.id))
     if @phone.save
+      if @phone.primary
+        other_phones = @phone.user.phones.select { |p| p.id != @phone.id }
+        other_phones.each do |other_phone|
+          other_phone.primary = false
+          other_phone.save
+        end
+      end
       redirect_to(phones_path, :notice => 'Phone was successfully created.')
     else
       render :action => "new"

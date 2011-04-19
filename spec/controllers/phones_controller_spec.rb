@@ -95,6 +95,13 @@ describe PhonesController do
           post :create, :phone => {}
           response.should redirect_to(phones_url)
         end
+
+        it "setting the primary flag on a phone will unset it on all others" do
+          post :create, :phone => {'string' => '123 333 4444', 'primary' => '1'}
+          @phone1.reload
+          @phone1.primary.should be_false
+          response.should redirect_to(phones_path)
+        end
       end
 
       describe "with invalid params" do
