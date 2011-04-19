@@ -29,6 +29,11 @@
   <%= f.text_field :handle, :class => "round" %></p>
 </div>
 <div class="field">
+  <p><%= f.label :facebook_uid, "Facebook ID:", :class => "round" %> (optional)
+  <%= f.text_field :facebook_uid, :class => "round" %><br />
+  </p>
+</div>
+<div class="field">
   <p><%= f.label :title, "Title:", :class => "round" %> (optional)
   <%= f.text_field :title, :class => "round" %><br />
   <i>(Software Developer, Graphic Designer, Author, etc...)</i>

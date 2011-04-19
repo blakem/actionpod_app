@@ -7,7 +7,7 @@
     <%= conference.status.titleize %>
     <br/>
     <% conference.users.each do |user| %>
-      &nbsp;&nbsp;&nbsp;<%= link_to user.name, "/u/" + user.handle %><br/>
+       <%= gravatar_for user %> <%= link_to user.name, "/u/" + user.handle %><br/>
     <% end %>
     </p>
   <% end %>

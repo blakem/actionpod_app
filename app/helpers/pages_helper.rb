@@ -1,8 +1,15 @@
 module PagesHelper
-  def gravatar_for(user, options = { :size => 50 })
-    gravatar_image_tag(user.email.downcase, :alt => user.name, 
-                                            :class => 'gravatar', 
-                                            :gravatar => options)
-    
+  def gravatar_for(user, options = { :size => 50, :default => 'monsterid' })
+    if user.facebook_uid
+      size = options[:size]
+      %(<img alt=").html_safe + user.name + %(" src="http://graph.facebook.com/).html_safe + user.facebook_uid + 
+      %(/picture" width=").html_safe + size.to_s + %(" height=").html_safe + size.to_s + %(" class="gravatar">).html_safe
+    else
+      gravatar_image_tag(user.email.downcase,
+        :alt => user.name, 
+        :class => 'gravatar', 
+        :gravatar => options
+      )
+    end    
   end
 end

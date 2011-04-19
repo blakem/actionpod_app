@@ -1,5 +1,5 @@
 # == Schema Information
-# Schema version: 20110417055418
+# Schema version: 20110419204133
 #
 # Table name: users
 #
@@ -31,6 +31,7 @@
 #  handle               :string(255)
 #  hide_email           :boolean
 #  about                :text
+#  facebook_uid         :string(255)
 #
 
 class User < ActiveRecord::Base
@@ -41,7 +42,7 @@ class User < ActiveRecord::Base
 
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email, :password, :password_confirmation, :remember_me, :invite_code, :time_zone, :name, :title,
-                  :invite_code, :use_ifmachine, :location, :handle, :hide_email, :about, :phones_attributes
+                  :invite_code, :use_ifmachine, :location, :handle, :hide_email, :about, :phones_attributes, :facebook_uid
 
   has_many :events
   has_many :pools
