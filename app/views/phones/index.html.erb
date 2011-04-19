@@ -14,8 +14,10 @@
     <td><%= phone.primary ? 'Primary' : '' %></td>
     <td><%= link_to 'Edit', edit_phone_path(phone) %></td>
     <td>
-	  <% unless phone.primary %>
-      <%= link_to 'Delete', phone, :confirm => 'Are you sure?', :method => :delete %>
+	  <% if phone.primary %>
+      &nbsp;
+	  <% else %>
+      <%= link_to 'Delete', phone, :confirm => 'Are you sure you want to delete this phone?', :method => :delete %>
       <% end %>
     </td>
   </tr>
