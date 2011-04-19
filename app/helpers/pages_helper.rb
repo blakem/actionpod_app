@@ -1,5 +1,10 @@
 module PagesHelper
-  def gravatar_for(user, options = { :size => 50, :default => 'monsterid' })
+  def gravatar_for(user, options = {})
+    options = { 
+      :size => 50, 
+      :default => 'monsterid',
+    }.merge(options)
+
     if user.facebook_uid
       size = options[:size]
       %(<img alt=").html_safe + user.name + %(" src="http://graph.facebook.com/).html_safe + user.facebook_uid + 
