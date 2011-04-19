@@ -120,11 +120,11 @@ describe "Users" do
         visit edit_user_registration_path
         fill_in "Full Name",          :with => 'Bubby Bob'
         fill_in "Email",              :with => "new@example.com"
-        fill_in "Primary Phone",      :with => '415 222 5555'
-        fill_in "Introductory text", :with => 'I like jellybeans.'
-        fill_in "Handle",            :with => 'newhandle'
+        fill_in "Phone Number",       :with => '415 222 5555'
+        fill_in "Introductory text",  :with => 'I like jellybeans.'
+        fill_in "Handle",             :with => 'newhandle'
         fill_in "Title",              :with => 'newtitle'
-        fill_in "Location",          :with => 'newlocation'
+        fill_in "Location",           :with => 'newlocation'
         fill_in "Time Zone",          :with => 'Mountain Time (US & Canada)'
         check   "Hide my email address from other users"
         check   "Go directly to conference"
