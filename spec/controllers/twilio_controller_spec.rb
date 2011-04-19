@@ -369,6 +369,23 @@ describe TwilioController do
       response.should have_selector('response>say', :content => 'Time is up. Goodbye.')      
     end
 
+    it "should put the user into the conference after the 60 second warning if he has less than 60 seconds left" do
+      user = Factory(:user, :name => 'Bobby')
+      event = Factory(:event, :user_id => user.id)
+      post :place_in_conference, :conference => 'FooBar', :timelimit => '59', :events => "#{event.id}"
+      intro_string = TwilioController.new.build_intro_string("#{event.id}")
+      response.content_type.should =~ /^application\/xml/
+      hash = (Hash.from_xml response.body).with_indifferent_access
+      hash[:Response][:Say].count.should == 2
+      hash[:Response][:Dial].should be_a_kind_of(Hash)
+      response.should have_selector('response>say', :content => "Welcome. On the call today we have #{intro_string}")
+      response.should have_selector('response>dial', :timelimit => '59')
+      response.should have_selector('response>dial>conference', :content => "FooBar")
+      response.should have_selector('response>say', :content => 'Time is up. Goodbye.')      
+      response.should_not have_selector('response>say', :content => 'Welcome. Joining a conference already in progress.')
+      response.should_not have_selector('response>say', :content => '1 Minute Remaining.')      
+    end
+
     it "should put the user into the conference room when it doesn't know the other callers" do
       post :place_in_conference, :conference => 'FooBar', :timelimit => (24 *60).to_s, :events => ''
       hash = (Hash.from_xml response.body).with_indifferent_access
@@ -407,6 +424,7 @@ describe TwilioController do
       event1 = Factory(:event, :user_id => user1.id, :pool_id => pool.id)
       event2 = Factory(:event, :user_id => user2.id, :pool_id => pool.id)
       event3 = Factory(:event, :user_id => user3.id, :pool_id => pool.id)
+      tc.build_intro_string("#{event1.id}").should == 'Bobby'
       tc.build_intro_string("#{event1.id},#{event2.id}").should == 'Bobby, and Sally'
       tc.build_intro_string("#{event1.id},#{event2.id},#{event3.id}").should == 'Bobby, Sally, and Jane'
       
