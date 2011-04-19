@@ -107,7 +107,8 @@ describe "Users" do
     describe "success" do
       it "should edit user attributes" do
         user = Factory(:user, :email => 'thisis3newrandomfoo@example.net', :password => 'foobarbaz', :confirmed_at => Time.now)
-        phone = Factory(:phone, :user_id => user.id, :primary => true)
+        phone1 = Factory(:phone, :user_id => user.id, :primary => true)
+        phone2 = Factory(:phone, :user_id => user.id, :string => '777 888 9999')
         user.use_ifmachine.should be_false
         user.hide_email.should be_false
         user.time_zone.should == 'Pacific Time (US & Canada)'
@@ -143,6 +144,10 @@ describe "Users" do
         user.time_zone.should == 'Mountain Time (US & Canada)'
         user.hide_email.should be_true
         user.use_ifmachine.should be_true
+        phone1.reload
+        phone2.reload
+        phone1.number.should == '+14152225555'
+        phone2.number.should == '+17778889999'
       end        
     end  
   end

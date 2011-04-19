@@ -1,14 +1,14 @@
 <h3>Sign in</h3>
 
 <%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
-  <p><%= f.label :email %>
-  <%= f.text_field :email %></p>
+  <p><%= f.label :email, :class => "round" %>
+  <%= f.text_field :email, :class => "round" %></p>
 
-  <p><%= f.label :password %>
-  <%= f.password_field :password %></p>
+  <p><%= f.label :password, :class => "round" %>
+  <%= f.password_field :password, :class => "round" %></p>
 
   <% if devise_mapping.rememberable? -%>
-    <p><%= f.check_box :remember_me %> <%= f.label :remember_me %></p>
+    <p><%= f.check_box :remember_me %> <%= f.label :remember_me, :class => "round" %></p>
   <% end -%>
 
   <p><%= f.submit "Sign in" %></p>

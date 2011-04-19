@@ -4,60 +4,60 @@
 <%= pretty_object_error_messages(resource) %>
 
 <div class="field">
-  <p><%= f.label :invite_code, "Invite Code:" %> 
-  <%= f.text_field :invite_code %><br />
+  <p><%= f.label :invite_code, "Invite Code:", :class => "round" %> 
+  <%= f.text_field :invite_code, :class => "round" %><br />
   <i>(email support@15minutecalls.com for your invite code)</i>
   </p>
 </div>
 <div class="field">
-  <p><%= f.label :name, "Full Name:" %>
-  <%= f.text_field :name %>
+  <p><%= f.label :name, "Full Name:", :class => "round" %>
+  <%= f.text_field :name, :class => "round" %>
   </p>
 </div>
 <div class="field">
-  <p><%= f.label :email, "Email:" %>
-  <%= f.text_field :email %>
+  <p><%= f.label :email, "Email:", :class => "round" %>
+  <%= f.text_field :email, :class => "round" %>
   </p>
 </div>
 <div class="field">
 <% f.fields_for :phones do |pf| %>
-  <p><%= pf.label :string, "Primary Phone:" %> 
-  <%= pf.text_field :string %><br />
+  <p><%= pf.label :string, "Primary Phone:", :class => "round" %> 
+  <%= pf.text_field :string, :class => "round" %><br />
   <i>(This is the number we will call for your 15-minute calls)</i>
   </p>
   <%= pf.hidden_field :primary, :value => true %>
 <% end %>
 </div>
 <div class="field">
-  <p><%= f.label :title, "Title:" %> (optional)
-  <%= f.text_field :title %><br />
+  <p><%= f.label :title, "Title:", :class => "round" %> (optional)
+  <%= f.text_field :title, :class => "round" %><br />
   <i>(Software Developer, Graphic Designer, Author, etc...)</i>
   </p>
 </div>
 <div class="field">
-  <p><%= f.label :location, "Location:" %> (optional) 
-  <%= f.text_field :location %><br />
+  <p><%= f.label :location, "Location:", :class => "round" %> (optional) 
+  <%= f.text_field :location, :class => "round" %><br />
   <i>(San Francisco, Seattle, etc.)</i>
   </p>
 </div>
 <div class="field">
   <newuser>
-  <p><%= f.label :about, "A sentence or two about what you want from your calls:" %> (optional)<br/>
-  <%= f.text_area :about, :size => "6x60" %></p>
+  <p><%= f.label :about, "A sentence or two about what you want from your calls:", :class => "round" %> (optional)<br/>
+  <%= f.text_area :about, :size => "6x60", :class => "round" %></p>
   </newuser>
 </div>
 <div class="field">
-  <p><%= f.label :time_zone, "Time Zone:"%>
+  <p><%= f.label :time_zone, "Time Zone:", :class => "round" %>
   <%= f.collection_select :time_zone, ActiveSupport::TimeZone.us_zones, :name, :to_s %>
   </p>
 </div>
 <div class="field">
-  <p><%= f.label :password, "Password:" %>
-  <%= f.password_field :password %></p>
+  <p><%= f.label :password, "Password:", :class => "round" %>
+  <%= f.password_field :password, :class => "round" %></p>
 </div>
 <div class="field">
-  <p><%= f.label :password_confirmation, "Password Confirmation:" %>
-  <%= f.password_field :password_confirmation %></p>
+  <p><%= f.label :password_confirmation, "Password Confirmation:", :class => "round" %>
+  <%= f.password_field :password_confirmation, :class => "round" %></p>
 </div>
 <div class="actions">
   <p><%= f.submit "Sign up" %></p>

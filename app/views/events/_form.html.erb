@@ -1,7 +1,7 @@
 <%= form_for(@event) do |f| %>
 <%= pretty_object_error_messages(@event) %>
   <p></p>
-  <p><%= f.label :time, "Time we should call you:" %>
+  <p><%= f.label :time, "Time we should call you:", :class => "round" %>
   <%= f.collection_select :time, Event.available_hours, :to_s, :to_s %></p>
 
   <p><label>Days we should call you:</label><br/>
@@ -13,11 +13,11 @@
       <%= check_box_tag 'on_fri', 5, @event.on_day(5) %> Friday <br/>
       <%= check_box_tag 'on_sat', 6, @event.on_day(6) %> Saturday </p>
 
-  <p><%= f.label :send_sms_reminder, "Send me an SMS reminder 10 minutes prior to call:" %>
+  <p><%= f.label :send_sms_reminder, "Send me an SMS reminder 10 minutes prior to call:", :class => "round" %>
 	 <%= f.check_box :send_sms_reminder %><br />
 
-  <p><%= f.label :name, "Name of this call:" %> 
-     <%= f.text_field :name %></br>
+  <p><%= f.label :name, "Name of this call:", :class => "round" %> 
+     <%= f.text_field :name, :class => "round" %></br>
      <i>(This name is just used for you to refer to later)</i></p>
 
 
