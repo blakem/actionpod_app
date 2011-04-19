@@ -9,7 +9,7 @@ class EventsController < ApplicationController
   # GET /events/1
   def show
     @event = Event.where(:id => params[:id], :user_id => current_user.id )[0]
-    redirect_to(root_path, :notice => "You don't have permissions to view that event.") unless @event
+    redirect_to(root_path, :alert => "You don't have permissions to view that event.") unless @event
   end
 
   # GET /events/new
@@ -20,7 +20,7 @@ class EventsController < ApplicationController
   # GET /events/1/edit
   def edit
     @event = Event.where(:id => params[:id], :user_id => current_user.id)[0]
-    redirect_to(root_path, :notice => "You don't have permissions to view that event.") unless @event
+    redirect_to(root_path, :alert => "You don't have permissions to view that event.") unless @event
   end
 
   # POST /events
@@ -51,7 +51,7 @@ class EventsController < ApplicationController
         render :action => "edit"
       end
     else
-      redirect_to(root_path, :notice => "You don't have permissions to view that event.")
+      redirect_to(root_path, :alert => "You don't have permissions to view that event.")
     end
   end
 
@@ -62,7 +62,7 @@ class EventsController < ApplicationController
       @event.destroy
       redirect_to(root_path, :notice => 'Event was successfully deleted.')
     else
-      redirect_to(root_path, :notice => "You don't have permissions to view that event.")
+      redirect_to(root_path, :alert => "You don't have permissions to view that event.")
     end
   end
   

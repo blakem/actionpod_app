@@ -13,7 +13,11 @@
     <td><%= phone.string %></td>
     <td><%= phone.primary ? 'Primary' : '' %></td>
     <td><%= link_to 'Edit', edit_phone_path(phone) %></td>
-    <td><%= link_to 'Delete', phone, :confirm => 'Are you sure?', :method => :delete %></td>
+    <td>
+	  <% unless phone.primary %>
+      <%= link_to 'Delete', phone, :confirm => 'Are you sure?', :method => :delete %>
+      <% end %>
+    </td>
   </tr>
 <% end %>
 </table>

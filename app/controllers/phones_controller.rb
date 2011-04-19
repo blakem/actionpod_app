@@ -9,7 +9,7 @@ class PhonesController < ApplicationController
   # GET /phones/1
   def show
     @phone = Phone.where(:id => params[:id], :user_id => current_user.id )[0]
-    redirect_to(root_path, :notice => "You don't have permissions to view that phone.") unless @phone
+    redirect_to(root_path, :alert => "You don't have permissions to view that phone.") unless @phone
   end
 
   # GET /phones/new
@@ -20,14 +20,14 @@ class PhonesController < ApplicationController
   # GET /phones/1/edit
   def edit
     @phone = Phone.where(:id => params[:id], :user_id => current_user.id)[0]
-    redirect_to(root_path, :notice => "You don't have permissions to view that phone.") unless @phone
+    redirect_to(root_path, :alert => "You don't have permissions to view that phone.") unless @phone
   end
 
   # POST /phones
   def create
     @phone = Phone.new(params[:phone].merge(:user_id => current_user.id))
     if @phone.save
-      redirect_to(@phone, :notice => 'Phone was successfully created.')
+      redirect_to(phones_path, :notice => 'Phone was successfully created.')
     else
       render :action => "new"
     end
@@ -38,13 +38,21 @@ class PhonesController < ApplicationController
     @phone = Phone.where(:id => params[:id], :user_id => current_user.id)[0]
 
     if @phone
+      params[:phone]['primary'] = '1' if params[:phone] && @phone.primary
       if @phone.update_attributes(params[:phone])
-        redirect_to(root_path, :notice => 'Phone was successfully updated.')
+        if @phone.primary
+          other_phones = @phone.user.phones.select { |p| p.id != @phone.id }
+          other_phones.each do |other_phone|
+            other_phone.primary = false
+            other_phone.save
+          end
+        end
+        redirect_to(phones_path, :notice => 'Phone was successfully updated.')
       else
         render :action => "edit"
       end
     else
-      redirect_to(root_path, :notice => "You don't have permissions to view that phone.")
+      redirect_to(root_path, :alert => "You don't have permissions to view that phone.")
     end
   end
 
@@ -52,10 +60,14 @@ class PhonesController < ApplicationController
   def destroy
     @phone = Phone.where(:id => params[:id], :user_id => current_user.id)[0]
     if @phone
-      @phone.destroy
-      redirect_to(phones_path, :notice => 'Phone was successfully deleted.')
+      if @phone.primary
+        redirect_to(phones_path, :alert => "You can't delete your primary phone")
+      else
+        @phone.destroy
+        redirect_to(phones_path, :notice => 'Phone was successfully deleted.')
+      end
     else
-      redirect_to(root_path, :notice => "You don't have permissions to view that phone.")
+      redirect_to(root_path, :alert => "You don't have permissions to view that phone.")
     end
   end
 end

@@ -90,10 +90,10 @@ describe PhonesController do
           assigns(:phone).should be(mock_phone)
         end
 
-        it "redirects to the created phone" do
+        it "redirects to the phone list" do
           Phone.stub(:new) { mock_phone(:save => true) }
           post :create, :phone => {}
-          response.should redirect_to(phone_url(mock_phone))
+          response.should redirect_to(phones_url)
         end
       end
 
@@ -122,7 +122,26 @@ describe PhonesController do
           @phone1.reload
           @phone1.number.should == '+14153338765'
           assigns(:phone).should == @phone1
-          response.should redirect_to(root_path)
+          response.should redirect_to(phones_path)
+        end
+
+        it "can't unset the primary flag on your primary phone" do
+          put :update, :id => @phone1.id, :phone => {'string' => '415 333 8765', 'primary' => '0'}
+          @phone1.reload
+          @phone1.number.should == '+14153338765'
+          @phone1.primary.should be_true
+          assigns(:phone).should == @phone1
+          response.should redirect_to(phones_path)
+        end
+
+        it "setting the primary flag on a phone will unset it on all others" do
+          put :update, :id => @phone2.id, :phone => {'primary' => '1'}
+          @phone2.reload
+          @phone2.primary.should be_true
+          assigns(:phone).should == @phone2
+          @phone1.reload
+          @phone1.primary.should be_false
+          response.should redirect_to(phones_path)
         end
 
         it "redirects if you try to show someone else's phone" do
@@ -154,9 +173,16 @@ describe PhonesController do
     
     describe "DELETE destroy" do
       it "destroys the requested phone" do
-        phone_id = @phone1.id
+        phone_id = @phone2.id
         delete :destroy, :id => phone_id
         Phone.find_by_id(phone_id).should be_nil
+        response.should redirect_to(phones_url)
+      end
+
+      it "Doesn't allow you to delete your primary phone" do
+        phone_id = @phone1.id
+        delete :destroy, :id => phone_id
+        Phone.find_by_id(phone_id).should_not be_nil
         response.should redirect_to(phones_url)
       end
 

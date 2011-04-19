@@ -5,11 +5,13 @@
     <%= f.label :string, "Phone Number:" %>
     <%= f.text_field :string %>
   </div>
-  <div class="field">
-    <%= f.label :primary, " Primary " %>
-    <%= f.check_box :primary %><br>
-    <i>(If checked, this phone will be the default selection for any new events you may create)</i>
-  </div>
+  <% if !@phone.primary or @phone.new_record? %>
+	<div class="field">
+	  <%= f.label :primary, " Primary " %>
+	  <%= f.check_box :primary %><br>
+	  <i>(If checked, this phone will be the default selection for any new events you may create)</i>
+	</div>
+  <% end %>
   <div class="actions">
     <%= f.submit %>
   </div>

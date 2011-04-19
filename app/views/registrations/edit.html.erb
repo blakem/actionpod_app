@@ -12,9 +12,8 @@
 </div>
 <div class="field">
 <%= f.fields_for :phones do |pf| %>
-  <p><%= pf.label :string, "Primary Phone:" %>
+  <p><%= pf.label :string, "Phone Number:" %>
   <%= pf.text_field :string %></p>
-  <%= pf.hidden_field :primary, :value => true %>
 <% end %>
 </div>
 <div class="field">
