@@ -84,7 +84,7 @@ class TwilioController < ApplicationController
   
   def place_in_conference
     @names = build_intro_string(params[:events])
-    @timelimit = params[:timelimit] ? params[:timelimit].to_i * 60 : 15 * 60
+    @timelimit = params[:timelimit] ? params[:timelimit].to_i : 15 * 60
     @conference = params[:conference] || 'DefaultConference'
   end
   

@@ -146,8 +146,12 @@ class PoolMerger
     data[:on_hold].delete(participant['call_sid'])
   end
       
-  def place_into_conference(participant, room_name, timelimit, data, event_ids = [])
-    @tc.place_participant_in_conference(participant[:call_sid], room_name, timelimit, event_ids)
+  def place_into_conference(participant, room_name, timelimit, start_time, data, event_ids = [])
+    end_time = start_time + timelimit.minutes + 1.minute
+    timelimit_insec = (end_time - Time.now).to_i
+    timelimit_insec = timelimit * 60 if timelimit_insec <= 0;
+    @tc.place_participant_in_conference(participant[:call_sid], room_name, timelimit_insec, event_ids)
+    
     take_off_hold(participant, data)
     data[:placed][participant['call_sid']] = {
       :room_name => room_name,
@@ -166,7 +170,7 @@ class PoolMerger
     )
     conference.users = event_ids.map{ |eid| event = Event.find_by_id(eid); event ? event.user : nil }.select{ |u| u }
     list.each do |participant|
-      place_into_conference(participant, room_name, pool.timelimit, data, event_ids)
+      place_into_conference(participant, room_name, pool.timelimit, pool_runs_at, data, event_ids)
     end
   end
 
@@ -177,7 +181,7 @@ class PoolMerger
     participant_event_id = participant_event_id(participant)
     event_ids = event_ids_for_conference_room(room_name, data)
     event_ids = [participant_event_id] + event_ids unless event_ids.include?(participant_event_id) 
-    place_into_conference(participant, room_name, pool.timelimit, data, event_ids)
+    place_into_conference(participant, room_name, pool.timelimit, pool_runs_at, data, event_ids)
     conference = Conference.where(:room_name => room_name, :status => 'in_progress', :pool_id => pool.id, :started_at => pool_runs_at)[0]
     event = Event.find_by_id(participant_event_id)
     if (event and conference)
