@@ -5,7 +5,7 @@ module PagesHelper
       :default => 'monsterid',
     }.merge(options)
 
-    if user.facebook_uid
+    if user.facebook_uid and !user.facebook_uid.blank?
       size = options[:size]
       %(<img alt=").html_safe + user.name + %(" src="http://graph.facebook.com/).html_safe + user.facebook_uid + 
       %(/picture" width=").html_safe + size.to_s + %(" height=").html_safe + size.to_s + %(" class="gravatar">).html_safe
