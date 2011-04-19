@@ -3,7 +3,9 @@
     <ul>
       <li><%= link_to "Home", root_path %></li> |
       <%= render 'devise/menu/registration_items' %> |
-      <li><%= link_to "Add or Delete Phones", phones_path %> |
+	  <% if user_signed_in? %>
+        <li><%= link_to "Add or Delete Phones", phones_path %> |
+      <% end %>
 	  <%= render 'devise/menu/login_items' %>
       <% if controller.admin_signed_in? %>
       | <li><%= link_to "Admin", '/admin' %></li> 
