@@ -14,7 +14,9 @@
 <%= f.fields_for :phones do |pf| %>
   <% if pf.object.primary %>
   <p><%= pf.label :string, "Phone Number:" %>
-  <%= pf.text_field :string %></p>
+  <%= pf.text_field :string %><br/>
+  <%= link_to "Add or Delete Phones", phones_path %>
+  </p>
   <% end %>
 <% end %>
 </div>
