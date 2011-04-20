@@ -257,6 +257,12 @@ describe TwilioController do
       event5.time = (now - 1.minutes).strftime("%I:%M%p")
       event5.save
 
+      event6 = Factory(:event, :user_id => user.id, :name => 'No Days Scheduled', :pool_id => Factory(:pool).id)
+      event6.days = []
+      event6.save
+
+      
+
       post :incoming, :From => phone.number, :Direction => 'inbound' 
       hash = (Hash.from_xml response.body).with_indifferent_access
       hash[:Response].should be_true
