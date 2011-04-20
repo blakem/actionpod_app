@@ -2,6 +2,6 @@
 <% if plan %>
   <b>Current Plan for <%= plan.created_at.strftime("%A %b #{plan.created_at.day.ordinalize}") %>:</b>
   <dl><dd>
-  <span class="plan"><%= simple_format(h(plan.body.strip)) %></span>
+  <span class="plan"><%= simple_format(h(plan.body.strip)).gsub(/<br \/>(\s+)/) { "<br />#{'&nbsp;' * $1.length}" } %></span>
   </dd></dl>
 <% end %>
