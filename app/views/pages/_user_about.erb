@@ -1,3 +1,9 @@
-<% unless @user.about.blank? %>
-  <span class="quote"><%= simple_format('&#8220;' + h(@user.about.strip) + '&#8221;') %></span>
+<% if @user.about.blank? %>
+  <p>Intro: None
+  <% if @user == current_user %>
+    <br/><strong><%= link_to "Update your Intro", :action => :intro %></strong>
+  <% end %>
+  </p>
+<% else %>
+  <span class="quote"><%= simple_format('&#8220;' + h(@user.about.strip) + '&#8221;') %></span><hr>
 <% end %>

@@ -34,8 +34,8 @@ class PagesController < ApplicationController
     @plan = Plan.new
     current_plan = current_user.current_plan    
     @plan.body = current_plan.body if current_plan
-    @view_options = {:hide_create_plan => true}
     set_profile_values
+    @view_options = {:hide_create_plan => true}
   end
 
   def plan_create
@@ -49,6 +49,19 @@ class PagesController < ApplicationController
     end
   end
   
+  def intro
+    set_profile_values
+    @view_options = {:hide_update_intro => true}
+  end
+
+  def intro_update
+    if current_user.update_attributes(params[:user])
+      redirect_to('/u/' + current_user.handle, :notice => 'Intro was successfully updated.')
+    else
+      render :action => :intro
+    end
+  end
+
   def set_profile_values
     @user = current_user
     @title = @user.name

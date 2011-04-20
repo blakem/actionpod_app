@@ -4,4 +4,10 @@
   <dl><dd>
   <span class="plan"><%= simple_format(h(plan.body.strip)).gsub(/<br \/>(\s+)/) { "<br />#{'&nbsp;' * $1.length}" } %></span>
   </dd></dl>
+<% else %>
+  <p>Current Plan: None
+  <% if @user == current_user %>
+    <br/><strong><%= link_to "Update your Plan", '/pages/plan' %></strong>
+  <% end %>
+  </p>
 <% end %>

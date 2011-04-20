@@ -5,8 +5,9 @@ ActionpodApp::Application.routes.draw do
   resources :events
   resources :phones
 
-  post 'pages/plan' => 'pages#plan_create'
-  match 'u/:handle' => 'pages#profile'
+  post  'pages/plan'  => 'pages#plan_create'
+  put   'pages/intro' => 'pages#intro_update'
+  match 'u/:handle'   => 'pages#profile'
 
   match ':controller(/:action(.:format))'
   match '/:controller(/:action(/:id))', :constraints => lambda{ |request|
