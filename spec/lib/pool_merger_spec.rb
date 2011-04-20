@@ -132,7 +132,7 @@ describe PoolMerger do
         )
         conference.users = [Factory(:user), Factory(:user)]
         @tc.should_receive(:participants_on_hold_for_pool).twice.with(@pool).and_return(new_participants)
-        @tc.should_receive(:place_participant_in_conference).twice.with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1", "Pool#{@pool.id}Room3", @timelimit_insec, [event.id, 32, 33])
+        @tc.should_receive(:place_participant_in_conference).twice.with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1", "Pool#{@pool.id}Room3", @timelimit_insec, [32, 33])
         data = {
           :on_hold => {"CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 1},
           :next_room => 5,
