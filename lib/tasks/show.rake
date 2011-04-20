@@ -52,7 +52,7 @@ namespace :show do
   task :phones => :environment do
     Phone.all.each do |p|
       primary = p.primary ? '*' : ' '
-      puts "#{sprintf"%3s",p.id}:#{primary} #{p.number} #{p.string} #{p.user_id}:#{p.user.name}"
+      puts "#{sprintf"%3s",p.id}:#{primary} #{p.number} #{sprintf("%15s",p.string)} #{p.user_id}:#{p.user.name}"
     end
   end
 
