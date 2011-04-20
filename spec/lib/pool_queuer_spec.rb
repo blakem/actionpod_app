@@ -94,10 +94,6 @@ describe PoolQueuer do
       @pq.check_before_calls_go_out(@pool, pool_runs_at)
     end
 
-    it "should have a call_duration" do
-      @pq.call_duration.should == 15.minutes
-    end
-
     it "should have a time_between_merges" do
       @pq.time_between_merges.should == 5.seconds
     end
@@ -130,7 +126,7 @@ describe PoolQueuer do
   
   describe "queue_merge_calls_for_pool" do
     before(:each) do
-      @pool = Factory(:pool)
+      @pool = Factory(:pool, :timelimit => 15)
       @user = Factory(:user)
       @event = Factory(:event, :pool_id => @pool.id, :user_id => @user.id)
       @now = Time.now.utc

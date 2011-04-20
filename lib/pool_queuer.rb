@@ -12,10 +12,6 @@ class PoolQueuer
     15.seconds
   end
 
-  def call_duration
-    15.minutes
-  end
-  
   def queue_pool(pool, run_time)
     queue_check_before_calls_go_out(pool, run_time)
   end
@@ -74,7 +70,7 @@ class PoolQueuer
   end
   
   def queue_merge_calls_for_pool(pool, pool_runs_at, count, data)
-    if count > ((call_duration - time_before_first_merge) / time_between_merges)
+    if count > ((pool.timelimit.minutes - time_before_first_merge) / time_between_merges)
       update_conferences(pool, pool_runs_at, data)
       return true
     end
