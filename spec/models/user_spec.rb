@@ -21,6 +21,21 @@ describe User do
     Phone.find_by_id(phone1_id).should be_nil
     Phone.find_by_id(phone2_id).should be_nil    
   end
+
+  it "has many plans and a current_plan" do
+    user = Factory(:user)
+    plan1 = Factory(:plan, :user_id => user.id)
+    plan2 = Factory(:plan, :user_id => user.id)
+    user.plans.should include(plan1, plan2)
+    user.current_plan.should == plan2
+
+    # Should delete phones on user destroy
+    plan1_id = plan1.id
+    plan2_id = plan2.id
+    user.destroy
+    Plan.find_by_id(plan1_id).should be_nil
+    Plan.find_by_id(plan2_id).should be_nil    
+  end
   
   it "has with_phone" do
     user = Factory(:user)

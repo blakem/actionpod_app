@@ -3,6 +3,7 @@ task :data_integrity => :environment do
   # Counts
   puts "ok - Users:       #{User.count}"
   puts "ok - Phones:      #{Phone.count}"
+  puts "ok - Plans:       #{Plan.count}"
   puts "ok - Events:      #{Event.count}"
   puts "ok - Pools:       #{Pool.count}"
   puts "ok - InviteCodes: #{InviteCode.count}"
@@ -56,6 +57,19 @@ task :data_integrity => :environment do
       puts "    ok - Phone'#{p.id}:#{p.number}' has a user"
     else
       puts "ERROR: Phone'#{p.id}:#{p.number}' has no user! user_id = #{p.user_id}"
+    end
+  end
+
+  # plans
+  plans = Plan.all
+  puts "  ok - Plan Count: #{plans.count}"
+  plans.each do |p|
+    puts "ERROR: Plan'#{p.id}:#{p.user_id}' is invalid!" unless p.valid?
+    user = User.find_by_id(p.user_id)
+    if user
+      puts "    ok - Plan'#{p.id}:#{p.user_id}' has a user"
+    else
+      puts "ERROR: Plan'#{p.id}:#{p.user_id}' has no user! user_id = #{p.user_id}"
     end
   end
   

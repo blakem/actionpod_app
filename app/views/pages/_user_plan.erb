@@ -1,0 +1,7 @@
+<% plan = @user.current_plan %>
+<% if plan %>
+  <b>Current Plan for <%= plan.created_at.strftime("%A %b #{plan.created_at.day.ordinalize}") %>:</b>
+  <dl><dd>
+  <span class="plan"><%= simple_format(h(plan.body.strip)) %></span>
+  </dd></dl>
+<% end %>

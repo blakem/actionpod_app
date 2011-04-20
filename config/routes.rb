@@ -1,17 +1,19 @@
 ActionpodApp::Application.routes.draw do
   root :to => 'pages#home'
+
   devise_for :users, :controllers => { :registrations => 'registrations' }
   resources :events
   resources :phones
 
-  # Callme routes
+  post 'pages/plan' => 'pages#plan_create'
+  match 'u/:handle' => 'pages#profile'
+
   match ':controller(/:action(.:format))'
   match '/:controller(/:action(/:id))', :constraints => lambda{ |request|
       # excluded if admin_data
       !request.path.starts_with?("/admin_data")     
   }
 
-  match 'u/:handle' => 'pages#profile'
 
   #match ':controller(/:action(/:id(.:format)))'
   

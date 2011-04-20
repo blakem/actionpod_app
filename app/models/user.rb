@@ -47,6 +47,7 @@ class User < ActiveRecord::Base
   has_many :events
   has_many :pools
   has_many :phones, :dependent => :destroy
+  has_many :plans, :dependent => :destroy
   has_and_belongs_to_many :conferences
   accepts_nested_attributes_for :phones, :allow_destroy => true
 
@@ -107,6 +108,10 @@ class User < ActiveRecord::Base
 
   def primary_phone
     Phone.where(:user_id => self.id, :primary => true)[0]
+  end
+
+  def current_plan
+    self.plans.sort_by(&:id).last
   end
 
   def find_unique_handle(genhandle, count=1)

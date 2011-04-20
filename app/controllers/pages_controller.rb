@@ -10,14 +10,10 @@ class PagesController < ApplicationController
   end
   
   def my_profile
-    @user = current_user
-    @title = @user.name
     @events = current_user.events.sort { |a,b| a.minute_of_day <=> b.minute_of_day }
     @conferences = current_user.conferences
     @timeslots = build_timeslots
-    @nextcalls = build_nextcalls(@user)
-    @your = 'Your'
-    @youhave = 'You have'
+    set_profile_values
   end
   
   def profile
@@ -28,16 +24,46 @@ class PagesController < ApplicationController
       @nextcalls = build_nextcalls(@user)
       @your = @user.first_name + "'s"
       @youhave = @user.first_name + " has"
+      @view_options = {}
     else
       redirect_to(root_path, :alert => "There is no handle by that name")
     end
   end
+
+  def plan
+    @plan = Plan.new
+    current_plan = current_user.current_plan    
+    @plan.body = current_plan.body if current_plan
+    @view_options = {:hide_create_plan => true}
+    set_profile_values
+  end
+
+  def plan_create
+    @plan = Plan.new(params[:plan].merge(:user_id => current_user.id))
+    if @plan.save
+      redirect_to('/u/' + current_user.handle, :notice => 'Plan was successfully updated.')
+    else
+      set_profile_values
+      @view_options = {:hide_create_plan => true}
+      render :action => :plan
+    end
+  end
   
+  def set_profile_values
+    @user = current_user
+    @title = @user.name
+    @nextcalls = build_nextcalls(@user)
+    @your = 'Your'
+    @youhave = 'You have'
+    @view_options = {}
+  end
+
   def join
     event = Event.create(:user_id => current_user.id, :pool_id => Pool.default_pool.id, :time => params[:time])
     run_at_date = event.schedule.next_occurrence.strftime("%A at %l:%M%p").sub(/AM/,'am').sub(/PM/,'pm')
     redirect_to(root_path, :notice => "Great! We'll call you on #{run_at_date}. ;-)")
   end
+  
   
   def callcal
     @scheduled_events = build_scheduled_events

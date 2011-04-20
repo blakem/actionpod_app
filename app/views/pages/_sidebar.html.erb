@@ -1,6 +1,12 @@
+<p>
 <% if current_user.admin? %>
-  <p><strong><%= link_to "Show existing call times", :action => :callcal %></strong></p>
+  <strong><%= link_to "Show existing call times", :action => :callcal %></strong><br/>
 <% end %>
+  <strong><%= link_to "View your profile", "/u/" + current_user.handle %></strong><br/>
+<% unless @view_options[:hide_create_plan] %>
+  <strong><%= link_to "Update your Plan", :action => :plan %></strong><br/>
+<% end %>
+</p>
 <% if @nextcalls.any? %>
   <p><strong><%= @your %> next <%= @nextcalls.count == 1 ? 'call' : "#{@nextcalls.count} calls" %>:</strong><br/>
   <% @nextcalls.each do |call| %>

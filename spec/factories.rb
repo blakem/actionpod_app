@@ -28,6 +28,10 @@ Factory.sequence :pool_name do |n|
   "TestPool#{n+1}"
 end
 
+Factory.sequence :plan_body do |n|
+  "TestPlanBody#{n+1}"
+end
+
 # XXX RESTART SPORK XXX #
 
 Factory.define :user do |user|
@@ -52,6 +56,13 @@ Factory.define :phone do |phone|
   phone.sequence(:number)     { Factory.next(:phone) }
   phone.string                "444 555 6666"
   phone.association :user_id, :factory => :user
+end
+
+# XXX RESTART SPORK XXX #
+
+Factory.define :plan do |plan|
+  plan.sequence(:body)     { Factory.next(:plan_body) }
+  plan.association :user_id, :factory => :user
 end
 
 Factory.define :pool do |pool|

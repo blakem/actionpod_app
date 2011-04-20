@@ -22,6 +22,7 @@ namespace :show do
   task :users => :environment do
     User.all.sort { |a,b| a.id <=> b.id }.each do |u|
       event_count = u.events.count
+      plan_count = u.plans.count
       admin = u.admin? ? '*' : ' '
       not_confirmed = u.confirmed_at.blank? ? 'NC' : '  '
       time = event_count == 1 ? u.events.first.time : ''
@@ -34,8 +35,9 @@ namespace :show do
       phones = Phone.where(:user_id => u.id)
         
       puts "#{sprintf('%3s',u.id)}:#{admin}#{not_confirmed} #{sprintf('%-25s',u.name)} " +
-           "has #{sprintf('%2s',event_count)}e #{sprintf('%-27s',u.time_zone)} #{sprintf('%7s',time)} " +
-           "#{phones.count}p #{primary_phones[0].number} #{sprintf("%10s", u.invite_code)} #{u.handle}"
+           "has #{sprintf('%2s',event_count)}e #{sprintf('%2s',plan_count)}pl " +
+           "#{sprintf('%-27s',u.time_zone)} #{sprintf('%7s',time)} " +
+           "#{phones.count}ph #{primary_phones[0].number} #{sprintf("%10s", u.invite_code)} #{u.handle}"
     end
   end
 
@@ -51,6 +53,13 @@ namespace :show do
     Phone.all.each do |p|
       primary = p.primary ? '*' : ' '
       puts "#{sprintf"%3s",p.id}:#{primary} #{p.number} #{p.string} #{p.user_id}:#{p.user.name}"
+    end
+  end
+
+  desc "Show information about current Plans"
+  task :plans => :environment do
+    Plan.all.each do |p|
+      puts "#{sprintf"%3s",p.id}:#{p.user_id} #{sprintf"%5s",p.body.length} #{p.user.name}"
     end
   end
 
