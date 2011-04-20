@@ -46,8 +46,7 @@ describe PagesController do
       event = Factory(:event, :user_id => user.id)
       
       get :home
-      response.should have_selector('ul>li', :content => event.schedule_str)
-      response.should have_selector('ul>li', :content => event.name)
+      response.should have_selector('i', :content => event.name)
     end
 
     it "should show the Users name" do

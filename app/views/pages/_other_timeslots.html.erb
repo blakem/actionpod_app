@@ -1,8 +1,8 @@
 <% if @timeslots.any? %>
-  <ul class="home">
-    <li><b>Join an existing time slot:</b></li>
+<p>
+    <b>Join an existing time slot:</b><br/>
     <% @timeslots.each do |ts| %>
-       <li><%= ts[:string] %> | <b><%= link_to 'Join', :action => :join, :time => ts[:time] %></b></li>
+       <%= ts[:string] %> | <b><%= link_to 'Join', :action => :join, :time => ts[:time] %></b><br/>
     <% end %>
-  </ul>
+</p>
 <% end %>

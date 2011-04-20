@@ -1,13 +1,12 @@
 <% if @events.any? %>
-  <ul class="home">
-    <li><b>Your existing time slots:</b></li>
+<p>
+    <b>Your existing time slots:</b><br/>
     <% @events.each do |event| %>
-	  <li><i><%= event.name %></i> : <%= event.schedule_str %> | 
+	  <i><%= event.name %></i> : <%= event.schedule_str %> | 
            <%= link_to "Edit", edit_event_path(event) %> |
-           <%= link_to 'Delete', event_path(event), :confirm => 'Are you sure you want to delete this call?', :method => :delete %>				
-      </li>
+           <%= link_to 'Delete', event_path(event), :confirm => 'Are you sure you want to delete this call?', :method => :delete %><br/>
     <% end %>
-  </ul>
+</p>
 <% else %>
   Below is a list of existing time-slots that other users have scheduled.  Simply <b>click the 'Join'</b> button to add yourself to the call. ;-)
 <% end %>

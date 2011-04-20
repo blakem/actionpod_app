@@ -76,14 +76,25 @@ class Event < ActiveRecord::Base
       5 => 'Fridays',
       6 => 'Saturdays'
     }
+    hash_short =  {
+      0 => 'Su',
+      1 => 'M',
+      2 => 'Tu',
+      3 => 'W',
+      4 => 'Th',
+      5 => 'F',
+      6 => 'Sa'
+    }
     if days == [0,1,2,3,4,5,6]
       day_string = 'Everyday'
     elsif days == [1,2,3,4,5]
       day_string = 'on Weekdays'
     elsif days == [0,6]
       day_string = 'on Weekends'
+    elsif days.count == 1
+      day_string = 'on ' + hash[days[0]]
     else
-      day_string = 'on ' + days.sort.map { |k| hash[k] }.to_sentence
+      day_string = 'on ' + days.sort.map { |k| hash_short[k] }.to_sentence
     end
     return self.time + ' ' + day_string
   end

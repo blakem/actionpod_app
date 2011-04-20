@@ -71,9 +71,11 @@ describe Event do
         '12:15am on Weekdays'
       @event.alter_schedule(:day => [2,3,4], :minute_of_hour => [15])
       @event.schedule_str.should ==
-        '12:15am on Tuesdays, Wednesdays, and Thursdays'
+        '12:15am on Tu, W, and Th'
+      @event.alter_schedule(:day => [2], :minute_of_hour => [15])
+      @event.schedule_str.should == '12:15am on Tuesdays'
       @event.alter_schedule(:day => [2,3], :minute_of_hour => [15])
-      @event.schedule_str.should == '12:15am on Tuesdays and Wednesdays'
+      @event.schedule_str.should == '12:15am on Tu and W'
       @event.alter_schedule(:day => [], :minute_of_hour => [15])
       @event.schedule_str.should == '12:15am, but No Days Selected!'
       @event.alter_schedule(:day => [0,1,2,3,4,5,6], :minute_of_hour => [15])
