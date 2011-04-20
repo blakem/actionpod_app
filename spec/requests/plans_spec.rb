@@ -30,7 +30,7 @@ describe "Plans" do
         fill_in "Update Plan",      :with => 'Plan #1'
         click_button
       }.should change(Plan, :count).by(1)
-      response.should have_selector('div.flash.notice', :content => 'Plan was successfully updated')
+      response.should have_selector('div.flash.notice', :content => 'Your plan was successfully updated')
       user.reload
       user.current_plan.body.should == 'Plan #1'
       user.plans.count.should == 1
@@ -41,7 +41,7 @@ describe "Plans" do
         fill_in "Update Plan",      :with => 'Plan #2'
         click_button
       }.should change(Plan, :count).by(1)
-      response.should have_selector('div.flash.notice', :content => 'Plan was successfully updated')
+      response.should have_selector('div.flash.notice', :content => 'Your plan was successfully updated')
       user.reload
       user.current_plan.body.should == 'Plan #2'
       user.plans.count.should == 2
