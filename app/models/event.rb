@@ -34,7 +34,8 @@ class Event < ActiveRecord::Base
   end
 
   def time=(string)
-    string =~ /^(\d+):(\d+)(\w+)$/
+    string = string.downcase.sub(/^0/,'')
+    string =~ /^(\d+):(\d+)(\w+)$/    
     hour = $1
     minute = $2
     ampm = $3
@@ -43,6 +44,7 @@ class Event < ActiveRecord::Base
     hour += 12 if ampm =~ /^pm$/i and hour != 12
     hour = 0 if hour == 12 and ampm =~ /^am$/i
     self.alter_schedule(:hour_of_day => [hour], :minute_of_hour => [minute])
+    self.name = self.name.sub(/\d+(:\d{2})?(am|pm)/i, string) unless self.name.blank?
   end
   
   def minute_of_hour

@@ -79,10 +79,8 @@ class User < ActiveRecord::Base
         old_time_zone = ActiveSupport::TimeZone.new(self.time_zone_was)
         new_time_zone = ActiveSupport::TimeZone.new(self.time_zone)
         new_time = old_time_zone.parse(event.time).in_time_zone(new_time_zone).strftime("%I:%M%p").downcase
-        new_time.sub!(/^0/,'')
         event.alter_schedule(:start_date => event.schedule.start_time.in_time_zone(self.time_zone).beginning_of_day)
         event.time = new_time
-        event.name = event.name.sub(/\d+(:\d{2})?(am|pm)/i, new_time) # XXX move to event object
         event.save
       end
     end
