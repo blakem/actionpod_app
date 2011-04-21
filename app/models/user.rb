@@ -61,6 +61,7 @@ class User < ActiveRecord::Base
   validates_uniqueness_of :handle
 
   after_initialize :init
+  after_update     :update_events
   
   def init
     write_attribute(:time_zone, default_time_zone) unless read_attribute(:time_zone)
@@ -72,15 +73,20 @@ class User < ActiveRecord::Base
     end
   end
 
-  def save(*args)
-     rv = super(*args)
-     return rv unless rv
-     self.events.each do |event|
-       event.alter_schedule(:start_date => event.schedule.start_time.in_time_zone(self.time_zone).beginning_of_day)
-       event.save
-     end
-     rv
-   end
+  def update_events
+    if self.time_zone_changed?
+      self.events.each do |event|
+        old_time_zone = ActiveSupport::TimeZone.new(self.time_zone_was)
+        new_time_zone = ActiveSupport::TimeZone.new(self.time_zone)
+        new_time = old_time_zone.parse(event.time).in_time_zone(new_time_zone).strftime("%I:%M%p").downcase
+        new_time.sub!(/^0/,'')
+        event.alter_schedule(:start_date => event.schedule.start_time.in_time_zone(self.time_zone).beginning_of_day)
+        event.time = new_time
+        event.name = event.name.sub(/\d+(:\d{2})?(am|pm)/i, new_time) # XXX move to event object
+        event.save
+      end
+    end
+  end
   
   def soft_delete
     self.deleted_at = Time.current
