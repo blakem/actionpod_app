@@ -1,0 +1,13 @@
+=== actionpods-staging
+Web URL:        http://actionpods-staging.heroku.com/
+Git Repo:       git@heroku.com:actionpods-staging.git
+Dynos:          1
+Workers:        0
+Repo size:      14M
+Slug size:      10M
+Stack:          bamboo-mri-1.9.2
+Data size:      432k
+Next cron:      2011-04-22 22:13 MDT (scheduled)
+Last cron:      2011-04-21 22:13 MDT (finished)
+Addons:         Daily Cron, Custom Domains, Custom Error Pages, Expanded Logging, PG Backups Basic, Basic Release Management, Sendgrid Free, Shared Database 5MB
+Owner:          blakem30@yahoo.com

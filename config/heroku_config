@@ -1,0 +1,11 @@
+AN_ERROR_PAGE_URL       => http://www.betonmyself.com/heroku_error.html
+AN_MAINTENANCE_PAGE_URL => http://www.betonmyself.com/heroku_maintenance.html
+BUNDLE_WITHOUT          => development:test
+DATABASE_URL            => postgres://shragsqatn:K7wpTVJushd-sDU0uf9c@ec2-50-17-213-59.compute-1.amazonaws.com/shragsqatn
+LANG                    => en_US.UTF-8
+PGBACKUPS_URL           => https://4473:ezphjyqcqh2376drsrc1xdy1d@pgbackups.heroku.com/client
+RACK_ENV                => production
+SENDGRID_DOMAIN         => froom.com
+SENDGRID_PASSWORD       => 638d9840370d5c41d9
+SENDGRID_USERNAME       => app477680@heroku.com
+SHARED_DATABASE_URL     => postgres://shragsqatn:K7wpTVJushd-sDU0uf9c@ec2-50-17-213-59.compute-1.amazonaws.com/shragsqatn

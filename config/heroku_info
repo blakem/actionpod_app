@@ -1,0 +1,14 @@
+=== actionpods
+Web URL:        http://actionpods.heroku.com/
+Domain name:    http://fifteenminutecalls.com/
+Git Repo:       git@heroku.com:actionpods.git
+Dynos:          1
+Workers:        1
+Repo size:      26M
+Slug size:      10M
+Stack:          bamboo-mri-1.9.2
+Data size:      960k
+Next cron:      2011-04-22 16:03 MDT (scheduled)
+Last cron:      2011-04-21 17:12 MDT (finished)
+Addons:         Daily Cron, Custom Domains, Expanded Logging, PG Backups Basic, Basic Release Management, Sendgrid Free, Shared Database 5MB
+Owner:          blakem30@yahoo.com

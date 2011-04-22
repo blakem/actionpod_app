@@ -1,0 +1,11 @@
+BUNDLE_WITHOUT       => development:test
+DATABASE_URL         => postgres://jnpmierqdq:KEdq3HHHHInMtEPq1Uzt@ec2-50-17-198-198.compute-1.amazonaws.com/jnpmierqdq
+ERROR_PAGE_URL       => http://www.betonmyself.com/heroku_error.html
+LANG                 => en_US.UTF-8
+MAINTENANCE_PAGE_URL => http://www.betonmyself.com/heroku_maintenance.html
+PGBACKUPS_URL        => https://4944:85ofs539b8dffa8siorxbaig9@pgbackups.heroku.com/client
+RACK_ENV             => production
+SENDGRID_DOMAIN      => heroku.com
+SENDGRID_PASSWORD    => 8586166f2fe47af29f
+SENDGRID_USERNAME    => app504659@heroku.com
+SHARED_DATABASE_URL  => postgres://jnpmierqdq:KEdq3HHHHInMtEPq1Uzt@ec2-50-17-198-198.compute-1.amazonaws.com/jnpmierqdq
