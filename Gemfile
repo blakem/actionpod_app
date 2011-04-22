@@ -16,6 +16,7 @@ gem 'faker'
 gem 'hpricot'
 
 group :test, :development do
+  gem 'taps'
   gem 'rspec-rails'
   gem 'annotate-models'
   gem 'rspec'
