@@ -3,6 +3,11 @@
   <nav class="round">
     <ul>
       <li><%= link_to "Home", root_path %></li>
+      <% if user_signed_in? %>
+        <li><%= link_to "Guide/FAQ", :controller => :pages, :action => :help %>
+	  <% else %>
+  	    <li><%= link_to "FAQ", :controller => :pages, :action => :help %>
+      <% end %>
       <%= render 'devise/menu/registration_items' %>
 	  <%= render 'devise/menu/login_items' %>
     </ul>

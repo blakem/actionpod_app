@@ -1,5 +1,5 @@
 class PagesController < ApplicationController
-  before_filter :authenticate_user!, :except => :home
+  before_filter :authenticate_user!, :except => [:home, :help]
   
   def home
     if user_signed_in?
@@ -76,7 +76,11 @@ class PagesController < ApplicationController
     run_at_date = event.schedule.next_occurrence.strftime("%A at %l:%M%p").sub(/AM/,'am').sub(/PM/,'pm')
     redirect_to(root_path, :notice => "Great! We'll call you on #{run_at_date}. ;-)")
   end
-  
+
+  def help
+    @title = 'Guide'
+    render :action => :help_logged_in if user_signed_in?
+  end
   
   def callcal
     @scheduled_events = build_scheduled_events

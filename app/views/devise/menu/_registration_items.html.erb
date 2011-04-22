@@ -1,8 +1,4 @@
-<% if user_signed_in? %>
-  <li>
-  <%= link_to('Edit Profile', edit_user_registration_path) %>
-  </li>
-<% else %>
+<% unless user_signed_in? %>
   <li>
   <%= link_to('SignUp', new_user_registration_path)  %>
   </li>

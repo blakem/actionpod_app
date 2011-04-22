@@ -57,6 +57,23 @@ describe PagesController do
     end
   end
 
+  describe "GET /pages/help" do
+
+    describe "success" do
+      it "should be successful when not logged in" do
+  	    controller.user_signed_in?.should be_false
+        get :help
+        response.should be_success
+      end
+
+      it "should be successful when logged in" do
+        login_user
+  	    controller.user_signed_in?.should be_true
+        get :help
+        response.should be_success
+      end
+    end
+  end
 
   describe "GET /u/handle" do
     login_user_before_each

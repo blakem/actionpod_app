@@ -1,0 +1,41 @@
+<h3>Welcome</h3>
+<p>
+Welcome to the site!  I'm glad you decided to give it a try.  First off, this site is in active development,
+so changes are happening fast.  I'm excited to have you on board for the ride.
+</p>
+ 
+<h3>Getting Started</h3>
+You'll want to do three things to get started:
+<ul>
+	<li>Choose a time slot for us to call you on the <%= link_to "home", root_path %> page</li>
+    <li><%= link_to "Add an introduction", :controller => :pages, :action => :intro %>
+	 that tells other a bit about what you're up to.</li>
+    <li><%= link_to "Create your first daily plan", :controller => :pages, :action => :plan %></li>
+</ul>
+<p>
+You can join an existing time-slot on the <%= link_to "home", root_path %> page simply by clicking on one of the
+'Join' links.  This will add you to the list of people that get called at that time.
+</p>
+<p>
+Your introduction is a place for you to state what your projects are and other things you're working on.
+The other callers will be able to see this during your 15-minute call.  This is the big-picture stuff.  
+I'm writing a book.  I'm building a new software project.  I'm starting my own business.  etc.
+</p>
+<p>
+Your daily plan is where you'll put the specifics of what you are doing that day.  Who are you going to email, when?
+Lunch plans?  Software features to write?  Phone calls to make?  This is the place to put them all in one place.
+</p>
+<%= render 'help_calls' %>
+
+<h3>Avatars</h3>
+<p>
+If you include your facebook id in your profile, we will use your facebook photo for your avatar.  Otherwise we use
+a service called gravatar to try and match your email up with an avatar.  Both work great, so you may fill in your
+facebook id or link your email to an avatar on gravatar.
+</p>
+<h3>Managing Phones</h3>
+<p>
+If you have multiple phone lines, you can <%= link_to "enter each of them into the system", phones_path %>.  We will
+call you on your primary phone number, but you may call in using any of the other phones you list.
+</p>
+<%= render 'help_feedback' %>

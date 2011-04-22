@@ -2,6 +2,7 @@
 <% if current_user.admin? %>
   <%= link_to "Show existing call times", :action => :callcal %><br/>
 <% end %>
+  <%= link_to('Edit Profile', edit_user_registration_path) %><br/>
   <%= link_to "View your profile", "/u/" + current_user.handle %><br/>
 <% unless @view_options[:hide_update_intro] %>
   <% if current_user.about.blank? %>
@@ -23,7 +24,7 @@
   <% end %>
   <br/>
 <% end %>
-  <%= link_to "Add Phones", phones_path %><br/>
+  <%= link_to "Add or Delete Phones", phones_path %><br/>
 </p>
 <% if @nextcalls.any? %>
   <p><strong><%= @your %> next <%= @nextcalls.count == 1 ? 'call' : "#{@nextcalls.count} calls" %>:</strong><br/>
