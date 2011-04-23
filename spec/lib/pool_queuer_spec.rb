@@ -71,7 +71,6 @@ describe PoolQueuer do
       conference.users.should == [@user]
     end
 
-    # XXX Start here by writing this test
     it "Sends an SMS reminder if it's successful and the event has sms_reminder_message turned on" do
       user2 = Factory(:user)
       phone2 = Factory(:phone, :user_id => user2.id, :primary => true)
@@ -92,6 +91,11 @@ describe PoolQueuer do
       Twilio::RestAccount.should_receive(:new).with("AC2e57bf710b77d765d280786bc07dbacc", "fc9bd67bb8deee6befd3ab0da3973718").and_return(account)
       pool_runs_at = @now + 5.minutes
       @pq.check_before_calls_go_out(@pool, pool_runs_at)
+    end
+
+    it "Doesn't sends an SMS reminder if it's past the call window" do
+      TwilioCaller.should_not_receive(:new)
+      @pq.check_before_calls_go_out(@pool, Time.now.utc - 1.minute - @event.pool.timelimit.minutes)
     end
 
     it "should have a time_between_merges" do
