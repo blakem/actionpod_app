@@ -20,4 +20,13 @@ describe Pool do
     pool2 = Pool.create(:user_id => user.id, :timelimit => 30)
     pool2.timelimit.should == 30
   end
+  
+  it "computes whether we are currently in the call window" do
+    pool = Factory(:pool, :timelimit => 12)
+    now = Time.now.utc
+    pool.after_call_window(now).should == false
+    pool.after_call_window(now - 10.minutes).should == false
+    pool.after_call_window(now - 13.minutes).should == true
+  end
+  
 end

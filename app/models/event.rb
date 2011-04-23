@@ -116,8 +116,8 @@ class Event < ActiveRecord::Base
     name.sub(/#{user.first_name}'s\s+/, '')
   end
 
-  def make_call
-    TwilioCaller.new.start_call_for_event(self)
+  def make_call(start_time)
+    TwilioCaller.new.start_call_for_event(self) unless self.pool.after_call_window(start_time)
   end
 
   def destroy

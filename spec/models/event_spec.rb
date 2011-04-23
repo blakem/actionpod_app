@@ -277,4 +277,29 @@ describe Event do
     
   end
 
+  describe "make calls" do
+    before(:each) do
+      @pool = Factory(:pool, :timelimit => 10)
+      @event = Factory(:event, :pool_id => @pool.id)
+      @tc = mock('TwilioCaller')
+      TwilioCaller.stub(:new).and_return(@tc)  
+      @now = Time.now.utc
+    end
+
+    it "makes calls with the twilio caller" do
+      @tc.should_receive(:start_call_for_event).with(@event)      
+      @event.make_call(@now)
+    end
+    
+    it "makes calls with the twilio caller in the middle of the call window" do
+      @tc.should_receive(:start_call_for_event).with(@event)      
+      @event.make_call(@now - 5.minutes)
+    end
+
+    it "does not make calls after the call window" do
+      @tc.should_not_receive(:start_call_for_event).with(@event)      
+      @event.make_call(@now - 12.minutes)
+    end
+  end
+
 end

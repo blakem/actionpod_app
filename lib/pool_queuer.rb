@@ -35,6 +35,7 @@ class PoolQueuer
   end
   
   def check_before_calls_go_out(pool, pool_runs_at)
+    # XXX skip if we are delayed and outside the call window
     jobs = DelayedJob.where(
       :run_at => pool_runs_at,
       :pool_id => pool.id,
