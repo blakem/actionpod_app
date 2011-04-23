@@ -7,9 +7,9 @@ task :call_phones, [:event1_id, :event2_id, :event3_id, :event4_id, :event5_id] 
     events = [event1, event2]
     event3 = Event.find_by_id(args[:event3_id].to_i)
     events << event3 if event3
-    event3 = Event.find_by_id(args[:event4_id].to_i)
+    event4 = Event.find_by_id(args[:event4_id].to_i)
     events << event4 if event4
-    event3 = Event.find_by_id(args[:event5_id].to_i)
+    event5 = Event.find_by_id(args[:event5_id].to_i)
     events << event5 if event5
   else
     user1 = User.find_by_email('blakem@15minutecalls.com')
