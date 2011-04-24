@@ -1,14 +1,18 @@
 <p>
-<% if current_user.admin? %>
-  <%= link_to "Show existing call times", :action => :callcal %><br/>
+<% if current_user.admin? && !@view_options[:hide_callcal] %>
+  <%= link_to "Show existing call times", :controller => :pages, :action => :callcal %><br/>
 <% end %>
+<% unless @view_options[:hide_edit_profile] %>
   <%= link_to('Edit Profile', edit_user_registration_path) %><br/>
+<% end %>
+<% unless @view_options[:hide_view_profile] %>
   <%= link_to "View your profile", "/u/" + current_user.handle %><br/>
+<% end %>
 <% unless @view_options[:hide_update_intro] %>
   <% if current_user.about.blank? %>
     <strong>
   <% end %>
-  <%= link_to "Update your Intro", :action => :intro %>
+  <%= link_to "Update your Intro", :controller => :pages, :action => :intro %>
   <% if current_user.about.blank? %>
     </strong>
   <% end %>
@@ -18,11 +22,15 @@
   <% unless current_user.current_plan %>
   <strong>
   <% end %>
-  <%= link_to "Update your Plan", :action => :plan %>
+  <%= link_to "Update your Plan", :controller => :pages, :action => :plan %>
   <% unless current_user.current_plan %>
   </strong>
   <% end %>
   <br/>
+<% end %>
+<% unless @view_options[:hide_call_groups] %>
+  <% call_groups = current_user.events.count > 1 ? 'groups' : 'group'%>
+  <%= link_to "Who's in my call #{call_groups}", :controller => :pages, :action => :call_groups %><br/>
 <% end %>
   <%= link_to "Add or Delete Phones", phones_path %><br/>
 </p>

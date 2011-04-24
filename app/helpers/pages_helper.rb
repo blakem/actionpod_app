@@ -16,5 +16,5 @@ module PagesHelper
         :gravatar => options
       )
     end    
-  end
+  end  
 end

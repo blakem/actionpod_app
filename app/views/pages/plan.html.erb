@@ -1,20 +1,11 @@
-<table class="profile" summary="Profile information">
-  <tr>
-	<td class="main">
-		<%= form_for(@plan, :url => '/pages/plan') do |f| %>
-		  <%= pretty_object_error_messages(@plan) %>
-		  <div class="field">
-		    <p><%= f.label :body, "Update Plan:", :class => "round" %><br/>
-		    <%= f.text_area :body, :class => "round" %></p>
-		  </div>
-		  <div class="actions">
-		    <%= f.submit "Update Plan" %>
-		  </div>
-		<% end %>
-    </td>
-    <td class="sidebar round">
-	  <%= render 'sidebar' %>
-	</td>
-  </tr>
-</table>
+<%= form_for(@plan, :url => '/pages/plan') do |f| %>
+  <%= pretty_object_error_messages(@plan) %>
+  <div class="field">
+    <p><%= f.label :body, "Update Plan:", :class => "round" %><br/>
+    <%= f.text_area :body, :class => "round" %></p>
+  </div>
+  <div class="actions">
+    <%= f.submit "Update Plan" %>
+  </div>
+<% end %>
 

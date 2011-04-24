@@ -2,11 +2,8 @@ class PagesController < ApplicationController
   before_filter :authenticate_user!, :except => [:home, :help]
   
   def home
-    if user_signed_in?
-      self.my_profile
-      render :action => 'my_profile'
-    end
     @title = 'Accountability Calls You Can Count On'
+    self.my_profile if user_signed_in?
   end
   
   def my_profile
@@ -14,6 +11,7 @@ class PagesController < ApplicationController
     @conferences = current_user.conferences
     @timeslots = build_timeslots
     set_profile_values
+    render :my_profile, :layout => "sidebar"
   end
   
   def profile
@@ -24,7 +22,8 @@ class PagesController < ApplicationController
       @nextcalls = build_nextcalls(@user)
       @your = @user.first_name + "'s"
       @youhave = @user.first_name + " has"
-      @view_options = {}
+      @view_options = {:hide_view_profile => @user == current_user}
+      render :layout => "sidebar"
     else
       redirect_to(root_path, :alert => "There is no handle by that name")
     end
@@ -36,6 +35,7 @@ class PagesController < ApplicationController
     @plan.body = current_plan.body if current_plan
     set_profile_values
     @view_options = {:hide_create_plan => true}
+    render :layout => "sidebar"
   end
 
   def plan_create
@@ -51,7 +51,8 @@ class PagesController < ApplicationController
   
   def intro
     set_profile_values
-    @view_options = {:hide_update_intro => true}
+    @view_options = {:hide_update_intro => true}    
+    render :layout => "sidebar"
   end
 
   def intro_update
@@ -84,6 +85,15 @@ class PagesController < ApplicationController
   
   def callcal
     @scheduled_events = build_scheduled_events
+    set_profile_values
+    @view_options = {:hide_callcal => true}    
+    render :layout => "sidebar"
+  end
+  
+  def call_groups
+    set_profile_values
+    @view_options = {:hide_call_groups => true}    
+    render :layout => "sidebar"
   end
   
   private
@@ -99,6 +109,7 @@ class PagesController < ApplicationController
       calls = calls.sort{ |a,b| a <=> b }.map { |c| c.strftime("%l:%M%p on %A").sub(/AM/,'am').sub(/PM/,'pm') }
       calls[0..4]
     end
+
     def build_timeslots
       slots = []
       build_scheduled_events.each do |occurrence|

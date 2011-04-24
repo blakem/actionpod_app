@@ -75,6 +75,18 @@ describe PagesController do
     end
   end
 
+  describe "GET /pages/call_groups" do
+
+    describe "success" do
+      it "should be successful when logged in" do
+        login_user
+  	    controller.user_signed_in?.should be_true
+        get :call_groups
+        response.should be_success
+      end
+    end
+  end
+
   describe "GET /u/handle" do
     login_user_before_each
 
