@@ -73,6 +73,8 @@ class TwilioCaller
       'From' => caller_id,
       'To' => event.user.primary_phone.number,
       'Url' => base_url + '/greeting.xml',
+      'FallbackUrl' => base_url + '/greeting_fallback.xml',
+      'StatusCallback' => base_url + '/callback.xml',
     }
     if event.user.use_ifmachine
       post_args['Url'] = base_url + '/go_directly_to_conference.xml'
