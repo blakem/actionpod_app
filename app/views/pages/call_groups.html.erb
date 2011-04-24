@@ -1,1 +1,18 @@
-My Call Groups
+<% if @call_groups.any? %>
+  <h3>My Call <%= @call_groups.length > 1 ? 'Groups' : 'Group' %>:</h3>
+  <p>Note: Only three of you will be on any one call....</p>
+  <% @call_groups.each do |cg| %>
+    <p>
+    <b><%= cg[:time] %> Call</b><br>
+    <% cg[:events].each do |event_list| %>
+    <% event = Event.find_by_id(event_list[0]) %>
+    <% user = event.user %>
+      <%= gravatar_for user, :size => 30 %> <%= link_to user.name, "/u/" + user.handle %>
+      <i>(<%= event.schedule_day_string %>)</i>
+      <br/>
+    <% end %>
+    </p>
+  <% end %>
+<% else %>
+ <h3>You currently aren't on any calls.</h3>
+<% end %>

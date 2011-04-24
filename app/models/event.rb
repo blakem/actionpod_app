@@ -69,6 +69,12 @@ class Event < ActiveRecord::Base
   
   def schedule_str
     return self.time + ", but No Days Selected!" if days.empty?
+    day_string = schedule_day_string
+    day_string = 'on ' + day_string unless day_string == 'Everyday'
+    return self.time + ' ' + day_string
+  end
+
+  def schedule_day_string
     hash =  {
       0 => 'Sundays',
       1 => 'Mondays',
@@ -90,15 +96,15 @@ class Event < ActiveRecord::Base
     if days == [0,1,2,3,4,5,6]
       day_string = 'Everyday'
     elsif days == [1,2,3,4,5]
-      day_string = 'on Weekdays'
+      day_string = 'Weekdays'
     elsif days == [0,6]
-      day_string = 'on Weekends'
+      day_string = 'Weekends'
     elsif days.count == 1
-      day_string = 'on ' + hash[days[0]]
+      day_string = hash[days[0]]
     else
-      day_string = 'on ' + days.sort.map { |k| hash_short[k] }.to_sentence
+      day_string = days.sort.map { |k| hash_short[k] }.to_sentence
     end
-    return self.time + ' ' + day_string
+    day_string
   end
   
   def alter_schedule(args)

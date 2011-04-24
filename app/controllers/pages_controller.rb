@@ -75,7 +75,8 @@ class PagesController < ApplicationController
   def join
     event = Event.create(:user_id => current_user.id, :pool_id => Pool.default_pool.id, :time => params[:time])
     run_at_date = event.schedule.next_occurrence.strftime("%A at %l:%M%p").sub(/AM/,'am').sub(/PM/,'pm')
-    redirect_to(root_path, :notice => "Great! We'll call you on #{run_at_date}. ;-)")
+    redirect_to('/pages/call_groups', :notice => "Great! We'll call you on #{run_at_date}, " + 
+                                                 "along with these other people. ;-)")
   end
 
   def help
@@ -93,6 +94,7 @@ class PagesController < ApplicationController
   def call_groups
     set_profile_values
     @view_options = {:hide_call_groups => true}    
+    @call_groups = build_call_groups(current_user)
     render :layout => "sidebar"
   end
   
@@ -135,5 +137,26 @@ class PagesController < ApplicationController
         end
       end
       hash.each.sort
-    end  
+    end
+    
+    def build_call_groups(user)
+      call_groups = {}
+      my_calls = {}
+      Event.all.each do |event|
+        occurrence = event.schedule.next_occurrence
+        next unless occurrence
+        occurrence = occurrence.in_time_zone(user.time_zone)
+        time = occurrence.strftime('%l:%M%p').downcase.strip
+        call_groups[time] ||= {
+          :time => time,
+          :events => []
+        }
+        call_groups[time][:events].push [event.id, event.user_id]
+        my_calls[time] = true if event.user_id == user.id
+      end
+      call_groups.select{ |k,v| my_calls[k]}.sort{ |a,b| a[0] <=> b[0] }.map{ |cg| {
+        :time => cg[0], 
+        :events => cg[1][:events].sort { |a,b| a[1] <=> b[1] } 
+      }}
+    end
 end

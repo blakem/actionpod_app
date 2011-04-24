@@ -82,6 +82,7 @@ describe Event do
       @event.schedule_str.should == '12:15am Everyday'
       @event.alter_schedule(:day => [0,6], :minute_of_hour => [15])
       @event.schedule_str.should == '12:15am on Weekends'
+      @event.schedule_day_string.should == 'Weekends'
     end
     
     it "should have time a time accessor to it's schedule" do
