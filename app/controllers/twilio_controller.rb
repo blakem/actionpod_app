@@ -68,11 +68,12 @@ class TwilioController < ApplicationController
 
   def incoming
     event = find_event_from_params(params)
+    event_id = event ? event.id : nil
+    TwilioCaller.create_call_from_call_hash(params.merge(:Sid => params[:CallSid]), event_id)
     unless event
       self.say_sorry
       render :action => :say_sorry
     else
-      TwilioCaller.create_call_from_call_hash(params.merge(:Sid => params[:CallSid]), event.id)
       @event_name = event.name_in_second_person
       @timelimit = event.pool.timelimit
       @pool = event.pool

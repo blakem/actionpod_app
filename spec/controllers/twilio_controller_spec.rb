@@ -352,6 +352,20 @@ describe TwilioController do
       call.From.should == user.primary_phone.number
       call.event_id.should == event.id
     end
+
+    it "should create a call record even when it can't match an event" do
+      phone_number = '+14345459122'
+      expect {
+        post :incoming, :From => phone_number, :Direction => 'inbound', :CallSid => "CA463"
+      }.to change(Call, :count).by(1)
+      hash = (Hash.from_xml response.body).with_indifferent_access
+      hash[:Response].should be_true
+      response.content_type.should =~ /^application\/xml/
+      call = Call.find_by_Sid('CA463')
+      call.Direction.should == 'inbound'
+      call.From.should == phone_number
+      call.event_id.should be_nil
+    end
   end
   
   describe "place_in_conference" do

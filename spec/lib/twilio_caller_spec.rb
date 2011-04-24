@@ -100,8 +100,6 @@ describe TwilioCaller do
         {"From"           => "+14157669865",
          "To"             => user.primary_phone.number, 
          "Url"            => "http://www.15minutecalls.com/twilio/greeting.xml",
-         "FallbackUrl"    => "http://www.15minutecalls.com/twilio/greeting_fallback.xml", 
-         "StatusCallback" => "http://www.15minutecalls.com/twilio/callback.xml"
         })
       Twilio::RestAccount.should_receive(:new).with("AC2e57bf710b77d765d280786bc07dbacc", "fc9bd67bb8deee6befd3ab0da3973718").and_return(account)
       expect {
@@ -134,8 +132,6 @@ describe TwilioCaller do
          "To"             => user.primary_phone.number, 
          "Url"            => "http://www.15minutecalls.com/twilio/go_directly_to_conference.xml",
          "IfMachine"      => "Hangup",
-         "FallbackUrl"    => "http://www.15minutecalls.com/twilio/greeting_fallback.xml", 
-         "StatusCallback" => "http://www.15minutecalls.com/twilio/callback.xml"
         })
       Twilio::RestAccount.should_receive(:new).with("AC2e57bf710b77d765d280786bc07dbacc", "fc9bd67bb8deee6befd3ab0da3973718").and_return(account)
       expect {
