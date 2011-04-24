@@ -175,9 +175,7 @@ class PoolMerger
   end
 
   def add_single_participant_to_conference(participant, pool, pool_runs_at, data)
-    room_name = placed?(participant, data) ? 
-      data[:placed][participant[:call_sid]][:room_name] : 
-      smallest_conference_room(data)
+    room_name = pick_room_for_single_participant(participant, data)
     participant_event_id = participant_event_id(participant)
     event_ids = event_ids_for_conference_room(room_name, data)
     place_into_conference(participant, room_name, pool.timelimit, pool_runs_at, data, event_ids)
@@ -187,7 +185,37 @@ class PoolMerger
       conference.users << event.user unless conference.users.include?(event.user)
     end
   end
+
+  def pick_room_for_single_participant(participant, data)
+    if placed?(participant, data)
+      last_room_name = data[:placed][participant[:call_sid]][:room_name]
+      if conference_has_other_callers(last_room_name, participant, data)
+        last_room_name
+      else
+        smallest_conference_room(data)
+      end        
+    else
+      smallest_conference_room(data)
+    end
+  end
   
+  def conference_has_other_callers(room_name, participant, data)
+    participants = participants_still_on_call(room_name, data)
+    participants.delete(participant[:call_sid])
+    participants.any?
+  end
+  
+  def participants_still_on_call(room_name, data)
+    participants = []
+    data[:placed].each_pair do |sid, v|
+      next unless v[:room_name] == room_name
+      call = Call.find_by_Sid(sid)
+      next unless call && !call.Duration
+      participants.push(sid)
+    end
+    participants
+  end
+    
   def smallest_conference_room(data)
     conferences = {}
     data[:placed].each_value do |v|

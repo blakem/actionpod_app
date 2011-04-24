@@ -517,7 +517,7 @@ describe PoolMerger do
         @pm.merge_calls_for_pool(@pool, @pool_runs_at, data)
       end
 
-      it "should merge callbacks into the same pool" do
+      it "should merge callbacks into the same room they were in before" do
         new_participants = participant_list(1)
         new_participants[0][:conference_friendly_name] = "HoldEvent1User1Pool#{@pool.id}Incoming"
         @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
@@ -548,7 +548,94 @@ describe PoolMerger do
             :event_id => 5,
           },
         }
+        Call.create(
+          :Sid => 'CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1',
+          :event_id => 1,
+          :Duration => 66,
+        )
+        Call.create(
+          :Sid => 'CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2',
+          :event_id => 2,
+          :Duration => nil,
+        )
+        Call.create(
+          :Sid => 'CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX3',
+          :event_id => 3,
+          :Duration => nil,
+        )
         @pm.merge_calls_for_pool(@pool, @pool_runs_at - 3.hours, data)
+      end
+
+      it "should merge callbacks into a new room if it's old room is empty" do
+        new_participants = participant_list(1)
+        new_participants[0][:conference_friendly_name] = "HoldEvent1User1Pool#{@pool.id}Incoming"
+        @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
+        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1", "Pool#{@pool.id}Room2", @pool.timelimit * 60, [4, 5])
+        data = @pm.initialize_data({})
+        data[:on_hold] = {
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 2,
+        }
+        data[:placed] = {
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => {
+            :room_name => "Pool#{@pool.id}Room1",
+            :event_id => 1,
+          },
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2" => {
+            :room_name => "Pool#{@pool.id}Room1",
+            :event_id => 2,
+          },
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX3" => {
+            :room_name => "Pool#{@pool.id}Room1",
+            :event_id => 3,
+          },
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX4" => {
+            :room_name => "Pool#{@pool.id}Room2",
+            :event_id => 4,
+          },
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX5" => {
+            :room_name => "Pool#{@pool.id}Room2",
+            :event_id => 5,
+          },
+        }
+        Call.create(
+          :Sid => 'CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1',
+          :event_id => 1,
+          :Duration => nil,
+        )
+        Call.create(
+          :Sid => 'CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2',
+          :event_id => 2,
+          :Duration => 66,
+        )
+        Call.create(
+          :Sid => 'CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX3',
+          :event_id => 3,
+          :Duration => 66,
+        )
+        got = @pm.merge_calls_for_pool(@pool, @pool_runs_at - 3.hours, data)
+        got[:on_hold].should == {}
+        got[:placed].should == {
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => {
+            :room_name => "Pool#{@pool.id}Room2",
+            :event_id => 1,
+          },
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2" => {
+            :room_name => "Pool#{@pool.id}Room1",
+            :event_id => 2,
+          },
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX3" => {
+            :room_name => "Pool#{@pool.id}Room1",
+            :event_id => 3,
+          },
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX4" => {
+            :room_name => "Pool#{@pool.id}Room2",
+            :event_id => 4,
+          },
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX5" => {
+            :room_name => "Pool#{@pool.id}Room2",
+            :event_id => 5,
+          },          
+        }
       end
     end
     
