@@ -79,14 +79,18 @@ class ApplicationController < ActionController::Base
         time = occurrence.strftime('%l:%M%p').downcase.strip
         call_groups[time] ||= {
           :time => time,
-          :events => []
+          :events => [],
+          :minute => occurrence.hour * 60 + occurrence.min,
         }
         call_groups[time][:events].push [event.id, event.user_id]
         my_calls[time] = true if event.user_id == user.id
       end
-      call_groups.select{ |k,v| my_calls[k]}.sort{ |a,b| a[0] <=> b[0] }.map{ |cg| {
-        :time => cg[0], 
-        :events => cg[1][:events].sort { |a,b| a[1] <=> b[1] } 
-      }}
+      call_groups.
+        select{ |k,v| my_calls[k]}.
+        sort{ |a,b| a[1][:minute] <=> b[1][:minute] }.
+        map{ |cg| {
+          :time => cg[0], 
+          :events => cg[1][:events].sort { |a,b| b[1] <=> a[1] } 
+        } }
     end
 end
