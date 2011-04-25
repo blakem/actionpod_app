@@ -122,6 +122,15 @@ class Event < ActiveRecord::Base
     name.sub(/#{user.first_name}'s\s+/, '')
   end
 
+  def name_with_pool
+    default_pool = Pool.default_pool
+    if default_pool.id == self.pool_id
+      self.name
+    else
+      self.pool.name + ": " + self.name 
+    end
+  end
+
   def make_call(start_time)
     TwilioCaller.new.start_call_for_event(self) unless self.pool.after_call_window(start_time)
   end

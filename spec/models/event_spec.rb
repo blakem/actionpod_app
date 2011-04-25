@@ -30,6 +30,16 @@ describe Event do
     event.name_in_second_person.should == "8:00am Call"    
   end
 
+  it "has a name_with_pool" do
+    pool1 = Pool.default_pool
+    event = Factory(:event, :name => 'My Event Name')
+    event.name_with_pool.should == 'My Event Name'
+    pool2 = Factory(:pool, :name => 'PoolName')
+    event.pool_id = pool2.id
+    event.save
+    event.name_with_pool.should == 'PoolName: My Event Name'
+  end
+
   describe "it's schedule" do
     before(:each) do
       user = Factory(:user, :time_zone => 'Mountain Time (US & Canada)')
