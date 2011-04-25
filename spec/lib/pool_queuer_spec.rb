@@ -196,13 +196,13 @@ describe PoolQueuer do
       conference1 = Conference.create(
         :pool_id => @pool.id, 
         :started_at => ran_at, 
-        :room_name => "Pool#{@pool.id}Room1", 
+        :room_name => "15mcPool#{@pool.id}Room1", 
         :status => 'in_progress'
       )
       conference2 = Conference.create(
         :pool_id => @pool.id, 
         :started_at => ran_at, 
-        :room_name => "Pool#{@pool.id}Room2", 
+        :room_name => "15mcPool#{@pool.id}Room2", 
         :status => 'in_progress'
       )
       data = {
@@ -210,23 +210,23 @@ describe PoolQueuer do
         :next_room => 5,
         :placed      => {
           "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX11" => {
-            :room_name => "Pool#{@pool.id}Room1",
+            :room_name => "15mcPool#{@pool.id}Room1",
             :event_id => event1.id,
           },
           "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX12" => {
-            :room_name => "Pool#{@pool.id}Room1",
+            :room_name => "15mcPool#{@pool.id}Room1",
             :event_id => event2.id,
           },
           "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX21" => {
-            :room_name => "Pool#{@pool.id}Room2",
+            :room_name => "15mcPool#{@pool.id}Room2",
             :event_id => event3.id,
           },
           "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX22" => {
-            :room_name => "Pool#{@pool.id}Room2",
+            :room_name => "15mcPool#{@pool.id}Room2",
             :event_id => event4.id,
           },
           "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX22999" => {
-            :room_name => "Pool#{@pool.id}Room2",
+            :room_name => "15mcPool#{@pool.id}Room2",
             :event_id => 7788990,
           },
         },

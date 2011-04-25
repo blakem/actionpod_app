@@ -243,7 +243,7 @@ class PoolMerger
   def next_room(pool, data)
     room_number = data[:next_room]
     data[:next_room] += 1
-    conference_name = "Pool#{pool.id}Room#{room_number}"
+    conference_name = "15mcPool#{pool.id}Room#{room_number}"
     conference_name
   end
 

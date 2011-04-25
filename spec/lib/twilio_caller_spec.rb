@@ -245,17 +245,17 @@ describe TwilioCaller do
     it "sends the right request" do
       tc = TwilioCaller.new
       tc.should_receive(:twilio_request).with(@tc.caller_uri('CA9fa67e8696b60ee1ca1e75ec81ef85e7'), 'POST', {
-        "Url" => "http://www.15minutecalls.com/twilio/place_in_conference.xml?conference=Pool456Room8&timelimit=22&events="
+        "Url" => "http://www.15minutecalls.com/twilio/place_in_conference.xml?conference=15mcPool456Room8&timelimit=22&events="
       })
-      tc.place_participant_in_conference('CA9fa67e8696b60ee1ca1e75ec81ef85e7', "Pool456Room8", 22, [])
+      tc.place_participant_in_conference('CA9fa67e8696b60ee1ca1e75ec81ef85e7', "15mcPool456Room8", 22, [])
     end
 
     it "sends the event ids to the url" do
       tc = TwilioCaller.new
       tc.should_receive(:twilio_request).with(@tc.caller_uri('CA9fa67e8696b60ee1ca1e75ec81ef85e7'), 'POST', {
-        "Url" => "http://www.15minutecalls.com/twilio/place_in_conference.xml?conference=Pool456Room8&timelimit=22&events=3,4,5"
+        "Url" => "http://www.15minutecalls.com/twilio/place_in_conference.xml?conference=15mcPool456Room8&timelimit=22&events=3,4,5"
       })
-      tc.place_participant_in_conference('CA9fa67e8696b60ee1ca1e75ec81ef85e7', "Pool456Room8", 22, [3,4,5])
+      tc.place_participant_in_conference('CA9fa67e8696b60ee1ca1e75ec81ef85e7', "15mcPool456Room8", 22, [3,4,5])
     end
   end
   
@@ -359,7 +359,7 @@ def four_conference_response
   ',"uri":"\/2010-04-01\/Accounts\/AC2e57bf710b77d765d280786bc07dbacc\/Conferences\/CFXXXaa0e4fe673292932492f68ba94d3f.json"' +
   ',"subresource_uris":' +
   '{"participants":"\/2010-04-01\/Accounts\/AC2e57bf710b77d765d280786bc07dbacc\/Conferences\/CFXXXaa0e4fe673292932492f68ba94d3f\/Participants.json"}},' +
-  '{"sid":"CFXXXaa0e4fe673292932492f68ba94d3f","account_sid":"AC2e57bf710b77d765d280786bc07dbacc","friendly_name":"Pool123Room6"' +
+  '{"sid":"CFXXXaa0e4fe673292932492f68ba94d3f","account_sid":"AC2e57bf710b77d765d280786bc07dbacc","friendly_name":"15mcPool123Room6"' +
   ',"status":"in-progress","date_created":"Thu, 07 Apr 2011 00:02:16 +0000","api_version":"2010-04-01","date_updated":"Thu, 07 Apr 2011 00:02:17 +0000"' +
   ',"uri":"\/2010-04-01\/Accounts\/AC2e57bf710b77d765d280786bc07dbacc\/Conferences\/CFXXXaa0e4fe673292932492f68ba94d3f.json"' +
   ',"subresource_uris":' +

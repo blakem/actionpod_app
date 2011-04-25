@@ -84,7 +84,7 @@ def make_users
     :started_at => now-30.minutes,
     :ended_at => now-15.minutes,
     :pool_id => pool.id,
-    :room_name => "Pool1Room1",
+    :room_name => "15mcPool1Room1",
     :status => 'completed',
   )
   all_users = User.all.sort_by(&:id)
@@ -94,7 +94,7 @@ def make_users
     :started_at => now-90.minutes,
     :ended_at => now - 90.minutes + 20.seconds,
     :pool_id => pool.id,
-    :room_name => "Pool1Room1",
+    :room_name => "15mcPool1Room1",
     :status => 'only_one_answered',
   )
   conference.users = [all_users.first]
