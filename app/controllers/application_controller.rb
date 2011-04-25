@@ -38,7 +38,7 @@ class ApplicationController < ActionController::Base
           calls.push(occurrence.in_time_zone(current_user.time_zone))
         end
       end
-      calls = calls.sort{ |a,b| a <=> b }.map { |c| c.strftime("%l:%M%p on %A").sub(/AM/,'am').sub(/PM/,'pm') }
+      calls = calls.sort{ |a,b| a <=> b }.map { |c| c.strftime("%l:%M%p on %A").sub(/AM/,'am').sub(/PM/,'pm').strip }
       calls[0..4]
     end
 
