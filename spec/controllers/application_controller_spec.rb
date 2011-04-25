@@ -91,4 +91,84 @@ describe ApplicationController do
       ]
     end
   end
+  
+  describe "build_timeslots" do
+    
+    it "should return an ordered list of existing time-slots that the user is not currently subscribed to" do
+      @ac.stub(:current_user).and_return(@user1)
+      @ac.send(:build_timeslots).should == [
+        {:time =>  "8:00am", :string =>  "8:00am on Weekdays"}, 
+        {:time => "11:00am", :string => "11:00am on Weekdays"}, 
+        {:time =>  "2:00pm", :string =>  "2:00pm on Weekdays"}, 
+        {:time =>  "8:00pm", :string =>  "8:00pm on Weekdays"},
+      ]
+
+      @ac.stub(:current_user).and_return(@user2)
+      @ac.send(:build_timeslots).should == [
+        {:time =>  "8:00pm", :string =>  "8:00pm on Weekdays"},
+      ]
+
+      @ac.stub(:current_user).and_return(@user3)
+      @ac.send(:build_timeslots).should == []
+    end
+  end
+
+  describe "build_scheduled_events" do
+    
+    it "should return an ordered list of all the events scheduled" do
+      got = @ac.send(:build_scheduled_events)
+      got.map { |data| [data[0].to_s.sub(/^.+? /, ''), data[1]] }.should == [
+        ["08:00:00 -0700", 2],
+        ["11:00:00 -0700", 2],
+        ["14:00:00 -0700", 2],
+        ["20:00:00 -0700", 1],
+        ["08:00:00 -0700", 2],
+        ["11:00:00 -0700", 2],
+        ["14:00:00 -0700", 2],
+        ["20:00:00 -0700", 1],
+        ["08:00:00 -0700", 2],
+        ["11:00:00 -0700", 2],
+        ["14:00:00 -0700", 2],
+        ["20:00:00 -0700", 1],
+        ["08:00:00 -0700", 2],
+        ["11:00:00 -0700", 2],
+        ["14:00:00 -0700", 2],
+        ["20:00:00 -0700", 1],
+        ["08:00:00 -0700", 2],
+        ["11:00:00 -0700", 2],
+        ["14:00:00 -0700", 2],
+        ["20:00:00 -0700", 1],
+      ]
+
+      @user2.toggle!(:admin)
+      got = @ac.send(:build_scheduled_events)
+      got.map { |data| [data[0].to_s.sub(/^.+? /, ''), data[1]] }.should == [
+        ["08:00:00 -0700", 2],
+        ["11:00:00 -0700", 2],
+        ["14:00:00 -0700", 2],
+        ["14:01:00 -0700", 2],
+        ["20:00:00 -0700", 1],
+        ["08:00:00 -0700", 2],
+        ["11:00:00 -0700", 2],
+        ["14:00:00 -0700", 2],
+        ["14:01:00 -0700", 2],
+        ["20:00:00 -0700", 1],
+        ["08:00:00 -0700", 2],
+        ["11:00:00 -0700", 2],
+        ["14:00:00 -0700", 2],
+        ["14:01:00 -0700", 2],
+        ["20:00:00 -0700", 1],
+        ["08:00:00 -0700", 2],
+        ["11:00:00 -0700", 2],
+        ["14:00:00 -0700", 2],
+        ["14:01:00 -0700", 2],
+        ["20:00:00 -0700", 1],
+        ["08:00:00 -0700", 2],
+        ["11:00:00 -0700", 2],
+        ["14:00:00 -0700", 2],
+        ["14:01:00 -0700", 2],
+        ["20:00:00 -0700", 1],
+      ]
+    end
+  end
 end
