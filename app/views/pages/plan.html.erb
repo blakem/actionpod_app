@@ -1,8 +1,10 @@
 <%= form_for(@plan, :url => '/pages/plan') do |f| %>
   <%= pretty_object_error_messages(@plan) %>
   <div class="field">
+    <plan>
     <p><%= f.label :body, "Update Plan:", :class => "round" %><br/>
     <%= f.text_area :body, :class => "round" %></p>
+    </plan>
   </div>
   <div class="actions">
     <%= f.submit "Update Plan" %>

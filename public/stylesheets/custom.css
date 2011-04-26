@@ -24,6 +24,7 @@ ul.home li {
 }
 
 newuser textarea { width: 415px; height: 50px; padding:5px; }
+plan textarea { width: 415px; height: 350px; padding:5px; }
 
 /* Devise Menu */
 devise {
