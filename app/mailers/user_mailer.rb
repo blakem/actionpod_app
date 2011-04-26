@@ -1,5 +1,9 @@
 class UserMailer < ActionMailer::Base
-  require PagesHelper
+  include ApplicationHelper
+  helper :application
+  include PagesHelper
+  helper :pages
+  
   default :from => "15-Minute Calls <support@15minutecalls.com>"
   
   def conference_email(user, participants)
