@@ -81,7 +81,7 @@ describe PoolMerger do
         phone = Factory(:phone, :user_id => user.id, :primary => true)
         event = Factory(:event, :user_id => user.id, :pool_id => @pool.id)
         new_participants = participant_list(1)
-        new_participants[0][:conference_friendly_name] = "HoldEvent#{event.id}User#{user.id}Pool555"
+        new_participants[0][:conference_friendly_name] = "15mcHoldEvent#{event.id}User#{user.id}Pool555"
         @tc.should_receive(:participants_on_hold_for_pool).twice.with(@pool).and_return(new_participants)
         @tc.should_receive(:apologize_no_other_participants).with('CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1', 2)
         @tc.should_receive(:send_sms).with(phone.number,
@@ -123,7 +123,7 @@ describe PoolMerger do
         phone = Factory(:phone, :user_id => user.id, :primary => true)
         event = Factory(:event, :user_id => user.id, :pool_id => @pool.id)
         new_participants = participant_list(1)
-        new_participants[0][:conference_friendly_name] = "HoldEvent#{event.id}User#{user.id}Pool555"
+        new_participants[0][:conference_friendly_name] = "15mcHoldEvent#{event.id}User#{user.id}Pool555"
         conference = Conference.create(
           :room_name  => "15mcPool#{@pool.id}Room3",
           :pool_id    => @pool.id,
@@ -225,8 +225,8 @@ describe PoolMerger do
         user2  = Factory(:user)
         event2 = Factory(:event, :user_id => user2.id, :pool_id => @pool.id)
         new_participants = participant_list(2)
-        new_participants[0][:conference_friendly_name] = "HoldEvent#{event1.id}User#{user1.id}Pool555"
-        new_participants[1][:conference_friendly_name] = "HoldEvent#{event2.id}User#{user1.id}Pool555"
+        new_participants[0][:conference_friendly_name] = "15mcHoldEvent#{event1.id}User#{user1.id}Pool555"
+        new_participants[1][:conference_friendly_name] = "15mcHoldEvent#{event2.id}User#{user1.id}Pool555"
         @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
         data = @pm.initialize_data({})
         data[:on_hold] = {
@@ -391,7 +391,7 @@ describe PoolMerger do
 
       it "should skip participants that have already been placed and are Incoming when they're on hold for 1" do
         new_participants = participant_list(3)
-        new_participants[2][:conference_friendly_name] = "HoldEvent3User3Pool#{@pool.id}Incoming"
+        new_participants[2][:conference_friendly_name] = "15mcHoldEvent3User3Pool#{@pool.id}Incoming"
         @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
         data = @pm.initialize_data({})
         data[:on_hold] = {
@@ -430,7 +430,7 @@ describe PoolMerger do
 
       it "should place participants that have already been placed and are Incoming when they're on hold for 2" do
         new_participants = participant_list(3)
-        new_participants[2][:conference_friendly_name] = "HoldEvent3User3Pool#{@pool.id}Incoming"
+        new_participants[2][:conference_friendly_name] = "15mcHoldEvent3User3Pool#{@pool.id}Incoming"
         @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
         data = @pm.initialize_data({})
         data[:next_room] = 2
@@ -493,7 +493,7 @@ describe PoolMerger do
 
       it "should not duplicate the event_ids when merging in a callback" do
         new_participants = participant_list(1)
-        new_participants[0][:conference_friendly_name] = "HoldEvent1User1Pool#{@pool.id}Incoming"
+        new_participants[0][:conference_friendly_name] = "15mcHoldEvent1User1Pool#{@pool.id}Incoming"
         @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
         @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1", "15mcPool#{@pool.id}Room1", @timelimit_insec, [1, 2, 3])
         data = @pm.initialize_data({})
@@ -519,7 +519,7 @@ describe PoolMerger do
 
       it "should merge callbacks into the same room they were in before" do
         new_participants = participant_list(1)
-        new_participants[0][:conference_friendly_name] = "HoldEvent1User1Pool#{@pool.id}Incoming"
+        new_participants[0][:conference_friendly_name] = "15mcHoldEvent1User1Pool#{@pool.id}Incoming"
         @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
         @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1", "15mcPool#{@pool.id}Room1", @pool.timelimit * 60, [1, 2, 3])
         data = @pm.initialize_data({})
@@ -568,7 +568,7 @@ describe PoolMerger do
 
       it "should merge callbacks into a new room if it's old room is empty" do
         new_participants = participant_list(1)
-        new_participants[0][:conference_friendly_name] = "HoldEvent1User1Pool#{@pool.id}Incoming"
+        new_participants[0][:conference_friendly_name] = "15mcHoldEvent1User1Pool#{@pool.id}Incoming"
         @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
         @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1", "15mcPool#{@pool.id}Room2", @pool.timelimit * 60, [4, 5])
         data = @pm.initialize_data({})
@@ -707,7 +707,7 @@ def participant_list(participant_count)
     participant = stub_participant.dup
     participant[:call_sid] += "XXX" + i.to_s
     participant[:conference_sid] += "XXX" + i.to_s
-    participant[:conference_friendly_name] = "HoldEvent#{i}User#{i}Pool555"
+    participant[:conference_friendly_name] = "15mcHoldEvent#{i}User#{i}Pool555"
     list << participant
   end
   list

@@ -63,7 +63,7 @@ describe TwilioController do
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => 'Waiting for the other participants')
       response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
-      response.should have_selector('response>dial>conference', :content => "HoldEvent#{event.id}User#{user.id}Pool#{pool.id}")
+      response.should have_selector('response>dial>conference', :content => "15mcHoldEvent#{event.id}User#{user.id}Pool#{pool.id}")
       response.should have_selector('response>say', :content => 'Time is up. Goodbye.')
     end    
   end
@@ -101,7 +101,7 @@ describe TwilioController do
       response.should have_selector('response>say', :content => 'Welcome to your Morning Call.')
       response.should have_selector('response>say', :content => 'Waiting for the other participants')
       response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
-      response.should have_selector('response>dial>conference', :content => "HoldEvent#{event.id}User#{user.id}Pool#{pool.id}")
+      response.should have_selector('response>dial>conference', :content => "15mcHoldEvent#{event.id}User#{user.id}Pool#{pool.id}")
       response.should have_selector('response>say', :content => 'Time is up. Goodbye.')
     end
   end
@@ -126,7 +126,7 @@ describe TwilioController do
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => 'Waiting for the other participants')
       response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
-      response.should have_selector('response>dial>conference', :content => "HoldEvent#{event.id}User#{user.id}Pool#{pool.id}")
+      response.should have_selector('response>dial>conference', :content => "15mcHoldEvent#{event.id}User#{user.id}Pool#{pool.id}")
       response.should have_selector('response>say', :content => 'Time is up. Goodbye.')
     end
 
@@ -141,7 +141,7 @@ describe TwilioController do
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => 'Waiting for the other participants')
       response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
-      response.should have_selector('response>dial>conference', :content => "HoldEvent#{event.id}User#{user.id}Pool#{pool.id}")
+      response.should have_selector('response>dial>conference', :content => "15mcHoldEvent#{event.id}User#{user.id}Pool#{pool.id}")
       response.should have_selector('response>say', :content => 'Time is up. Goodbye.')
     end
 
@@ -159,7 +159,7 @@ describe TwilioController do
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => 'Waiting for the other participants')
       response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
-      response.should have_selector('response>dial>conference', :content => "HoldEvent#{event.id}User#{user.id}Pool#{pool.id}")
+      response.should have_selector('response>dial>conference', :content => "15mcHoldEvent#{event.id}User#{user.id}Pool#{pool.id}")
       response.should have_selector('response>say', :content => 'Time is up. Goodbye.')
     end
 
@@ -177,7 +177,7 @@ describe TwilioController do
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => 'Waiting for the other participants')
       response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
-      response.should have_selector('response>dial>conference', :content => "HoldEvent#{event.id}User#{user.id}Pool#{pool.id}")
+      response.should have_selector('response>dial>conference', :content => "15mcHoldEvent#{event.id}User#{user.id}Pool#{pool.id}")
       response.should have_selector('response>say', :content => 'Time is up. Goodbye.')
     end
     
@@ -195,7 +195,7 @@ describe TwilioController do
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => 'Waiting for the other participants')
       response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
-      response.should have_selector('response>dial>conference', :content => "HoldEvent#{event.id}User#{user.id}Pool#{pool.id}")
+      response.should have_selector('response>dial>conference', :content => "15mcHoldEvent#{event.id}User#{user.id}Pool#{pool.id}")
       response.should have_selector('response>say', :content => 'Time is up. Goodbye.')
     end
 
@@ -213,7 +213,7 @@ describe TwilioController do
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => 'Waiting for the other participants')
       response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
-      response.should have_selector('response>dial>conference', :content => "HoldEvent#{event.id}User#{user.id}Pool#{pool.id}")
+      response.should have_selector('response>dial>conference', :content => "15mcHoldEvent#{event.id}User#{user.id}Pool#{pool.id}")
       response.should have_selector('response>say', :content => 'Time is up. Goodbye.')
     end
   end
@@ -270,7 +270,7 @@ describe TwilioController do
       response.should have_selector('response>say', :content => 'Hello, welcome to your Bit After Morning Call.')
       response.should have_selector('response>say', :content => 'Waiting for the other participants')
       response.should have_selector('response>dial', :timelimit => (event2.pool.timelimit * 60).to_s)
-      response.should have_selector('response>dial>conference', :content => "HoldEvent#{event2.id}User#{user.id}Pool#{event2.pool.id}Incoming")
+      response.should have_selector('response>dial>conference', :content => "15mcHoldEvent#{event2.id}User#{user.id}Pool#{event2.pool.id}Incoming")
       response.should have_selector('response>say', :content => 'Time is up. Goodbye.')
       
       event2.time = (now + 13.minutes).strftime("%I:%M%p")
@@ -282,7 +282,7 @@ describe TwilioController do
       response.should have_selector('response>say', :content => 'Hello, welcome to your Bit Before Morning Call.')
       response.should have_selector('response>say', :content => 'Waiting for the other participants')
       response.should have_selector('response>dial', :timelimit => (event5.pool.timelimit * 60).to_s)
-      response.should have_selector('response>dial>conference', :content => "HoldEvent#{event5.id}User#{user.id}Pool#{event5.pool.id}Incoming")
+      response.should have_selector('response>dial>conference', :content => "15mcHoldEvent#{event5.id}User#{user.id}Pool#{event5.pool.id}Incoming")
       response.should have_selector('response>say', :content => 'Time is up. Goodbye.')
     end
 
@@ -303,7 +303,7 @@ describe TwilioController do
       response.should have_selector('response>say', :content => 'Hello, welcome to your Yesterdays Call.')
       response.should have_selector('response>say', :content => 'Waiting for the other participants')
       response.should have_selector('response>dial', :timelimit => (event1.pool.timelimit * 60).to_s)
-      response.should have_selector('response>dial>conference', :content => "HoldEvent#{event1.id}User#{user.id}Pool#{event1.pool.id}Incoming")
+      response.should have_selector('response>dial>conference', :content => "15mcHoldEvent#{event1.id}User#{user.id}Pool#{event1.pool.id}Incoming")
       response.should have_selector('response>say', :content => 'Time is up. Goodbye.')
     end
 

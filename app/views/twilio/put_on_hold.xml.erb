@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Response>
-  <Say>Hello, welcome to your <%= @event_name %>.</Say>
   <Say>Waiting for the other participants.</Say>
   <Dial timeLimit="<%= @timelimit %>">
-	<Conference><%= "15mcHoldEvent#{@event.id}User#{@user.id}Pool#{@pool.id}Incoming" %></Conference>
+	<Conference><%= "15mcHoldEvent#{@event.id}User#{@user.id}Pool#{@pool.id}" %></Conference>
   </Dial>
   <Say>Time is up. Goodbye.</Say>
 </Response>

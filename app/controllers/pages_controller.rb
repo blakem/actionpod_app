@@ -3,7 +3,10 @@ class PagesController < ApplicationController
   
   def home
     @title = 'Accountability Calls You Can Count On'
-    self.my_profile if user_signed_in?
+    if user_signed_in?
+      self.my_profile
+      render :my_profile
+    end
   end
   
   def my_profile
