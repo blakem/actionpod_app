@@ -90,6 +90,10 @@ class User < ActiveRecord::Base
     self.deleted_at = Time.current
     self.save
   end
+
+  def memberships
+    self.admin ? Pool.all : [Pool.default_pool]
+  end
   
   def with_phone
     self.phones.build if self.phones.empty?

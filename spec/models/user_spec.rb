@@ -74,6 +74,17 @@ describe User do
     user.events.should_not include(event3)
   end
 
+  it "regular users belong to one pool.  Admin users belong to all pools" do
+    pool1 = Pool.default_pool
+    pool2 = Factory(:pool)
+    user = Factory(:user)
+    user.memberships.should include(pool1)
+    user.memberships.should_not include(pool2)
+
+    user.toggle!(:admin)
+    user.memberships.should include(pool1, pool2)    
+  end
+
   it "can have zero or more pools" do
     user = Factory(:user)
     user.pools.count.should == 0

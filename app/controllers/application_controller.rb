@@ -76,7 +76,9 @@ class ApplicationController < ActionController::Base
     def build_call_groups(user)
       call_groups = {}
       my_calls = {}
+      pools = user.memberships
       Event.all.each do |event|
+        next unless pools.include?(event.pool)
         occurrence = event.schedule.next_occurrence
         next unless occurrence
         occurrence = occurrence.in_time_zone(user.time_zone)
