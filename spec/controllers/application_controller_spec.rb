@@ -32,7 +32,7 @@ describe ApplicationController do
     @ac = ApplicationController.new
     @ac.stub(:current_user).and_return(@user2)
     Event.stub(:all).and_return(@events.shuffle)
-    now = Time.now.beginning_of_week
+    now = Time.now.beginning_of_week + 7.days
     Time.stub(:now).and_return(now)
   end
 
