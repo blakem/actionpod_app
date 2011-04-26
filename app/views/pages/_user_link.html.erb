@@ -1,4 +1,8 @@
 <h1>
   <%= gravatar_for @user %>
-  <%= @user.name %>
+  <% if @mailer %>
+    <%= link_to @user.name, "http://www.15minutecalls.com/u/" + @user.handle %>
+  <% else %>
+    <%= @user.name %>
+  <% end %>
 </h1>
