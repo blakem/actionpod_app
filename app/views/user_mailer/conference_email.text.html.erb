@@ -9,6 +9,7 @@
     <p>
        <%= gravatar_for user, :size => 30 %> <%= link_to user.name, "http://www.15minutecalls.com/u/" + user.handle %><br/>
     </p>
+    <%= render 'pages/user_information' %>
     <% end %>
     <p>Thanks for joining and have a great day!</p>
   </body>
