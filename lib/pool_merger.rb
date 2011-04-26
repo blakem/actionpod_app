@@ -172,6 +172,13 @@ class PoolMerger
     list.each do |participant|
       place_into_conference(participant, room_name, pool.timelimit, pool_runs_at, data, event_ids)
     end
+    send_conference_email(conference)
+  end
+
+  def send_conference_email(conference)
+    conference.users.each do |user|
+      UserMailer.deliver_conference_email(user)
+    end
   end
 
   def add_single_participant_to_conference(participant, pool, pool_runs_at, data)
