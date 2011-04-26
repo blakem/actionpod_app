@@ -1,5 +1,4 @@
 class RegistrationsController < Devise::RegistrationsController
-  layout :registrations_layout
 
   def destroy
     resource.soft_delete # instead of resource.destroy
@@ -17,9 +16,4 @@ class RegistrationsController < Devise::RegistrationsController
     @view_options = {:hide_edit_profile => true}
     super
   end
-  
-  private
-    def registrations_layout
-      @view_options ? "sidebar" : "application"
-    end
 end

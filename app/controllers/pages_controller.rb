@@ -11,7 +11,6 @@ class PagesController < ApplicationController
     @conferences = current_user.conferences
     @timeslots = build_timeslots
     set_profile_values
-    render :my_profile, :layout => "sidebar"
   end
   
   def profile
@@ -23,7 +22,6 @@ class PagesController < ApplicationController
       @your = @user.first_name + "'s"
       @youhave = @user.first_name + " has"
       @view_options = {:hide_view_profile => @user == current_user}
-      render :layout => "sidebar"
     else
       redirect_to(root_path, :alert => "There is no handle by that name")
     end
@@ -35,7 +33,6 @@ class PagesController < ApplicationController
     @plan.body = current_plan.body if current_plan
     set_profile_values
     @view_options = {:hide_create_plan => true}
-    render :layout => "sidebar"
   end
 
   def plan_create
@@ -52,7 +49,6 @@ class PagesController < ApplicationController
   def intro
     set_profile_values
     @view_options = {:hide_update_intro => true}    
-    render :layout => "sidebar"
   end
 
   def intro_update
@@ -79,13 +75,11 @@ class PagesController < ApplicationController
     @scheduled_events = build_scheduled_events
     set_profile_values
     @view_options = {:hide_callcal => true}    
-    render :layout => "sidebar"
   end
   
   def call_groups
     set_profile_values
     @view_options = {:hide_call_groups => true}    
     @call_groups = build_call_groups(current_user)
-    render :layout => "sidebar"
   end
 end

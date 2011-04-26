@@ -8,6 +8,10 @@ class ApplicationController < ActionController::Base
     user_signed_in? && current_user.admin?
   end
 
+  def sublayout 
+    @view_options ? 'sidebar' : 'main'
+  end
+
   private
     def ensure_domain
       return unless Rails.env.production?
