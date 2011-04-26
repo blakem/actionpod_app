@@ -172,13 +172,17 @@ class PoolMerger
     list.each do |participant|
       place_into_conference(participant, room_name, pool.timelimit, pool_runs_at, data, event_ids)
     end
-    send_conference_email(conference)
+    send_email_for_new_conference(conference)
   end
 
-  def send_conference_email(conference)
+  def send_email_for_new_conference(conference)
     conference.users.each do |user|
-      UserMailer.deliver_conference_email(user)
+      send_conference_email_to_user(user, conference.users)
     end
+  end
+
+  def send_conference_email_to_user(user, participants)
+    UserMailer.conference_email(user, participants)
   end
 
   def add_single_participant_to_conference(participant, pool, pool_runs_at, data)
@@ -189,7 +193,14 @@ class PoolMerger
     conference = Conference.where(:room_name => room_name, :status => 'in_progress', :pool_id => pool.id, :started_at => pool_runs_at)[0]
     event = Event.find_by_id(participant_event_id)
     if (event and conference)
-      conference.users << event.user unless conference.users.include?(event.user)
+      user = event.user
+      unless conference.users.include?(user)
+        conference.users.each do |other_participant|
+          send_conference_email_to_user(other_participant, [user])
+        end
+        conference.users << user 
+        send_conference_email_to_user(user, conference.users)
+      end
     end
   end
 

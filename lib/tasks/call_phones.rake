@@ -44,6 +44,7 @@ task :call_phones, [:event1_id, :event2_id, :event3_id, :event4_id, :event5_id] 
       event.days = [run_time.wday]
       event.time = run_time.in_time_zone(event.user.time_zone).strftime("%I:%M%p")
       event.save
+      puts "Scheduling Call for #{event.user.name} at #{event.user.primary_phone.number}..."
     end
 
     puts "Scheduled call for " + run_time.strftime("%I:%M%p")
