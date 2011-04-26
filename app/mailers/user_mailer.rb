@@ -4,8 +4,7 @@ class UserMailer < ActionMailer::Base
   def conference_email(user, participants)
     @user = user
     @url  = "http://example.com/login"
-    date = Time.now.strftime('%A %B %d').sub(/ 0/, '')
-    mail(:to => user.email,
-        :subject => "[15mc] Conference Notes for #{date}")
+    @date = Time.now.strftime('%A, %B %d').sub(/ 0/, '')
+    mail(:to => user.email, :subject => "[15mc] Conference Notes for #{@date}")
   end
 end
