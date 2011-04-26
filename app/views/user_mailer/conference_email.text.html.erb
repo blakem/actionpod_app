@@ -4,13 +4,13 @@
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
   </head>
   <body>
-    <h2>Notes for your 15-Minute Call on <% @date %></h2>
+    <h2>Notes for your 15-Minute Call on <%= @date %></h2>
 	<% @participants.each do |user| %>
-    <p>
-       <%= gravatar_for user, :size => 30 %> <%= link_to user.name, "http://www.15minutecalls.com/u/" + user.handle %><br/>
-    </p>
-    <%= render 'pages/user_information' %>
-    <% end %>
+	  <p><%= gravatar_for user %> <%= link_to user.name, "http://www.15minutecalls.com/u/" + user.handle %></p>
+	  <%= render 'pages/user_information' %>
+	  <%= render 'pages/user_about' %>
+	  <%= render 'pages/user_plan' %>
+	<% end %>
     <p>Thanks for joining and have a great day!</p>
   </body>
 </html>

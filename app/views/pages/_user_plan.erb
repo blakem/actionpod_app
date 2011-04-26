@@ -6,7 +6,7 @@
   </dd></dl>
 <% else %>
   <p>Current Plan: None
-  <% if @user == current_user %>
+  <% if @user == @current_user %>
     <br/><strong><%= link_to "Update your Plan", '/pages/plan' %></strong>
   <% end %>
   </p>

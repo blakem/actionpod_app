@@ -24,6 +24,7 @@ class PagesController < ApplicationController
       @nextcalls = build_nextcalls(@user)
       @your = @user.first_name + "'s"
       @youhave = @user.first_name + " has"
+      @current_user = current_user
       @view_options = {:hide_view_profile => @user == current_user}
     else
       redirect_to(root_path, :alert => "There is no handle by that name")
