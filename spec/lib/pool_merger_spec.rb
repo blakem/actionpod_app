@@ -118,7 +118,7 @@ describe PoolMerger do
         conference.users.should == [user]
       end
 
-      it "should put him in the smallest conference room if he's old" do
+      it "should put him in the smallest conference room if he's old (bit flaky with timelimit 2458 is ok)" do
         user = Factory(:user)
         phone = Factory(:phone, :user_id => user.id, :primary => true)
         event = Factory(:event, :user_id => user.id, :pool_id => @pool.id)
