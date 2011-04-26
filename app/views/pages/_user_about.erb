@@ -6,7 +6,7 @@
   </p>
 <% else %>
   <% if @mailer %>
-  <%= simple_format(h(@user.about.strip)) %>
+  <p><%= simple_format(h(@user.about.strip)) %></p>
   <% else %>
   <span class="quote"><%= simple_format('&#8220;' + h(@user.about.strip) + '&#8221;') %></span><hr>
   <% end %>
