@@ -43,6 +43,7 @@ describe "Users" do
         }.should change(User, :count).by(1)}.should change(Phone, :count).by(1)
         user = User.find_by_email('newuserpurple@example.org')
         user.name.should == "Example User"
+        user.phonetic_name.should == "Example User"
         user.email.should == "newuserpurple@example.org"
         user.primary_phone.number.should == '+14151112222'
         user.title.should == 'mytitle'
@@ -120,6 +121,7 @@ describe "Users" do
 
         visit edit_user_registration_path
         fill_in "Full Name",          :with => 'Bubby Bob'
+        fill_in "Phonetic Name",      :with => 'Buubby Bab'
         fill_in "Email",              :with => "new@example.com"
         fill_in "Phone Number",       :with => '415 222 5555'
         fill_in "Introductory text",  :with => 'I like jellybeans.'
@@ -135,6 +137,7 @@ describe "Users" do
         response.should_not have_selector('div.flash.alert', :content => 'error')
         user.reload
         user.name.should == 'Bubby Bob'
+        user.phonetic_name.should == 'Buubby Bab'
         user.email.should == "new@example.com"
         user.primary_phone.number.should == '+14152225555'
         user.about.should == 'I like jellybeans.'

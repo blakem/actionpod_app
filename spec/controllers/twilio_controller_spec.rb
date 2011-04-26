@@ -440,13 +440,13 @@ describe TwilioController do
       pool = Factory(:pool)
       user1 = Factory(:user, :name => 'Bobby', :title => '', :location => '')
       user2 = Factory(:user, :name => 'Sally', :title => '', :location => '')
-      user3 = Factory(:user, :name => 'Jane', :title => '', :location => '')
+      user3 = Factory(:user, :name => 'Jane', :title => '', :location => '', :phonetic_name => 'Jaaane')
       event1 = Factory(:event, :user_id => user1.id, :pool_id => pool.id)
       event2 = Factory(:event, :user_id => user2.id, :pool_id => pool.id)
       event3 = Factory(:event, :user_id => user3.id, :pool_id => pool.id)
       tc.build_intro_string("#{event1.id}").should == 'Bobby'
       tc.build_intro_string("#{event1.id},#{event2.id}").should == 'Bobby, and Sally'
-      tc.build_intro_string("#{event1.id},#{event2.id},#{event3.id}").should == 'Bobby, Sally, and Jane'
+      tc.build_intro_string("#{event1.id},#{event2.id},#{event3.id}").should == 'Bobby, Sally, and Jaaane'
       
       user1.title = 'Software Developer'
       user1.save

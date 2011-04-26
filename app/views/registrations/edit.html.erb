@@ -7,6 +7,12 @@
   <%= f.text_field :name, :class => "round" %></p>
 </div>
 <div class="field">
+  <p><%= f.label :phonetic_name, "Phonetic Name:", :class => "round" %>
+  <%= f.text_field :phonetic_name, :class => "round" %><br />
+  <i>(How your name sounds verbally.  <br/>This is what the voice reads during your intro.)</i>
+  </p>
+</div>
+<div class="field">
   <p><%= f.label :email, "Email:", :class => "round" %>
   <%= f.text_field :email, :class => "round" %></p>
 </div>

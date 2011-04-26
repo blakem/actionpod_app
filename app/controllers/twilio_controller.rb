@@ -101,7 +101,7 @@ class TwilioController < ApplicationController
 
   def intro_string_for_user(user)
     return '' unless user
-    string = user.name
+    string = user.phonetic_name
     string = string + " a " + user.title unless user.title.blank?
     string = string + " from " + user.location unless user.location.blank?
     string

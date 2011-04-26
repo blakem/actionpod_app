@@ -1,5 +1,5 @@
 # == Schema Information
-# Schema version: 20110419204133
+# Schema version: 20110426202926
 #
 # Table name: users
 #
@@ -32,6 +32,7 @@
 #  hide_email           :boolean
 #  about                :text
 #  facebook_uid         :string(255)
+#  phonetic_name        :string(255)
 #
 
 class User < ActiveRecord::Base
@@ -42,7 +43,8 @@ class User < ActiveRecord::Base
 
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email, :password, :password_confirmation, :remember_me, :invite_code, :time_zone, :name, :title,
-                  :invite_code, :use_ifmachine, :location, :handle, :hide_email, :about, :phones_attributes, :facebook_uid
+                  :invite_code, :use_ifmachine, :location, :handle, :hide_email, :about, :phones_attributes, :facebook_uid,
+                  :phonetic_name
 
   has_many :events
   has_many :pools
@@ -71,7 +73,9 @@ class User < ActiveRecord::Base
     if attribute_present?("email") && !attribute_present?("handle")
       self.handle = self.generate_handle_from_email
     end
-  end
+    if attribute_present?("name") && !attribute_present?("phonetic_name")
+      self.phonetic_name = self.name
+    end  end
 
   def update_events
     if self.time_zone_changed?
