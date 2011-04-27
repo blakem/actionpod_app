@@ -4,6 +4,9 @@
     <br/><strong><%= link_to "Update your Intro", 'http://www.15minutecalls.com/pages/intro' %></strong>
   <% end %>
   </p>
+  <% if @mailer%>
+    <p>&nbsp;</p>
+  <% end %>
 <% else %>
   <% if @mailer %>
     <p><%= simple_format(h(@user.about.strip)) %></p><p>&nbsp;</p>
