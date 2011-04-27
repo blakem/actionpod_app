@@ -183,7 +183,7 @@ class PoolMerger
 
   def send_conference_email_to_user(user, participants)
     return unless Rails.env.production?
-    UserMailer.conference_email(user, participants)
+    UserMailer.deliver_conference_email(user, participants)
   end
 
   def add_single_participant_to_conference(participant, pool, pool_runs_at, data)
