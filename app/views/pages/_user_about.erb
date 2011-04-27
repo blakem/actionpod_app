@@ -1,7 +1,7 @@
 <% if @user.about.blank? %>
   <p>Intro: None
   <% if @user == @current_user %>
-    <br/><strong><%= link_to "Update your Intro", :controller => :pages, :action => :intro %></strong>
+    <br/><strong><%= link_to "Update your Intro", 'http://www.15minutecalls.com/pages/intro' %></strong>
   <% end %>
   </p>
 <% else %>
