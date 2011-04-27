@@ -3,7 +3,7 @@
   <b>Current Plan for <%= plan.created_at.strftime("%A %b #{plan.created_at.day.ordinalize}") %>:</b>
   <% if @mailer %>
     <dl><dd>
-    <%=raw simple_format(h(plan.body.strip)).gsub(/<br \/>( +)/) { "<br />#{'&nbsp;' * $1.length}" } %>
+    <%= h(plan.body.strip).gsub(/<br \/>( +)/) { "<br />#{'&nbsp;' * $1.length}" }.gsub(/\n/,"<br/>\n") %>
     </dd></dl>
   <% else %>
     <dl><dd>
