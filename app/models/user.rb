@@ -58,7 +58,7 @@ class User < ActiveRecord::Base
         value && (value == secret_invite_code || InviteCode.find_by_name(value.downcase))
   end
 
-  validates_format_of :handle, :with => /\A[0-9a-z]+\Z/i, :message => "can only be letters and numbers."
+  validates_format_of :handle, :with => /\A[0-9a-z]+\Z/i, :on => :update, :message => "can only be letters and numbers."
   validates_presence_of :name
   validates_uniqueness_of :handle
 
@@ -127,6 +127,7 @@ class User < ActiveRecord::Base
   end
 
   def find_unique_handle(genhandle, count=1)
+    return handle_was if handle_changed? and handle == ''
     genhandle = genhandle + count.to_s if count > 1
     self.class.find_by_handle(genhandle) ? find_unique_handle(genhandle, count+1) : genhandle
   end
@@ -145,7 +146,7 @@ class User < ActiveRecord::Base
   def self.human_attribute_name(attribute_key_name, options = {})
     return "Primary Phone" if attribute_key_name.to_s == 'phones.string'
     return "Primary Phone" if attribute_key_name.to_s == 'phones.number'
-    return "" if options[:default] == 'Invite code'
+    return "" if attribute_key_name.to_s == 'invite_code'
     return super(attribute_key_name, options)
   end
 

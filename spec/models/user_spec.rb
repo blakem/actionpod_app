@@ -182,7 +182,11 @@ describe User do
       user2.email = 'sally@example.com'
       user2.save
       user2.reload
-      user2.handle.should == 'foobar2'      
+      user2.handle.should == 'foobar2'
+      user2.handle = ''
+      user2.save
+      user2.reload
+      user2.handle.should == 'foobar2'
     end
   end
   
