@@ -150,7 +150,7 @@ class User < ActiveRecord::Base
   end
 
   def self.blake
-    return self.find_by_email('blakem@15minutes.com')
+    return self.find_by_email('blakem@15minutecalls.com')
   end
 
   def self.blake_test
