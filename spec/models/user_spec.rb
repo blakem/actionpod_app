@@ -203,14 +203,14 @@ describe User do
       event1.time = '1:00pm'
       event1.save
       user.reload
-      user.next_call_time.strftime("%A %I:%M%P").sub(/ 0/,' ').titlecase.should == "Tuesday 1:00pm"
+      user.next_call_time.strftime("%A at %I:%M%P").sub(/ 0/,' ').humanize.should == "Tuesday at 1:00pm"
 
       event2 = Factory(:event, :user_id => user.id)
       event2.days = [0,1,2,3,4,5,6]
       event2.time = '4:00pm'
       event2.save
       user.reload
-      user.next_call_time.strftime("%A %I:%M%P").sub(/ 0/,' ').titlecase.should == "Monday 4:00pm"
+      user.next_call_time.strftime("%A at %I:%M%P").sub(/ 0/,' ').humanize.should == "Monday at 4:00pm"
     end    
   end
 end
