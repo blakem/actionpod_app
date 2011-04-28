@@ -1,11 +1,11 @@
 <% plan = @user.current_plan %>
 <% if plan %>
-  <b><%= @my %> Plan: <i>(updated <%= time_ago_in_words(plan.created_at) %> ago)</i></b>
+  <b><%= @my %> Goals: <i>(updated <%= time_ago_in_words(plan.created_at) %> ago)</i></b>
   <% if @mailer %>
     <p>
     <%= h(plan.body.strip).gsub(/^( +)/) { "#{'&nbsp;' * $1.length}" }.gsub(/\n/,"<br/>\n") %>
     <% if @user == @current_user %>
-      <br/><strong><%= link_to "Update your Plan", 'http://www.15minutecalls.com/pages/plan' %></strong>
+      <br/><strong><%= link_to "Update your Goals", 'http://www.15minutecalls.com/pages/plan' %></strong>
     <% end %>
     </p>
   <% else %>
@@ -14,9 +14,9 @@
     </dd></dl>
   <% end %>
 <% else %>
-  <p>Current Plan: None
+  <p>Current Goals: None
   <% if @user == @current_user %>
-    <br/><strong><%= link_to "Update your Plan", 'http://www.15minutecalls.com/pages/plan' %></strong>
+    <br/><strong><%= link_to "Update your Goals", 'http://www.15minutecalls.com/pages/plan' %></strong>
   <% end %>
   </p>
   <% if @mailer%>

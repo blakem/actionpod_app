@@ -15,9 +15,9 @@ describe "Plans" do
       user.plans.should be_empty
 
       # show error on empty plan
-      click_link 'Update your Plan'
+      click_link 'Update your Daily Goals'
       expect {
-        fill_in "Update Your Daily/Weekly Plan",      :with => ''
+        fill_in "Update Your Daily/Weekly Goals",      :with => ''
         click_button
       }.should_not change(Plan, :count)
       response.should render_template('pages/plan')
@@ -27,21 +27,21 @@ describe "Plans" do
       
       # Create new plan
       expect {
-        fill_in "Update Your Daily/Weekly Plan",      :with => 'Plan #1'
+        fill_in "Update Your Daily/Weekly Goals",      :with => 'Plan #1'
         click_button
       }.should change(Plan, :count).by(1)
-      response.should have_selector('div.flash.notice', :content => 'Your plan was successfully updated')
+      response.should have_selector('div.flash.notice', :content => 'Your goals were successfully updated')
       user.reload
       user.current_plan.body.should == 'Plan #1'
       user.plans.count.should == 1
 
       # Create second plan
-      click_link 'Update your Plan'
+      click_link 'Update your Daily Goals'
       expect {
-        fill_in "Update Your Daily/Weekly Plan",      :with => 'Plan #2'
+        fill_in "Update Your Daily/Weekly Goals",      :with => 'Plan #2'
         click_button
       }.should change(Plan, :count).by(1)
-      response.should have_selector('div.flash.notice', :content => 'Your plan was successfully updated')
+      response.should have_selector('div.flash.notice', :content => 'Your goals were successfully updated')
       user.reload
       user.current_plan.body.should == 'Plan #2'
       user.plans.count.should == 2

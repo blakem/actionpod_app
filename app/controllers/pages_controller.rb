@@ -43,7 +43,7 @@ class PagesController < ApplicationController
   def plan_create
     @plan = Plan.new(params[:plan].merge(:user_id => current_user.id))
     if @plan.save
-      redirect_to('/u/' + current_user.handle, :notice => 'Your plan was successfully updated.')
+      redirect_to('/u/' + current_user.handle, :notice => 'Your goals were successfully updated.')
     else
       set_profile_values
       @view_options = {:hide_create_plan => true}

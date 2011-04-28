@@ -2,13 +2,13 @@
   <%= pretty_object_error_messages(@plan) %>
   <div class="field">
     <plan>
-    <p><%= f.label :body, "Update Your Daily/Weekly Plan:", :class => "round" %><br/>
-	(This will be emailed to the other participants on your call)
+    <p><%= f.label :body, "Update Your Daily/Weekly Goals:", :class => "round" %><br/>
+	(This will be emailed to the other participants before your call)
     <%= f.text_area :body, :class => "round" %></p>
     </plan>
   </div>
   <div class="actions">
-    <%= f.submit "Update Plan" %>
+    <%= f.submit "Update Goals" %>
   </div>
 <% end %>
 
