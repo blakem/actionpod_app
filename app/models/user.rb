@@ -132,7 +132,6 @@ class User < ActiveRecord::Base
   end
   
   def next_call_time
-    puts events
     return nil unless events.any?
     occurrence = events.first.schedule.next_occurrence
     return nil unless occurrence
@@ -148,6 +147,14 @@ class User < ActiveRecord::Base
     return "Primary Phone" if attribute_key_name.to_s == 'phones.number'
     return "" if options[:default] == 'Invite code'
     return super(attribute_key_name, options)
+  end
+
+  def self.blake
+    return self.find_by_email('blakem@15minutes.com')
+  end
+
+  def self.blake_test
+    return self.find_by_email('blakem@blakem.com')
   end
 
   private
