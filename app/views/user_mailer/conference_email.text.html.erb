@@ -8,6 +8,7 @@
     <font size="+1">(Your next call is scheduled for <%= @next_call_time %>)</font>
 	<% @participants.each do |user| %>
 	  <% @user = user %>
+	  <% @my = @user == @current_user ? 'My' : @user.first_name + "'s" %>
 	  <%= render 'pages/user_link' %>
 	  <%= render 'pages/user_information' %>
 	  <%= render 'pages/user_about' %>
