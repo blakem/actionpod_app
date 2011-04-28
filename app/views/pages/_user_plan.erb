@@ -2,10 +2,12 @@
 <% if plan %>
   <b>Current Plan for <%= plan.created_at.strftime("%A %b #{plan.created_at.day.ordinalize}") %>:</b>
   <% if @mailer %>
+    <p>
     <%= h(plan.body.strip).gsub(/^( +)/) { "#{'&nbsp;' * $1.length}" }.gsub(/\n/,"<br/>\n") %>
     <% if @user == @current_user %>
       <br/><strong><%= link_to "Update your Plan", 'http://www.15minutecalls.com/pages/plan' %></strong>
     <% end %>
+    </p>
   <% else %>
     <dl><dd>
     <span class="plan"><%= simple_format(h(plan.body.strip)).gsub(/<br \/>(\s+)/) { "<br />#{'&nbsp;' * $1.length}" } %></span>
