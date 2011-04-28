@@ -47,8 +47,10 @@ class PoolQueuer
       job = jobs.first
       event = Event.find_by_id(job.obj_id)
       if (event)
-        twilio_caller.send_sms(event.user.primary_phone.number, 
-          "Sorry.  No one else is scheduled for the #{event.time} slot.  This shouldn't happen after we reach a critical mass of users. ;-)")
+        if (event.send_sms_reminder)
+          twilio_caller.send_sms(event.user.primary_phone.number, 
+            "Sorry.  No one else is scheduled for the #{event.time} slot.  This shouldn't happen after we reach a critical mass of users. ;-)")
+        end
         conference = Conference.create(
           :pool_id => event.pool_id, 
           :started_at => pool_runs_at, 

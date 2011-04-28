@@ -79,7 +79,7 @@ describe PoolMerger do
       it "should tell him sorry and end call if he's been waiting a long time" do
         user = Factory(:user)
         phone = Factory(:phone, :user_id => user.id, :primary => true)
-        event = Factory(:event, :user_id => user.id, :pool_id => @pool.id)
+        event = Factory(:event, :user_id => user.id, :pool_id => @pool.id, :send_sms_reminder => true)
         new_participants = participant_list(1)
         new_participants[0][:conference_friendly_name] = "15mcHoldEvent#{event.id}User#{user.id}Pool555"
         @tc.should_receive(:participants_on_hold_for_pool).twice.with(@pool).and_return(new_participants)
@@ -87,6 +87,46 @@ describe PoolMerger do
         @tc.should_receive(:send_sms).with(phone.number,
           "Sorry about that... I couldn't find anyone else for the call.  That shouldn't happen once we reach critical mass. ;-)"
         )
+        data = @pm.initialize_data({})
+        data[:on_hold] = {
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 7,
+        }
+        data[:total] = 2
+        data = @pm.merge_calls_for_pool(@pool, @pool_runs_at, data)
+        data.should == {
+          :total       => 2,
+          :next_room   => 1,
+          :on_hold     => {
+            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 8,
+          },
+          :placed      => {},
+        }
+        data = @pm.merge_calls_for_pool(@pool, @pool_runs_at, data)
+        data.should == {
+          :total       => 2,
+          :next_room   => 1,
+          :on_hold     => {},
+          :placed      => {},
+        }
+        conference = Conference.where(
+          :pool_id    => event.pool_id,
+          :started_at => @pool_runs_at,
+          :status     => 'only_one_answered'
+        )[0]
+        conference.ended_at.should > @pool_runs_at
+        conference.ended_at.should < Time.now
+        conference.users.should == [user]
+      end
+
+      it "don't send sms apology if send_sms_reminders is turned off" do
+        user = Factory(:user)
+        phone = Factory(:phone, :user_id => user.id, :primary => true)
+        event = Factory(:event, :user_id => user.id, :pool_id => @pool.id, :send_sms_reminder => false)
+        new_participants = participant_list(1)
+        new_participants[0][:conference_friendly_name] = "15mcHoldEvent#{event.id}User#{user.id}Pool555"
+        @tc.should_receive(:participants_on_hold_for_pool).twice.with(@pool).and_return(new_participants)
+        @tc.should_receive(:apologize_no_other_participants).with('CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1', event.id, 2)
+        @tc.should_not_receive(:send_sms)
         data = @pm.initialize_data({})
         data[:on_hold] = {
           "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 7,

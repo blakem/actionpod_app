@@ -81,12 +81,14 @@ class PoolMerger
 
   def apologize_to_participant(participant, pool, pool_runs_at, data)
     take_off_hold(participant, data)
-    @tc.apologize_no_other_participants(participant[:call_sid], participant_event_id(participant), data[:total])
-    @tc.send_sms(
-      Event.find(participant_event_id(participant)).user.primary_phone.number,
-      "Sorry about that... I couldn't find anyone else for the call.  That shouldn't happen once we reach critical mass. ;-)",
-    )
     event = Event.find(participant_event_id(participant))
+    @tc.apologize_no_other_participants(participant[:call_sid], event.id, data[:total])
+    if (event.send_sms_reminder)
+      @tc.send_sms(
+        Event.find(participant_event_id(participant)).user.primary_phone.number,
+        "Sorry about that... I couldn't find anyone else for the call.  That shouldn't happen once we reach critical mass. ;-)",
+      )
+    end
     conference = Conference.create(
       :pool_id    => pool.id,
       :started_at => pool_runs_at,
