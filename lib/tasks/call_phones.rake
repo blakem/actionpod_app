@@ -61,8 +61,7 @@ task :send_conference_email => :environment do
       next unless c.users.count == 2
       next unless c.users.include?(user1)
       next unless c.users.include?(user2)
-      conference = c
-      last
+      conference ||= c
     end
     if (conference)
       puts conference.users.map(&:name)
