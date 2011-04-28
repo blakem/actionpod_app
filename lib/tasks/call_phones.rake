@@ -59,7 +59,8 @@ task :send_conference_email => :environment do
     conference = nil
     Conference.all.reverse.each do |c|
       next unless c.users.count == 2
-      next unless c.users.include?(user1, user2)
+      next unless c.users.include?(user1)
+      next unless c.users.include?(user2)
       conference = c
       last
     end
