@@ -9,7 +9,8 @@
   <% end %>
 <% else %>
   <% if @mailer %>
-    <p><%= simple_format(h(@user.about.strip)) %></p><p>&nbsp;</p>
+    <p><%= h(@user.about.strip).gsub(/^( +)/) { "#{'&nbsp;' * $1.length}" }.gsub(/\n/,"<br/>\n") %></p>
+    <p>&nbsp;</p>
   <% else %>
     <span class="quote"><%= simple_format('&#8220;' + h(@user.about.strip) + '&#8221;') %></span><hr>
   <% end %>
