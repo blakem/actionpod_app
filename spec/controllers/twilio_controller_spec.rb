@@ -374,7 +374,7 @@ describe TwilioController do
       user2 = Factory(:user, :name => 'Sally')
       event1 = Factory(:event, :user_id => user1.id)
       event2 = Factory(:event, :user_id => user2.id)
-      post :place_in_conference, :conference => 'FooBar', :timelimit => (24 * 60).to_s, :events => [event1.id, event2.id].join(',')
+      post :place_in_conference, :conference => 'FooBar', :timelimit => (24 * 60).to_s, :event => event1.id, :events => [event1.id, event2.id].join(',')
       intro_string = TwilioController.new.build_intro_string("#{event1.id},#{event2.id}")
       response.content_type.should =~ /^application\/xml/
       hash = (Hash.from_xml response.body).with_indifferent_access
@@ -386,13 +386,13 @@ describe TwilioController do
       response.should have_selector('response>dial>conference', :content => "FooBar")
       response.should have_selector('response>say', :content => '1 Minute Remaining.')      
       response.should have_selector('response>dial', :timelimit => 60.to_s)
-      response.should have_selector('response>say', :content => 'Time is up. Goodbye.')      
+      response.should have_selector('response>say', :content => "Time is up. Your next call is #{user1.next_call_time_string}. Have an awesome day!")      
     end
 
     it "should put the user into the conference after the 60 second warning if he has less than 60 seconds left" do
       user = Factory(:user, :name => 'Bobby')
       event = Factory(:event, :user_id => user.id)
-      post :place_in_conference, :conference => 'FooBar', :timelimit => '59', :events => "#{event.id}"
+      post :place_in_conference, :conference => 'FooBar', :timelimit => '59', :event => event.id, :events => "#{event.id}"
       intro_string = TwilioController.new.build_intro_string("#{event.id}")
       response.content_type.should =~ /^application\/xml/
       hash = (Hash.from_xml response.body).with_indifferent_access
@@ -401,7 +401,7 @@ describe TwilioController do
       response.should have_selector('response>say', :content => "Welcome. On the call today we have #{intro_string}")
       response.should have_selector('response>dial', :timelimit => '59')
       response.should have_selector('response>dial>conference', :content => "FooBar")
-      response.should have_selector('response>say', :content => 'Time is up. Goodbye.')      
+      response.should have_selector('response>say', :content => "Time is up. Your next call is #{user.next_call_time_string}. Have an awesome day!")      
       response.should_not have_selector('response>say', :content => 'Welcome. Joining a conference already in progress.')
       response.should_not have_selector('response>say', :content => '1 Minute Remaining.')      
     end
@@ -417,7 +417,7 @@ describe TwilioController do
       response.should have_selector('response>dial>conference', :content => "FooBar")
       response.should have_selector('response>say', :content => '1 Minute Remaining.')      
       response.should have_selector('response>dial', :timelimit => 60.to_s)
-      response.should have_selector('response>say', :content => 'Time is up. Goodbye.')      
+      response.should have_selector('response>say', :content => "Time is up. Have an awesome day!")      
     end
 
     it "should default to a time limit of 15 and a room of DefaultConference" do

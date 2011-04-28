@@ -150,7 +150,7 @@ class PoolMerger
     end_time = start_time + timelimit.minutes + 1.minute
     timelimit_insec = (end_time - Time.now).to_i
     timelimit_insec = timelimit * 60 if timelimit_insec <= 0;
-    @tc.place_participant_in_conference(participant[:call_sid], room_name, timelimit_insec, event_ids)
+    @tc.place_participant_in_conference(participant[:call_sid], room_name, timelimit_insec, participant_event_id(participant), event_ids)
     
     take_off_hold(participant, data)
     data[:placed][participant['call_sid']] = {

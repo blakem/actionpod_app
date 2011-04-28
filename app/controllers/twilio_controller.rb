@@ -87,6 +87,8 @@ class TwilioController < ApplicationController
     @names = build_intro_string(params[:events])
     @timelimit = params[:timelimit] ? params[:timelimit].to_i : 15 * 60
     @conference = params[:conference] || 'DefaultConference'
+    event = Event.find_by_id(params[:event])
+    @next_call_time = event ? event.user.next_call_time_string : ''
   end
   
   def sms
