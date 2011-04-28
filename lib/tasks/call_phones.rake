@@ -50,3 +50,25 @@ task :call_phones, [:event1_id, :event2_id, :event3_id, :event4_id, :event5_id] 
     puts "Scheduled call for " + run_time.strftime("%I:%M%p")
   end
 end
+
+desc "Send out a test conference email"
+task :send_conference_email => :environment do
+  user1 = User.find_by_email('blakem@15minutecalls.com')
+  user2 = User.find_by_email('blakem@blakem.com')
+  if (user1 && user2)
+    conference = nil
+    Conference.all.reverse.each do |c|
+      next unless c.users.count == 2
+      next unless c.users.include?(user1, user2)
+      conference = c
+      last
+    end
+    if (conference)
+      puts conference.users.map(&:name)
+    else 
+      puts "Couldn't find conference"
+    end
+  else
+    puts "Couldn't find users"
+  end
+end
