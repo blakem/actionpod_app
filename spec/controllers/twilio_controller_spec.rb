@@ -476,7 +476,7 @@ describe TwilioController do
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => "I'm sorry. I called 1 other person but they didn't answer.")
       response.should have_selector('response>say', :content => 
-        "You may stay on the line for one of them to call in or wait for your next call, #{@user.next_call_time_string}.")
+        "You may stay on the line, for one of them to call in. Or wait for your next call, #{@user.next_call_time_string}.")
       response.should have_selector('response>say', :content => "Waiting for another participant.")
       response.should have_selector('response>dial', :timelimit => @event.pool.timelimit.minutes.to_s)
       response.should have_selector('response>dial>conference', :content => "15mcHoldEvent#{@event.id}User#{@user.id}Pool#{@event.pool.id}")
@@ -489,7 +489,7 @@ describe TwilioController do
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => "I'm sorry. I called 2 other people but they didn't answer.")
       response.should have_selector('response>say', :content => 
-        "You may stay on the line for one of them to call in or wait for your next call, #{@user.next_call_time_string}.")
+        "You may stay on the line, for one of them to call in. Or wait for your next call, #{@user.next_call_time_string}.")
       response.should have_selector('response>say', :content => "Waiting for another participant.")
       response.should have_selector('response>dial', :timelimit => @event.pool.timelimit.minutes.to_s)
       response.should have_selector('response>dial>conference', :content => "15mcHoldEvent#{@event.id}User#{@user.id}Pool#{@event.pool.id}")
