@@ -27,17 +27,22 @@
 <% end %>
 </div>
 <div class="field">
+  <intro>
   <p><%= f.label :about, "Introductory text:", :class => "round" %><br/>
+  (What projects are you working on? What are you focusing on?)<br/>
   <%= f.text_area :about, :class => "round" %></p>
+  </intro>
 </div>
 <div class="field">
   <p><%= f.label :handle, "Handle:", :class => "round" %>
-  <%= f.text_field :handle, :class => "round" %></p>
+  <%= f.text_field :handle, :class => "round" %><br/>
+  (This is used to generate the URL for your profile)</p>
 </div>
 <div class="field">
   <p><%= f.label :facebook_uid, "Facebook ID:", :class => "round" %> (optional)
   <%= f.text_field :facebook_uid, :class => "round" %><br />
-  </p>
+  (To find this, go to facebook.  Click on your name.  Your Facebook ID is is in the URL.
+  It will either be a series of numbers after 'id=' or the string you chose after facebook.com/ )</p>
 </div>
 <div class="field">
   <p><%= f.label :title, "Title:", :class => "round" %> (optional)
