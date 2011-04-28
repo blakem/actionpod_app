@@ -196,18 +196,21 @@ describe User do
       Time.stub(:now).and_return(now)
       user = Factory(:user)
       user.next_call_time.should be_nil
+      user.next_call_time_string.should == ''
 
       event1 = Factory(:event, :user_id => user.id)
       event1.days = []
       event1.save
       user.reload
       user.next_call_time.should be_nil
+      user.next_call_time_string.should == ''
 
       event1.days = [0,1,2,3,4,5,6]
       event1.time = '1:00pm'
       event1.save
       user.reload
       user.next_call_time.strftime("%A at %I:%M%P").sub(/ 0/,' ').humanize.should == "Tuesday at 1:00pm"
+      user.next_call_time_string.should == "Tomorrow at 1:00pm"
 
       event2 = Factory(:event, :user_id => user.id)
       event2.days = [0,1,2,3,4,5,6]
@@ -215,6 +218,15 @@ describe User do
       event2.save
       user.reload
       user.next_call_time.strftime("%A at %I:%M%P").sub(/ 0/,' ').humanize.should == "Monday at 4:00pm"
+      user.next_call_time_string.should == "Today at 4:00pm"
+
+      event1.days = [5,6]
+      event1.save
+      event2.days = [5,6]
+      event2.save
+      user.reload
+      user.next_call_time.strftime("%A at %I:%M%P").sub(/ 0/,' ').humanize.should == "Friday at 1:00pm"
+      user.next_call_time_string.should == "Friday at 1:00pm"
     end    
   end
 end

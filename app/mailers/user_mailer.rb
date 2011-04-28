@@ -11,8 +11,6 @@ class UserMailer < ActionMailer::Base
     @participants = [user] + participants.select{ |p| p.id != user.id }
     @date = Time.now.strftime('%A, %B %d').sub(/ 0/, '')
     @mailer = true
-    @next_call_time = @current_user.next_call_time
-    @next_call_time = @next_call_time.strftime("%A at %I:%M%P").sub(/ 0/,' ').humanize if @next_call_time    
     mail(:to => @current_user.email, :subject => "[15mc] Conference Notes for #{@date}")
   end
 end

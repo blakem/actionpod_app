@@ -143,6 +143,20 @@ class User < ActiveRecord::Base
     occurrence
   end
   
+  def next_call_time_string
+    call_time = self.next_call_time
+    return '' unless call_time
+    if call_time.today?
+      day = "Today"
+    elsif call_time < Time.now.beginning_of_day + 48.hours
+      day = "Tomorrow"
+    else
+      day = call_time.strftime("%A")
+    end
+    time = call_time.strftime(" at %I:%M%P").sub(/ 0/,' ').humanize
+    day + time
+  end
+  
   def self.human_attribute_name(attribute_key_name, options = {})
     return "Primary Phone" if attribute_key_name.to_s == 'phones.string'
     return "Primary Phone" if attribute_key_name.to_s == 'phones.number'
