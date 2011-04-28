@@ -64,7 +64,8 @@ task :send_conference_email => :environment do
       conference ||= c
     end
     if (conference)
-      puts conference.users.map(&:name)
+      message = UserMailer.deliver_conference_email(user2, conference.users);
+      message.body
     else 
       puts "Couldn't find conference"
     end
