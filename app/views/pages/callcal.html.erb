@@ -2,6 +2,16 @@
 <table>
   <tr><th>Data</th><th>User Count</th></tr>
   <% @scheduled_events.each do |data| %>
-    <tr><td><%= data[0].strftime("%a %l:%M%p %Z") %></td><td><%= data[1] > 5 ? '>5' : data[1] %></td></tr>
+    <% star = ''; bold = false %>
+    <% if data[1] == 1 %>
+      <% current_user.events.each do |event| %>
+	    <% star = '*' if event.days.include?(data[0].wday) && event.hour_of_day == data[0].hour && event.minute_of_hour == data[0].min %>
+      <% end %>
+      <% bold = true if star.blank? %>      
+    <% end %>
+    <tr>
+	  <td><%= data[0].strftime("%a %l:%M%p").humanize + data[0].strftime(" %Z") %></td>
+	  <td><%= bold ? "<b>".html_safe : ''%><%= data[1] %><%= bold ? "</b>".html_safe : ''%><%= star %></td>
+	</tr>
   <% end %>
 </table>
