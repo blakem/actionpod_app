@@ -9,7 +9,10 @@
   <% end %>
 <% else %>
   <% if @mailer %>
-    <p><font size="+1"<%= h(@user.about.strip).gsub(/^( +)/) { "#{'&nbsp;' * $1.length}" }.gsub(/\n/,"<br/>\n") %></font></p>
+    <p>
+	  <font size="+1"<%= h(@user.about.strip).gsub(/^( +)/) { "#{'&nbsp;' * $1.length}" }.gsub(/\n/,"<br/>\n") %></font>
+      <br/><strong><%= link_to "Update your Intro", 'http://www.15minutecalls.com/pages/intro' %></strong>
+    </p>
     <p>&nbsp;</p>
   <% else %>
     <span class="quote"><%= simple_format('&#8220;' + h(@user.about.strip) + '&#8221;') %></span><hr>
