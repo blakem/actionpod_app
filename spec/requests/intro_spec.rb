@@ -14,7 +14,7 @@ describe "Intros" do
       
       # update intro
       click_link 'Update your Intro'
-      fill_in "Update Introduction",  :with => 'My New Intro'
+      fill_in "Update Your Introduction",  :with => 'My New Intro'
       click_button
       response.should have_selector('div.flash.notice', :content => 'Your introduction was successfully updated')
       user.reload

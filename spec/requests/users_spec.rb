@@ -33,7 +33,7 @@ describe "Users" do
           fill_in "Primary Phone",          :with => "415 111 2222"
           fill_in "Title",                  :with => 'mytitle'
           fill_in "Location",               :with => 'mylocation'
-          fill_in "A sentence or two about what you want from your calls", :with => 'Some jellybeans.'
+          fill_in "A brief introduction",   :with => 'Some jellybeans.'
           fill_in "Time Zone",              :with => "Pacific Time (US & Canada)"
           fill_in "Password",               :with => "a"*10
           fill_in "Password Confirmation",  :with => "a"*10

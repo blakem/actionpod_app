@@ -1,8 +1,11 @@
 <%= form_for(current_user, :url => '/pages/intro') do |f| %>
   <%= pretty_object_error_messages(current_user) %>
   <div class="field">
-    <p><%= f.label :about, "Update Introduction:", :class => "round" %><br/>
+    <intro>
+    <p><%= f.label :about, "Update Your Introduction:", :class => "round" %><br/>
+    (What projects are you working on?  What are you focusing on?)
     <%= f.text_area :about, :class => "round" %></p>
+    </intro>
   </div>
   <div class="actions">
     <%= f.submit "Update Introduction" %>
