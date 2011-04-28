@@ -8,7 +8,7 @@ class UserMailer < ActionMailer::Base
   
   def conference_email(user, participants)
     @current_user = user
-    @participants = participants
+    @participants = [user] + participants.select{ |p| p.id != user.id }
     @date = Time.now.strftime('%A, %B %d').sub(/ 0/, '')
     @mailer = true
     mail(:to => @current_user.email, :subject => "[15mc] Conference Notes for #{@date}")
