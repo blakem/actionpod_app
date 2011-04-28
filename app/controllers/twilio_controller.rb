@@ -34,7 +34,12 @@ class TwilioController < ApplicationController
 
   def apologize_no_other_participants
     @other_participants = params[:participant_count].to_i - 1
-    @people = @other_participants == 1 ? 'person' : 'people' 
+    @people = @other_participants == 1 ? 'person' : 'people'
+    @event = Event.find_by_id(params[:event])
+    @next_call_time = @event ? @event.user.next_call_time_string : ''
+    @user = @event.user
+    @pool = @event.pool
+    @timelimit = @pool.timelimit * 60
   end
 
   def go_directly_to_conference

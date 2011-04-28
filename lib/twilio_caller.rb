@@ -91,9 +91,9 @@ class TwilioCaller
     })
   end
 
-  def apologize_no_other_participants(call_sid, participant_count)
+  def apologize_no_other_participants(call_sid, event_id, participant_count)
     resp_hash = twilio_request(caller_uri(call_sid), 'POST', {
-     'Url' => base_url + "/apologize_no_other_participants.xml?participant_count=#{participant_count}",
+     'Url' => base_url + "/apologize_no_other_participants.xml?participant_count=#{participant_count}&event=#{event_id}",
     })
   end
   

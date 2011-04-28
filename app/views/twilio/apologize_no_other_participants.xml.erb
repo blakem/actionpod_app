@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Response>
-  <Say>I'm sorry. I called <%= @other_participants %> other <%= @people %> but they didn't answer. Goodbye.</Say>
+  <Say>I'm sorry. I called <%= @other_participants %> other <%= @people %> but they didn't answer.</Say>
+  <Say>You may stay on the line for one of them to call in or wait for your next call <%= @next_call_time %>.</Say>
+  <Say>Waiting for another participant to call in.</Say>
+  <Dial timeLimit="<%= @timelimit %>">
+	<Conference><%= "15mcHoldEvent#{@event.id}User#{@user.id}Pool#{@pool.id}" %></Conference>
+  </Dial>
 </Response>

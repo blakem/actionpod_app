@@ -263,9 +263,9 @@ describe TwilioCaller do
     it "sends the right request" do
       tc = TwilioCaller.new
       tc.should_receive(:twilio_request).with(@tc.caller_uri('CA9fa67e8696b60ee1ca1e75ec81ef85e7'), 'POST', {
-        "Url" => "http://www.15minutecalls.com/twilio/apologize_no_other_participants.xml?participant_count=3"
+        "Url" => "http://www.15minutecalls.com/twilio/apologize_no_other_participants.xml?participant_count=3&event=223"
       })
-      tc.apologize_no_other_participants('CA9fa67e8696b60ee1ca1e75ec81ef85e7', 3)
+      tc.apologize_no_other_participants('CA9fa67e8696b60ee1ca1e75ec81ef85e7', 223, 3)
     end
   end
 

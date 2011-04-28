@@ -464,20 +464,35 @@ describe TwilioController do
   end
 
   describe "apologize_no_other_participants" do
-    it "should say sorry and give the number of total participants called" do
-      post :apologize_no_other_participants, :participant_count => '2'
-      hash = (Hash.from_xml response.body).with_indifferent_access
-      hash[:Response].should be_true
-      response.content_type.should =~ /^application\/xml/
-      response.should have_selector('response>say', :content => "I'm sorry. I called 1 other person but they didn't answer. Goodbye.")
+    before(:each) do
+      @user = Factory(:user)
+      @event = Factory(:event, :user_id => @user.id)
     end
 
     it "should say sorry and give the number of total participants called" do
-      post :apologize_no_other_participants, :participant_count => '3'
+      post :apologize_no_other_participants, :participant_count => '2', :event => @event.id
       hash = (Hash.from_xml response.body).with_indifferent_access
       hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
-      response.should have_selector('response>say', :content => "I'm sorry. I called 2 other people but they didn't answer. Goodbye.")
+      response.should have_selector('response>say', :content => "I'm sorry. I called 1 other person but they didn't answer.")
+      response.should have_selector('response>say', :content => 
+        "You may stay on the line for one of them to call in or wait for your next call #{@user.next_call_time_string}.")
+      response.should have_selector('response>say', :content => "Waiting for another participant to call in.")
+      response.should have_selector('response>dial', :timelimit => @event.pool.timelimit.minutes.to_s)
+      response.should have_selector('response>dial>conference', :content => "15mcHoldEvent#{@event.id}User#{@user.id}Pool#{@event.pool.id}")
+    end
+
+    it "should say sorry and give the number of total participants called" do
+      post :apologize_no_other_participants, :participant_count => '3', :event => @event.id
+      hash = (Hash.from_xml response.body).with_indifferent_access
+      hash[:Response].should be_true
+      response.content_type.should =~ /^application\/xml/
+      response.should have_selector('response>say', :content => "I'm sorry. I called 2 other people but they didn't answer.")
+      response.should have_selector('response>say', :content => 
+        "You may stay on the line for one of them to call in or wait for your next call #{@user.next_call_time_string}.")
+      response.should have_selector('response>say', :content => "Waiting for another participant to call in.")
+      response.should have_selector('response>dial', :timelimit => @event.pool.timelimit.minutes.to_s)
+      response.should have_selector('response>dial>conference', :content => "15mcHoldEvent#{@event.id}User#{@user.id}Pool#{@event.pool.id}")
     end
   end
 
