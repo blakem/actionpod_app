@@ -185,4 +185,32 @@ describe User do
       user2.handle.should == 'foobar2'      
     end
   end
+  
+  describe "next_call_time" do
+    it "should return the next call time of your events" do
+      now = Time.now.beginning_of_week + 7.days + 13.hours
+      Time.stub(:now).and_return(now)
+      user = Factory(:user)
+      user.next_call_time.should be_nil
+
+      event1 = Factory(:event, :user_id => user.id)
+      event1.days = []
+      event1.save
+      user.reload
+      user.next_call_time.should be_nil
+
+      event1.days = [0,1,2,3,4,5,6]
+      event1.time = '1:00pm'
+      event1.save
+      user.reload
+      user.next_call_time.strftime("%A %I:%M%P").sub(/ 0/,' ').titlecase.should == "Tuesday 1:00pm"
+
+      event2 = Factory(:event, :user_id => user.id)
+      event2.days = [0,1,2,3,4,5,6]
+      event2.time = '4:00pm'
+      event2.save
+      user.reload
+      user.next_call_time.strftime("%A %I:%M%P").sub(/ 0/,' ').titlecase.should == "Monday 4:00pm"
+    end    
+  end
 end

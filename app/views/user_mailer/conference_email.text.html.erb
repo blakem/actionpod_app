@@ -5,6 +5,7 @@
   </head>
   <body>
     <h2>Notes for your 15-Minute Call on <%= @date %></h2>
+    (Your next call is at <% @current_user.next_call_time.strftime("%A %I:%M%P").sub(/ 0/,' ').titlecase %>)
 	<% @participants.each do |user| %>
 	  <% @user = user %>
 	  <%= render 'pages/user_link' %>

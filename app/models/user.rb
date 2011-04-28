@@ -131,6 +131,18 @@ class User < ActiveRecord::Base
     self.class.find_by_handle(genhandle) ? find_unique_handle(genhandle, count+1) : genhandle
   end
   
+  def next_call_time
+    puts events
+    return nil unless events.any?
+    occurrence = events.first.schedule.next_occurrence
+    return nil unless occurrence
+    events.each do |event|
+      first_occurrence = event.schedule.next_occurrence
+      occurrence = first_occurrence if first_occurrence < occurrence
+    end
+    occurrence
+  end
+  
   def self.human_attribute_name(attribute_key_name, options = {})
     return "Primary Phone" if attribute_key_name.to_s == 'phones.string'
     return "Primary Phone" if attribute_key_name.to_s == 'phones.number'
