@@ -65,7 +65,7 @@ task :send_conference_email => :environment do
     end
     if (conference)
       message = UserMailer.deliver_conference_email(user2, conference.users);
-      message.body
+      puts message.body
     else 
       puts "Couldn't find conference"
     end
