@@ -165,7 +165,7 @@ class User < ActiveRecord::Base
   end
 
   def self.blake
-    return self.find_by_email('blakem@15minutecalls.com')
+    return self.find_by_email('blakem@15minutecalls.com') || self.find_by_email('blakem30@yahoo.com')
   end
 
   def self.blake_test

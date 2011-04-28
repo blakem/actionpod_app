@@ -16,7 +16,7 @@ describe "Phones" do
         user = Factory(:user, :email => 'purple@example.com', :confirmed_at => Time.now)
         log_user_in(user)
   
-        click_link 'Add or Delete Phones'
+        click_link 'Manage Multiple Phones'
         response.should render_template('phones/index')
         click_link 'Add a New Phone Number'
         response.should render_template('phones/new')
@@ -33,7 +33,7 @@ describe "Phones" do
       user = Factory(:user, :email => 'purple@example.com', :confirmed_at => Time.now)
       log_user_in(user)
       expect {
-        click_link 'Add or Delete Phones'
+        click_link 'Manage Multiple Phones'
         response.should render_template('phones/index')
         click_link 'Add a New Phone Number'
         response.should render_template('phones/new')
@@ -49,7 +49,7 @@ describe "Phones" do
       phone = Factory(:phone, :user_id => user.id, :primary => true)
       log_user_in(user)
       expect {  
-        click_link 'Add or Delete Phones'
+        click_link 'Manage Multiple Phones'
         response.should render_template('phones/index')
         click_link 'Edit'
         response.should render_template('phones/edit')
