@@ -24,12 +24,15 @@ class ApplicationController < ActionController::Base
       Time.zone = current_user.time_zone if current_user
     end
   
-    def set_profile_values
-      @user = current_user
+    def set_profile_values(user = current_user)
+      @user = user
+      @current_user = current_user
       @title = @user.name
       @nextcalls = build_nextcalls(@user)
       @your = 'Your'
       @youhave = 'You have'
+      @my = 'My'
+      @mailer = false
       @view_options = {}
     end
   
