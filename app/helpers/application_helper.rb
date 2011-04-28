@@ -1,6 +1,6 @@
 module ApplicationHelper
   def title
-    base_title = "15-Minute Calls"
+    base_title = "15 Minute Calls"
     base_title = "(dev) " + base_title if Rails.env.development?
     if @title.nil?
       base_title
@@ -10,7 +10,7 @@ module ApplicationHelper
   end
   
   def logo
-    image_tag("logo.png", :alt => "15-Minute Calls", :class => "round")
+    image_tag("logo.png", :alt => "15 Minute Calls", :class => "round")
   end
     
   def pretty_object_error_messages(object)

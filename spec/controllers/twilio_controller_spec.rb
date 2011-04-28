@@ -487,7 +487,7 @@ describe TwilioController do
       hash = (Hash.from_xml response.body).with_indifferent_access
       hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
-      response.should have_selector('response>sms', :content => "Welcome to 15-Minute Calls.  See 15minutecalls.com for more information.")
+      response.should have_selector('response>sms', :content => "Welcome to 15 Minute Calls.  See 15minutecalls.com for more information.")
     end
   end
 end
