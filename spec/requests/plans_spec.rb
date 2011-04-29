@@ -14,6 +14,19 @@ describe "Plans" do
       user.current_plan.should be_nil
       user.plans.should be_empty
 
+      # Fill in with default valid value
+      click_link 'Update your Daily Goals'
+      expect {
+        click_button
+      }.should change(Plan, :count).by(1)
+      response.should have_selector('div.flash.notice', :content => 'Your goals were successfully updated')
+      user.reload
+      user.current_plan.body.should =~ /Three Goals I have for this week:/
+      user.current_plan.body.should =~ /What I'm going to do today to move closer to those goals:/
+      user.plans.count.should == 1
+      user.current_plan.destroy
+      user.reload
+
       # show error on empty plan
       click_link 'Update your Daily Goals'
       expect {
@@ -24,17 +37,7 @@ describe "Plans" do
       response.should have_selector('div.flash.alert', :content => 'blank')
       user.current_plan.should be_nil
       user.plans.should be_empty
-      
-      # Fill in with default valid value
-      expect {
-        click_button
-      }.should change(Plan, :count).by(1)
-      response.should have_selector('div.flash.notice', :content => 'Your goals were successfully updated')
-      user.reload
-      user.current_plan.body.should =~ /Three Goals I have for this week:/
-      user.current_plan.body.should =~ /What I'm going to do today to move closer to those goals:/
-      user.plans.count.should == 1
-      
+            
       # Create new plan
       expect {
         fill_in "Update Your Daily/Weekly Goals",      :with => 'Plan #1'
@@ -43,7 +46,7 @@ describe "Plans" do
       response.should have_selector('div.flash.notice', :content => 'Your goals were successfully updated')
       user.reload
       user.current_plan.body.should == 'Plan #1'
-      user.plans.count.should == 2
+      user.plans.count.should == 1
 
       # Create second plan
       click_link 'Update your Daily Goals'
@@ -54,7 +57,7 @@ describe "Plans" do
       response.should have_selector('div.flash.notice', :content => 'Your goals were successfully updated')
       user.reload
       user.current_plan.body.should == 'Plan #2'
-      user.plans.count.should == 3
+      user.plans.count.should == 2
     end
   end
 end
