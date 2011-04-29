@@ -4,7 +4,6 @@
   Add "tips" to outbound email
   Improve Help/Faq pages
   Add Feedback Form
-  Paginate Conferences
   Paginate Plans
   Opt-Out days for event schedule
 

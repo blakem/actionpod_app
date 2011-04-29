@@ -11,7 +11,7 @@ class PagesController < ApplicationController
   
   def my_profile
     @events = current_user.events.sort { |a,b| a.minute_of_day <=> b.minute_of_day }
-    @conferences = current_user.conferences
+    @conferences = current_user.conferences.paginate(:page => params[:page], :per_page => 5)
     @timeslots = build_timeslots
     set_profile_values
   end
@@ -20,7 +20,7 @@ class PagesController < ApplicationController
     @user = User.find_by_handle(params[:handle])
     if (@user)
       set_profile_values(@user)
-      @conferences = @user.conferences.select{ |c| c.started_at.strftime("%M") == "00"}
+      @conferences = @user.conferences.select{ |c| c.started_at.min == 0 }.paginate(:page => params[:page], :per_page => 5)
       @your = @user.first_name + "'s"
       @youhave = @user.first_name + " has"
       if (@user != current_user)
