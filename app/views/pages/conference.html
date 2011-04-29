@@ -1,0 +1,10 @@
+<h3>Participants on the <%= @conference.started_at.strftime("%l%p").downcase %> call
+	                    (<%= @conference.started_at.strftime("%A, %B %e") %>):</h3>
+<% @users.each do |user| %>
+  <% @user = user %>
+  <%= render 'user_link' %>
+  <%= render 'user_information' %>
+  <%= render 'user_about' %>
+  <%= render 'user_plan' %>
+<hr/>
+<% end %>

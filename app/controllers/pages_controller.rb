@@ -31,6 +31,17 @@ class PagesController < ApplicationController
       redirect_to(root_path, :alert => "There is no handle by that name")
     end
   end
+  
+  def conference
+    @conference = Conference.find_by_id(params[:id])
+    if @conference
+      @users = @conference.users.select { |u| u.id == current_user.id } +
+               @conference.users.select { |u| u.id != current_user.id }
+      set_profile_values
+    else @conference
+      redirect_to(root_path, :alert => "There is no conference with that id")
+    end
+  end
 
   def plan    
     @plan = Plan.new(:body => Plan.default_body)

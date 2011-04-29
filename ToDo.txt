@@ -1,6 +1,5 @@
 15 Minute Calls Features and Todo list:
  FrontEnd:
-  Add link to inprogress conferences that shows Conference Notes
   Add "tips" to outbound email
   Improve Help/Faq pages
   Add Feedback Form
@@ -12,7 +11,6 @@
   Pool management
 
  Community:
-  Email Garrison on Wednesday
   Ask Garret about Tweet (@15mincalls)
   Go through EcoTuesday Cards
   Email Team IO about 15mc
@@ -20,6 +18,7 @@
   Facebook Fan Page
   Facebook Like buttons (with friends)
   Send emails to stranded clients
+  Email Garrison on Wednesday
 
  Business:
   Email Rene
