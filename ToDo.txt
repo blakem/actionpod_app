@@ -4,7 +4,6 @@
   Add "tips" to outbound email
   Improve Help/Faq pages
   Add Feedback Form
-  Remove Chrome Autofill on password field
   Paginate Conferences
   Paginate Plans
   Opt-Out days for event schedule
