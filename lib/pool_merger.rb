@@ -57,7 +57,7 @@ class PoolMerger
     if on_hold?(participant, data) && data[:placed].any?
       add_single_participant_to_conference(participant, pool, pool_runs_at, data)
     else
-      if hold_count(participant, data) >= max_hold_count
+      if hold_count(participant, data) >= max_hold_count && !on_apologized?(participant, data)
         apologize_to_participant(participant, pool, pool_runs_at, data)
       else
         put_on_hold(participant, data)
@@ -90,7 +90,8 @@ class PoolMerger
   end
 
   def apologize_to_participant(participant, pool, pool_runs_at, data)
-    take_off_hold(participant, data)
+    put_on_apologized(participant, data)
+    put_on_hold(participant, data)
     event = Event.find(participant_event_id(participant))
     @tc.apologize_no_other_participants(participant[:call_sid], event.id, data[:total])
     if (event.send_sms_reminder)
@@ -111,6 +112,10 @@ class PoolMerger
   def on_hold?(participant, data)
     hold_count(participant, data) == 0 ? false : true
   end
+
+  def on_apologized?(participant, data)
+    apologized_count(participant, data) == 0 ? false : true
+  end
   
   def max_hold_count
     8
@@ -118,6 +123,10 @@ class PoolMerger
 
   def hold_count(participant, data)
     data[:on_hold][participant['call_sid']] || 0
+  end
+
+  def apologized_count(participant, data)
+    data[:apologized][participant['call_sid']] || 0
   end
 
   def placed?(participant, data)
@@ -152,6 +161,11 @@ class PoolMerger
   def put_on_hold(participant, data)
     data[:on_hold][participant['call_sid']] ||= 0
     data[:on_hold][participant['call_sid']] += 1 
+  end
+
+  def put_on_apologized(participant, data)
+    data[:apologized][participant['call_sid']] ||= 0
+    data[:apologized][participant['call_sid']] += 1 
   end
   
   def take_off_hold(participant, data)
@@ -283,6 +297,7 @@ class PoolMerger
     data[:next_room]   = 1  unless data.has_key?(:next_room)
     data[:on_hold]     = {} unless data.has_key?(:on_hold)
     data[:placed]      = {} unless data.has_key?(:placed)
+    data[:apologized]  = {} unless data.has_key?(:apologized)
     data
   end
 

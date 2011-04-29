@@ -18,6 +18,7 @@ describe PoolMerger do
         :next_room   => 1,
         :on_hold     => {},
         :placed      => {},
+        :apologized  => {},
       }
     end
 
@@ -28,6 +29,7 @@ describe PoolMerger do
         :total => 3,
         :on_hold     => {},
         :placed      => {},
+        :apologized  => {},
       }
     end
     
@@ -43,6 +45,7 @@ describe PoolMerger do
           :next_room   => 1,
           :on_hold     => {},
           :placed      => {},
+          :apologized  => {},
         }
       end
     end
@@ -57,6 +60,7 @@ describe PoolMerger do
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 1,
           },
           :placed      => {},
+          :apologized  => {},
         }
       end
 
@@ -73,6 +77,7 @@ describe PoolMerger do
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 2,
           },
           :placed      => {},
+          :apologized  => {},
         }
       end
 
@@ -82,7 +87,7 @@ describe PoolMerger do
         event = Factory(:event, :user_id => user.id, :pool_id => @pool.id, :send_sms_reminder => true)
         new_participants = participant_list(1)
         new_participants[0][:conference_friendly_name] = "15mcHoldEvent#{event.id}User#{user.id}Pool555"
-        @tc.should_receive(:participants_on_hold_for_pool).twice.with(@pool).and_return(new_participants)
+        @tc.should_receive(:participants_on_hold_for_pool).exactly(3).times.with(@pool).and_return(new_participants)
         @tc.should_receive(:apologize_no_other_participants).with('CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1', event.id, 2)
         @tc.should_receive(:send_sms).with(phone.number,
           "Sorry about that... I couldn't find anyone else for the call.  That shouldn't happen once we reach critical mass. ;-)"
@@ -100,12 +105,30 @@ describe PoolMerger do
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 8,
           },
           :placed      => {},
+          :apologized  => {},
         }
         data = @pm.merge_calls_for_pool(@pool, @pool_runs_at, data)
         data.should == {
           :total       => 2,
           :next_room   => 1,
-          :on_hold     => {},
+          :on_hold     => {
+            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 9,
+          },
+          :apologized  => {
+            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 1,
+          },
+          :placed      => {},
+        }
+        data = @pm.merge_calls_for_pool(@pool, @pool_runs_at, data)
+        data.should == {
+          :total       => 2,
+          :next_room   => 1,
+          :on_hold     => {
+            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 10,
+          },
+          :apologized  => {
+            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 1,
+          },
           :placed      => {},
         }
         conference = Conference.where(
@@ -140,13 +163,19 @@ describe PoolMerger do
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 8,
           },
           :placed      => {},
+          :apologized  => {},
         }
         data = @pm.merge_calls_for_pool(@pool, @pool_runs_at, data)
         data.should == {
           :total       => 2,
           :next_room   => 1,
-          :on_hold     => {},
+          :on_hold     => {
+            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 9,
+          },
           :placed      => {},
+          :apologized  => {
+            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 1,
+          },
         }
         conference = Conference.where(
           :pool_id    => event.pool_id,
@@ -182,6 +211,7 @@ describe PoolMerger do
         data = {
           :on_hold => {"CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 1},
           :next_room => 5,
+          :apologized  => {},
           :placed      => {
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX11" => {
               :room_name => "15mcPool#{@pool.id}Room1",
@@ -262,6 +292,7 @@ describe PoolMerger do
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2" => 1,
           },
           :placed      => {},
+          :apologized  => {},
         }
       end
 
@@ -285,6 +316,7 @@ describe PoolMerger do
         @pm.merge_calls_for_pool(@pool, @pool_runs_at, data).should == {
           :next_room   => 2,
           :on_hold     => {},
+          :apologized  => {},
           :placed      => {
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => {
               :room_name => "15mcPool#{@pool.id}Room1",
@@ -320,6 +352,7 @@ describe PoolMerger do
         @pm.merge_calls_for_pool(@pool, @pool_runs_at, data).should == {
           :next_room   => 2,
           :on_hold     => {},
+          :apologized  => {},
           :placed      => {
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => {
               :room_name => "15mcPool#{@pool.id}Room1",
@@ -347,6 +380,7 @@ describe PoolMerger do
         @pm.merge_calls_for_pool(@pool, @pool_runs_at, {}).should == {
           :next_room   => 2,
           :on_hold     => {},
+          :apologized  => {},
           :placed      => {
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => {
               :room_name => "15mcPool#{@pool.id}Room1",
@@ -382,6 +416,7 @@ describe PoolMerger do
         @pm.merge_calls_for_pool(@pool, @pool_runs_at, {}).should == {
           :next_room   => 3,
           :on_hold     => {},
+          :apologized  => {},
           :placed      => {
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => {
               :room_name => "15mcPool#{@pool.id}Room1",
@@ -433,6 +468,7 @@ describe PoolMerger do
           :on_hold     => {
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX3" => 1,
           },
+          :apologized  => {},
           :placed      => {
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX3" => {
               :room_name => "15mcPool34Event123",
@@ -474,6 +510,7 @@ describe PoolMerger do
           :on_hold     => {
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX3" => 2,
           },
+          :apologized  => {},
           :placed      => {
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX3" => {
               :room_name => "15mcPool34Room1",
@@ -528,6 +565,7 @@ describe PoolMerger do
         @pm.merge_calls_for_pool(@pool, @pool_runs_at, data).should == {
           :next_room   => 3,
           :on_hold     => {},
+          :apologized  => {},
           :placed      => {
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => {
               :room_name => "15mcPool#{@pool.id}Room2",
@@ -723,6 +761,7 @@ describe PoolMerger do
         @pm.merge_calls_for_pool(@pool, @pool_runs_at, @pm.merge_calls_for_pool(@pool, @pool_runs_at, {})).should == {
           :next_room   => 3,
           :on_hold     => {},
+          :apologized  => {},
           :placed      => {
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => {
               :room_name => "15mcPool#{@pool.id}Room1",
@@ -764,6 +803,7 @@ describe PoolMerger do
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2" => 1,
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX3" => 1,
           },
+          :apologized  => {},
           :placed      => {
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX4" => {
               :room_name => "15mcPool#{@pool.id}Room1",
@@ -785,6 +825,7 @@ describe PoolMerger do
         :next_room   => 1,
         :on_hold     => {},
         :placed      => {},
+        :apologized  => {},
       }
     end
 
