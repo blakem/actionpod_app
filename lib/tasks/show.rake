@@ -85,9 +85,10 @@ namespace :show do
   end
 
   desc "Show information about calls"
-  task :calls => :environment do
+  task :calls, [:count]  => :environment do |t, args|
+    args.with_defaults(:count => 20)
     calls = Call.all.sort{ |a,b| a.created_at <=> b.created_at }
-    calls[-20..-1].each do |c|
+    calls[(0-args[:count])..-1].each do |c|
       time = c.created_at.in_time_zone('Pacific Time (US & Canada)')
       date = time.strftime("%a %b %e")
       user = ''
@@ -96,7 +97,8 @@ namespace :show do
         user = event.user.name if event
       end
       puts "#{sprintf("%3s", c.id)}: #{date} #{time.strftime("%l:%M:%S%p").downcase} #{c.To} #{c.From} " +
-           "#{sprintf("%-12s", c.Direction)} #{sprintf("%-4s", c.Duration)} #{user}"
+           "#{sprintf("%-12s", c.Direction)} #{sprintf("%-4s", c.Duration)} #{sprintf("%17s",user)} " +
+           "#{c.status}"
     end
   end
 end
