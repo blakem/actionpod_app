@@ -1,0 +1,36 @@
+15 Minute Calls Features and Todo list:
+ FrontEnd:
+  Add link to inprogress conferences that shows Conference Notes
+  Add "tips" to outbound email
+  Improve Help/Faq pages
+  Add Feedback Form
+  Remove Chrome Autofill on password field
+  Paginate Conferences
+  Paginate Plans
+  Opt-Out days for event schedule
+
+ BackEnd:
+  Phones per event / per occurrence
+  Pool management
+  Add & Track status of Call objects
+  Split group if 2nd incoming makes 5 participants (Revisit Grouping Algorithm)
+
+ Community:
+  Email Garrison
+  Ask Garret about Tweet (@15mincalls)
+  Go through EcoTuesday Cards
+  Email Team IO about 15mc
+  Email TMC about 15mc
+  Add 15mc to email footer
+  Facebook Fan Page
+  Facebook Like buttons (with friends)
+
+ Business:
+  Email Rene
+  Create 15mc financial spreadsheet
+  Watch Haml Screencast
+  
+ Other:
+  Deal with HL return
+  Package HL
+  Fix Leather Bracelet
