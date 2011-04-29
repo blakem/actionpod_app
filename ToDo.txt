@@ -24,6 +24,7 @@
   Add 15mc to email footer
   Facebook Fan Page
   Facebook Like buttons (with friends)
+  Send emails to stranded clients
 
  Business:
   Email Rene
