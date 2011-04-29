@@ -86,19 +86,22 @@ class ApplicationController < ActionController::Base
         next unless occurrence
         occurrence = occurrence.in_time_zone(user.time_zone)
         time = occurrence.strftime('%l:%M%p').downcase.strip
-        call_groups[time] ||= {
+        key = event.pool_id.to_s + ':' + time
+        call_groups[key] ||= {
           :time => time,
+          :pool => event.pool_id,
           :events => [],
           :minute => occurrence.hour * 60 + occurrence.min,
         }
-        call_groups[time][:events].push [event.id, event.user_id]
-        my_calls[time] = true if event.user_id == user.id
+        call_groups[key][:events].push [event.id, event.user_id]
+        my_calls[key] = true if event.user_id == user.id
       end
       call_groups.
         select{ |k,v| my_calls[k]}.
         sort{ |a,b| a[1][:minute] <=> b[1][:minute] }.
         map{ |cg| {
-          :time => cg[0], 
+          :time => cg[1][:time],
+          :pool => cg[1][:pool],
           :events => cg[1][:events].sort { |a,b| b[1] <=> a[1] } 
         } }
     end

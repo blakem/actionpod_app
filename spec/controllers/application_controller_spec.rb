@@ -27,7 +27,11 @@ describe ApplicationController do
     @event25 = Factory(:event, :user_id => @user2.id, :pool_id => @pool1.id)
     @event35.time = '3:01pm'
     @event25.time = '2:01pm'
-    @events = [@event21, @event31, @event22, @event32, @event23, @event33, @event24, @event34, @event35, @event25]
+    @event36 = Factory(:event, :user_id => @user3.id, :pool_id => @pool2.id)
+    @event26 = Factory(:event, :user_id => @user2.id, :pool_id => @pool2.id)
+    @event36.time = '4:05pm'
+    @event26.time = '3:05pm'
+    @events = [@event21, @event31, @event22, @event32, @event23, @event33, @event24, @event34, @event35, @event25, @event36, @event26]
     @events.each { |e| e.save }
     @ac = ApplicationController.new
     @ac.stub(:current_user).and_return(@user2)
@@ -44,22 +48,26 @@ describe ApplicationController do
 
     it "returns a list of call_groups sorted by time and sorted by user_id" do
       @ac.send(:build_call_groups, @user2).should == [{
-        :time=>"8:00am", 
+        :time=>"8:00am",
+        :pool=>1,
         :events=> [ 
           [@event31.id, @user3.id],
           [@event21.id, @user2.id], 
       ]}, {
         :time=>"11:00am", 
+        :pool=>1,
         :events=> [ 
           [@event32.id, @user3.id],
           [@event22.id, @user2.id], 
       ]}, {
         :time=>"2:00pm", 
+        :pool=>1,
         :events=> [ 
           [@event34.id, @user3.id],
           [@event24.id, @user2.id], 
       ]}, {
         :time=>"2:01pm", 
+        :pool=>1,
         :events=> [ 
           [@event25.id, @user2.id], 
       ]}]
@@ -69,24 +77,33 @@ describe ApplicationController do
       @user2.toggle!(:admin)
       @ac.send(:build_call_groups, @user2).should == [{
         :time=>"8:00am", 
+        :pool=>1,
         :events=> [ 
           [@event31.id, @user3.id],
           [@event21.id, @user2.id], 
       ]}, {
         :time=>"11:00am", 
+        :pool=>1,
         :events=> [ 
           [@event32.id, @user3.id],
           [@event22.id, @user2.id], 
       ]}, {
         :time=>"2:00pm", 
+        :pool=>1,
         :events=> [ 
           [@event34.id, @user3.id],
           [@event24.id, @user2.id], 
       ]}, {
         :time=>"2:01pm", 
+        :pool=>1,
         :events=> [ 
-          [@event35.id, @user3.id], 
           [@event25.id, @user2.id], 
+      ]}, {
+        :time=>"3:05pm", 
+        :pool=>@pool2.id,
+        :events=> [ 
+          [@event36.id, @user3.id], 
+          [@event26.id, @user2.id], 
       ]}]
     end
   end
@@ -103,7 +120,7 @@ describe ApplicationController do
         "11:00am on Monday",
         "2:00pm on Monday",
         "2:01pm on Monday",
-        "8:00am on Tuesday",
+        "3:05pm on Monday",
       ]
     end
 
@@ -113,7 +130,7 @@ describe ApplicationController do
         "11:00am on Monday",
         "2:00pm on Monday",
         "2:01pm on Monday",
-        "8:00pm on Monday",
+        "3:05pm on Monday",
       ]
     end
   end
@@ -173,26 +190,31 @@ describe ApplicationController do
         ["11:00:00 -0700", 2],
         ["14:00:00 -0700", 2],
         ["14:01:00 -0700", 2],
+        ["15:05:00 -0700", 2],
         ["20:00:00 -0700", 1],
         ["08:00:00 -0700", 2],
         ["11:00:00 -0700", 2],
         ["14:00:00 -0700", 2],
         ["14:01:00 -0700", 2],
+        ["15:05:00 -0700", 2],
         ["20:00:00 -0700", 1],
         ["08:00:00 -0700", 2],
         ["11:00:00 -0700", 2],
         ["14:00:00 -0700", 2],
         ["14:01:00 -0700", 2],
+        ["15:05:00 -0700", 2],
         ["20:00:00 -0700", 1],
         ["08:00:00 -0700", 2],
         ["11:00:00 -0700", 2],
         ["14:00:00 -0700", 2],
         ["14:01:00 -0700", 2],
+        ["15:05:00 -0700", 2],
         ["20:00:00 -0700", 1],
         ["08:00:00 -0700", 2],
         ["11:00:00 -0700", 2],
         ["14:00:00 -0700", 2],
         ["14:01:00 -0700", 2],
+        ["15:05:00 -0700", 2],
         ["20:00:00 -0700", 1],
       ]
     end

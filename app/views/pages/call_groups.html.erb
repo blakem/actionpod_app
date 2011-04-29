@@ -2,8 +2,12 @@
   <h3>My Call <%= @call_groups.length > 1 ? 'Groups' : 'Group' %>:</h3>
   <p>Note: Only three of you will be on any one call....</p>
   <% @call_groups.each do |cg| %>
-    <p>
-    <b><%= cg[:time] %> Call</b><br>
+    <p><b>
+	<% if cg[:pool] != Pool.default_pool.id %>
+	<i><%= Pool.find_by_id(cg[:pool]).name %>: </i>
+	<% end %>
+    <%= cg[:time] %> Call
+    </b><br>
     <% cg[:events].each do |event_list| %>
     <% event = Event.find_by_id(event_list[0]) %>
     <% user = event.user %>
