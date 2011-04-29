@@ -50,7 +50,7 @@ class User < ActiveRecord::Base
   has_many :pools
   has_many :phones, :dependent => :destroy
   has_many :plans, :dependent => :destroy
-  has_and_belongs_to_many :conferences
+  has_and_belongs_to_many :conferences, :order => 'id DESC'
   accepts_nested_attributes_for :phones, :allow_destroy => true
 
   validates_each :invite_code, :on => :create do |record, attr, value|
