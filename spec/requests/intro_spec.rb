@@ -13,7 +13,7 @@ describe "Intros" do
       controller.user_signed_in?.should be_true
       
       # update intro
-      click_link 'Update your Intro'
+      click_link 'Update Your Intro'
       fill_in "Update Your Introduction",  :with => 'My New Intro'
       click_button
       response.should have_selector('div.flash.notice', :content => 'Your introduction was successfully updated')

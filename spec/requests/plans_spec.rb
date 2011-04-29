@@ -15,7 +15,7 @@ describe "Plans" do
       user.plans.should be_empty
 
       # Fill in with default valid value
-      click_link 'Update your Daily Goals'
+      click_link 'Update Your Daily Goals'
       expect {
         click_button
       }.should change(Plan, :count).by(1)
@@ -28,7 +28,7 @@ describe "Plans" do
       user.reload
 
       # show error on empty plan
-      click_link 'Update your Daily Goals'
+      click_link 'Update Your Daily Goals'
       expect {
         fill_in "Update Your Daily/Weekly Goals",      :with => ''
         click_button
@@ -49,7 +49,7 @@ describe "Plans" do
       user.plans.count.should == 1
 
       # Create second plan
-      click_link 'Update your Daily Goals'
+      click_link 'Update Your Daily Goals'
       expect {
         fill_in "Update Your Daily/Weekly Goals",      :with => 'Plan #2'
         click_button
