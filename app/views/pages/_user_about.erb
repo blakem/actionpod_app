@@ -2,9 +2,9 @@
   <p>Intro: None
   <% if @user == @current_user %>
     <% if @mailer %>
-      <br/><strong><%= link_to "Update Your Intro", 'http://www.15minutecalls.com/pages/intro' %></strong>
+      <br/><strong><%= link_to "Update Your Introduction", 'http://www.15minutecalls.com/pages/intro' %></strong>
     <% else %>
-      <br/><strong><%= link_to "Update Your Intro", :controller => :pages, :action => :intro %></strong>
+      <br/><strong><%= link_to "Update Your Introduction", :controller => :pages, :action => :intro %></strong>
     <% end %>
   <% end %>
   </p>
@@ -16,7 +16,7 @@
     <p>
 	  <font size="+1"><%= h(@user.about.strip).gsub(/^( +)/) { "#{'&nbsp;' * $1.length}" }.gsub(/\n/,"<br/>\n") %></font>
       <% if @user == @current_user %>
-        <br/><strong><%= link_to "Update Your Intro", 'http://www.15minutecalls.com/pages/intro' %></strong>
+        <br/><strong><%= link_to "Update Your Introduction", 'http://www.15minutecalls.com/pages/intro' %></strong>
       <% end %>
     </p>
     <p>&nbsp;</p>

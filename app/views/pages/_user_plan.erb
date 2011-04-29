@@ -5,7 +5,7 @@
     <p>
     <%= h(plan.body.strip).gsub(/^( +)/) { "#{'&nbsp;' * $1.length}" }.gsub(/\n/,"<br/>\n") %>
     <% if @user == @current_user %>
-      <br/><strong><%= link_to "Update Your Goals", 'http://www.15minutecalls.com/pages/plan' %></strong>
+      <br/><strong><%= link_to "Update Your Daily/Weekly Goals", 'http://www.15minutecalls.com/pages/plan' %></strong>
     <% end %>
     </p>
   <% else %>
@@ -17,9 +17,9 @@
   <p>Current Goals: None
   <% if @user == @current_user %>
     <% if @mailer %>
-      <br/><strong><%= link_to "Update Your Goals", 'http://www.15minutecalls.com/pages/plan' %></strong>
+      <br/><strong><%= link_to "Update Your Daily/Weekly Goals", 'http://www.15minutecalls.com/pages/plan' %></strong>
     <% else %>
-      <br/><strong><%= link_to "Update Your Goals", :controller => :pages, :action => :plan %></strong>
+      <br/><strong><%= link_to "Update Your Daily/Weekly Goals", :controller => :pages, :action => :plan %></strong>
     <% end %>
   <% end %>
   </p>
