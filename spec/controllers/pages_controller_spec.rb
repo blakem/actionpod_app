@@ -109,7 +109,7 @@ describe PagesController do
         login_user
         user1 = Factory(:user)
         user2 = Factory(:user)
-        conference = Conference.create!()
+        conference = Conference.create!(:started_at => Time.now - 5.minutes)
         conference.users = [user1, user2]
         get :conference, :id => conference.id
         response.body.should =~ /#{user1.name}/
