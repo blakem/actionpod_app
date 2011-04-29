@@ -36,7 +36,7 @@
 </div>
 <div class="field">
   <p><%= f.label :location, "Location:", :class => "round" %> (optional) 
-  <%= f.text_field :location, :class => "round" %><br />
+  <%= f.text_field :location, :class => "round", :autocomplete => "off" %><br />
   <i>(San Francisco, Seattle, etc.)</i>
   </p>
 </div>
@@ -55,11 +55,11 @@
 </div>
 <div class="field">
   <p><%= f.label :password, "Password:", :class => "round" %>
-  <%= f.password_field :password, :class => "round" %></p>
+  <%= f.password_field :password, :class => "round", :autocomplete => "off" %></p>
 </div>
 <div class="field">
   <p><%= f.label :password_confirmation, "Password Confirmation:", :class => "round" %>
-  <%= f.password_field :password_confirmation, :class => "round" %></p>
+  <%= f.password_field :password_confirmation, :class => "round", :autocomplete => "off" %></p>
 </div>
 <div class="actions">
   <p><%= f.submit "Sign up" %></p>

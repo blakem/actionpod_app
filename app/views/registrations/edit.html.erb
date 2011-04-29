@@ -52,7 +52,7 @@
 </div>
 <div class="field">
   <p><%= f.label :location, "Location:", :class => "round" %> (optional) 
-  <%= f.text_field :location, :class => "round" %><br />
+  <%= f.text_field :location, :class => "round", :autocomplete => "off" %><br />
   <i>(San Francisco, Seattle, etc.)</i>
   </p>
 </div>
@@ -74,17 +74,17 @@
 </div>
 <div class="field">
   <p><%= f.label :password, "Password:", :class => "round" %> 
-  <%= f.password_field :password, :class => "round" %><br />
+  <%= f.password_field :password, :class => "round", :autocomplete => "off" %><br />
   <i>(leave blank if you don't want to change it)</i>
   </p>
 </div>
 <div class="field">
   <p><%= f.label :password_confirmation, "Password Confirmation:", :class => "round" %>
-  <%= f.password_field :password_confirmation, :class => "round" %>
+  <%= f.password_field :password_confirmation, :class => "round", :autocomplete => "off" %>
   </p>
 </div>
 <div class="field">
-  <p><%= f.label :current_password, "Current Password:", :class => "round" %> 
+  <p><%= f.label :current_password, "Current Password:", :class => "round", :autocomplete => "off" %> 
   <%= f.password_field :current_password, :class => "round" %><br />
   <i>(we need your current password to confirm your changes)</i>
   </p>
