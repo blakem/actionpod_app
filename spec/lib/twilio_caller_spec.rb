@@ -251,21 +251,27 @@ describe TwilioCaller do
     end
 
     it "sends the event ids to the url" do
+      call = Call.create(:Sid => 'CA9fa67e8696b60ee1ca1e75ec81ef85e7', :status => 'incoming-onhold')
       tc = TwilioCaller.new
       tc.should_receive(:twilio_request).with(@tc.caller_uri('CA9fa67e8696b60ee1ca1e75ec81ef85e7'), 'POST', {
         "Url" => "http://www.15minutecalls.com/twilio/place_in_conference.xml?conference=15mcPool456Room8&timelimit=22&events=3,4,5&event=91"
       })
       tc.place_participant_in_conference('CA9fa67e8696b60ee1ca1e75ec81ef85e7', "15mcPool456Room8", 22, 91, [3,4,5])
+      call.reload
+      call.status.should == 'incoming-onhold-placing:15mcPool456Room8'
     end
   end
   
   describe "apologize_no_other_participants" do
     it "sends the right request" do
+      call = Call.create(:Sid => 'CA9fa67e8696b60ee1ca1e75ec81ef85e7', :status => 'incoming-onhold')
       tc = TwilioCaller.new
       tc.should_receive(:twilio_request).with(@tc.caller_uri('CA9fa67e8696b60ee1ca1e75ec81ef85e7'), 'POST', {
         "Url" => "http://www.15minutecalls.com/twilio/apologize_no_other_participants.xml?participant_count=3&event=223"
       })
       tc.apologize_no_other_participants('CA9fa67e8696b60ee1ca1e75ec81ef85e7', 223, 3)
+      call.reload
+      call.status.should == 'incoming-onhold-apologizing'
     end
   end
 

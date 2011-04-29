@@ -19,17 +19,20 @@ describe TwilioController do
 
   describe "greeting" do
     it "should say can't match this number when it can't find an event" do
-      post :greeting
+      call = Call.create(:Sid => '12345', :status => 'outgoing')
+      post :greeting, :CallSid => '12345'
       hash = (Hash.from_xml response.body).with_indifferent_access
       hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => "I'm sorry")
+      call.reload
+      call.status.should == 'outgoing-greeting:nomatch'
     end
 
     it "should match up with the event being called" do
       user = Factory(:user)
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call')      
-      Call.create(:Sid => '12345', :event_id => event.id)
+      call = Call.create(:Sid => '12345', :event_id => event.id, :status => 'outgoing')
       post :greeting, :CallSid => '12345'
       hash = (Hash.from_xml response.body).with_indifferent_access
       hash[:Response].should be_true
@@ -40,24 +43,29 @@ describe TwilioController do
       response.should have_selector('response>gather>say', :content => 'Welcome to your Morning Call. Press 1 to join the conference.')
       response.should have_selector('response>say', 
         :content => 'Sorry, We didn\'t receive any input. You may dial into the conference directly at 4, 1, 5, 7, 6, 6, 9, 8, 6, 5.')
+      call.reload
+      call.status.should == 'outgoing-greeting:match'
     end
   end
 
   describe "greeting_fallback" do
     it "should say can't match this number when it can't find an event" do
-      post :greeting_fallback
+      call = Call.create(:Sid => '12345', :status => 'outgoing')
+      post :greeting_fallback, :CallSid => '12345'
       hash = (Hash.from_xml response.body).with_indifferent_access
       hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => "I'm sorry")
+      call.reload
+      call.status.should == 'outgoing-fallback:nomatch'
     end
 
     it "should put on hold on CallSid" do
       user = Factory(:user)
       pool = Factory(:pool, :timelimit => 33)
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
-      Call.create(:Sid => '54321', :event_id => event.id)
-      post :greeting_fallback, :CallSid => '54321'
+      call = Call.create(:Sid => '543211', :event_id => event.id)
+      post :greeting_fallback, :CallSid => '543211'
       hash = (Hash.from_xml response.body).with_indifferent_access
       hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
@@ -65,35 +73,41 @@ describe TwilioController do
       response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
       response.should have_selector('response>dial>conference', :content => "15mcHoldEvent#{event.id}User#{user.id}Pool#{pool.id}")
       response.should have_selector('response>say', :content => 'Time is up. Goodbye.')
+      call.reload
+      call.status.should == 'fallback:match-onhold:match'
     end    
   end
 
   describe "callback" do
     it "should set the duration of the call" do
-      call = Call.create(:Sid => '54321')
+      call = Call.create(:Sid => '54321', :status => 'foo')
       post :callback, :CallSid => call.Sid, :CallDuration => 33
       hash = (Hash.from_xml response.body).with_indifferent_access
       hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
       call.reload
+      call.status.should == 'foo-completed'
       call.Duration.should == 33
     end
   end
 
   describe "go_directly_to_conference" do
     it "should say can't match this number when it can't find an event" do
-      post :go_directly_to_conference
+      call = Call.create(:Sid => '54321', :status => 'foo')
+      post :go_directly_to_conference, :CallSid => call.Sid
       hash = (Hash.from_xml response.body).with_indifferent_access
       hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => "I'm sorry")
+      call.reload
+      call.status.should == 'foo-direct:nomatch'
     end
 
     it "should match up with the event being called" do
       user = Factory(:user)
       pool = Factory(:pool, :timelimit => 33)
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
-      Call.create(:Sid => '12345', :event_id => event.id)
+      call = Call.create(:Sid => '12345', :event_id => event.id)
       post :go_directly_to_conference, :CallSid => '12345'
       hash = (Hash.from_xml response.body).with_indifferent_access
       hash[:Response].should be_true
@@ -103,23 +117,28 @@ describe TwilioController do
       response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
       response.should have_selector('response>dial>conference', :content => "15mcHoldEvent#{event.id}User#{user.id}Pool#{pool.id}")
       response.should have_selector('response>say', :content => 'Time is up. Goodbye.')
+      call.reload
+      call.status.should == 'direct:match'
     end
   end
 
   describe "put_on_hold" do
     it "should say can't match this number when it can't find an event" do
-      post :put_on_hold
+      call = Call.create(:Sid => '54321', :status => 'foo')
+      post :put_on_hold, :CallSid => call.Sid
       hash = (Hash.from_xml response.body).with_indifferent_access
       hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => "I'm sorry")
+      call.reload
+      call.status.should == 'foo-onhold:nomatch'
     end
 
     it "should put on hold on CallSid" do
       user = Factory(:user)
       pool = Factory(:pool, :timelimit => 33)
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
-      Call.create(:Sid => '54321', :event_id => event.id)
+      call = Call.create(:Sid => '54321', :event_id => event.id)
       post :put_on_hold, :CallSid => '54321'
       hash = (Hash.from_xml response.body).with_indifferent_access
       hash[:Response].should be_true
@@ -128,6 +147,8 @@ describe TwilioController do
       response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
       response.should have_selector('response>dial>conference', :content => "15mcHoldEvent#{event.id}User#{user.id}Pool#{pool.id}")
       response.should have_selector('response>say', :content => 'Time is up. Goodbye.')
+      call.reload
+      call.status.should == 'onhold:match'
     end
 
     it "should put on hold on PhoneNumberSid" do
@@ -261,8 +282,6 @@ describe TwilioController do
       event6.days = []
       event6.save
 
-      
-
       post :incoming, :From => phone.number, :Direction => 'inbound' 
       hash = (Hash.from_xml response.body).with_indifferent_access
       hash[:Response].should be_true
@@ -351,6 +370,7 @@ describe TwilioController do
       call.Direction.should == 'inbound'
       call.From.should == user.primary_phone.number
       call.event_id.should == event.id
+      call.status.should == 'incoming-onhold'
     end
 
     it "should create a call record even when it can't match an event" do
@@ -365,16 +385,19 @@ describe TwilioController do
       call.Direction.should == 'inbound'
       call.From.should == phone_number
       call.event_id.should be_nil
+      call.status.should == 'incoming-nomatch'
     end
   end
   
   describe "place_in_conference" do
     it "should put the user into the conference room when it knows the other callers" do
+      call = Call.create(:Sid => '5566', :status => 'outgoing-matched')
       user1 = Factory(:user, :name => 'Bobby')
       user2 = Factory(:user, :name => 'Sally')
       event1 = Factory(:event, :user_id => user1.id)
       event2 = Factory(:event, :user_id => user2.id)
-      post :place_in_conference, :conference => 'FooBar', :timelimit => (24 * 60).to_s, :event => event1.id, :events => [event1.id, event2.id].join(',')
+      post :place_in_conference, :conference => 'FooBar', :timelimit => (24 * 60).to_s, :event => event1.id, 
+        :events => [event1.id, event2.id].join(','), :CallSid => '5566'
       intro_string = TwilioController.new.build_intro_string("#{event1.id},#{event2.id}")
       response.content_type.should =~ /^application\/xml/
       hash = (Hash.from_xml response.body).with_indifferent_access
@@ -386,7 +409,9 @@ describe TwilioController do
       response.should have_selector('response>dial>conference', :content => "FooBar")
       response.should have_selector('response>say', :content => '1 Minute Remaining.')      
       response.should have_selector('response>dial', :timelimit => 60.to_s)
-      response.should have_selector('response>say', :content => "Time is up. Your next call is #{user1.next_call_time_string}. Have an awesome day!")      
+      response.should have_selector('response>say', :content => "Time is up. Your next call is #{user1.next_call_time_string}. Have an Awesome day!")      
+      call.reload
+      call.status.should == 'outgoing-matched-placed:FooBar'
     end
 
     it "should put the user into the conference after the 60 second warning if he has less than 60 seconds left" do
@@ -401,7 +426,7 @@ describe TwilioController do
       response.should have_selector('response>say', :content => "Welcome. On the call today we have #{intro_string}")
       response.should have_selector('response>dial', :timelimit => '59')
       response.should have_selector('response>dial>conference', :content => "FooBar")
-      response.should have_selector('response>say', :content => "Time is up. Your next call is #{user.next_call_time_string}. Have an awesome day!")      
+      response.should have_selector('response>say', :content => "Time is up. Your next call is #{user.next_call_time_string}. Have an Awesome day!")      
       response.should_not have_selector('response>say', :content => 'Welcome. Joining a conference already in progress.')
       response.should_not have_selector('response>say', :content => '1 Minute Remaining.')      
     end
@@ -417,7 +442,7 @@ describe TwilioController do
       response.should have_selector('response>dial>conference', :content => "FooBar")
       response.should have_selector('response>say', :content => '1 Minute Remaining.')      
       response.should have_selector('response>dial', :timelimit => 60.to_s)
-      response.should have_selector('response>say', :content => "Time is up. Have an awesome day!")      
+      response.should have_selector('response>say', :content => "Time is up. Have an Awesome day!")      
     end
 
     it "should default to a time limit of 15 and a room of DefaultConference" do
@@ -470,7 +495,8 @@ describe TwilioController do
     end
 
     it "should say sorry and give the number of total participants called" do
-      post :apologize_no_other_participants, :participant_count => '2', :event => @event.id
+      call = Call.create(:Sid => '3333', :status => 'foo')
+      post :apologize_no_other_participants, :participant_count => '2', :event => @event.id, :CallSid => '3333'
       hash = (Hash.from_xml response.body).with_indifferent_access
       hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
@@ -480,6 +506,8 @@ describe TwilioController do
       response.should have_selector('response>say', :content => "Waiting for another participant.")
       response.should have_selector('response>dial', :timelimit => @event.pool.timelimit.minutes.to_s)
       response.should have_selector('response>dial>conference', :content => "15mcHoldEvent#{@event.id}User#{@user.id}Pool#{@event.pool.id}")
+      call.reload
+      call.status.should == 'foo-apologized'
     end
 
     it "should say sorry and give the number of total participants called" do

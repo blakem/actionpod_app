@@ -4,9 +4,11 @@ class TwilioController < ApplicationController
   def greeting
     event = find_event_from_params(params)
     unless event
+      update_call_status_from_params(params, 'greeting:nomatch')
       self.say_sorry
       render :action => :say_sorry
     else
+      update_call_status_from_params(params, 'greeting:match')
       @event_name = event.name_in_second_person
       @postto = base_url + '/put_on_hold.xml'
     end
@@ -15,9 +17,11 @@ class TwilioController < ApplicationController
   def greeting_fallback
     event = find_event_from_params(params)
     unless event
+      update_call_status_from_params(params, 'fallback:nomatch')
       self.say_sorry
       render :action => :say_sorry
     else
+      update_call_status_from_params(params, 'fallback:match')
       self.put_on_hold
       render :action => :put_on_hold
     end
@@ -27,12 +31,14 @@ class TwilioController < ApplicationController
     call = Call.find_by_Sid(params[:CallSid])
     call.Duration = params[:CallDuration]
     call.save
+    update_call_object_status(call, 'completed')
   end
 
   def say_sorry
   end
 
   def apologize_no_other_participants
+    update_call_status_from_params(params, 'apologized')
     @other_participants = params[:participant_count].to_i - 1
     @people = @other_participants == 1 ? 'person' : 'people'
     @event = Event.find_by_id(params[:event])
@@ -45,9 +51,11 @@ class TwilioController < ApplicationController
   def go_directly_to_conference
     event = find_event_from_params(params)
     unless event
+      update_call_status_from_params(params, 'direct:nomatch')
       self.say_sorry
       render :action => :say_sorry
     else
+      update_call_status_from_params(params, 'direct:match')
       @event_name = event.name_in_second_person
       @timelimit = event.pool.timelimit
       @pool = event.pool
@@ -60,9 +68,11 @@ class TwilioController < ApplicationController
   def put_on_hold
     event = find_event_from_params(params)
     unless event
+      update_call_status_from_params(params, 'onhold:nomatch')
       self.say_sorry
       render :action => :say_sorry
     else
+      update_call_status_from_params(params, 'onhold:match')
       @timelimit = event.pool.timelimit
       @pool = event.pool 
       @event = event
@@ -74,11 +84,13 @@ class TwilioController < ApplicationController
   def incoming
     event = find_event_from_params(params)
     event_id = event ? event.id : nil
-    TwilioCaller.create_call_from_call_hash(params.merge(:Sid => params[:CallSid]), event_id)
+    call = TwilioCaller.create_call_from_call_hash(params.merge(:Sid => params[:CallSid], :status => 'incoming'), event_id)
     unless event
+      update_call_object_status(call, 'nomatch')
       self.say_sorry
       render :action => :say_sorry
     else
+      update_call_object_status(call, 'onhold')
       @event_name = event.name_in_second_person
       @timelimit = event.pool.timelimit
       @pool = event.pool
@@ -87,11 +99,23 @@ class TwilioController < ApplicationController
       @timelimit *= 60
     end
   end
+
+  def update_call_object_status(call, status)
+    return unless call
+    call.status = call.status.nil? ? status : call.status + "-#{status}"
+    call.save
+  end
+  
+  def update_call_status_from_params(params, status)
+    call = Call.find_by_Sid(params[:CallSid])
+    update_call_object_status(call, status)
+  end
   
   def place_in_conference
     @names = build_intro_string(params[:events])
     @timelimit = params[:timelimit] ? params[:timelimit].to_i : 15 * 60
     @conference = params[:conference] || 'DefaultConference'
+    update_call_status_from_params(params, "placed:#{@conference}")
     event = Event.find_by_id(params[:event])
     @next_call_time = event ? event.user.next_call_time_string : ''
   end

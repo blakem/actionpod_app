@@ -81,10 +81,11 @@ class TwilioCaller
       post_args['IfMachine'] = 'Hangup'
     end
     call_hash = twilio_request(start_call_uri, 'POST', post_args)
-    TwilioCaller.create_call_from_call_hash(call_hash, event.id)
+    TwilioCaller.create_call_from_call_hash(call_hash.merge(:status => 'outgoing'), event.id)
   end
   
   def place_participant_in_conference(call_sid, conference, timelimit, event_id, event_ids)
+    update_call_status(call_sid, "placing:#{conference}")
     events = event_ids.join(',')
     resp_hash = twilio_request(caller_uri(call_sid), 'POST', {
      'Url' => base_url + "/place_in_conference.xml?conference=#{conference}&timelimit=#{timelimit}&events=#{events}&event=#{event_id}",
@@ -92,9 +93,18 @@ class TwilioCaller
   end
 
   def apologize_no_other_participants(call_sid, event_id, participant_count)
+    update_call_status(call_sid, 'apologizing')
     resp_hash = twilio_request(caller_uri(call_sid), 'POST', {
      'Url' => base_url + "/apologize_no_other_participants.xml?participant_count=#{participant_count}&event=#{event_id}",
     })
+  end
+
+  def update_call_status(sid, status)
+    call = Call.find_by_Sid(sid)
+    if call
+      call.status = call.status.nil? ? status : call.status + "-#{status}"
+      call.save
+    end
   end
   
   def participants_on_hold_for_pool(pool)
@@ -138,7 +148,8 @@ class TwilioCaller
       :From           => call_hash[:From]            || call_hash[:from],
       :PhoneNumberSid => call_hash[:PhoneNumberSid]  || call_hash[:phone_number_sid],
       :Uri            => call_hash[:Uri]             || call_hash[:uri],
-      :Direction      => call_hash[:Direction]       || call_hash[:direction]
+      :Direction      => call_hash[:Direction]       || call_hash[:direction],
+      :status         => call_hash[:status],
     )
   end
 end
