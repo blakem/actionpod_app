@@ -12,7 +12,6 @@
  BackEnd:
   Phones per event / per occurrence
   Pool management
-  Split group if 2nd incoming makes 5 participants (Revisit Grouping Algorithm)
 
  Community:
   Email Garrison

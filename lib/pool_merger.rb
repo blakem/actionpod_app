@@ -1,6 +1,7 @@
 class PoolMerger
 
   # Get list of new participants
+  # Four gets split into two groups of two
   # Split them into groups of 3 using old participants first
     # Put groups of three into a conference room
   
@@ -35,8 +36,12 @@ class PoolMerger
 
   def handle_new_participants(participants, pool, pool_runs_at, data)
     while participants.count > 2 do
-      (three_participants, participants) = pick_three_participants(participants)
-      handle_three_new_participants(three_participants, pool, pool_runs_at, data)
+      if participants.count == 4
+        handle_four_new_participants(participants, pool, pool_runs_at, data)
+      else
+        (three_participants, participants) = pick_three_participants(participants)
+        handle_three_new_participants(three_participants, pool, pool_runs_at, data)
+      end
     end
     return data if participants.empty?
 
@@ -72,6 +77,11 @@ class PoolMerger
 
   def handle_three_new_participants(participants, pool, pool_runs_at, data)
     create_new_group(participants.shift(3), pool, pool_runs_at, data)
+  end
+
+  def handle_four_new_participants(participants, pool, pool_runs_at, data)
+    handle_two_new_participants(participants.shift(2), pool, pool_runs_at, data)
+    handle_two_new_participants(participants.shift(2), pool, pool_runs_at, data)
   end
 
   def pick_three_participants(participants)
