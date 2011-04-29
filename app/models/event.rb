@@ -20,9 +20,7 @@ class Event < ActiveRecord::Base
   validates_presence_of :name
 
   before_validation do
-    if self.name.blank?
-      self.name = (self.user.first_name + "'s " + self.time + " Call")
-    end
+    self.name = self.default_name if self.name.blank?
   end
   
   def schedule
@@ -118,10 +116,24 @@ class Event < ActiveRecord::Base
     days.include?(int)
   end
 
+  def default_name
+    self.user.first_name + "'s " + self.time + " Call"
+  end
+
   def name_in_second_person
     name.sub(/#{user.first_name}'s\s+/, '')
   end
-
+  
+  def sms_reminder_text
+    event_name = self.name_in_second_person
+    if self.name == self.default_name
+      "Your #{event_name} is about to begin. Expect a call in 10 minutes."
+    else
+      event_name += ' Call' unless event_name =~ /call$/i
+      "Your #{event_name} will begin at #{self.time}. Expect a call in 10 minutes."
+    end  
+  end
+  
   def name_with_pool
     default_pool = Pool.default_pool
     if default_pool.id == self.pool_id
@@ -130,7 +142,7 @@ class Event < ActiveRecord::Base
       self.pool.name + ": " + self.name 
     end
   end
-
+  
   def make_call(start_time)
     TwilioCaller.new.start_call_for_event(self) unless self.pool.after_call_window(start_time)
   end

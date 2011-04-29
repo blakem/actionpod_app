@@ -99,7 +99,7 @@ describe PoolQueuer do
       account.should_receive(:request).with(TwilioCaller.new.sms_uri, 'POST', {
         :From => TwilioCaller.new.caller_id,
         :To   => @user.primary_phone.number, 
-        :Body => "Your #{event2.name_in_second_person} will begin at 8:00am.  Expect a call in 10 minutes."        
+        :Body => event2.sms_reminder_text,
       })
       Twilio::RestAccount.should_receive(:new).with("AC2e57bf710b77d765d280786bc07dbacc", "fc9bd67bb8deee6befd3ab0da3973718").and_return(account)
       pool_runs_at = @now + 5.minutes

@@ -64,8 +64,7 @@ class PoolQueuer
       jobs.each do |job|
         event = Event.find_by_id(job.obj_id)
         if (event and event.send_sms_reminder)
-          twilio_caller.send_sms(event.user.primary_phone.number, 
-            "Your #{event.name_in_second_person} will begin at #{event.time}.  Expect a call in 10 minutes.")
+          twilio_caller.send_sms(event.user.primary_phone.number, event.sms_reminder_text)
         end
       end
       queue_merge_calls_for_pool(pool, pool_runs_at, 0, {:total => jobs.count})

@@ -30,6 +30,22 @@ describe Event do
     event.name_in_second_person.should == "8:00am Call"    
   end
 
+  describe "it's sms_reminder_text" do
+    it "shouldn't duplicate the time" do
+      user = Factory(:user, :name => 'Bob Smith')
+      event = Factory(:event, :user_id => user.id, :name => '')
+      event.name.should == "Bob's 8:00am Call"
+      event.sms_reminder_text.should ==
+       "Your 8:00am Call is about to begin. Expect a call in 10 minutes."
+      event.name = "Morning Accountability Call"
+      event.sms_reminder_text.should ==
+        "Your Morning Accountability Call will begin at 8:00am. Expect a call in 10 minutes."
+        event.name = "Something Cool"
+        event.sms_reminder_text.should ==
+          "Your Something Cool Call will begin at 8:00am. Expect a call in 10 minutes."
+    end
+  end
+
   it "has a name_with_pool" do
     pool1 = Pool.default_pool
     event = Factory(:event, :name => 'My Event Name')
@@ -39,7 +55,7 @@ describe Event do
     event.save
     event.name_with_pool.should == 'PoolName: My Event Name'
   end
-
+  
   describe "it's schedule" do
     before(:each) do
       user = Factory(:user, :time_zone => 'Mountain Time (US & Canada)')
