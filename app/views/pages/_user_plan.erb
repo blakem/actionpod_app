@@ -16,7 +16,11 @@
 <% else %>
   <p>Current Goals: None
   <% if @user == @current_user %>
-    <br/><strong><%= link_to "Update your Goals", 'http://www.15minutecalls.com/pages/plan' %></strong>
+    <% if @mailer %>
+      <br/><strong><%= link_to "Update your Goals", 'http://www.15minutecalls.com/pages/plan' %></strong>
+    <% else %>
+      <br/><strong><%= link_to "Update your Goals", :controller => :pages, :action => :plan %></strong>
+    <% end %>
   <% end %>
   </p>
   <% if @mailer%>
