@@ -12,6 +12,7 @@
  BackEnd:
   Phones per event / per occurrence
   Pool management
+  apologizing-apologized-apologizing-apologized loop when on hold with only one caller
 
  Community:
   Email Garrison
