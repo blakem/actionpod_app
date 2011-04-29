@@ -32,8 +32,8 @@ class PagesController < ApplicationController
     end
   end
 
-  def plan
-    @plan = Plan.new
+  def plan    
+    @plan = Plan.new(:body => Plan.default_body)
     current_plan = current_user.current_plan    
     @plan.body = current_plan.body if current_plan
     set_profile_values

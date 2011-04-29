@@ -14,4 +14,9 @@ class Plan < ActiveRecord::Base
   belongs_to :user
   validates_presence_of :body
 
+  def self.default_body
+    "Three Goals I have for this week:\n  1.\n  2.\n  3.\n\n\nWhat I'm going to do today to move closer to those goals:\n" +
+    ("  *\n" * 8)
+  end
+
 end
