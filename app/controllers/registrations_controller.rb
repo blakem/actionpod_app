@@ -16,4 +16,18 @@ class RegistrationsController < Devise::RegistrationsController
     @view_options = {:hide_edit_profile => true}
     super
   end
+
+  def create
+    build_resource
+
+    if resource.save
+      TwilioCaller.new.send_error_to_blake("New User: #{resource.id}:#{resource.name} - #{resource.invite_code}") if Rails.env.production?
+      set_flash_message :notice, :signed_up
+      sign_in_and_redirect(resource_name, resource)
+    else
+      clean_up_passwords(resource)
+      render_with_scope :new
+    end
+  end
+
 end
