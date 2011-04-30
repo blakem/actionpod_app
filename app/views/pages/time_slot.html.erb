@@ -1,10 +1,10 @@
-<h3>Participants in the <%= @call_group[:time] %> group:</h3>
+<h3>Participants in the <%= @call_group[:time] %> 
+	<% if @call_group[:pool] != Pool.default_pool.id %>
+	  (<%= Pool.find_by_id(@call_group[:pool]).name %>)
+	<% end %>
+	group:</h3>
 <p>Note: Only three of you will be on any one call....</p>
 <p>
-<% if @call_group[:pool] != Pool.default_pool.id %>
-  <i><%= Pool.find_by_id(call_group[:pool]).name %>: </i>
-  <br>
-<% end %>
 <% hide_join = false %>
 <% @call_group[:events].each do |event_list| %>
 <% event = Event.find_by_id(event_list[0]) %>

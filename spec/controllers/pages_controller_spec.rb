@@ -154,6 +154,18 @@ describe PagesController do
         response.body.should     =~ /#{user2.name}/
         response.body.should_not =~ /#{user3.name}/
       end
+
+      it "shows the name of the pool if it isn't the default pool" do
+        login_admin
+        pool = Factory(:pool, :name => 'Not The Default Pool')
+        user = Factory(:user)
+        event = Factory(:event, :user_id => user.id, :pool_id => pool.id)
+        event.time = '4:34pm'
+        event.save
+        pool.should_not == Pool.default_pool
+        get :time_slot, :time => '4:34pm'
+        response.body.should =~ /#{pool.name}/
+      end
     end
   end
 
