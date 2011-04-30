@@ -1,7 +1,9 @@
 <p>
-<% conference = current_user.conferences.first %>
-<% if conference.status == 'in_progress' %>
-  <b><%= link_to "View Current Conference", :controller => :pages, :action => :conference, :id => conference.id %></b>
+<% unless @view_options[:hide_view_current_conference] %>
+  <% conference = current_user.conferences.first %>
+  <% if conference and conference.status == 'in_progress' %>
+    <b><%= link_to "View Current Conference", :controller => :pages, :action => :conference, :id => conference.id %></b>
+  <% end %>
 <% end %>
 <% unless @view_options[:hide_create_plan] %>
   <% bold_plan = !current_user.current_plan || current_user.current_plan.updated_at < Time.now - 24.hours %>

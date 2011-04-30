@@ -38,6 +38,7 @@ class PagesController < ApplicationController
       @users = @conference.users.select { |u| u.id == current_user.id } +
                @conference.users.select { |u| u.id != current_user.id }
       set_profile_values
+      @view_options = {:hide_view_current_conference => @conference == current_user.conferences.first}
     else
       redirect_to(root_path, :alert => "There is no conference with that id")
     end
