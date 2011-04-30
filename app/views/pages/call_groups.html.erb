@@ -11,7 +11,7 @@
     <% cg[:events].each do |event_list| %>
     <% event = Event.find_by_id(event_list[0]) %>
     <% user = event.user %>
-      <%= gravatar_for user, :size => 30 %> <%= link_to user.name, "/u/" + user.handle %>
+      <%= gravatar_for user, :size => 30 %> <%= link_to user.name, "/u/" + user.handle %> - <%= user.title %>
       <i>(<%= event.schedule_day_string %>)</i>
       <br/>
     <% end %>
