@@ -38,7 +38,7 @@ class PagesController < ApplicationController
       @users = @conference.users.select { |u| u.id == current_user.id } +
                @conference.users.select { |u| u.id != current_user.id }
       set_profile_values
-    else @conference
+    else
       redirect_to(root_path, :alert => "There is no conference with that id")
     end
   end
@@ -96,6 +96,12 @@ class PagesController < ApplicationController
   def call_groups
     set_profile_values
     @view_options = {:hide_call_groups => true}    
-    @call_groups = build_call_groups(current_user)
+    @call_groups = build_call_groups(current_user, current_user)
+  end
+
+  def time_slot
+    set_profile_values
+    @call_group = build_call_groups(current_user).select{ |cg| cg[:time] == params[:time] }[0]
+    redirect_to(root_path, :alert => "There is no call at that time.") unless @call_group
   end
 end

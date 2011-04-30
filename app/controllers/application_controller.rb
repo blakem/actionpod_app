@@ -82,15 +82,15 @@ class ApplicationController < ActionController::Base
         first != 0 ? first : a[:pool_id] <=> b[:pool_id] }
     end
     
-    def build_call_groups(user)
+    def build_call_groups(viewer, user = nil)
       call_groups = {}
       my_calls = {}
-      pools = user.memberships
+      pools = viewer.memberships
       Event.all.each do |event|
         next unless pools.include?(event.pool)
         occurrence = event.schedule.next_occurrence
         next unless occurrence
-        occurrence = occurrence.in_time_zone(user.time_zone)
+        occurrence = occurrence.in_time_zone(viewer.time_zone)
         time = occurrence.strftime('%l:%M%p').downcase.strip
         key = event.pool_id.to_s + ':' + time
         call_groups[key] ||= {
@@ -100,12 +100,14 @@ class ApplicationController < ActionController::Base
           :minute => occurrence.hour * 60 + occurrence.min,
         }
         call_groups[key][:events].push [event.id, event.user_id]
-        my_calls[key] = true if event.user_id == user.id
+        my_calls[key] = true if user and event.user_id == user.id
       end
+      call_groups = call_groups.select{ |k,v| my_calls[k]} if user      
       call_groups.
-        select{ |k,v| my_calls[k]}.
-        sort{ |a,b| a[1][:minute] <=> b[1][:minute] }.
-        map{ |cg| {
+        sort{ |a,b| 
+          first = a[1][:minute] <=> b[1][:minute]
+          first != 0 ? first : a[1][:pool] <=> b[1][:pool] 
+        }.map{ |cg| {
           :time => cg[1][:time],
           :pool => cg[1][:pool],
           :events => cg[1][:events].sort { |a,b| b[1] <=> a[1] } 

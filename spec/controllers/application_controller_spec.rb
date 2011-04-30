@@ -43,11 +43,11 @@ describe ApplicationController do
   describe "build_call_groups" do
     
     it "should return [] if a user has no events" do
-      @ac.send(:build_call_groups, @user1).should == []
+      @ac.send(:build_call_groups, @user1, @user1).should == []
     end
 
     it "returns a list of call_groups sorted by time and sorted by user_id" do
-      @ac.send(:build_call_groups, @user2).should == [{
+      @ac.send(:build_call_groups, @user2, @user2).should == [{
         :time=>"8:00am",
         :pool=>1,
         :events=> [ 
@@ -73,9 +73,85 @@ describe ApplicationController do
       ]}]
     end
 
-    it "shows all pools for admin users" do
+    it "returns a list all call_groups when not passed a second argument" do
+      @ac.send(:build_call_groups, @user2).should == [{
+        :time=>"8:00am",
+        :pool=>1,
+        :events=> [ 
+          [@event31.id, @user3.id],
+          [@event21.id, @user2.id], 
+      ]}, {
+        :time=>"11:00am", 
+        :pool=>1,
+        :events=> [ 
+          [@event32.id, @user3.id],
+          [@event22.id, @user2.id], 
+      ]}, {
+        :time=>"2:00pm", 
+        :pool=>1,
+        :events=> [ 
+          [@event34.id, @user3.id],
+          [@event24.id, @user2.id], 
+      ]}, {
+        :time=>"2:01pm", 
+        :pool=>1,
+        :events=> [ 
+          [@event25.id, @user2.id], 
+      ]}, {
+        :time=>"8:00pm", 
+        :pool=>1, 
+        :events=>[
+          [@event33.id, @user3.id]
+      ]}]
+    end
+
+    it "returns a list all call_groups and all pools when not passed a second argument for an admin user" do
       @user2.toggle!(:admin)
       @ac.send(:build_call_groups, @user2).should == [{
+        :time=>"8:00am",
+        :pool=>1,
+        :events=> [ 
+          [@event31.id, @user3.id],
+          [@event21.id, @user2.id], 
+      ]}, {
+        :time=>"11:00am", 
+        :pool=>1,
+        :events=> [ 
+          [@event32.id, @user3.id],
+          [@event22.id, @user2.id], 
+      ]}, {
+        :time=>"2:00pm", 
+        :pool=>1,
+        :events=> [ 
+          [@event34.id, @user3.id],
+          [@event24.id, @user2.id], 
+      ]}, {
+        :time=>"2:01pm", 
+        :pool=>1,
+        :events=> [ 
+          [@event25.id, @user2.id], 
+      ]}, {
+        :time=>"2:01pm", 
+        :pool=>@pool2.id, 
+        :events=>[
+          [@event35.id, @user3.id],
+      ]}, {
+        :time=>"3:05pm",
+        :pool=>@pool2.id,
+        :events=>[
+          [@event36.id, @user3.id], 
+          [@event26.id, @user2.id]
+      ]}, {
+        :time=>"8:00pm", 
+        :pool=>1, 
+        :events=>[
+          [@event33.id, @user3.id]
+      ]}]
+    end
+
+    it "shows all pools for admin users" do
+      @user2.toggle!(:admin)
+      @ac.send(:build_call_groups, @user2, @user2).should == [{
         :time=>"8:00am", 
         :pool=>1,
         :events=> [ 

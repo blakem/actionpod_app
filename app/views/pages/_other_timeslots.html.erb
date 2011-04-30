@@ -2,7 +2,10 @@
 <p>
     <b>Join an existing time slot:</b><br/>
     <% @timeslots.each do |ts| %>
-       <%= ts[:string] %> | <b><%= link_to 'Join', :action => :join, :time => ts[:time] %></b><br/>
+       <%= ts[:string] %> |
+       <%= link_to "Show Participants", :controller => :pages, :action => :time_slot, :time => ts[:time] %> |
+       <b><%= link_to 'Join this group', :action => :join, :time => ts[:time] %></b>
+       <br/>
     <% end %>
 </p>
 <% end %>
