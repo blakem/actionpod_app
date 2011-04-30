@@ -1,17 +1,23 @@
 <h3>Existing Users have calls scheduled at:</h3>
 <table>
   <tr><th>Data</th><th>User Count</th></tr>
+  <% default_pool = Pool.default_pool %>
   <% @scheduled_events.each do |data| %>
+    <% occurrence = data[:occurrence] %>
     <% star = ''; bold = false %>
-    <% if data[1] == 1 %>
+    <% if data[:count] == 1 %>
       <% current_user.events.each do |event| %>
-	    <% star = '*' if event.days.include?(data[0].wday) && event.hour_of_day == data[0].hour && event.minute_of_hour == data[0].min %>
+	    <% star = '*' if event.days.include?(occurrence.wday) && event.hour_of_day == occurrence.hour && event.minute_of_hour == occurrence.min %>
       <% end %>
       <% bold = true if star.blank? %>      
     <% end %>
     <tr>
-	  <td><%= data[0].strftime("%a %l:%M%p").humanize + data[0].strftime(" %Z") %></td>
-	  <td><%= bold ? "<b>".html_safe : ''%><%= data[1] %><%= bold ? "</b>".html_safe : ''%><%= star %></td>
+	  <td><%= occurrence.strftime("%a %l:%M%p").humanize + occurrence.strftime(" %Z") %>
+		<% if data[:pool_id] != default_pool.id %>
+		  <i> - <%= Pool.find_by_id(data[:pool_id]).name %></i>
+        <% end %>
+	  </td>
+	  <td><%= bold ? "<b>".html_safe : ''%><%= data[:count] %><%= bold ? "</b>".html_safe : ''%><%= star %></td>
 	</tr>
   <% end %>
 </table>

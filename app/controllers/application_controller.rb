@@ -51,8 +51,8 @@ class ApplicationController < ActionController::Base
 
     def build_timeslots
       slots = []
-      build_scheduled_events.each do |occurrence|
-        slot = occurrence[0].strftime('%l:%M%p').downcase.strip
+      build_scheduled_events.each do |hash|
+        slot = hash[:occurrence].strftime('%l:%M%p').downcase.strip
         slots.push(slot) unless slots.include?(slot)
       end
       current_user.events.each do |event|
@@ -69,11 +69,17 @@ class ApplicationController < ActionController::Base
         next unless (event.minute_of_hour == 0 or current_user.admin?)
         event.schedule.occurrences_between(start_time, end_time).each do |occurrence|
           occurrence = occurrence.in_time_zone(current_user.time_zone)
-          hash[occurrence] ||= 0
-          hash[occurrence] += 1
+          key = event.pool.id.to_s + ':' + occurrence.to_s
+          hash[key] ||= {}
+          hash[key][:count] ||= 0
+          hash[key][:count] += 1
+          hash[key][:pool_id] = event.pool.id
+          hash[key][:occurrence] = occurrence
         end
       end
-      hash.each.sort
+      hash.each_value.sort { |a,b| 
+        first = a[:occurrence] <=> b[:occurrence]; 
+        first != 0 ? first : a[:pool_id] <=> b[:pool_id] }
     end
     
     def build_call_groups(user)
