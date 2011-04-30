@@ -1,5 +1,5 @@
 # == Schema Information
-# Schema version: 20110426202926
+# Schema version: 20110430205507
 #
 # Table name: users
 #
@@ -33,6 +33,10 @@
 #  about                :text
 #  facebook_uid         :string(255)
 #  phonetic_name        :string(255)
+#  called_count         :integer         default(0)
+#  answered_count       :integer         default(0)
+#  placed_count         :integer         default(0)
+#  incoming_count       :integer         default(0)
 #
 
 class User < ActiveRecord::Base

@@ -107,6 +107,14 @@ describe User do
     user.name.should == 'Bob Jones'
   end
 
+  it "starts with counts of 0" do
+    user = Factory(:user)
+    user.placed_count == 0
+    user.incoming_count == 0
+    user.answered_count == 0
+    user.called_count == 0
+  end
+
   it "should have a title" do
     user = Factory(:user, :title => 'Software Developer')
     user.title.should == 'Software Developer'
