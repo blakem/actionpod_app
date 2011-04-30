@@ -56,6 +56,7 @@ class TwilioController < ApplicationController
       render :action => :say_sorry
     else
       update_call_status_from_params(params, 'direct:match')
+      update_answered_count(event.user)
       @event_name = event.name_in_second_person
       @timelimit = event.pool.timelimit
       @pool = event.pool
@@ -73,6 +74,7 @@ class TwilioController < ApplicationController
       render :action => :say_sorry
     else
       update_call_status_from_params(params, 'onhold:match')
+      update_answered_count(event.user)
       @timelimit = event.pool.timelimit
       @pool = event.pool 
       @event = event
@@ -91,6 +93,7 @@ class TwilioController < ApplicationController
       render :action => :say_sorry
     else
       update_call_object_status(call, 'onhold')
+      update_incoming_count(event.user)
       @event_name = event.name_in_second_person
       @timelimit = event.pool.timelimit
       @pool = event.pool
@@ -100,17 +103,6 @@ class TwilioController < ApplicationController
     end
   end
 
-  def update_call_object_status(call, status)
-    return unless call
-    call.status = call.status.nil? ? status : call.status + "-#{status}"
-    call.save
-  end
-  
-  def update_call_status_from_params(params, status)
-    call = Call.find_by_Sid(params[:CallSid])
-    update_call_object_status(call, status)
-  end
-  
   def place_in_conference
     @names = build_intro_string(params[:events])
     @timelimit = params[:timelimit] ? params[:timelimit].to_i : 15 * 60
@@ -123,26 +115,32 @@ class TwilioController < ApplicationController
   def sms
   end
 
-  def build_intro_string(event_string)
-    return '' if event_string.blank?
-    users = event_string.split(/,/).map { |s| Event.find_by_id(s.to_i) }.select{ |e| e }.map { |e| intro_string_for_user(e.user) }
-    last_user = users.pop
-    users.empty? ? last_user : users.join(', ') + ", and " + last_user
-  end
-
-  def intro_string_for_user(user)
-    return '' unless user
-    string = user.phonetic_name
-    string = string + " a " + user.title unless user.title.blank?
-    string = string + " from " + user.location unless user.location.blank?
-    string
-  end
-
   private
     def base_url 
       "http://www.15minutecalls.com/twilio"
     end
     
+    def update_answered_count(user)
+      user.answered_count += 1
+      user.save
+    end
+
+    def update_incoming_count(user)
+      user.incoming_count += 1
+      user.save
+    end
+
+    def update_call_object_status(call, status)
+      return unless call
+      call.status = call.status.nil? ? status : call.status + "-#{status}"
+      call.save
+    end
+
+    def update_call_status_from_params(params, status)
+      call = Call.find_by_Sid(params[:CallSid])
+      update_call_object_status(call, status)
+    end
+
     def find_event_from_params(params)
       call = match_call_from_params(params)
       return Event.find_by_id(call.event_id) if call
@@ -181,4 +179,20 @@ class TwilioController < ApplicationController
       end
       closest_event
     end
+
+    def build_intro_string(event_string)
+      return '' if event_string.blank?
+      users = event_string.split(/,/).map { |s| Event.find_by_id(s.to_i) }.select{ |e| e }.map { |e| intro_string_for_user(e.user) }
+      last_user = users.pop
+      users.empty? ? last_user : users.join(', ') + ", and " + last_user
+    end
+
+    def intro_string_for_user(user)
+      return '' unless user
+      string = user.phonetic_name
+      string = string + " a " + user.title unless user.title.blank?
+      string = string + " from " + user.location unless user.location.blank?
+      string
+    end
+
 end

@@ -139,6 +139,8 @@ describe PoolMerger do
         conference.ended_at.should > @pool_runs_at
         conference.ended_at.should < Time.now
         conference.users.should == [user]
+        user.reload
+        user.placed_count.should == 0
       end
 
       it "don't send sms apology if send_sms_reminders is turned off" do
@@ -271,12 +273,16 @@ describe PoolMerger do
         conference.reload
         conference.users.should include(user)
         conference.users.count.should == 3
+        user.reload
+        user.placed_count.should == 1
 
         # Don't add them to the conference object twice
         @pm.merge_calls_for_pool(@pool, @pool_runs_at, data2)
         conference.reload
         conference.users.should include(user)
         conference.users.count.should == 3
+        user.reload
+        user.placed_count.should == 2
       end
     end
     

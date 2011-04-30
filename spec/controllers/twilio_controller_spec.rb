@@ -75,6 +75,8 @@ describe TwilioController do
       response.should have_selector('response>say', :content => 'Time is up. Goodbye.')
       call.reload
       call.status.should == 'fallback:match-onhold:match'
+      user.reload
+      user.answered_count.should == 1
     end    
   end
 
@@ -104,7 +106,7 @@ describe TwilioController do
     end
 
     it "should match up with the event being called" do
-      user = Factory(:user)
+      user = Factory(:user, :answered_count => 3)
       pool = Factory(:pool, :timelimit => 33)
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
       call = Call.create(:Sid => '12345', :event_id => event.id)
@@ -119,6 +121,8 @@ describe TwilioController do
       response.should have_selector('response>say', :content => 'Time is up. Goodbye.')
       call.reload
       call.status.should == 'direct:match'
+      user.reload
+      user.answered_count.should == 4
     end
   end
 
@@ -149,6 +153,8 @@ describe TwilioController do
       response.should have_selector('response>say', :content => 'Time is up. Goodbye.')
       call.reload
       call.status.should == 'onhold:match'
+      user.reload
+      user.answered_count.should == 1
     end
 
     it "should put on hold on PhoneNumberSid" do
@@ -352,10 +358,12 @@ describe TwilioController do
       hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => "I'm sorry")
+      user.reload
+      user.incoming_count.should == 0
     end
     
-    it "should create a call record" do
-      user = Factory(:user)
+    it "should create a call record and upate the incoming_count" do
+      user = Factory(:user, :incoming_count => 5)
       phone = Factory(:phone, :user_id => user.id, :primary => true)
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => Factory(:pool).id)
       event.days = [0,1,2,3,4,5,6]
@@ -371,6 +379,8 @@ describe TwilioController do
       call.From.should == user.primary_phone.number
       call.event_id.should == event.id
       call.status.should == 'incoming-onhold'
+      user.reload
+      user.incoming_count.should == 6
     end
 
     it "should create a call record even when it can't match an event" do
@@ -398,7 +408,7 @@ describe TwilioController do
       event2 = Factory(:event, :user_id => user2.id)
       post :place_in_conference, :conference => 'FooBar', :timelimit => (24 * 60).to_s, :event => event1.id, 
         :events => [event1.id, event2.id].join(','), :CallSid => '5566'
-      intro_string = TwilioController.new.build_intro_string("#{event1.id},#{event2.id}")
+      intro_string = TwilioController.new.send(:build_intro_string, "#{event1.id},#{event2.id}")
       response.content_type.should =~ /^application\/xml/
       hash = (Hash.from_xml response.body).with_indifferent_access
       hash[:Response][:Say].count.should == 3
@@ -418,7 +428,7 @@ describe TwilioController do
       user = Factory(:user, :name => 'Bobby')
       event = Factory(:event, :user_id => user.id)
       post :place_in_conference, :conference => 'FooBar', :timelimit => '59', :event => event.id, :events => "#{event.id}"
-      intro_string = TwilioController.new.build_intro_string("#{event.id}")
+      intro_string = TwilioController.new.send(:build_intro_string, "#{event.id}")
       response.content_type.should =~ /^application\/xml/
       hash = (Hash.from_xml response.body).with_indifferent_access
       hash[:Response][:Say].count.should == 2
@@ -460,7 +470,7 @@ describe TwilioController do
   describe "build_intro_string" do
     it "builds nice strings" do
       tc = TwilioController.new
-      tc.build_intro_string('').should == ''
+      tc.send(:build_intro_string, '').should == ''
 
       pool = Factory(:pool)
       user1 = Factory(:user, :name => 'Bobby', :title => '', :location => '')
@@ -469,22 +479,22 @@ describe TwilioController do
       event1 = Factory(:event, :user_id => user1.id, :pool_id => pool.id)
       event2 = Factory(:event, :user_id => user2.id, :pool_id => pool.id)
       event3 = Factory(:event, :user_id => user3.id, :pool_id => pool.id)
-      tc.build_intro_string("#{event1.id}").should == 'Bobby'
-      tc.build_intro_string("#{event1.id},#{event2.id}").should == 'Bobby, and Sally'
-      tc.build_intro_string("#{event1.id},#{event2.id},#{event3.id}").should == 'Bobby, Sally, and Jaaane'
+      tc.send(:build_intro_string, "#{event1.id}").should == 'Bobby'
+      tc.send(:build_intro_string, "#{event1.id},#{event2.id}").should == 'Bobby, and Sally'
+      tc.send(:build_intro_string, "#{event1.id},#{event2.id},#{event3.id}").should == 'Bobby, Sally, and Jaaane'
       
       user1.title = 'Software Developer'
       user1.save
-      tc.build_intro_string("#{event1.id},#{event2.id}").should == 'Bobby a Software Developer, and Sally'
+      tc.send(:build_intro_string, "#{event1.id},#{event2.id}").should == 'Bobby a Software Developer, and Sally'
 
       user1.location = 'San Francisco'
       user1.save
 
       user2.location = 'Seattle'
       user2.save
-      tc.build_intro_string("#{event1.id},#{event2.id}").should == 'Bobby a Software Developer from San Francisco, and Sally from Seattle'
+      tc.send(:build_intro_string, "#{event1.id},#{event2.id}").should == 'Bobby a Software Developer from San Francisco, and Sally from Seattle'
 
-      tc.build_intro_string("0,888,44466,33377,,xyzzy,#{event1.id},#{event2.id}").should == 'Bobby a Software Developer from San Francisco, and Sally from Seattle'
+      tc.send(:build_intro_string, "0,888,44466,33377,,xyzzy,#{event1.id},#{event2.id}").should == 'Bobby a Software Developer from San Francisco, and Sally from Seattle'
     end
   end
 
