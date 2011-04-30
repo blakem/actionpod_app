@@ -1,16 +1,23 @@
 <h3>Participants in the <%= @call_group[:time] %> group:</h3>
 <p>Note: Only three of you will be on any one call....</p>
-   <p>
-   <% if @call_group[:pool] != Pool.default_pool.id %>
-     <i><%= Pool.find_by_id(call_group[:pool]).name %>: </i>
-     <br>
-   <% end %>
-   <% @call_group[:events].each do |event_list| %>
-   <% event = Event.find_by_id(event_list[0]) %>
-   <% user = event.user %>
-     <%= gravatar_for user, :size => 30 %> <%= link_to user.name, "/u/" + user.handle %> - <%= user.title %>
-     <i>(<%= event.schedule_day_string %>)</i>
-     <br/>
-   <% end %>
-   </p>
+<p>
+<% if @call_group[:pool] != Pool.default_pool.id %>
+  <i><%= Pool.find_by_id(call_group[:pool]).name %>: </i>
+  <br>
+<% end %>
+<% hide_join = false %>
+<% @call_group[:events].each do |event_list| %>
+<% event = Event.find_by_id(event_list[0]) %>
+<% user = event.user %>
+  <% hide_join = true if user == current_user %>
+  <%= gravatar_for user, :size => 30 %> <%= link_to user.name, "/u/" + user.handle %> - <%= user.title %>
+  <i>(<%= event.schedule_day_string %>)</i>
+  <br/>
+<% end %>
+</p>
+<% unless hide_join %>
+  <p>
+  <b><%= link_to 'Join this group', :controller => :pages, :action => :join, :time => @call_group[:time] %></b>
+  </p>
+<% end %>
 
