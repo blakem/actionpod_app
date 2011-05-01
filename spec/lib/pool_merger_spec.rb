@@ -405,20 +405,27 @@ describe PoolMerger do
       end
 
       it "with six we should get two new conferences ordered by user_id" do
-        new_participants = participant_list(6).reverse # reverse tests the sorting by user_id
+        events = create_events(6)
+        new_participants = participant_list_for_events(events).reverse # reverse tests the sorting by user_id
         @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
-        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1", "15mcPool#{@pool.id}Room1", @timelimit_insec, 
-          1, [1, 2, 3])
-        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2", "15mcPool#{@pool.id}Room1", @timelimit_insec,
-          2, [1 ,2 ,3])
-        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX3", "15mcPool#{@pool.id}Room1", @timelimit_insec,
-          3, [1, 2, 3])
-        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX4", "15mcPool#{@pool.id}Room2", @timelimit_insec,
-          4, [4, 5, 6])
-        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX5", "15mcPool#{@pool.id}Room2", @timelimit_insec,
-          5, [4, 5, 6])
-        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX6", "15mcPool#{@pool.id}Room2", @timelimit_insec,
-          6, [4, 5, 6])
+        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1", "15mcPool#{@pool.id}Room1", 
+          be_within(3).of(@timelimit_insec),
+          events[0].id, [events[0].id, events[1].id, events[2].id])
+        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2", "15mcPool#{@pool.id}Room1",
+          be_within(3).of(@timelimit_insec),
+          events[1].id, [events[0].id, events[1].id, events[2].id])
+        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX3", "15mcPool#{@pool.id}Room1",
+          be_within(3).of(@timelimit_insec),
+          events[2].id, [events[0].id, events[1].id, events[2].id])
+        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX4", "15mcPool#{@pool.id}Room2",
+          be_within(3).of(@timelimit_insec),
+          events[3].id, [events[3].id, events[4].id, events[5].id])
+        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX5", "15mcPool#{@pool.id}Room2",
+          be_within(3).of(@timelimit_insec),
+          events[4].id, [events[3].id, events[4].id, events[5].id])
+        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX6", "15mcPool#{@pool.id}Room2",
+          be_within(3).of(@timelimit_insec),
+          events[5].id, [events[3].id, events[4].id, events[5].id])
         @pm.merge_calls_for_pool(@pool, @pool_runs_at, {}).should == {
           :next_room   => 3,
           :on_hold     => {},
@@ -426,27 +433,27 @@ describe PoolMerger do
           :placed      => {
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => {
               :room_name => "15mcPool#{@pool.id}Room1",
-              :event_id => 1,
+              :event_id => events[0].id,
             },
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2" => {
               :room_name => "15mcPool#{@pool.id}Room1",
-              :event_id => 2,
+              :event_id => events[1].id,
             },            
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX3" => {
               :room_name => "15mcPool#{@pool.id}Room1",
-              :event_id => 3,
+              :event_id => events[2].id,
             },
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX4" => {
               :room_name => "15mcPool#{@pool.id}Room2",
-              :event_id => 4,
+              :event_id => events[3].id,
             },
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX5" => {
               :room_name => "15mcPool#{@pool.id}Room2",
-              :event_id => 5,
+              :event_id => events[4].id,
             },            
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX6" => {
               :room_name => "15mcPool#{@pool.id}Room2",
-              :event_id => 6,
+              :event_id => events[5].id,
             },
           },
         }
@@ -824,6 +831,39 @@ describe PoolMerger do
       end
     end
   end
+  
+  describe "pick_three_participants" do
+    it "grabs the first three from the list" do
+      events = create_events(3)
+      participants = participant_list_for_events(events)
+
+      three = @pm.pick_three_participants(participants)
+
+      extract_event_names(three).should == [events[0], events[1], events[2]].map(&:name)
+      extract_event_names(participants).should == []
+    end
+
+    it "it teams a admin user with the two users with the lowest placed_count" do
+      events = create_events(6)
+      events[4].name += ': Admin'
+      events[4].user.admin = true
+      events[0].user.placed_count = 10
+      events[1].user.placed_count = 0
+      events[1].name += ': Newbie'
+      events[2].user.placed_count = 33
+      events[3].user.placed_count = 6
+      events[4].user.placed_count = 100
+      events[5].user.placed_count = 2
+      events[5].name += ': FirstWeek'
+      events.each { |e| e.save; e.user.save }
+      participants = participant_list_for_events(events)
+
+      three = @pm.pick_three_participants(participants)
+
+      extract_event_names(three).should == [events[1], events[4], events[5]].map(&:name)
+      extract_event_names(participants).should == [events[0], events[2], events[3]].map(&:name)
+    end
+  end
 
   describe "initialize_data" do
     it "should initialize the empty hash" do
@@ -853,18 +893,51 @@ def one_participant_response
   'AC2e57bf710b77d765d280786bc07dbacc\/Conferences\/CF0cb07a25bdaf64828850b784ea2d1aa7\/Participants\/CA9fa67e8696b60ee1ca1e75ec81ef85e7.json"}]}'
 end
 
-def participant_list(participant_count)
+def participant_list(participant_count, events = [])
   list = []
   stub_participant = ActiveSupport::JSON.decode(one_participant_response).with_indifferent_access[:participants][0]
   (1..participant_count).each do |i|
     participant = stub_participant.dup
     participant[:call_sid] += "XXX" + i.to_s
     participant[:conference_sid] += "XXX" + i.to_s
-    participant[:conference_friendly_name] = "15mcHoldEvent#{i}User#{i}Pool555"
+    event_id = i
+    user_id = i
+    if events.any?
+      event = events[i-1]
+      event_id = event.id
+      user_id = event.user_id
+    end
+    participant[:conference_friendly_name] = "15mcHoldEvent#{event_id}User#{user_id}Pool555"
     list << participant
   end
   list
 end
-  
-  
-  
+
+def create_events(count)
+  list = []
+  i = 0
+  count.times do
+    user = Factory(:user)
+    event = Factory(:event, :name => "Event #{i}", :user_id => user.id)
+    list << event
+    i += 1
+  end
+  list
+end
+
+def participant_list_for_events(events = [])
+  participant_list(events.count, events)
+end
+
+def extract_events(participants)
+  list = []
+  participants.each do |participant|
+    participant[:conference_friendly_name] =~ /Event(\d+)/
+    list << Event.find($1.to_i)
+  end
+  list
+end
+
+def extract_event_names(participants)
+  extract_events(participants).map(&:name)
+end

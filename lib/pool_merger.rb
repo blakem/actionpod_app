@@ -39,7 +39,7 @@ class PoolMerger
       if participants.count == 4
         handle_four_new_participants(participants, pool, pool_runs_at, data)
       else
-        (three_participants, participants) = pick_three_participants(participants)
+        three_participants = pick_three_participants(participants)
         handle_three_new_participants(three_participants, pool, pool_runs_at, data)
       end
     end
@@ -79,14 +79,38 @@ class PoolMerger
     create_new_group(participants.shift(3), pool, pool_runs_at, data)
   end
 
-  def handle_four_new_participants(participants, pool, pool_runs_at, data)
+  def handle_four_new_participants(participants, pool, pool_runs_at, data) # XXX Start here
     handle_two_new_participants(participants.shift(2), pool, pool_runs_at, data)
     handle_two_new_participants(participants.shift(2), pool, pool_runs_at, data)
   end
 
   def pick_three_participants(participants)
-    picked = participants.shift(3)
-    return [picked, participants]
+    index = 0
+    users = {}
+    admin = nil
+    participants.each do |participant|
+      user = User.find_by_id(participant_user_id(participant))
+      users[user.id] = {
+        :user => user,
+        :index => index,
+      }
+      admin = user if user.admin
+      index += 1
+    end
+    
+    if admin
+      admin_hash = users.delete(admin.id)
+      sorted = users.sort{ |a,b| a[1][:user].placed_count <=> b[1][:user].placed_count }
+      picked_indices = [admin_hash[:index], sorted[0][1][:index], sorted[1][1][:index]]
+    else
+      picked_indices = [0,1,2]
+    end
+    
+    picked = []
+    picked_indices.sort.reverse.each do |i|
+      picked << participants.slice!(i)
+    end
+    return picked.reverse
   end
 
   def apologize_to_participant(participant, pool, pool_runs_at, data)
