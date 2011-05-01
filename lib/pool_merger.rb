@@ -79,9 +79,13 @@ class PoolMerger
     create_new_group(participants.shift(3), pool, pool_runs_at, data)
   end
 
-  def handle_four_new_participants(participants, pool, pool_runs_at, data) # XXX Start here
-    handle_two_new_participants(participants.shift(2), pool, pool_runs_at, data)
-    handle_two_new_participants(participants.shift(2), pool, pool_runs_at, data)
+  def handle_four_new_participants(participants, pool, pool_runs_at, data)
+    user1 = participants.shift
+    user2 = participants.shift
+    user3 = participants.shift
+    user4 = participants.shift
+    handle_two_new_participants([user1, user4], pool, pool_runs_at, data)
+    handle_two_new_participants([user2, user3], pool, pool_runs_at, data)
   end
 
   def pick_three_participants(participants)
@@ -97,7 +101,7 @@ class PoolMerger
       admin = user if user.admin
       index += 1
     end
-    
+
     if admin
       admin_hash = users.delete(admin.id)
       sorted = users.sort{ |a,b| a[1][:user].placed_count <=> b[1][:user].placed_count }
