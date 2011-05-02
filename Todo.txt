@@ -1,13 +1,14 @@
 15 Minute Calls Features and Todo list:
  FrontEnd:
-  Add "tips" to outbound email
   Improve Help/Faq pages
+  Add "tips" to outbound email
   Add Feedback Form
   Opt-Out days for event schedule
 
  BackEnd:
-  Phones per event / per occurrence
-  Pool management
+  Send emails to stranded clients
+  LowPriority - Phones per event / per occurrence
+  LowPriority - Pool management
 
  Community:
   Ask Garret about Tweet (@15mincalls)
@@ -15,14 +16,11 @@
   Email TMC about 15mc
   Facebook Fan Page
   Facebook Like buttons (with friends)
-  Send emails to stranded clients
 
  Business:
   Email Rene
   Create 15mc financial spreadsheet
-  Watch Haml Screencast
+  LowPriority - Watch Haml Screencast
   
  Other:
-  Deal with HL return
-  Package HL
   Fix Leather Bracelet

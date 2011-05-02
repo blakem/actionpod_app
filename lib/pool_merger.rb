@@ -80,10 +80,7 @@ class PoolMerger
   end
 
   def handle_four_new_participants(participants, pool, pool_runs_at, data)
-    user1 = participants.shift
-    user2 = participants.shift
-    user3 = participants.shift
-    user4 = participants.shift
+    (user1, user2, user3, user4) = participants.slice!(0,4)
     handle_two_new_participants([user1, user4], pool, pool_runs_at, data)
     handle_two_new_participants([user2, user3], pool, pool_runs_at, data)
   end
