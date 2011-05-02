@@ -105,7 +105,7 @@ class PagesController < ApplicationController
 
   def stranded_users
     if admin_signed_in?
-      @users = User.all.select { |u| u.events.empty? }
+      @users = User.all.sort_by(&:id).select { |u| u.events.empty? }
       set_profile_values
       @view_options = {:hide_stranded_users => true}    
     else
