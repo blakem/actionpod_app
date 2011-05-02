@@ -3,4 +3,5 @@ From: <%= @user.location.blank? ? 'None' : @user.location %><br/>
 <% unless @user.hide_email %>
 Email: <%= @user.email %><br/>
 <% end %>
+Member Since: <%= @user.created_at.strftime("%B #{@user.created_at.day.ordinalize}, %Y") %>
 <p>&nbsp;</p>

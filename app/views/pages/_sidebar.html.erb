@@ -37,8 +37,13 @@
   <%= link_to "Who's in my call #{call_groups}?", :controller => :pages, :action => :call_groups %><br/>
 <% end %>
   <%= link_to "Manage Multiple Phones", phones_path %><br/>
-<% if current_user.admin? && !@view_options[:hide_callcal] %>
-  <%= link_to "Show existing call times", :controller => :pages, :action => :callcal %><br/>
+<% if current_user.admin? %>
+  <% unless @view_options[:hide_callcal] %>
+    <%= link_to "Show existing call times", :controller => :pages, :action => :callcal %><br/>
+  <% end %>
+  <% unless @view_options[:hide_stranded_users] %>
+    <%= link_to "Show stranded users", :controller => :pages, :action => :stranded_users %><br/>
+  <% end %>
 <% end %>
 </p>
 <% if @nextcalls.any? %>

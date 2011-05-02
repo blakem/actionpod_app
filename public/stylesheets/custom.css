@@ -168,6 +168,7 @@ table.profile {
 td.main {
 	width: 70%;
 	padding: 1em;
+	vertical-align: top;
 }
 
 td.sidebar {

@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe PagesController do
   render_views
-  describe "GET /home when not logged in" do
+  describe "GET /pages/home when not logged in" do
     it "should show a welcome page" do
   	  controller.user_signed_in?.should be_false
       get :home
@@ -16,7 +16,7 @@ describe PagesController do
     end
   end
 
-  describe "GET /homepage" do
+  describe "GET /pages/homepage" do
     it "should show a welcome page when not logged in" do
   	  controller.user_signed_in?.should be_false
       get :homepage
@@ -33,7 +33,7 @@ describe PagesController do
     end    
   end
   
-  describe "GET /home success" do
+  describe "GET /pages/home success" do
     login_user_before_each
  
     it "should be successful when logged in" do
@@ -212,7 +212,7 @@ describe PagesController do
     end
   end
 
-  describe "GET /callcal" do
+  describe "GET /pages/callcal" do
     describe "when not logged in" do
       it "should redirect to the root path" do
         controller.user_signed_in?.should be_false
@@ -221,11 +221,46 @@ describe PagesController do
       end
     end
 
-    describe "when logged in" do
-      login_user_before_each
-      it "should be a success" do
-        controller.user_signed_in?.should be_true
+    describe "when user logged in" do
+      it "should redirect to the root path" do
+        login_user
         get :callcal
+        flash[:alert].should =~ /You don't have access to that page/i
+        response.should redirect_to(root_path)
+      end
+    end
+
+    describe "when admin logged in" do
+      it "should be a success" do
+        login_admin
+        get :callcal
+        response.should be_success
+      end
+    end
+  end
+
+  describe "GET /pages/stranded_users" do
+    describe "when not logged in" do
+      it "should redirect to the root path" do
+        controller.user_signed_in?.should be_false
+        get :stranded_users
+        response.should redirect_to(new_user_session_path)
+      end
+    end
+
+    describe "when user logged in" do
+      it "should redirect to the root path" do
+        login_user
+        get :stranded_users
+        flash[:alert].should =~ /You don't have access to that page/i
+        response.should redirect_to(root_path)
+      end
+    end
+
+    describe "when admin logged in" do
+      it "should be a success" do
+        login_admin
+        get :stranded_users
         response.should be_success
       end
     end

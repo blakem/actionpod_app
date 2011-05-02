@@ -94,9 +94,23 @@ class PagesController < ApplicationController
   end
   
   def callcal
-    @scheduled_events = build_scheduled_events
-    set_profile_values
-    @view_options = {:hide_callcal => true}    
+    if admin_signed_in?
+      @scheduled_events = build_scheduled_events
+      set_profile_values
+      @view_options = {:hide_callcal => true}    
+    else
+      redirect_to(root_path, :alert => "You don't have access to that page")
+    end
+  end
+
+  def stranded_users
+    if admin_signed_in?
+      @users = User.all.select { |u| u.events.empty? }
+      set_profile_values
+      @view_options = {:hide_stranded_users => true}    
+    else
+      redirect_to(root_path, :alert => "You don't have access to that page")
+    end
   end
   
   def call_groups
