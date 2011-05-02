@@ -17,4 +17,6 @@
 </font></p><p><font size="+1">
   -Blake
 </font></p>
-<%= link_to "Sign up now!", new_user_registration_path, :class => "signup_button round" %>
+<% unless user_signed_in? %>
+  <%= link_to "Sign up now!", new_user_registration_path, :class => "signup_button round" %>
+<% end %>

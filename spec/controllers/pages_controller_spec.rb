@@ -15,6 +15,23 @@ describe PagesController do
       Time.zone.to_s.should == '(GMT+00:00) UTC'
     end
   end
+
+  describe "GET /homepage" do
+    it "should show a welcome page when not logged in" do
+  	  controller.user_signed_in?.should be_false
+      get :homepage
+      response.should have_selector('h1', :content => 'Welcome')
+      response.body.should =~ /Sign up now!/
+    end
+
+    it "should show a welcome page when logged in" do
+      login_user
+  	  controller.user_signed_in?.should be_true
+      get :homepage
+      response.should have_selector('h1', :content => 'Welcome')
+      response.body.should_not =~ /Sign up now!/
+    end    
+  end
   
   describe "GET /home success" do
     login_user_before_each

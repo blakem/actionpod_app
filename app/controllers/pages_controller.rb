@@ -1,5 +1,5 @@
 class PagesController < ApplicationController
-  before_filter :authenticate_user!, :except => [:home, :help]
+  before_filter :authenticate_user!, :except => [:home, :help, :homepage]
   
   def home
     @title = 'Accountability Calls You Can Count On'
@@ -7,6 +7,11 @@ class PagesController < ApplicationController
       self.my_profile
       render :my_profile
     end
+  end
+  
+  def homepage
+    @title = 'Accountability Calls You Can Count On'
+    render :home
   end
   
   def my_profile
