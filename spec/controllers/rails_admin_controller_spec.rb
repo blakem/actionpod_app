@@ -27,6 +27,7 @@ describe RailsAdmin::MainController do
   describe "when logged in as an admin user" do
     login_admin_before_each
     it "should be a success" do
+      pending
       get 'index'
 	    controller.user_signed_in?.should be_true
   	  controller.admin_signed_in?.should be_true

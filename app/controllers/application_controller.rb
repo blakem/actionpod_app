@@ -58,7 +58,7 @@ class ApplicationController < ActionController::Base
       current_user.events.each do |event|
         slots.delete(event.time.downcase.strip)
       end
-      slots.map{ |s| {:time => s, :string => "#{s} on Weekdays"} }
+      slots.map{ |s| {:time => s, :string => "#{s} on selected Weekdays"} }
     end
     
     def build_scheduled_events

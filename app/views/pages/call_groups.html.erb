@@ -13,6 +13,9 @@
     <% user = event.user %>
       <%= gravatar_for user, :size => 30 %> <%= link_to user.name, "/u/" + user.handle %> - <%= user.title %>
       <i>(<%= event.schedule_day_string %>)</i>
+      <% if event.user == current_user %>
+       - <%= link_to "Edit Your Availability", edit_event_path(event) %>
+      <% end %>
       <br/>
     <% end %>
     </p>

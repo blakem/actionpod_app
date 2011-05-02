@@ -216,25 +216,25 @@ describe ApplicationController do
     it "should return an ordered list of existing time-slots that the user is not currently subscribed to" do
       @ac.stub(:current_user).and_return(@user1)
       @ac.send(:build_timeslots).should == [
-        {:time =>  "8:00am", :string =>  "8:00am on Weekdays"}, 
-        {:time => "11:00am", :string => "11:00am on Weekdays"}, 
-        {:time =>  "2:00pm", :string =>  "2:00pm on Weekdays"}, 
-        {:time =>  "8:00pm", :string =>  "8:00pm on Weekdays"},
+        {:time =>  "8:00am", :string =>  "8:00am on selected Weekdays"}, 
+        {:time => "11:00am", :string => "11:00am on selected Weekdays"}, 
+        {:time =>  "2:00pm", :string =>  "2:00pm on selected Weekdays"}, 
+        {:time =>  "8:00pm", :string =>  "8:00pm on selected Weekdays"},
       ]
 
       @user1.toggle!(:admin)
       @ac.send(:build_timeslots).should == [
-        {:time =>  "8:00am", :string =>  "8:00am on Weekdays"}, 
-        {:time => "11:00am", :string => "11:00am on Weekdays"}, 
-        {:time =>  "2:00pm", :string =>  "2:00pm on Weekdays"},
-        {:time =>  "2:01pm", :string =>  "2:01pm on Weekdays"},
-        {:time =>  "3:05pm", :string =>  "3:05pm on Weekdays"},
-        {:time =>  "8:00pm", :string =>  "8:00pm on Weekdays"},
+        {:time =>  "8:00am", :string =>  "8:00am on selected Weekdays"}, 
+        {:time => "11:00am", :string => "11:00am on selected Weekdays"}, 
+        {:time =>  "2:00pm", :string =>  "2:00pm on selected Weekdays"},
+        {:time =>  "2:01pm", :string =>  "2:01pm on selected Weekdays"},
+        {:time =>  "3:05pm", :string =>  "3:05pm on selected Weekdays"},
+        {:time =>  "8:00pm", :string =>  "8:00pm on selected Weekdays"},
       ]
 
       @ac.stub(:current_user).and_return(@user2)
       @ac.send(:build_timeslots).should == [
-        {:time =>  "8:00pm", :string =>  "8:00pm on Weekdays"},
+        {:time =>  "8:00pm", :string =>  "8:00pm on selected Weekdays"},
       ]
 
       @ac.stub(:current_user).and_return(@user3)
