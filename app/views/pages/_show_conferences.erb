@@ -3,7 +3,7 @@
   <p><b><%= @your %> 15 Minute Calls:</b></p>
   <% @conferences.each do |conference| %>
     <p>
-    <%= link_to conference.started_at.strftime("%a %b %e") + " " +
+    <%= link_to conference.started_at.strftime("%A %B #{conference.started_at.day.ordinalize}") + " at " +
                 conference.started_at.strftime("%l:%M%p").downcase,
         :controller => :pages,
         :action => :conference,
