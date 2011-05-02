@@ -873,6 +873,52 @@ describe PoolMerger do
       extract_event_names(three).should == [events[1], events[4], events[5]].map(&:name)
       extract_event_names(participants).should == [events[0], events[2], events[3]].map(&:name)
     end
+
+    it "it splits new newbies apart" do
+      events = create_events(6)
+      events[0].user.placed_count = 103
+      events[0].name += ': OldSchool'
+      events[1].user.placed_count = 102
+      events[1].name += ': OldSchool'
+      events[2].user.placed_count = 20
+      events[2].name += ': Teen'
+      events[3].user.placed_count = 12
+      events[3].name += ': Trial'
+      events[4].user.placed_count = 0
+      events[4].name += ': Newbie'
+      events[5].user.placed_count = 0
+      events[5].name += ': Newbie'
+      events.each { |e| e.save; e.user.save }
+      participants = participant_list_for_events(events)
+
+      three = @pm.pick_three_participants(participants)
+
+      extract_event_names(three).should == [events[1], events[2], events[4]].map(&:name)
+      extract_event_names(participants).should == [events[0], events[3], events[5]].map(&:name)
+    end
+
+    it "it pairs newbies with trials if there's no oldschoolers around" do
+      events = create_events(6)
+      events[0].user.placed_count = 7
+      events[0].name += ': Trial'
+      events[1].user.placed_count = 6
+      events[1].name += ': Trial'
+      events[2].user.placed_count = 5
+      events[2].name += ': Trial'
+      events[3].user.placed_count = 4
+      events[3].name += ': Trial'
+      events[4].user.placed_count = 0
+      events[4].name += ': Newbie'
+      events[5].user.placed_count = 0
+      events[5].name += ': Newbie'
+      events.each { |e| e.save; e.user.save }
+      participants = participant_list_for_events(events)
+
+      three = @pm.pick_three_participants(participants)
+
+      extract_event_names(three).should == [events[2], events[3], events[4]].map(&:name)
+      extract_event_names(participants).should == [events[0], events[1], events[5]].map(&:name)
+    end
   end
 
   describe "initialize_data" do

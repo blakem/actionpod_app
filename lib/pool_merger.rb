@@ -89,13 +89,18 @@ class PoolMerger
     index = 0
     users = {}
     admin = nil
+    newbie = nil
     participants.each do |participant|
       user = User.find_by_id(participant_user_id(participant))
       users[user.id] = {
         :user => user,
         :index => index,
       }
-      admin = user if user.admin
+      if user.admin
+        admin ||= user
+      elsif user.placed_count == 0
+        newbie ||= user
+      end
       index += 1
     end
 
@@ -103,6 +108,13 @@ class PoolMerger
       admin_hash = users.delete(admin.id)
       sorted = users.sort{ |a,b| a[1][:user].placed_count <=> b[1][:user].placed_count }
       picked_indices = [admin_hash[:index], sorted[0][1][:index], sorted[1][1][:index]]
+    elsif newbie
+      newbie_hash = users.delete(newbie.id)
+      sorted = users.sort{ |a,b| a[1][:user].placed_count <=> b[1][:user].placed_count }
+      picked_indices = [newbie_hash[:index]]
+      pick_users_with_minimum_placed_count(picked_indices, sorted, 16)
+      pick_users_with_minimum_placed_count(picked_indices, sorted, 1)
+      pick_users_with_minimum_placed_count(picked_indices, sorted, 0)
     else
       picked_indices = [0,1,2]
     end
@@ -112,6 +124,19 @@ class PoolMerger
       picked << participants.slice!(i)
     end
     return picked.reverse
+  end
+
+  def pick_users_with_minimum_placed_count(picked_indices, sorted, value)
+    return if picked_indices.count >= 3
+    delete_ids = []
+    sorted.each do |data|
+      user = data[1][:user]
+      if picked_indices.count < 3 and user.placed_count >= value
+        picked_indices << data[1][:index]
+        delete_ids << user.id
+      end
+    end
+    delete_ids.each { |i| sorted.delete(i) }
   end
 
   def apologize_to_participant(participant, pool, pool_runs_at, data)
