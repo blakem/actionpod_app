@@ -11,7 +11,15 @@
 <% user = event.user %>
   <% hide_join = true if user == current_user %>
   <%= gravatar_for user, :size => 30 %> <%= link_to user.name, "/u/" + user.handle %> - <%= user.title %>
-  <i>(<%= event.schedule_day_string %>)</i>
+  <% if event.user == current_user %>
+    <% if event.user.title.blank? %>
+      <i>(<%= event.schedule_day_string %>)</i> - <%= link_to "Edit Your Availability", edit_event_path(event) %>
+    <% else %>
+      <i>(<%= event.schedule_day_string %> - <%= link_to "Edit", edit_event_path(event) %>)</i>
+    <% end %>
+  <% else %>
+    <i>(<%= event.schedule_day_string %>)</i>
+  <% end %>
   <br/>
 <% end %>
 </p>
