@@ -81,6 +81,7 @@ describe PagesController do
   	    controller.user_signed_in?.should be_false
         get :help
         response.should be_success
+        response.body.should =~ /Sign up now!/
       end
 
       it "should be successful when logged in" do
@@ -88,6 +89,7 @@ describe PagesController do
   	    controller.user_signed_in?.should be_true
         get :help
         response.should be_success
+        response.body.should_not =~ /Sign up now!/
       end
     end
   end

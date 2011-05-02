@@ -1,9 +1,13 @@
 <h3>Welcome</h3>
 <p>
-Welcome to the site!  First off, this site is in active development,
-so changes are happening fast.  I'm excited to have you on board for the ride.
+Welcome to the site!  I've had fun building this site and meeting other members on the calls.  I hope you are intrigued enough by the idea that
+you try it out.  Hopefully, I'll get a chance to check-in with you on one of the upcoming calls. ;-) 
 </p>
 
 <%= render 'help_how_it_works' %>
 <%= render 'help_calls' %>
 <%= render 'help_feedback' %>
+
+<% unless user_signed_in? %>
+  <%= link_to "Sign up now!", new_user_registration_path, :class => "signup_button round" %>
+<% end %>
