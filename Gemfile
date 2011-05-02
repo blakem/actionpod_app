@@ -14,6 +14,7 @@ gem 'gravatar_image_tag'
 gem 'heroku_san'
 gem 'faker'
 gem 'hpricot'
+gem 'jquery-rails', '>= 0.2.6'
 
 group :test, :development do
   gem 'taps'
