@@ -59,7 +59,7 @@ devise ul li a:hover {
 /* From Sample App */
 
 .container {
-	width: 810px;
+	width: 875px;
 }
 body {
 	background: #bfbfbf;
@@ -150,7 +150,7 @@ a.signup_button {
 footer { 
 	text-align: center; 
 	margin-top: 10px; 
-	width: 810px; 
+	width: 875px; 
 	margin-left: auto; 
 	margin-right: auto; 
 } 

@@ -3,7 +3,6 @@
   Add "tips" to outbound email
   Improve Help/Faq pages
   Add Feedback Form
-  Paginate Plans
   Opt-Out days for event schedule
 
  BackEnd:
@@ -12,13 +11,11 @@
 
  Community:
   Ask Garret about Tweet (@15mincalls)
-  Go through EcoTuesday Cards
   Email Team IO about 15mc
   Email TMC about 15mc
   Facebook Fan Page
   Facebook Like buttons (with friends)
   Send emails to stranded clients
-  Email Garrison on Wednesday
 
  Business:
   Email Rene
