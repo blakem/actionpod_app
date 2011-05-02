@@ -8,7 +8,7 @@ echo; echo "************ git add ."
 git add .
 
 echo; echo "************ git commit -m \"$comment\""
-git commit -m "$comment"
+git commit -am "$comment"
 
 echo; echo "************ git push"
 git push
