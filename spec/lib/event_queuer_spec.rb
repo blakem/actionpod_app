@@ -14,8 +14,8 @@ describe EventQueuer do
     DelayedJob.all.each { |dj| dj.destroy }
 
     pool_queuer = mock('PoolQueuer')
-    pool_queuer.should_receive(:queue_pool).with(event1.pool, event1.schedule.next_occurrence.utc)
-    pool_queuer.should_receive(:queue_pool).with(event2.pool, event2.schedule.next_occurrence.utc)
+    pool_queuer.should_receive(:queue_pool).with(event1.pool, event1.next_occurrence.utc)
+    pool_queuer.should_receive(:queue_pool).with(event2.pool, event2.next_occurrence.utc)
     PoolQueuer.should_receive(:new).twice.and_return(pool_queuer)
 
     rv = nil

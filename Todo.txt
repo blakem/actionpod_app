@@ -1,6 +1,6 @@
 15 Minute Calls Features and Todo list:
  FrontEnd:
-  Add validator to skip_dates
+  Improve welcome email
   Improve Help/Faq pages
   Add "tips" to outbound email
   Add Feedback Form
@@ -8,8 +8,6 @@
  BackEnd:
   Send emails to stranded clients
   Preferences for other users
-  LowPriority - Phones per event / per occurrence
-  LowPriority - Pool management
 
  Community:
   Ask Garret about Tweet (@15mincalls)
@@ -19,9 +17,10 @@
   Facebook Like buttons (with friends)
 
  Business:
-  Email Rene
   Create 15mc financial spreadsheet
-  LowPriority - Watch Haml Screencast
   
  Other:
   Fix Leather Bracelet
+  Watch Haml Screencast
+  Phones per event / per occurrence
+  Pool management

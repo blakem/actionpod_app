@@ -69,6 +69,13 @@ class Event < ActiveRecord::Base
     self.alter_schedule(:exdates => exdates)
   end
   
+  def next_occurrence(from = Time.now)
+    sched = self.schedule
+    next_occurrence = sched.next_occurrence(from)
+    return next_occurrence if next_occurrence
+    sched.occurrences_between(Time.now, Time.now + (sched.exdates.count + 7).days).first
+  end
+  
   def minute_of_hour
     schedule_validations[:minute_of_hour][0]
   end

@@ -88,7 +88,7 @@ class ApplicationController < ActionController::Base
       pools = viewer.memberships
       Event.all.each do |event|
         next unless pools.include?(event.pool)
-        occurrence = event.schedule.next_occurrence
+        occurrence = event.next_occurrence
         next unless occurrence
         occurrence = occurrence.in_time_zone(viewer.time_zone)
         time = occurrence.strftime('%l:%M%p').downcase.strip

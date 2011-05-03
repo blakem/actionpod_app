@@ -166,7 +166,7 @@ describe Event do
       @event.skip_dates.should == '5/10/2020'
       @event.days = [0,1,2,3,4,5,6]
       @event.schedule.occurrences_between(Time.now, Time.now + 7.days).count.should == 7
-      next_occur = @event.schedule.next_occurrence
+      next_occur = @event.next_occurrence
       @event.skip_dates = next_occur.strftime("%m/%d/%Y")
       @event.schedule.occurrences_between(Time.now, Time.now + 7.days).count.should == 6
     end
@@ -174,7 +174,7 @@ describe Event do
     it "should have a skip_dates accessor and skip_dates setter to it's schedule" do
       @event.days = [0,1,2,3,4,5,6]
       @event.schedule.occurrences_between(Time.now, Time.now + 7.days).count.should == 7
-      next_occur = @event.schedule.next_occurrence
+      next_occur = @event.next_occurrence
       @event.skip_dates = next_occur.strftime("%m/%d/%Y") + ',' + (next_occur + 1.day).strftime("%m/%d/%Y")
       @event.schedule.occurrences_between(Time.now, Time.now + 7.days).count.should == 5
       @event.save
@@ -190,6 +190,19 @@ describe Event do
       user.save
       @event.reload
       @event.schedule.occurrences_between(Time.now, Time.now + 7.days).count.should == 5
+    end
+
+    it "should have a next_occurrence that respects exdates" do
+      @event.days = [0,1,2,3,4,5,6]
+      @event.schedule.occurrences_between(Time.now, Time.now + 7.days).count.should == 7
+      next_occur = @event.schedule.next_occurrence
+      @event.next_occurrence.should == next_occur
+      @event.skip_dates = next_occur.strftime("%m/%d/%Y")
+      @event.schedule.occurrences_between(Time.now, Time.now + 7.days).count.should == 6
+      @event.schedule.next_occurrence.should == nil # <----- This is the buggy behavior we're working around
+      @event.next_occurrence.should == next_occur + 1.day
+      @event.days = []
+      @event.next_occurrence.should be_nil
     end
 
     it "should have a minute_of_day accessor to it's schedule" do
@@ -292,7 +305,7 @@ describe Event do
     end
 
     describe "empty schedule" do
-      it "should not have occurrences if it has not days" do
+      it "should not have occurrences if it has no days" do
         @event.days = []
         @event.time = '8:00pm'
         @event.schedule.next_occurrence.should be_nil

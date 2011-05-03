@@ -9,7 +9,7 @@ class EventQueuer
   end
   
   def queue_event(event, time = Time.now.utc)
-    next_run_time = event.schedule.next_occurrence
+    next_run_time = event.next_occurrence
     return nil unless next_run_time
     next_run_time = next_run_time.utc
     if next_run_time < time.tomorrow.utc
