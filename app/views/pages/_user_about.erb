@@ -21,6 +21,6 @@
     </p>
     <p>&nbsp;</p>
   <% else %>
-    <span class="quote"><%= simple_format('&#8220;' + h(@user.about.strip) + '&#8221;') %></span><hr>
+    <span class="quote"><%= simple_format('&#8220;' + h(@user.about.strip) + '&#8221;') %></span><p>&nbsp;</p><hr class="short" />
   <% end %>
 <% end %>

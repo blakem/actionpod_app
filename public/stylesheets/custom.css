@@ -23,6 +23,20 @@ ul.home li {
     color: #09c;
 }
 
+/* hr */
+
+hr.short {
+    width: 80%;
+	height: 1px;
+}
+hr.white {
+	color: #fff;
+	background-color: #fff;
+}
+hr.long {
+	height: 3px;
+}
+
 newuser textarea { width: 415px; height: 50px; padding:5px; }
 plan textarea { width: 445px; height: 350px; padding:5px; }
 intro textarea { width: 445px; height: 150px; padding:5px; }

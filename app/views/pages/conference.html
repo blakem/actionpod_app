@@ -1,11 +1,13 @@
 <h3>Participants on the <%= @conference.started_at.strftime("%l%p").downcase %> call
 	                   (<%= @conference.started_at.strftime("%A, %B ") %>
 	                    <%= @conference.started_at.strftime("%e").to_i.ordinalize %>):</h3>
-<% @users.each do |user| %>
+<% @users.each_with_index do |user, i| %>
   <% @user = user %>
   <%= render 'user_link' %>
   <%= render 'user_information' %>
   <%= render 'user_about' %>
   <%= render 'user_plan' %>
-<hr/>
+  <% unless i == @users.count - 1 %>
+    <hr class="long" />
+  <% end %>
 <% end %>
