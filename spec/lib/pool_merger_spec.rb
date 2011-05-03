@@ -805,6 +805,21 @@ describe PoolMerger do
           },
         }
       end
+
+      it "another way to write the handle_four test..... Needs plumbing test to go along with it" do
+        events = create_events(4)
+        events[2].user.placed_count = 11
+        events[3].user.placed_count = 12
+        events[1].user.placed_count = 13
+        events[0].user.placed_count = 14
+        events.each { |e| e.save; e.user.save }
+        new_participants = participant_list(4, events)
+        pool = Pool.default_pool
+        pool_runs_at = Time.now
+        @pm.should_receive(:handle_two_new_participants).with([new_participants[2], new_participants[0]], pool, pool_runs_at, {})
+        @pm.should_receive(:handle_two_new_participants).with([new_participants[3], new_participants[1]], pool, pool_runs_at, {})
+        @pm.handle_four_new_participants(new_participants, pool, pool_runs_at, {})
+      end
     end
     
     describe "Handle those who are on hold first" do
