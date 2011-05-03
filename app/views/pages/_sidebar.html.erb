@@ -55,3 +55,7 @@
 <% else %>
   <p><strong><%= @youhave %> no calls scheduled.</strong></p>
 <% end %>
+
+<% if @user != @current_user %>
+  <%= render 'user_preferences'%>
+<% end %>
