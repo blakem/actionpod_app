@@ -1,12 +1,13 @@
 15 Minute Calls Features and Todo list:
  FrontEnd:
+  Add validator to skip_dates
   Improve Help/Faq pages
   Add "tips" to outbound email
   Add Feedback Form
-  Opt-Out days for event schedule
 
  BackEnd:
   Send emails to stranded clients
+  Preferences for other users
   LowPriority - Phones per event / per occurrence
   LowPriority - Pool management
 

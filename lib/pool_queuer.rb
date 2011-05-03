@@ -9,7 +9,7 @@ class PoolQueuer
   end
 
   def time_before_first_merge
-    20.seconds
+    25.seconds
   end
 
   def queue_pool(pool, run_time)

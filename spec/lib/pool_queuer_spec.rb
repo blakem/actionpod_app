@@ -117,7 +117,7 @@ describe PoolQueuer do
     end
     
     it "should have a time_before_first_merge" do
-      @pq.time_before_first_merge.should == 20.seconds
+      @pq.time_before_first_merge.should == 25.seconds
     end
     
     it "should queue merge_calls_for_pool on success" do
@@ -181,23 +181,25 @@ describe PoolQueuer do
       ).count.should == 1
     end
     
-    it "should run on the 176th time" do
+    it "should run on the 175th time" do
+      test_count = 175
       pool_runs_at = @now + 5.minutes
       pool_merger = mock('PoolMerger')
       pool_merger.should_receive(:merge_calls_for_pool).with(@pool, pool_runs_at, {})
       PoolMerger.should_receive(:new).and_return(pool_merger)
       expect {
-        @pq.queue_merge_calls_for_pool(@pool, pool_runs_at, 176, {})
+        @pq.queue_merge_calls_for_pool(@pool, pool_runs_at, test_count, {})
       }.to change(DelayedJob, :count).by(1)
       DelayedJob.where(
         :obj_type    => 'PoolMerger',
         :pool_id     => @pool.id,
         :obj_jobtype => 'merge_calls_for_pool',
-        :run_at      => pool_runs_at + @pq.time_before_first_merge + (@pq.time_between_merges * 176)
+        :run_at      => pool_runs_at + @pq.time_before_first_merge + (@pq.time_between_merges * test_count)
       ).count.should == 1
     end
 
-    it "should exit and update the conference on the 177th time" do
+    it "should exit and update the conference on the 176th time" do
+      test_count = 176
       user1 = Factory(:user)
       user2 = Factory(:user)
       user3 = Factory(:user)
@@ -246,7 +248,7 @@ describe PoolQueuer do
         },
       }
       expect {
-        rv = @pq.queue_merge_calls_for_pool(@pool, ran_at, 177, data)
+        rv = @pq.queue_merge_calls_for_pool(@pool, ran_at, test_count, data)
         rv.should == true
       }.to_not change(DelayedJob, :count)
       conference1.reload
