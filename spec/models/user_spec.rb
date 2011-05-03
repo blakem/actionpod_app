@@ -245,4 +245,44 @@ describe User do
       user.next_call_time_string.should == "Friday at 1:00pm"
     end    
   end
+
+  describe "preferences" do
+    it "should be able to prefer another user" do
+      user = Factory(:user)
+      other_user = Factory(:user)
+      other_user2 = Factory(:user)
+      user.prefer!(other_user)
+      user.preferred_members.should include(other_user)
+      user.preferred_members.should_not include(other_user2)
+      user.avoided_members.should == []
+      user.prefers?(other_user).should be_true
+      user.avoids?(other_user).should be_false
+      
+      user.unprefer!(other_user)
+      user.reload
+      user.preferred_members.should == []
+      user.avoided_members.should == []
+      user.prefers?(other_user).should be_false
+      user.avoids?(other_user).should be_false
+    end
+
+    it "should be able to avoid another user" do
+      user = Factory(:user)
+      other_user = Factory(:user)
+      other_user2 = Factory(:user)
+      user.avoid!(other_user)
+      user.avoided_members.should include(other_user)
+      user.avoided_members.should_not include(other_user2)
+      user.preferred_members.should == []
+      user.avoids?(other_user).should be_true
+      user.prefers?(other_user).should be_false
+      
+      user.unprefer!(other_user)
+      user.reload
+      user.avoided_members.should == []
+      user.preferred_members.should == []
+      user.prefers?(other_user).should be_false
+      user.avoids?(other_user).should be_false
+    end
+  end
 end

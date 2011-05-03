@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110430205507) do
+ActiveRecord::Schema.define(:version => 20110503212230) do
 
   create_table "calls", :force => true do |t|
     t.string   "Sid"
@@ -100,6 +100,14 @@ ActiveRecord::Schema.define(:version => 20110430205507) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "timelimit",  :null => false
+  end
+
+  create_table "preferences", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "other_user_id"
+    t.boolean  "prefer_more"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "rails_admin_histories", :force => true do |t|

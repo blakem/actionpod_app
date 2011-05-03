@@ -54,6 +54,8 @@ class User < ActiveRecord::Base
   has_many :pools
   has_many :phones, :dependent => :destroy
   has_many :plans, :dependent => :destroy
+  has_many :preferences, :dependent => :destroy
+  has_many :preferenced_members, :through => :preferences, :source => :other_user
   has_and_belongs_to_many :conferences, :order => 'id DESC'
   accepts_nested_attributes_for :phones, :allow_destroy => true
 
@@ -102,7 +104,38 @@ class User < ActiveRecord::Base
   def memberships
     self.admin ? Pool.all : [Pool.default_pool]
   end
+
+  def prefers?(other_user)
+    preference = preferences.find_by_other_user_id(other_user.id)
+    preference ? preference.prefer_more : false
+  end
+
+  def avoids?(other_user)
+    preference = preferences.find_by_other_user_id(other_user.id)
+    preference ? !preference.prefer_more : false
+  end
   
+  def prefer!(other_user)
+    preferences.create!(:other_user_id => other_user.id, :prefer_more => true)
+  end
+  
+  def avoid!(other_user)
+    preferences.create!(:other_user_id => other_user.id, :prefer_more => false)
+  end
+  
+  def unprefer!(other_user)
+    preference = preferences.find_by_other_user_id(other_user.id)
+    preference.destroy if preference
+  end
+  
+  def preferred_members
+     preferences.select { |p| p.prefer_more }.map(&:other_user)
+  end
+
+  def avoided_members
+     preferences.select { |p| !p.prefer_more }.map(&:other_user)
+  end
+
   def with_phone
     self.phones.build if self.phones.empty?
     self
