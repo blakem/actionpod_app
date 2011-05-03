@@ -45,6 +45,22 @@ class Event < ActiveRecord::Base
     self.name = self.name.sub(/\d+(:\d{2})?(am|pm)/i, string) unless self.name.blank?
   end
   
+  def skip_dates
+    self.schedule.exdates.map{ |date| date.strftime("%m/%d/%Y").sub(/^0/, '').sub(/\/0/, '/') }.join(',')
+  end
+  
+  def skip_dates=(string)
+    return unless self.user
+    event_minute = self.minute_of_hour
+    event_hour = self.hour_of_day
+    event_time_zone = Time.now.in_time_zone(self.user.time_zone).zone
+    exdates = string.split(',').map{ |s| 
+      time_string = s + " #{event_hour}:#{event_minute} #{event_time_zone}"
+      Time.zone.parse(DateTime.strptime(time_string , "%m/%d/%Y %H:%M %z").to_s)
+    }
+    self.alter_schedule(:exdates => exdates)
+  end
+  
   def minute_of_hour
     schedule_validations[:minute_of_hour][0]
   end
@@ -108,7 +124,9 @@ class Event < ActiveRecord::Base
   def alter_schedule(args)
     sched_hash = schedule_actual.to_hash
     sched_hash[:start_date] = args.delete(:start_date) if args[:start_date]
+    sched_hash[:exdates] = args.delete(:exdates) if args[:exdates]
     sched_hash[:rrules][0][:validations].merge!(args)
+    
     self.schedule_yaml = IceCube::Schedule.from_hash(sched_hash).to_yaml
   end
   
@@ -186,7 +204,9 @@ class Event < ActiveRecord::Base
     end
     
     def schedule_actual
-      IceCube::Schedule.from_yaml(self.schedule_yaml ||= default_schedule.to_yaml)
+      sched = IceCube::Schedule.from_yaml(self.schedule_yaml ||= default_schedule.to_yaml)
+      sched.instance_variable_set(:@exdates, sched.exdates.map { |ed| Time.zone.parse(ed.to_s).in_time_zone(self.user.time_zone) })
+      sched
     end
 
     def ampm_format(hour, minute)

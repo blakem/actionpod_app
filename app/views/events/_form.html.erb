@@ -1,10 +1,15 @@
+<script type="text/javascript">
+$(function() {
+	$('#event_skip_dates').datepick({multiSelect: 99});
+});
+</script>
 <%= form_for(@event) do |f| %>
 <%= pretty_object_error_messages(@event) %>
   <p></p>
   <p><%= f.label :time, "Time we should call you:", :class => "round" %>
   <%= f.collection_select :time, Event.available_hours, :to_s, :to_s %></p>
 
-  <p><label>Days we should call you:</label><br/>
+  <p><label>Days of the week we should call you:</label><br/>
       <%= check_box_tag 'on_sun', 0, @event.on_day(0) %> Sunday <br/>
       <%= check_box_tag 'on_mon', 1, @event.on_day(1) %> Monday <br/>
       <%= check_box_tag 'on_tue', 2, @event.on_day(2) %> Tuesday <br/>
@@ -12,6 +17,11 @@
       <%= check_box_tag 'on_thr', 4, @event.on_day(4) %> Thursday <br/>
       <%= check_box_tag 'on_fri', 5, @event.on_day(5) %> Friday <br/>
       <%= check_box_tag 'on_sat', 6, @event.on_day(6) %> Saturday </p>
+
+
+
+  <p><%= f.label :skip_dates, "But, don't call me on these specific dates:", :class => "round" %> 
+	 <%= f.text_field :skip_dates, :class => "round" %></br></p>
 
   <p><%= f.label :send_sms_reminder, "Send me an SMS reminder 10 minutes prior to call:", :class => "round" %>
 	 <%= f.check_box :send_sms_reminder %><br />

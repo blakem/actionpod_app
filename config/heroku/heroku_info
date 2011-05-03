@@ -5,7 +5,7 @@ Git Repo:       git@heroku.com:actionpods.git
 Dynos:          1
 Workers:        1
 Repo size:      31M
-Slug size:      10M
+Slug size:      11M
 Stack:          bamboo-mri-1.9.2
 Data size:      1M
 Next cron:      2011-05-03 00:30 PDT (scheduled)

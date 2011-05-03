@@ -123,6 +123,28 @@ describe Event do
       @event.time.should == '9:00am'
     end
     
+    it "should have a skip_dates accessor and skip_dates setter to it's schedule" do
+      @event.skip_dates.should == ''
+      @event.skip_dates = '5/10/2020'
+      @event.skip_dates.should == '5/10/2020'
+      @event.days = [0,1,2,3,4,5,6]
+      @event.schedule.occurrences_between(Time.now, Time.now + 7.days).count.should == 7
+      next_occur = @event.schedule.next_occurrence
+      @event.skip_dates = next_occur.strftime("%m/%d/%Y")
+      @event.schedule.occurrences_between(Time.now, Time.now + 7.days).count.should == 6
+    end
+
+    it "should have a skip_dates accessor and skip_dates setter to it's schedule" do
+      @event.days = [0,1,2,3,4,5,6]
+      @event.schedule.occurrences_between(Time.now, Time.now + 7.days).count.should == 7
+      next_occur = @event.schedule.next_occurrence
+      @event.skip_dates = next_occur.strftime("%m/%d/%Y") + ',' + (next_occur + 1.day).strftime("%m/%d/%Y")
+      @event.schedule.occurrences_between(Time.now, Time.now + 7.days).count.should == 5
+      @event.save
+      @event.reload
+      @event.schedule.occurrences_between(Time.now, Time.now + 7.days).count.should == 5
+    end
+
     it "should have a minute_of_day accessor to it's schedule" do
       @event.time = '4:07pm'
       @event.minute_of_day.should == (4+12)*60+7
