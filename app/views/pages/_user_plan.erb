@@ -9,6 +9,9 @@
     <% end %>
     </p>
   <% else %>
+    <% if @user == @current_user %>
+      - <i><%= link_to "Update Goals", :controller => :pages, :action => :plan %></i>
+    <% end %>
     <dl><dd>
     <span class="plan"><%= simple_format(h(plan.body.strip)).gsub(/<br \/>(\s+)/) { "<br />#{'&nbsp;' * $1.length}" } %></span>
     </dd></dl>

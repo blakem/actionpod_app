@@ -21,6 +21,10 @@
     </p>
     <p>&nbsp;</p>
   <% else %>
-    <span class="quote"><%= simple_format('&#8220;' + h(@user.about.strip) + '&#8221;') %></span><p>&nbsp;</p><hr class="short" />
+    <span class="quote"><%= simple_format('&#8220;' + h(@user.about.strip) + '&#8221;') %></span><p>&nbsp;</p>
+  <% if @user == @current_user %>
+    <br/><i> - <%= link_to "Update Introduction", :controller => :pages, :action => :intro %></i>
+  <% end %>
+    <hr class="short" />
   <% end %>
 <% end %>
