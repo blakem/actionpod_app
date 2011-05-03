@@ -18,6 +18,10 @@ class Event < ActiveRecord::Base
   belongs_to :pool
 
   validates_presence_of :name
+  validates_format_of :skip_dates, 
+    :with => /(\A\Z|\A(\d{1,2}\/\d{1,2}\/\d{4}(\,\d{1,2}\/\d{1,2}\/\d{4})*)\Z)/i, 
+    :on => :update, 
+    :message => "must be comma separated dates in m/d/y format. i.e '5/10/2011,5/11/2011'"
 
   before_validation do
     self.name = self.default_name if self.name.blank?
@@ -46,11 +50,15 @@ class Event < ActiveRecord::Base
   end
   
   def skip_dates
+    return @skip_dates if @skip_dates
     self.schedule.exdates.map{ |date| date.strftime("%m/%d/%Y").sub(/^0/, '').sub(/\/0/, '/') }.join(',')
   end
   
   def skip_dates=(string)
     return unless self.user
+    @skip_dates = string
+    return unless string =~ /(\A\Z|\A(\d{1,2}\/\d{1,2}\/\d{4}(\,\d{1,2}\/\d{1,2}\/\d{4})*)\Z)/i
+    @skip_dates = nil
     event_minute = self.minute_of_hour
     event_hour = self.hour_of_day
     event_time_zone = Time.now.in_time_zone(self.user.time_zone).zone

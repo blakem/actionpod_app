@@ -1,7 +1,44 @@
 require 'spec_helper'
 
 describe Event do
-  
+
+  describe "skip_dates" do
+    it "is ok blank" do
+      event = Factory(:event)
+      event.skip_dates.should == ''
+      event.valid?
+      event.errors[:skip_dates].should == []
+    end    
+
+    it "is ok with one date" do
+      event = Factory(:event)
+      event.skip_dates = '5/10/2011'
+      event.valid?
+      event.errors[:skip_dates].should == []
+    end    
+
+    it "is ok with two dates" do
+      event = Factory(:event)
+      event.skip_dates = '5/10/2011,5/11/2011'
+      event.valid?
+      event.errors[:skip_dates].should == []
+    end    
+
+    it "is ok with three dates" do
+      event = Factory(:event)
+      event.skip_dates = '5/10/2011,5/11/2011,10/9/2011'
+      event.valid?
+      event.errors[:skip_dates].should == []
+    end    
+
+    it "is not ok with two digit years" do
+      event = Factory(:event)
+      event.skip_dates = '5/10/11'
+      event.valid?
+      event.errors[:skip_dates].should include("must be comma separated dates in m/d/y format. i.e '5/10/2011,5/11/2011'")
+    end    
+  end
+
   it "should generate a name if it isn't given one" do
     user = Factory(:user, :name => 'Bob Jones')
     event = Factory(:event, :user_id => user.id, :name => '')
