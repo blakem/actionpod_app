@@ -30,6 +30,12 @@ class PagesController < ApplicationController
       @youhave = @user.first_name + " has"
       if (@user != current_user)
         @my = @your
+        @opacity_more = '65'
+        @percent_more = '0.65'
+        @opacity_less = '65'
+        @percent_less = '0.65'
+        @opacity_nutral = '100'
+        @percent_nutral = '1.0'
       end
       @view_options = {
         :hide_view_profile => @user == current_user,
