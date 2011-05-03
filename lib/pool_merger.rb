@@ -80,9 +80,21 @@ class PoolMerger
   end
 
   def handle_four_new_participants(participants, pool, pool_runs_at, data)
-    (user1, user2, user3, user4) = participants.slice!(0,4)
-    handle_two_new_participants([user1, user4], pool, pool_runs_at, data)
-    handle_two_new_participants([user2, user3], pool, pool_runs_at, data)
+    users = {}
+    participants.each_with_index do |participant, i|
+      user = User.find_by_id(participant_user_id(participant))
+      users[user.id] = {
+        :user => user,
+        :index => i,
+      }
+    end
+    sorted = users.sort{ |a,b| 
+      first = a[1][:user].placed_count <=> b[1][:user].placed_count
+      first != 0 ? first : a[0] <=> b[0]
+    }
+    handle_two_new_participants([participants[sorted[0][1][:index]], participants[sorted[3][1][:index]]], pool, pool_runs_at, data)
+    handle_two_new_participants([participants[sorted[1][1][:index]], participants[sorted[2][1][:index]]], pool, pool_runs_at, data)
+    participants.slice!(0,4)
   end
 
   def pick_three_participants(participants)
