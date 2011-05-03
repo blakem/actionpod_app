@@ -37,6 +37,16 @@ describe Event do
       event.valid?
       event.errors[:skip_dates].should include("must be comma separated in mm/dd/yyyy format. i.e '5/10/2011,5/11/2011'")
     end    
+
+    it "is removes old dates and returns them sorted" do
+      event = Factory(:event)
+      event.skip_dates = '5/11/2021,4/10/2011,5/10/2021,10/9/2021'
+      event.valid?
+      event.errors[:skip_dates].should == []
+      event.save
+      event.skip_dates.should == '5/10/2021,5/11/2021,10/9/2021'
+    end    
+
   end
 
   it "should generate a name if it isn't given one" do

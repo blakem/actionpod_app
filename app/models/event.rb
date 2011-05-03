@@ -51,7 +51,8 @@ class Event < ActiveRecord::Base
   
   def skip_dates
     return @skip_dates if @skip_dates
-    self.schedule.exdates.map{ |date| date.strftime("%m/%d/%Y").sub(/^0/, '').sub(/\/0/, '/') }.join(',')
+    self.schedule.exdates.select{ |date| date > Time.now }.sort.
+      map{ |date| date.strftime("%m/%d/%Y").sub(/^0/, '').sub(/\/0/, '/') }.join(',')
   end
   
   def skip_dates=(string)
