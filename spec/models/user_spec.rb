@@ -125,6 +125,7 @@ describe User do
     mountain_time_zone = 'Mountain Time (US & Canada)'
     user = Factory(:user, :time_zone => pacific_time_zone, :name => "Robb Jones")
     event = Factory(:event, :user_id => user.id, :pool_id => Factory(:pool).id, :name => "Robb's 8:00am Call")
+    event.skip_dates = Time.now.tomorrow.strftime("%m/%d/%Y")
     event.schedule
     event.save
     event.reload
@@ -132,18 +133,25 @@ describe User do
     event.name.should == "Robb's 8:00am Call"
 
     event.schedule.start_time.time_zone.to_s.should == "(GMT-08:00) " + pacific_time_zone
+    event.schedule.exdates[0].time_zone.to_s.should == "(GMT-08:00) " + pacific_time_zone
+    event.schedule.exdates[0].hour.should == 8
     user.time_zone = mountain_time_zone
     user.save
     event.reload
     event.schedule.start_time.time_zone.to_s.should == "(GMT-07:00) " + mountain_time_zone
+    event.schedule.exdates[0].time_zone.to_s.should == "(GMT-07:00) " + mountain_time_zone
+    event.schedule.exdates[0].hour.should == 9
     event.time.should == '9:00am'
     event.name.should == "Robb's 9:00am Call"
 
     event.schedule.start_time.time_zone.to_s.should == "(GMT-07:00) " + mountain_time_zone
+    event.schedule.exdates[0].time_zone.to_s.should == "(GMT-07:00) " + mountain_time_zone
     user.time_zone = pacific_time_zone
     user.save
     event.reload
     event.schedule.start_time.time_zone.to_s.should == "(GMT-08:00) " + pacific_time_zone
+    event.schedule.exdates[0].time_zone.to_s.should == "(GMT-08:00) " + pacific_time_zone
+    event.schedule.exdates[0].hour.should == 8
     event.time.should == '8:00am'
     event.name.should == "Robb's 8:00am Call"
   end

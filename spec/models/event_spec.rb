@@ -180,6 +180,16 @@ describe Event do
       @event.save
       @event.reload
       @event.schedule.occurrences_between(Time.now, Time.now + 7.days).count.should == 5
+      user = @event.user
+      user.time_zone.should == 'Mountain Time (US & Canada)'
+      user.time_zone = 'Pacific Time (US & Canada)'
+      user.save
+      @event.reload
+      @event.schedule.occurrences_between(Time.now, Time.now + 7.days).count.should == 5
+      user.time_zone = 'Mountain Time (US & Canada)'
+      user.save
+      @event.reload
+      @event.schedule.occurrences_between(Time.now, Time.now + 7.days).count.should == 5
     end
 
     it "should have a minute_of_day accessor to it's schedule" do
