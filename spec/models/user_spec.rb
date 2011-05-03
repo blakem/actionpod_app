@@ -284,5 +284,20 @@ describe User do
       user.prefers?(other_user).should be_false
       user.avoids?(other_user).should be_false
     end
+
+    it "should delete existing preferences for a user when prefer! or avoid! is called" do
+      user = Factory(:user)
+      other_user = Factory(:user)
+      other_user2 = Factory(:user)
+      user.avoid!(other_user)
+      user.prefer!(other_user)
+      user.preferences.count.should == 1
+
+      user.unprefer!(other_user)
+      user.reload
+      user.prefer!(other_user)
+      user.avoid!(other_user)
+      user.preferences.count.should == 1
+    end
   end
 end

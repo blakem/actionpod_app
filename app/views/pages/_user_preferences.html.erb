@@ -1,9 +1,16 @@
-<img src="/images/icons/users_two_add_48.png" style="opacity:<%= @percent_more %>;filter:alpha(opacity=<%= @opacity_more %>)"
+<%= link_to %(<img src="/images/icons/users_two_add_48.png" style="opacity:#{@percent_more};filter:alpha(opacity=#{@opacity_more})"
 onmouseover="this.style.opacity=1;this.filters.alpha.opacity=100"
-onmouseout="this.style.opacity=<%= @percent_more %>;this.filters.alpha.opacity=<%= @opacity_more %>">
-<img src="/images/icons/users_two_48.png" style="opacity:<%= @percent_nutral %>;filter:alpha(opacity=<%= @opacity_nutral %>)"
+onmouseout="this.style.opacity=#{@percent_more};this.filters.alpha.opacity=#{@opacity_more}">).html_safe, 
+  :controller => :pages, :action => :prefer, :other_user_id => @user.id, :prefer => 'more' %>
+
+<%= link_to %(<img src="/images/icons/users_two_48.png" style="opacity:#{@percent_nutral};filter:alpha(opacity=#{@opacity_nutral})"
 onmouseover="this.style.opacity=1;this.filters.alpha.opacity=100"
-onmouseout="this.style.opacity=<%= @percent_nutral %>;this.filters.alpha.opacity=<%= @opacity_nutral %>">
-<img src="/images/icons/user_two_delete_48.png" style="opacity:<%= @percent_less %>;filter:alpha(opacity=<%= @opacity_less %>)"
+onmouseout="this.style.opacity=#{@percent_nutral};this.filters.alpha.opacity=#{@opacity_nutral}">).html_safe, 
+  :controller => :pages, :action => :prefer, :other_user_id => @user.id, :prefer => 'standard' %>
+
+<%= link_to %(<img src="/images/icons/user_two_delete_48.png" style="opacity:#{@percent_less};filter:alpha(opacity=#{@opacity_less})"
 onmouseover="this.style.opacity=1;this.filters.alpha.opacity=100"
-onmouseout="this.style.opacity=<%= @percent_less %>;this.filters.alpha.opacity=<%= @opacity_less %>">
+onmouseout="this.style.opacity=#{@percent_less};this.filters.alpha.opacity=#{@opacity_less}">).html_safe, 
+  :controller => :pages, :action => :prefer, :other_user_id => @user.id, :prefer => 'less' %>
+
+

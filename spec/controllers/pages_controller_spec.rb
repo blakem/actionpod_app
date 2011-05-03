@@ -265,4 +265,64 @@ describe PagesController do
       end
     end
   end
+
+  describe "GET /pages/prefer" do
+    describe "more" do
+      it "should prefer a user" do
+        login_user
+        other_user = Factory(:user)
+        get :prefer, :other_user_id => other_user.id, :prefer => 'more'
+        flash[:notice].should =~ /You will be put on more calls with #{other_user.first_name}./
+        response.should redirect_to('/u/' + other_user.handle)
+        @current_user.reload
+        @current_user.prefers?(other_user).should be_true
+        @current_user.avoids?(other_user).should be_false
+      end
+      
+      it "should avoid a user" do
+        login_user
+        other_user = Factory(:user)
+        get :prefer, :other_user_id => other_user.id, :prefer => 'less'
+        flash[:notice].should =~ /You will be put on fewer calls with #{other_user.first_name}./
+        response.should redirect_to('/u/' + other_user.handle)
+        @current_user.reload
+        @current_user.prefers?(other_user).should be_false
+        @current_user.avoids?(other_user).should be_true
+      end
+
+      it "should avoid a user" do
+        login_user
+        other_user = Factory(:user)
+        @current_user.prefer!(other_user)
+        get :prefer, :other_user_id => other_user.id, :prefer => 'standard'
+        flash[:notice].should =~ /You will be teamed with #{other_user.first_name} according to the standard algorithm./
+        response.should redirect_to('/u/' + other_user.handle)
+        @current_user.reload
+        @current_user.prefers?(other_user).should be_false
+        @current_user.avoids?(other_user).should be_false
+      end
+    end
+
+    it "should handle bad other_user_id gracefully" do
+      login_user
+      other_user = Factory(:user)
+      @current_user.prefer!(other_user)
+      get :prefer, :other_user_id => other_user.id + 100, :prefer => 'more'
+      response.should redirect_to(root_path)
+      @current_user.reload
+      @current_user.prefers?(other_user).should be_true
+      @current_user.avoids?(other_user).should be_false
+    end
+
+    it "should handle bad prefer values gracefully" do
+      login_user
+      other_user = Factory(:user)
+      @current_user.prefer!(other_user)
+      get :prefer, :other_user_id => other_user.id, :prefer => 'moreorless'
+      response.should redirect_to('/u/' + other_user.handle)
+      @current_user.reload
+      @current_user.prefers?(other_user).should be_true
+      @current_user.avoids?(other_user).should be_false
+    end
+  end
 end

@@ -1,3 +1,16 @@
+# == Schema Information
+# Schema version: 20110503212230
+#
+# Table name: preferences
+#
+#  id            :integer         not null, primary key
+#  user_id       :integer
+#  other_user_id :integer
+#  prefer_more   :boolean
+#  created_at    :datetime
+#  updated_at    :datetime
+#
+
 class Preference < ActiveRecord::Base
   attr_accessible :other_user_id, :prefer_more
   

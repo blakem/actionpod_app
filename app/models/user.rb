@@ -116,10 +116,12 @@ class User < ActiveRecord::Base
   end
   
   def prefer!(other_user)
+    unprefer!(other_user)
     preferences.create!(:other_user_id => other_user.id, :prefer_more => true)
   end
   
   def avoid!(other_user)
+    unprefer!(other_user)
     preferences.create!(:other_user_id => other_user.id, :prefer_more => false)
   end
   

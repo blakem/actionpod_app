@@ -30,12 +30,18 @@ class PagesController < ApplicationController
       @youhave = @user.first_name + " has"
       if (@user != current_user)
         @my = @your
-        @opacity_more = '65'
-        @percent_more = '0.65'
-        @opacity_less = '65'
-        @percent_less = '0.65'
-        @opacity_nutral = '100'
-        @percent_nutral = '1.0'
+        @opacity_more = @opacity_less = @opacity_nutral = '65'
+        @percent_more = @percent_less = @percent_nutral = '0.65'
+        if current_user.prefers?(@user)
+          @opacity_more = '100'
+          @percent_more = '1.0'
+        elsif current_user.avoids?(@user)
+          @opacity_less = '100'
+          @percent_less = '1.0'
+        else
+          @opacity_nutral = '100'
+          @percent_nutral = '1.0'
+        end
       end
       @view_options = {
         :hide_view_profile => @user == current_user,
@@ -43,6 +49,28 @@ class PagesController < ApplicationController
       }
     else
       redirect_to(root_path, :alert => "There is no handle by that name")
+    end
+  end
+  
+  def prefer
+    other_user = User.find_by_id(params[:other_user_id])
+    prefer = params[:prefer]
+    if (other_user)
+      if params[:prefer] == 'more'
+        current_user.prefer!(other_user)   
+        notice = "You will be put on more calls with #{other_user.first_name}."
+      end
+      if params[:prefer] == 'less'
+        current_user.avoid!(other_user)    
+        notice = "You will be put on fewer calls with #{other_user.first_name}."
+      end
+      if params[:prefer] == 'standard'
+        current_user.unprefer!(other_user) 
+        notice = "You will be teamed with #{other_user.first_name} according to the standard algorithm."
+      end
+      redirect_to('/u/' + other_user.handle, :notice => notice)
+    else
+      redirect_to(root_path)
     end
   end
   
