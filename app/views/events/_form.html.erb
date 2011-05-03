@@ -1,8 +1,11 @@
 <script type="text/javascript">
 $(function() {
-	$('#event_skip_dates').datepick({multiSelect: 99});
+	$('#event_skip_dates').datepick({multiSelect: 99, showTrigger: '#calImg'});
 });
 </script>
+<div style="display: none;"> 
+    <img id="calImg" src="/images/cal.gif" alt="Popup" class="trigger"> 
+</div>
 <%= form_for(@event) do |f| %>
 <%= pretty_object_error_messages(@event) %>
   <p></p>

@@ -21,7 +21,7 @@ class Event < ActiveRecord::Base
   validates_format_of :skip_dates, 
     :with => /(\A\Z|\A(\d{1,2}\/\d{1,2}\/\d{4}(\,\d{1,2}\/\d{1,2}\/\d{4})*)\Z)/i, 
     :on => :update, 
-    :message => "must be comma separated dates in m/d/y format. i.e '5/10/2011,5/11/2011'"
+    :message => "must be comma separated in mm/dd/yyyy format. i.e '5/10/2011,5/11/2011'"
 
   before_validation do
     self.name = self.default_name if self.name.blank?

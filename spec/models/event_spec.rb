@@ -35,7 +35,7 @@ describe Event do
       event = Factory(:event)
       event.skip_dates = '5/10/11'
       event.valid?
-      event.errors[:skip_dates].should include("must be comma separated dates in m/d/y format. i.e '5/10/2011,5/11/2011'")
+      event.errors[:skip_dates].should include("must be comma separated in mm/dd/yyyy format. i.e '5/10/2011,5/11/2011'")
     end    
   end
 
