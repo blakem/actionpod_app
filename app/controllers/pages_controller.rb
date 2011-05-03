@@ -31,7 +31,10 @@ class PagesController < ApplicationController
       if (@user != current_user)
         @my = @your
       end
-      @view_options = {:hide_view_profile => @user == current_user}
+      @view_options = {
+        :hide_view_profile => @user == current_user,
+        :show_user_preferences => @user != current_user,
+      }
     else
       redirect_to(root_path, :alert => "There is no handle by that name")
     end
