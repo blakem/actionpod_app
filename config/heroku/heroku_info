@@ -10,5 +10,5 @@ Stack:          bamboo-mri-1.9.2
 Data size:      1M
 Next cron:      2011-05-05 00:30 PDT (scheduled)
 Last cron:      2011-05-04 00:30 PDT (finished)
-Addons:         Daily Cron, Custom Domains, Expanded Logging, PG Backups Basic, Basic Release Management, Sendgrid Free, Shared Database 5MB
+Addons:         Cron Daily Cron, Custom Domains, Expanded Logging, PG Backups Basic, Basic Release Management, Sendgrid Free, Shared Database 5MB
 Owner:          blakem30@yahoo.com

@@ -1,16 +1,16 @@
 15 Minute Calls Features and Todo list:
  FrontEnd:
-  Improve welcome email
   Improve Help/Faq pages
+  Improve welcome email
   Add "tips" to outbound email
-  Add Feedback Form
+  Slider UI for user preferences
+  Add count-down timer on Current Conference page
 
  BackEnd:
   Send emails to stranded clients
-  Preferences for other users
 
  Community:
-  Done - Ask Garret about Tweet (@15mincalls)
+  Ask Garret about Tweet (@15mincalls)
   Email Team IO about 15mc
   Email TMC about 15mc
   Facebook Fan Page
@@ -18,7 +18,6 @@
 
  Business:
   Create 15mc financial spreadsheet
-  Done - put @15mincalls on card
   
  Other:
   Fix Leather Bracelet
@@ -26,3 +25,5 @@
   Phones per event / per occurrence
   Pool management
   Change all 'User' copy to 'Member'
+  Add Feedback Form
+  

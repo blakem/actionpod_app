@@ -1,10 +1,10 @@
 <h3> Stranded Users:</h3>
 <% @users.each do |user| %>
    <%= gravatar_for user, :size => 30 %> <%= link_to user.name, "/u/" + user.handle %>
-   Events:<%= user.events.count %>
-   Called:<%= user.called_count %>
-   Answered:<%= user.answered_count %>
    Placed:<%= user.placed_count %>
+   Answered:<%= user.answered_count %>
+   Called:<%= user.called_count %>
    Incoming:<%= user.incoming_count %>
+   Events:<%= user.events.count %>
    <br/>
 <% end %>
