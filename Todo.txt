@@ -18,6 +18,7 @@
 
  Business:
   Create 15mc financial spreadsheet
+  put @15mincalls on card
   
  Other:
   Fix Leather Bracelet
