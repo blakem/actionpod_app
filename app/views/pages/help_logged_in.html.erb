@@ -1,17 +1,17 @@
 <%= render 'home_status_message' %>
 <h3>Welcome</h3>
 <p>
-Welcome to the site!  I'm glad you decided to give it a try.  First off, this site is in active development,
-so changes are happening fast.  I'm excited to have you on board for the ride.
+Welcome to the site!  I've had fun building it and meeting other members on the calls.  Hopefully, I'll get 
+a chance to check-in with you on one of the upcoming calls. ;-) 
 </p>
  
 <h3>Getting Started</h3>
 You'll want to do three things to get started:
 <ul>
-	<li>Choose a time slot for us to call you on the <%= link_to "home", root_path %> page</li>
+	<li>Choose a time for us to call you on the <%= link_to "home", root_path %> page</li>
     <li><%= link_to "Add an introduction", :controller => :pages, :action => :intro %>
 	 that tells other a bit about what you're up to.</li>
-    <li><%= link_to "Create your first daily plan", :controller => :pages, :action => :plan %></li>
+    <li><%= link_to "Enter in a few of your goals", :controller => :pages, :action => :plan %></li>
 </ul>
 <p>
 You can join an existing time-slot on the <%= link_to "home", root_path %> page simply by clicking on one of the
@@ -23,8 +23,8 @@ The other callers will be able to see this during your 15 minute call.  This is 
 I'm writing a book.  I'm building a new software project.  I'm starting my own business.  etc.
 </p>
 <p>
-Your daily plan is where you'll put the specifics of what you are doing that day.  Who are you going to email, when?
-Lunch plans?  Software features to write?  Phone calls to make?  This is the place to put them all in one place.
+In the goals section, enter three goals for your week and what you're doing today to make progress on them.  Who are you 
+going to email, when? Lunch plans?  Software features to write?  Phone calls to make?  This is the place to put them all in one place.
 </p>
 <%= render 'help_how_it_works' %>
 <%= render 'help_calls' %>
@@ -33,7 +33,7 @@ Lunch plans?  Software features to write?  Phone calls to make?  This is the pla
 <p>
 If you include your facebook id in your profile, we will use your facebook photo for your avatar.  Otherwise we use
 a service called gravatar to try and match your email up with an avatar.  Both work great, so you may fill in your
-facebook id or link your email to an avatar on gravatar.
+facebook id or link your email to an avatar on <%= link_to "gravatar", "http://en.gravatar.com/site/signup" %>.
 </p>
 <h3>Managing Phones</h3>
 <p>

@@ -1,6 +1,5 @@
 15 Minute Calls Features and Todo list:
  FrontEnd:
-  Improve Help/Faq pages
   Improve welcome email
   Add "tips" to outbound email
   Slider UI for user preferences
