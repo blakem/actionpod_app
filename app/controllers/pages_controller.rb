@@ -43,6 +43,9 @@ class PagesController < ApplicationController
           @percent_nutral = '1.0'
         end
       end
+      @pref_less_text = "Prefer more calls with #{@user.first_name}"
+      @pref_more_text = "Prefer less calls with #{@user.first_name}"
+      @pref_standard_text = "Prefer normal amount of calls with #{@user.first_name}"
       @view_options = {
         :hide_view_profile => @user == current_user,
         :show_user_preferences => @user != current_user,
