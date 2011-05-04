@@ -33,8 +33,12 @@
   <%= link_to('Edit Your Profile Information', edit_user_registration_path) %><br/>
 <% end %>
 <% unless @view_options[:hide_call_groups] or @user.events.empty? %>
-  <% call_groups = current_user.events.count > 1 ? 'groups' : 'group'%>
-  <%= link_to "Who's in my call #{call_groups}?", :controller => :pages, :action => :call_groups %><br/>
+  <% if current_user.admin? %>
+    <%= link_to "All Call Groups", :controller => :pages, :action => :call_groups %><br/>
+  <% else %>
+    <% call_groups = current_user.events.count > 1 ? 'groups' : 'group'%>
+    <%= link_to "Who's in my call #{call_groups}?", :controller => :pages, :action => :call_groups %><br/>
+  <% end %>
 <% end %>
   <%= link_to "Manage Multiple Phones", phones_path %><br/>
 <% if current_user.admin? %>

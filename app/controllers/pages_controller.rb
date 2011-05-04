@@ -157,6 +157,9 @@ class PagesController < ApplicationController
     set_profile_values
     @view_options = {:hide_call_groups => true}    
     @call_groups = build_call_groups(current_user, current_user)
+    @my = current_user.admin? ? 'All' : 'My'
+    @groups = @call_groups.length > 1 ? 'Groups' : 'Group'
+    @groups = 'Groups' if current_user.admin?
   end
 
   def time_slot

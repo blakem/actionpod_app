@@ -102,7 +102,7 @@ class ApplicationController < ActionController::Base
         call_groups[key][:events].push [event.id, event.user_id]
         my_calls[key] = true if user and event.user_id == user.id
       end
-      call_groups = call_groups.select{ |k,v| my_calls[k]} if user      
+      call_groups = call_groups.select{ |k,v| my_calls[k]} if user && !viewer.admin?     
       call_groups.
         sort{ |a,b| 
           first = a[1][:minute] <=> b[1][:minute]
