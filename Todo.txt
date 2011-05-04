@@ -25,3 +25,4 @@
   Watch Haml Screencast
   Phones per event / per occurrence
   Pool management
+  Change all 'User' copy to 'Member'

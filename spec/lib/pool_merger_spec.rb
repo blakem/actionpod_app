@@ -819,6 +819,23 @@ describe PoolMerger do
         @pm.should_receive(:handle_two_new_participants).with([new_participants[2], new_participants[0]], pool, pool_runs_at, {})
         @pm.should_receive(:handle_two_new_participants).with([new_participants[3], new_participants[1]], pool, pool_runs_at, {})
         @pm.handle_four_new_participants(new_participants, pool, pool_runs_at, {})
+        new_participants.should be_empty
+      end
+
+      it "groups all four together if there is a newbie" do
+        events = create_events(4)
+        events[0].user.placed_count = 0
+        events[1].user.placed_count = 1
+        events[2].user.placed_count = 2
+        events[3].user.placed_count = 3
+        events.each { |e| e.save; e.user.save }
+        new_participants = participant_list(4, events)
+        pool = Pool.default_pool
+        pool_runs_at = Time.now
+        @pm.should_receive(:create_new_group).with([new_participants[0], new_participants[1], new_participants[2], new_participants[3]], 
+          pool, pool_runs_at, {})
+        @pm.handle_four_new_participants(new_participants, pool, pool_runs_at, {})
+        new_participants.should be_empty
       end
     end
     

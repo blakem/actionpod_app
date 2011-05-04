@@ -149,7 +149,7 @@ describe ApplicationController do
       ]}]
     end
 
-    it "shows all pools for admin users" do
+    it "shows all pools and all calls for admin users" do
       @user2.toggle!(:admin)
       @ac.send(:build_call_groups, @user2, @user2).should == [{
         :time=>"8:00am", 
@@ -175,11 +175,21 @@ describe ApplicationController do
         :events=> [ 
           [@event25.id, @user2.id], 
       ]}, {
+        :time=>"2:01pm", 
+        :pool=>@pool2.id,
+        :events=> [ 
+          [@event35.id, @user3.id], 
+      ]}, {
         :time=>"3:05pm", 
         :pool=>@pool2.id,
         :events=> [ 
           [@event36.id, @user3.id], 
           [@event26.id, @user2.id], 
+      ]}, {
+        :time=>"8:00pm", 
+        :pool=>1,
+        :events=> [ 
+          [@event33.id, @user3.id],
       ]}]
     end
   end
