@@ -39,13 +39,13 @@ class ApplicationController < ActionController::Base
     def build_nextcalls(user)
       calls = []
       start_time = Time.now
-      end_time = start_time + 7.days
+      end_time = start_time + 1.month
       user.events.each do |event|
         event.schedule.occurrences_between(start_time, end_time).each do |occurrence|
           calls.push(occurrence.in_time_zone(current_user.time_zone))
         end
       end
-      calls = calls.sort{ |a,b| a <=> b }.map { |c| c.strftime("%l:%M%p on %A").sub(/AM/,'am').sub(/PM/,'pm').strip }
+      calls = calls.sort{ |a,b| a <=> b }.map { |c| c.strftime("%l:%M%p on %a %b #{c.day.ordinalize}").sub(/AM/,'am').sub(/PM/,'pm').strip }
       calls[0..4]
     end
 

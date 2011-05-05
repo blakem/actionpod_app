@@ -1,6 +1,7 @@
 15 Minute Calls Features and Todo list:
  FrontEnd:
   Improve welcome email
+  Copy for JVD Newsletter
   Add "tips" to outbound email
   Slider UI for user preferences
   Add count-down timer on Current Conference page

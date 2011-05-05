@@ -201,23 +201,23 @@ describe ApplicationController do
     end
 
     it "should return a list of the users next 5 calls" do
-      @ac.send(:build_nextcalls, @user2).should == [
-        "8:00am on Monday",
-        "11:00am on Monday",
-        "2:00pm on Monday",
-        "2:01pm on Monday",
-        "3:05pm on Monday",
-      ]
+      next_calls = @ac.send(:build_nextcalls, @user2)
+      next_calls.length.should == 5
+      next_calls[0].should =~ /^8:00am on Mon \w+ \d+\w+/
+      next_calls[1].should =~ /^11:00am on Mon \w+ \d+\w+/
+      next_calls[2].should =~ /^2:00pm on Mon \w+ \d+\w+/
+      next_calls[3].should =~ /^2:01pm on Mon \w+ \d+\w+/
+      next_calls[4].should =~ /^3:05pm on Mon \w+ \d+\w+/
     end
 
     it "should display in the current_users time_zone" do
-      @ac.send(:build_nextcalls, @user3).should == [
-        "8:00am on Monday",
-        "11:00am on Monday",
-        "2:00pm on Monday",
-        "2:01pm on Monday",
-        "3:05pm on Monday",
-      ]
+      next_calls = @ac.send(:build_nextcalls, @user3)
+      next_calls.length.should == 5
+      next_calls[0].should =~ /^8:00am on Mon \w+ \d+\w+/
+      next_calls[1].should =~ /^11:00am on Mon \w+ \d+\w+/
+      next_calls[2].should =~ /^2:00pm on Mon \w+ \d+\w+/
+      next_calls[3].should =~ /^2:01pm on Mon \w+ \d+\w+/
+      next_calls[4].should =~ /^3:05pm on Mon \w+ \d+\w+/
     end
   end
   
