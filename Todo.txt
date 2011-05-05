@@ -8,6 +8,7 @@
 
  BackEnd:
   Send emails to stranded clients
+  Install stilalive basic monitoring service
 
  Community:
   Ask Garret about Tweet (@15mincalls)
@@ -17,7 +18,6 @@
   Facebook Like buttons (with friends)
 
  Business:
-  Create 15mc financial spreadsheet
   
  Other:
   Fix Leather Bracelet

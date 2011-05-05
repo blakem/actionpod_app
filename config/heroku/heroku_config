@@ -5,6 +5,7 @@ DATABASE_URL            => postgres://shragsqatn:K7wpTVJushd-sDU0uf9c@ec2-50-17-
 LANG                    => en_US.UTF-8
 PGBACKUPS_URL           => https://4473:ezphjyqcqh2376drsrc1xdy1d@pgbackups.heroku.com/client
 RACK_ENV                => production
+RECURLY_CONFIG          => {"username":"test-app477680@heroku.com","password":"d0945e929b794ed2a1f2e3c9a914a920","site":"https://app477680-heroku-test.recurly.com"}
 SENDGRID_DOMAIN         => froom.com
 SENDGRID_PASSWORD       => 638d9840370d5c41d9
 SENDGRID_USERNAME       => app477680@heroku.com
