@@ -29,6 +29,20 @@ going to email, when? Lunch plans?  Software features to write?  Phone calls to 
 <%= render 'help_how_it_works' %>
 <%= render 'help_calls' %>
 
+<h3>Help! I'm not receiving any calls.</h3>
+<p>
+Some members have experienced problems receiving their first call.  If you have any sort of screening set on your phone (Google Voice, etc)
+call will not make it through.  You can either provide a different number or configure your screening setup to allow direct calls from the
+15 Minute Call number (415-766-9865)
+</p>
+<p>
+To test it out, <%= link_to "click here to place a test call to #{current_user.primary_phone.number.sub(/\+1(\d{3})(\d{3})/, '(\1) \2-')}",
+                            :controller => :pages, :action => :place_test_call %>.
+</p>
+<p>
+If you're still having troubles receiving a call, please contact us at support@15minutecalls.com.
+</p>
+
 <h3>Avatars</h3>
 <p>
 If you include your facebook id in your profile, we will use your facebook photo for your avatar.  Otherwise we use
