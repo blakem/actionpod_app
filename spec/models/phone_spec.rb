@@ -31,5 +31,11 @@ describe Phone do
     phone3.valid?.should be_false
     phone3.errors[:number].should include("can't be blank")
   end
+
+  it "can format your phone number into a pretty string" do
+    user = Factory(:user)
+    phone = Phone.create(:string => '+14154441234', :user_id => user.id, :primary => true)
+    user.primary_phone.number_pretty.should == '(415) 444-1234'
+  end
   
 end

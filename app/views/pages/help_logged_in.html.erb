@@ -36,7 +36,7 @@ call will not make it through.  You can either provide a different number or con
 15 Minute Call number (415-766-9865)
 </p>
 <p>
-To test it out, <%= link_to "click here to place a test call to #{current_user.primary_phone.number.sub(/\+1(\d{3})(\d{3})/, '(\1) \2-')}",
+To test it out, <%= link_to "click here to place a test call to #{current_user.primary_phone.number_pretty}",
                             :controller => :pages, :action => :place_test_call %>.
 </p>
 <p>

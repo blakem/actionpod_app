@@ -4,7 +4,7 @@ From: <%= @user.location.blank? ? 'None' : @user.location %><br/>
   Email: <%= @user.email %><br/>
 <% end %>
 <% if @current_user.admin? %>
-  Phone: <%= link_to @user.primary_phone.number.sub(/\+1(\d{3})(\d{3})/, '(\1) \2-'), 
+  Phone: <%= link_to @user.primary_phone.number_pretty, 
                      :controller => :pages, :action => :place_test_call, :user_id => @user.id %><br/>
 <% end %>
 Member Since: <%= @user.created_at.strftime("%B #{@user.created_at.day.ordinalize}, %Y") %>

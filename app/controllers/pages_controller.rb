@@ -184,7 +184,7 @@ class PagesController < ApplicationController
       tc.start_call_for_user(@user, {
         'Url' => tc.base_url + '/place_test_call.xml',
       })
-      redirect_to('/u/' + @user.handle, :notice => "Placing test call to: #{@user.primary_phone.number}")
+      redirect_to('/u/' + @user.handle, :notice => "Placing test call to: #{@user.primary_phone.number_pretty}")
     end      
   end
 end

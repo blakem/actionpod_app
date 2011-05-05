@@ -36,4 +36,8 @@ class Phone < ActiveRecord::Base
     return super(attribute_key_name, options)
   end
   
+  def number_pretty
+    return self.number.sub(/\+1(\d{3})(\d{3})/, '(\1) \2-')
+  end
+  
 end

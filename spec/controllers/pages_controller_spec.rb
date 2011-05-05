@@ -195,8 +195,8 @@ describe PagesController do
         login_user
   	    controller.user_signed_in?.should be_true
         user2 = Factory(:user)
-        phone = Factory(:phone, :user_id => user2.id, :primary => true)        
-        phone_string = phone.number.sub(/\+1(\d{3})(\d{3})/, '\(\1\) \2-')
+        phone = Factory(:phone, :user_id => user2.id, :primary => true)
+        phone_string = phone.number_pretty.sub(/\(/, "\\(").sub(/\)/, "\\)")
         get :profile, :handle => user2.handle 
         response.should be_success
         response.should have_selector('h1', :content => user2.name )
@@ -209,7 +209,7 @@ describe PagesController do
         login_user
         user2 = Factory(:user, :hide_email => true)
         phone = Factory(:phone, :user_id => user2.id, :primary => true)        
-        phone_string = phone.number.sub(/\+1(\d{3})(\d{3})/, '\(\1\) \2-')
+        phone_string = phone.number_pretty.sub(/\(/, "\\(").sub(/\)/, "\\)")
         get :profile, :handle => user2.handle 
         response.should be_success
         response.should have_selector('h1', :content => user2.name )
@@ -222,7 +222,7 @@ describe PagesController do
         login_admin
         user2 = Factory(:user, :hide_email => true)
         phone = Factory(:phone, :user_id => user2.id, :primary => true)        
-        phone_string = phone.number.sub(/\+1(\d{3})(\d{3})/, '\(\1\) \2-')
+        phone_string = phone.number_pretty.sub(/\(/, "\\(").sub(/\)/, "\\)")
         get :profile, :handle => user2.handle 
         response.should be_success
         response.should have_selector('h1', :content => user2.name )
