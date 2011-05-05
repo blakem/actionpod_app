@@ -86,6 +86,7 @@ describe PagesController do
 
       it "should be successful when logged in" do
         login_user
+        phone = Factory(:phone, :user_id => @current_user.id, :primary => true)
   	    controller.user_signed_in?.should be_true
         get :help
         response.should be_success
