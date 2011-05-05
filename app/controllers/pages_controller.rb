@@ -16,7 +16,11 @@ class PagesController < ApplicationController
   
   def my_profile
     @events = current_user.events.sort { |a,b| a.minute_of_day <=> b.minute_of_day }
-    @conferences = current_user.conferences.paginate(:page => params[:page], :per_page => 5)
+    if current_user.admin?
+      @conferences = Conference.order("id DESC").paginate(:page => params[:page], :per_page => 5)
+    else
+      @conferences = current_user.conferences.paginate(:page => params[:page], :per_page => 5)
+    end
     @timeslots = build_timeslots
     set_profile_values
   end
