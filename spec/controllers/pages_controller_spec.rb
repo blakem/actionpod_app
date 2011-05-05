@@ -189,21 +189,51 @@ describe PagesController do
   end
 
   describe "GET /u/handle" do
-    login_user_before_each
-
     describe "success" do
       it "should be successful when logged in" do
+        login_user
   	    controller.user_signed_in?.should be_true
         user2 = Factory(:user)
+        phone = Factory(:phone, :user_id => user2.id, :primary => true)        
+        phone_string = phone.number.sub(/\+1(\d{3})(\d{3})/, '\(\1\) \2-')
         get :profile, :handle => user2.handle 
         response.should be_success
         response.should have_selector('h1', :content => user2.name )
         response.should have_selector('title', :content => '15 Minute Calls')
+        response.body.should =~ /#{user2.email}/
+        response.body.should_not =~ /#{phone_string}/
+      end
+
+      it "should hide a users email when hide_email is turned on" do
+        login_user
+        user2 = Factory(:user, :hide_email => true)
+        phone = Factory(:phone, :user_id => user2.id, :primary => true)        
+        phone_string = phone.number.sub(/\+1(\d{3})(\d{3})/, '\(\1\) \2-')
+        get :profile, :handle => user2.handle 
+        response.should be_success
+        response.should have_selector('h1', :content => user2.name )
+        response.should have_selector('title', :content => '15 Minute Calls')
+        response.body.should_not =~ /#{user2.email}/
+        response.body.should_not =~ /#{phone_string}/
+      end
+
+      it "should show email and phone number if viewed by an admin" do
+        login_admin
+        user2 = Factory(:user, :hide_email => true)
+        phone = Factory(:phone, :user_id => user2.id, :primary => true)        
+        phone_string = phone.number.sub(/\+1(\d{3})(\d{3})/, '\(\1\) \2-')
+        get :profile, :handle => user2.handle 
+        response.should be_success
+        response.should have_selector('h1', :content => user2.name )
+        response.should have_selector('title', :content => '15 Minute Calls')
+        response.body.should =~ /#{user2.email}/
+        response.body.should =~ /#{phone_string}/
       end
     end
     
     describe "failure" do
       it "should redirect if given an incorrect handle" do
+        login_user
   	    controller.user_signed_in?.should be_true
         get :profile, :handle => 'somethingthatdoesnotmatch'
         flash[:alert].should =~ /There is no handle by that name/i

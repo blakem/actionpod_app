@@ -1,7 +1,10 @@
 Title: <%= @user.title.blank? ? 'None' : @user.title %><br/>
 From: <%= @user.location.blank? ? 'None' : @user.location %><br/>
-<% unless @user.hide_email %>
-Email: <%= @user.email %><br/>
+<% if !@user.hide_email || @current_user.admin? %>
+  Email: <%= @user.email %><br/>
+<% end %>
+<% if @current_user.admin? %>
+  Phone: <%= @user.primary_phone.number.sub(/\+1(\d{3})(\d{3})/, '(\1) \2-') %><br/>
 <% end %>
 Member Since: <%= @user.created_at.strftime("%B #{@user.created_at.day.ordinalize}, %Y") %>
 <p>&nbsp;</p>
