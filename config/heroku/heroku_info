@@ -4,8 +4,8 @@ Domain name:    http://fifteenminutecalls.com/
 Git Repo:       git@heroku.com:actionpods.git
 Dynos:          1
 Workers:        1
-Repo size:      33M
-Slug size:      11M
+Repo size:      34M
+Slug size:      12M
 Stack:          bamboo-mri-1.9.2
 Data size:      1M
 Next cron:      2011-05-06 00:30 PDT (scheduled)

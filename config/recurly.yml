@@ -1,0 +1,6 @@
+--- 
+username: myemail@mydomain.com
+password: my_api_key
+private_key: my_private_key
+subdomain: mysite
+site: https://api-production.recurly.com
