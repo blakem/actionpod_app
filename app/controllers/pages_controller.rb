@@ -167,4 +167,20 @@ class PagesController < ApplicationController
     @call_group = build_call_groups(current_user).select{ |cg| cg[:time] == params[:time] }[0]
     redirect_to(root_path, :alert => "There is no call at that time.") unless @call_group
   end
+  
+  def place_test_call
+    @user = current_user
+    if params[:user_id] && current_user.admin?
+      @user = User.find_by_id(params[:user_id])
+    end
+    unless @user
+      redirect_to(root_path, :alert => "Couldn't find user.")
+    else
+      tc = TwilioCaller.new
+      tc.start_call_for_user(@user, {
+        'Url' => tc.base_url + '/place_test_call.xml',
+      })
+      redirect_to('/u/' + @user.handle, :notice => "Placing test call to: #{@user.primary_phone.number}")
+    end      
+  end
 end

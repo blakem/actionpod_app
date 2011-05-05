@@ -17,6 +17,18 @@ describe TwilioController do
     end
   end
 
+  describe "place_test_call" do
+    it "should be success" do
+  	  controller.user_signed_in?.should be_false
+      post :place_test_call
+      hash = (Hash.from_xml response.body).with_indifferent_access
+      hash[:Response].should be_true
+      response.content_type.should =~ /^application\/xml/
+      response.should be_success
+      response.should have_selector('response>say', :content => "Welcome to 15 Minute Calls. Your phone is now set up and ready to go.  Thank you and have an awesome day.")
+    end
+  end
+  
   describe "greeting" do
     it "should say can't match this number when it can't find an event" do
       call = Call.create(:Sid => '12345', :status => 'outgoing')

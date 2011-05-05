@@ -1,6 +1,7 @@
 class TwilioController < ApplicationController
 
   respond_to :html, :xml
+
   def greeting
     event = find_event_from_params(params)
     unless event
@@ -35,6 +36,9 @@ class TwilioController < ApplicationController
   end
 
   def say_sorry
+  end
+  
+  def place_test_call
   end
 
   def apologize_no_other_participants
