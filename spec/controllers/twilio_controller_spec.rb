@@ -25,7 +25,7 @@ describe TwilioController do
       hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
       response.should be_success
-      response.should have_selector('response>say', :content => "Welcome to 15 Minute Calls. Your phone is now set up and ready to go.  Thank you and have an awesome day.")
+      response.should have_selector('response>say', :content => "Welcome. Your phone is now set up and ready to go.  Thank you and have an awesome day.")
     end
   end
   
