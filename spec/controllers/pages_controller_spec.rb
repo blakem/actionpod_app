@@ -298,6 +298,42 @@ describe PagesController do
     end
   end
 
+  describe "GET /pages/conference_email" do
+    describe "when not logged in" do
+      it "should redirect to the root path" do
+        controller.user_signed_in?.should be_false
+        get :conference_email
+        response.should redirect_to(new_user_session_path)
+      end
+    end
+
+    describe "when user logged in" do
+      it "should redirect to the root path" do
+        login_user
+        get :conference_email
+        flash[:alert].should =~ /You don't have access to that page/i
+        response.should redirect_to(root_path)
+      end
+    end
+
+    describe "when admin logged in" do
+      it "should be a success" do
+        login_admin
+        admin_phone = Factory(:phone, :user_id => @current_user.id, :primary => true)
+        user1 = Factory(:user)
+        phone1 = Factory(:phone, :user_id => user1.id, :primary => true)
+        user2 = Factory(:user)
+        phone2 = Factory(:phone, :user_id => user2.id, :primary => true)
+        conference = Conference.create!(:status => 'completed')
+        conference.users = [@current_user, user1, user2]
+        get :conference_email
+        response.should be_success
+        response.body.should =~ /#{@current_user.email}/
+        response.body.should =~ /Notes for your 15 Minute Call/
+      end
+    end
+  end
+
   describe "GET /pages/stranded_users" do
     describe "when not logged in" do
       it "should redirect to the root path" do

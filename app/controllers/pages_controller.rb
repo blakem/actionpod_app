@@ -188,6 +188,16 @@ class PagesController < ApplicationController
     end
   end
   
+  def conference_email
+    if admin_signed_in?
+      set_profile_values
+      conference = current_user.conferences.select { |c| c.users.count == 3 }.first
+      render :inline => message = UserMailer.conference_email(current_user, conference.users).body.raw_source.html_safe, :layout => true
+    else
+      redirect_no_access
+    end
+  end
+
   def confirmation_email
     if admin_signed_in?
       set_profile_values
