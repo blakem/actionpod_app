@@ -1,7 +1,6 @@
 <p>Hey there, <%= @resource.first_name %>.  Welcome to 15 Minute Calls. I'm happy you decided to try it out. ;-)</p>
 <p>&nbsp;</p>
-<p>There are four steps to get you to your first call.</p>
-<p>&nbsp;</p>
+<p>There are four steps to get you to your first call:</p>
 <ol>
 	<li><%= link_to 'Click here to confirm your account', confirmation_url(@resource, :confirmation_token => @resource.confirmation_token) %></li>
     <li>Make sure we've got your phone set up properly. <%= link_to 'Click here to place a test call to your phone',
@@ -13,6 +12,7 @@
 <p>
 That's it.  You're all set.  If you encounter <i>any</i> problems getting set up, please contact me directly at blakem@15minutecalls.com
 </p>
+<p>&nbsp;</p>
 
 <p>
 A few tips for making this work for you:
@@ -30,5 +30,6 @@ A few tips for making this work for you:
 Send any comments, questions, or feedback to me directly at blakem@15minutecalls.com.  I will try to respond within 24 hours.
 </p>
 
+<p>
 -Blake
 </p>
