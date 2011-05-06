@@ -4,4 +4,5 @@
 <p>&nbsp;</p>
 <ul>
 	<li><%= link_to 'Click here to confirm your account', confirmation_url(@resource, :confirmation_token => @resource.confirmation_token) %></li>
+    <li>Make sure we've got your phone set up properly. <%= link_to 'Click here to place a test call to your phone' %></li>
 </ul>
