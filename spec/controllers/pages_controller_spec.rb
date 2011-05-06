@@ -366,8 +366,8 @@ describe PagesController do
       it "should prefer a user" do
         login_user
         other_user = Factory(:user)
-        get :prefer, :other_user_id => other_user.id, :prefer => 'more'
-        flash[:notice].should =~ /You will be put on more calls with #{other_user.first_name}./
+        get :prefer, :other_user_id => other_user.id, :prefer => '3'
+        flash[:notice].should =~ /more calls with #{other_user.first_name}./
         response.should redirect_to('/u/' + other_user.handle)
         @current_user.reload
         @current_user.prefers?(other_user).should be_true
@@ -377,20 +377,20 @@ describe PagesController do
       it "should avoid a user" do
         login_user
         other_user = Factory(:user)
-        get :prefer, :other_user_id => other_user.id, :prefer => 'less'
-        flash[:notice].should =~ /You will be put on fewer calls with #{other_user.first_name}./
+        get :prefer, :other_user_id => other_user.id, :prefer => '1'
+        flash[:notice].should =~ /fewer calls with #{other_user.first_name}./
         response.should redirect_to('/u/' + other_user.handle)
         @current_user.reload
         @current_user.prefers?(other_user).should be_false
         @current_user.avoids?(other_user).should be_true
       end
 
-      it "should avoid a user" do
+      it "should set a user to standard" do
         login_user
         other_user = Factory(:user)
         @current_user.prefer!(other_user)
-        get :prefer, :other_user_id => other_user.id, :prefer => 'standard'
-        flash[:notice].should =~ /You will be teamed with #{other_user.first_name} according to the standard algorithm./
+        get :prefer, :other_user_id => other_user.id, :prefer => '2'
+        flash[:notice].should =~ /#{other_user.first_name} according to the standard algorithm./
         response.should redirect_to('/u/' + other_user.handle)
         @current_user.reload
         @current_user.prefers?(other_user).should be_false
@@ -402,7 +402,7 @@ describe PagesController do
       login_user
       other_user = Factory(:user)
       @current_user.prefer!(other_user)
-      get :prefer, :other_user_id => other_user.id + 100, :prefer => 'more'
+      get :prefer, :other_user_id => other_user.id + 100, :prefer => '1'
       response.should redirect_to(root_path)
       @current_user.reload
       @current_user.prefers?(other_user).should be_true
@@ -414,6 +414,7 @@ describe PagesController do
       other_user = Factory(:user)
       @current_user.prefer!(other_user)
       get :prefer, :other_user_id => other_user.id, :prefer => 'moreorless'
+      flash[:notice].should =~ /We couldn't understand that preference setting/
       response.should redirect_to('/u/' + other_user.handle)
       @current_user.reload
       @current_user.prefers?(other_user).should be_true

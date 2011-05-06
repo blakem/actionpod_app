@@ -34,22 +34,14 @@ class PagesController < ApplicationController
       @youhave = @user.first_name + " has"
       if (@user != current_user)
         @my = @your
-        @opacity_more = @opacity_less = @opacity_nutral = '65'
-        @percent_more = @percent_less = @percent_nutral = '0.65'
         if current_user.prefers?(@user)
-          @opacity_more = '100'
-          @percent_more = '1.0'
+          @slider_value = 3
         elsif current_user.avoids?(@user)
-          @opacity_less = '100'
-          @percent_less = '1.0'
+          @slider_value = 1
         else
-          @opacity_nutral = '100'
-          @percent_nutral = '1.0'
+          @slider_value = 2
         end
       end
-      @pref_less_text = "Prefer less calls with #{@user.first_name}"
-      @pref_more_text = "Prefer more calls with #{@user.first_name}"
-      @pref_standard_text = "Prefer normal amount of calls with #{@user.first_name}"
       @view_options = {
         :hide_view_profile => @user == current_user,
         :show_user_preferences => @user != current_user,
@@ -63,18 +55,19 @@ class PagesController < ApplicationController
     other_user = User.find_by_id(params[:other_user_id])
     prefer = params[:prefer]
     if (other_user)
-      if params[:prefer] == 'more'
-        current_user.prefer!(other_user)   
-        notice = "You will be put on more calls with #{other_user.first_name}."
-      end
-      if params[:prefer] == 'less'
+      if prefer == '1'
         current_user.avoid!(other_user)    
-        notice = "You will be put on fewer calls with #{other_user.first_name}."
+        notice = "We will try to place you on fewer calls with #{other_user.first_name}."
       end
-      if params[:prefer] == 'standard'
+      if prefer == '2'
         current_user.unprefer!(other_user) 
-        notice = "You will be teamed with #{other_user.first_name} according to the standard algorithm."
+        notice = "You will be placed with #{other_user.first_name} according to the standard algorithm."
       end
+      if prefer == '3'
+        current_user.prefer!(other_user)   
+        notice = "We will try to place you on more calls with #{other_user.first_name}."
+      end
+      notice ||= "We couldn't understand that preference setting"
       redirect_to('/u/' + other_user.handle, :notice => notice)
     else
       redirect_to(root_path)
