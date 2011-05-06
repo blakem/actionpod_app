@@ -1,6 +1,5 @@
 15 Minute Calls Features and Todo list:
  FrontEnd:
-  Improve welcome email
   Copy for JVD Newsletter
   Add "tips" to outbound email
   Slider UI for user preferences
@@ -26,4 +25,7 @@
   Pool management
   Change all 'User' copy to 'Member'
   Add Feedback Form
+  Cancel Judds Hill
+  Bank
+  Send support request to Twilio about Tom's call
   
