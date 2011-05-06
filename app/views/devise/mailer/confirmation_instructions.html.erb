@@ -1,6 +1,6 @@
-<p>Hey there, <%= @resource.first_name %>.  Welcome to 15 Minute Calls.</p>
+<p>Hey there, <%= @resource.first_name %>.  Welcome to 15 Minute Calls. I'm happy you decided to try it out. ;-)</p>
 <p>&nbsp;</p>
-<p>I'm happy you decided to try it out. There are four steps to get you to your first call.</p>
+<p>There are four steps to get you to your first call.</p>
 <p>&nbsp;</p>
 <ol>
 	<li><%= link_to 'Click here to confirm your account', confirmation_url(@resource, :confirmation_token => @resource.confirmation_token) %></li>
