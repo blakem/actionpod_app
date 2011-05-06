@@ -12,7 +12,7 @@ describe PagesController do
     end
 
     it "recognizes and generates #profile" do
-      { :get => "/u/blakem" }.should route_to(:controller => "pages", :action => "profile", :handle => "blakem")
+      { :get => "/member/blakem" }.should route_to(:controller => "pages", :action => "profile", :handle => "blakem")
     end
 
     it "recognizes and generates #join" do
