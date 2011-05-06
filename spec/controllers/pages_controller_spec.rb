@@ -270,6 +270,34 @@ describe PagesController do
     end
   end
 
+  describe "GET /pages/confirmation_email" do
+    describe "when not logged in" do
+      it "should redirect to the root path" do
+        controller.user_signed_in?.should be_false
+        get :confirmation_email
+        response.should redirect_to(new_user_session_path)
+      end
+    end
+
+    describe "when user logged in" do
+      it "should redirect to the root path" do
+        login_user
+        get :confirmation_email
+        flash[:alert].should =~ /You don't have access to that page/i
+        response.should redirect_to(root_path)
+      end
+    end
+
+    describe "when admin logged in" do
+      it "should be a success" do
+        login_admin
+        get :confirmation_email
+        response.should be_success
+        response.body.should =~ /blakem@15minutecalls.com/
+      end
+    end
+  end
+
   describe "GET /pages/stranded_users" do
     describe "when not logged in" do
       it "should redirect to the root path" do

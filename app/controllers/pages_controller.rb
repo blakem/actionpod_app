@@ -153,7 +153,7 @@ class PagesController < ApplicationController
       set_profile_values
       @view_options = {:hide_stranded_users => true}    
     else
-      redirect_to(root_path, :alert => "You don't have access to that page")
+      redirect_no_access
     end
   end
   
@@ -185,6 +185,20 @@ class PagesController < ApplicationController
         'Url' => tc.base_url + '/place_test_call.xml',
       })
       redirect_to('/u/' + @user.handle, :notice => "Placing test call to: #{@user.primary_phone.number_pretty}")
-    end      
+    end
   end
+  
+  def confirmation_email
+    if admin_signed_in?
+      set_profile_values
+      render :inline => Devise::Mailer.confirmation_instructions(current_user).body.raw_source.html_safe, :layout => true
+    else
+      redirect_no_access
+    end
+  end
+
+  private
+      def redirect_no_access
+        redirect_to(root_path, :alert => "You don't have access to that page")      
+      end
 end
