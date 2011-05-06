@@ -78,5 +78,10 @@ desc "Send out the confirmation instructions email"
 task :send_confirmation_email, [:email] => :environment do |t, args|
   email = args[:email] || 'blakem@15minutecalls.com'
   user = User.find_by_email(email)
-  Devise::Mailer.confirmation_instructions(user).deliver if user
+  if user
+    Devise::Mailer.confirmation_instructions(user).deliver
+    puts "Sent email to: #{user.email}"
+  else
+    puts "Couldn't find user"
+  end
 end
