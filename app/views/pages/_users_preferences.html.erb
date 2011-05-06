@@ -22,7 +22,7 @@
 	</script>
 <% end %>
 
-<label for="amount">Matching Preference for:</label><br/>
+<label for="amount">Matching <%= @users.select{ |u| u != current_user}.count > 1 ? 'Preferences' : 'Preference' %> for:</label><br/>
 <center><img src="/images/icons/users_two_48.png"></center>
 <% @users.each do |user| %>
 <% next if user == current_user %>
