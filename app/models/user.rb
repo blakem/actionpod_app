@@ -174,14 +174,7 @@ class User < ActiveRecord::Base
   end
   
   def next_call_time
-    return nil unless events.any?
-    occurrence = events.first.next_occurrence
-    return nil unless occurrence
-    events.each do |event|
-      first_occurrence = event.next_occurrence
-      occurrence = first_occurrence if first_occurrence < occurrence
-    end
-    occurrence
+    events.map { |e| e.next_occurrence }.select{ |o| o }.sort.first
   end
   
   def next_call_time_string

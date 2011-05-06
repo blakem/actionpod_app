@@ -245,6 +245,22 @@ describe User do
       user.reload
       user.next_call_time.strftime("%A at %I:%M%P").sub(/ 0/,' ').humanize.should == "Friday at 1:00pm"
       user.next_call_time_string.should == "Friday at 1:00pm"
+
+      event1.days = [5,6]
+      event1.save
+      event2.days = []
+      event2.save
+      user.reload
+      user.next_call_time.strftime("%A at %I:%M%P").sub(/ 0/,' ').humanize.should == "Friday at 1:00pm"
+      user.next_call_time_string.should == "Friday at 1:00pm"
+
+      event1.days = []
+      event1.save
+      event2.days = [5,6]
+      event2.save
+      user.reload
+      user.next_call_time.strftime("%A at %I:%M%P").sub(/ 0/,' ').humanize.should == "Friday at 4:00pm"
+      user.next_call_time_string.should == "Friday at 4:00pm"
     end    
   end
 
