@@ -101,4 +101,11 @@ namespace :show do
            "#{c.status}"
     end
   end
+  
+  desc "Show information about preferences"
+  task :preferences => :environment do
+    Preference.all.sort { |a,b| a.updated_at <=> b.updated_at }.each do |p|
+      puts "#{p.user.first_name} #{p.preference_string} #{p.other_user.first_name} at #{p.updated_at.strftime("%A %B #{p.updated_at.day.ordinalize} %l:%M%p").downcase.titleize}"
+    end
+  end
 end

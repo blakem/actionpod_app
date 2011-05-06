@@ -57,4 +57,13 @@ describe Preference do
       Preference.new(@attr).should_not be_valid      
     end    
   end
+  
+  describe "preference_string method" do
+    it "should have a string method that returns 'prefers' or 'avoids'" do
+      preference = Preference.new(@attr.merge({:user_id => @user.id}))
+      preference.preference_string.should == 'prefers'
+      preference.prefer_more = false
+      preference.preference_string.should == 'avoids'      
+    end
+  end
 end

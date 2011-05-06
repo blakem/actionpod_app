@@ -19,4 +19,8 @@ class Preference < ActiveRecord::Base
 
   validates :user_id, :presence => true
   validates :other_user_id, :presence => true
+
+  def preference_string
+    prefer_more ? 'prefers' : 'avoids'
+  end
 end
