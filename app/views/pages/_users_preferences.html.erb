@@ -28,15 +28,14 @@
 <% next if user == current_user %>
 	<div class="prefs<%= user.id %>">
 	  <%= form_tag '/pages/prefer', :id => "prefform#{user.id}" %>
-	  <p>
 		<center>You and <%= user.first_name %></center>
 		<input type="hidden" name="other_user_id" value="<%= user.id %>">
 		<input type="hidden" id="amount<%= user.id %>" name="prefer" style="border:0; color:#f6931f; font-weight:bold;" />
         <% if @conference %>
 		  <input type="hidden" name="conference" value="<%= @conference.id %>">
 		<% end %>
-	  </p>
 	  <div id="slider-range-min<%= user.id %>"></div>
 	  </form>
 	</div>
+	<p></p>
 <% end %>
