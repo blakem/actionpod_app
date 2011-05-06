@@ -10,7 +10,7 @@ describe PhonesController do
     it "should redirect to the home page" do
   	  controller.user_signed_in?.should be_false
       get :index
-      response.should redirect_to('/users/sign_in')
+      response.should redirect_to('/members/sign_in')
     end
   end  
 

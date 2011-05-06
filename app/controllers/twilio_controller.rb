@@ -32,7 +32,18 @@ class TwilioController < ApplicationController
     call = Call.find_by_Sid(params[:CallSid])
     call.Duration = params[:CallDuration]
     call.save
+    bailed_before_greeting = call.status == 'outgoing'
+    event = find_event_from_params(params)
+    unless event
+      update_call_object_status(call, 'callback:nomatch')
+    else
+      update_call_object_status(call, 'callback:match')
+      if call.status =~ /^outgoing/ && call.status !~ /-onhold/
+        update_missed_count(event.user) unless bailed_before_greeting
+      end
+    end
     update_call_object_status(call, 'completed')
+    TwilioCaller.new.send_error_to_blake('OutgoingBug: ' + params[:CallSid]) if bailed_before_greeting
   end
 
   def say_sorry
@@ -126,6 +137,14 @@ class TwilioController < ApplicationController
     
     def update_answered_count(user)
       user.answered_count += 1
+      user.made_in_a_row += 1
+      user.missed_in_a_row = 0
+      user.save
+    end
+
+    def update_missed_count(user)
+      user.missed_in_a_row += 1
+      user.made_in_a_row = 0
       user.save
     end
 

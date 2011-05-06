@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110503212230) do
+ActiveRecord::Schema.define(:version => 20110506211752) do
 
   create_table "calls", :force => true do |t|
     t.string   "Sid"
@@ -157,6 +157,8 @@ ActiveRecord::Schema.define(:version => 20110503212230) do
     t.integer  "answered_count",                      :default => 0
     t.integer  "placed_count",                        :default => 0
     t.integer  "incoming_count",                      :default => 0
+    t.integer  "missed_in_a_row",                     :default => 0
+    t.integer  "made_in_a_row",                       :default => 0
   end
 
   add_index "users", ["confirmation_token"], :name => "index_users_on_confirmation_token", :unique => true

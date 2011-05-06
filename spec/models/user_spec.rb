@@ -113,6 +113,8 @@ describe User do
     user.incoming_count == 0
     user.answered_count == 0
     user.called_count == 0
+    user.missed_in_a_row == 0
+    user.made_in_a_row == 0
   end
 
   it "should have a title" do

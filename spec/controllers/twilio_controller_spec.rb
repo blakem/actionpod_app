@@ -89,6 +89,8 @@ describe TwilioController do
       call.status.should == 'fallback:match-onhold:match'
       user.reload
       user.answered_count.should == 1
+      user.missed_in_a_row.should == 0
+      user.made_in_a_row.should == 1
     end    
   end
 
@@ -100,8 +102,60 @@ describe TwilioController do
       hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
       call.reload
-      call.status.should == 'foo-completed'
+      call.status.should == 'foo-callback:nomatch-completed'
       call.Duration.should == 33
+    end
+
+    it "should match up with the event being called" do
+      user = Factory(:user)
+      pool = Factory(:pool, :timelimit => 33)
+      event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
+      call = Call.create(:Sid => '12345', :event_id => event.id, :status => 'foo')
+      post :callback, :CallSid => call.Sid, :CallDuration => 33
+      hash = (Hash.from_xml response.body).with_indifferent_access
+      hash[:Response].should be_true
+      response.content_type.should =~ /^application\/xml/
+      call.reload
+      call.status.should == 'foo-callback:match-completed'
+      call.Duration.should == 33
+    end
+
+    it "should update the missed count" do
+      user = Factory(:user, :made_in_a_row => 3, :missed_in_a_row => 2)
+      pool = Factory(:pool, :timelimit => 33)
+      event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
+      call = Call.create(:Sid => '12345', :event_id => event.id, :status => 'outgoing-greeting:match')
+      post :callback, :CallSid => call.Sid, :CallDuration => 33
+      hash = (Hash.from_xml response.body).with_indifferent_access
+      hash[:Response].should be_true
+      response.content_type.should =~ /^application\/xml/
+      call.reload
+      call.status.should == 'outgoing-greeting:match-callback:match-completed'
+      call.Duration.should == 33
+      user.reload
+      user.made_in_a_row.should == 0
+      user.missed_in_a_row.should == 3
+    end
+
+    it "should not update the missed count if twilio bug hit where we never got to the greeting page" do
+
+      tc = mock('TwilioCaller')
+      tc.should_receive(:send_error_to_blake).with('OutgoingBug: 12345')
+      TwilioCaller.should_receive(:new).and_return(tc)
+      user = Factory(:user, :made_in_a_row => 3, :missed_in_a_row => 2)
+      pool = Factory(:pool, :timelimit => 33)
+      event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
+      call = Call.create(:Sid => '12345', :event_id => event.id, :status => 'outgoing')
+      post :callback, :CallSid => call.Sid, :CallDuration => 33
+      hash = (Hash.from_xml response.body).with_indifferent_access
+      hash[:Response].should be_true
+      response.content_type.should =~ /^application\/xml/
+      call.reload
+      call.status.should == 'outgoing-callback:match-completed'
+      call.Duration.should == 33
+      user.reload
+      user.made_in_a_row.should == 3
+      user.missed_in_a_row.should == 2
     end
   end
 
@@ -118,7 +172,7 @@ describe TwilioController do
     end
 
     it "should match up with the event being called" do
-      user = Factory(:user, :answered_count => 3)
+      user = Factory(:user, :answered_count => 3, :made_in_a_row => 3, :missed_in_a_row => 2)
       pool = Factory(:pool, :timelimit => 33)
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
       call = Call.create(:Sid => '12345', :event_id => event.id)
@@ -135,6 +189,8 @@ describe TwilioController do
       call.status.should == 'direct:match'
       user.reload
       user.answered_count.should == 4
+      user.missed_in_a_row.should == 0
+      user.made_in_a_row.should == 4
     end
   end
 
@@ -167,6 +223,8 @@ describe TwilioController do
       call.status.should == 'onhold:match'
       user.reload
       user.answered_count.should == 1
+      user.missed_in_a_row.should == 0
+      user.made_in_a_row.should == 1
     end
 
     it "should put on hold on PhoneNumberSid" do
