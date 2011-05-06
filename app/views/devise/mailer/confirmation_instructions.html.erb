@@ -1,7 +1,7 @@
-<p>Hey there, <%= @resource.first_name %>.  Welcome to 15minutecalls.com!</p>
+<p>Hey there, <%= @resource.first_name %>.  Welcome to 15minutecalls.com</p>
 <p>&nbsp;</p>
-<p>I'm excited you've decided to sign up, and we've got just a few steps to get you to your first call</p>
+<p>I'm excited you've decided to sign up! There are just a few steps to get you to your first call</p>
 <p>&nbsp;</p>
 <ul>
-	<li>1. <%= link_to 'Click here to confirm your account', confirmation_url(@resource, :confirmation_token => @resource.confirmation_token) %></li>
+	<li><%= link_to 'Click here to confirm your account', confirmation_url(@resource, :confirmation_token => @resource.confirmation_token) %></li>
 </ul>
