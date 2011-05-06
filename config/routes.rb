@@ -1,7 +1,7 @@
 ActionpodApp::Application.routes.draw do
   root :to => 'pages#home'
 
-  devise_for :users, :controllers => { :registrations => 'registrations' }
+  devise_for :users, :controllers => { :registrations => 'registrations' }, :path => 'members'
   resources :events
   resources :phones
 
