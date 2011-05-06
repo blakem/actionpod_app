@@ -7,7 +7,7 @@ ActionpodApp::Application.routes.draw do
 
   post  'pages/plan'  => 'pages#plan_create'
   put   'pages/intro' => 'pages#intro_update'
-  match 'u/:handle'   => 'pages#profile'
+  match 'member/:handle'   => 'pages#profile'
 
   match ':controller(/:action(.:format))'
   match '/:controller(/:action(/:id))', :constraints => lambda{ |request|

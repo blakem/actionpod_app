@@ -197,7 +197,7 @@ class User < ActiveRecord::Base
   end
   
   def profile_path
-    '/u/' + self.handle
+    "/member/#{self.handle}"
   end
 
   def remote_profile_path
