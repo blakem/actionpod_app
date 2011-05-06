@@ -4,5 +4,9 @@
 <p>&nbsp;</p>
 <ol>
 	<li><%= link_to 'Click here to confirm your account', confirmation_url(@resource, :confirmation_token => @resource.confirmation_token) %></li>
-    <li>Make sure we've got your phone set up properly. <%= link_to 'Click here to place a test call to your phone' %></li>
+    <li>Make sure we've got your phone set up properly. <%= link_to 'Click here to place a test call to your phone',
+           :controller => :pages, :action => :place_test_call %></li>
+    <li>Log in and join one of the existing call groups.</li>
+    <li>Enter in a few goals or projects <%= link_to 'here',
+           :controller => :pages, :action => :plan %>
 </ol>
