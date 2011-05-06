@@ -5,7 +5,7 @@
       <% if user_signed_in? %>
         <li><%= link_to "Guide/FAQ",  :controller => :pages, :action => :help %>
 	  <% else %>
-  	    <li><%= link_to "FAQ",  :controller => :pages, :action => :help %> |
+  	    <li><%= link_to "More Information",  :controller => :pages, :action => :help %> |
       <% end %>
       <%= render 'devise/menu/registration_items' %> |
 	  <%= render 'devise/menu/login_items' %>
