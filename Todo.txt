@@ -8,7 +8,7 @@
 
  BackEnd:
   Send emails to stranded clients
-  Install stilalive basic monitoring service
+  Set up Recurly
 
  Community:
   Ask Garret about Tweet (@15mincalls)

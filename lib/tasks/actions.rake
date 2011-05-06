@@ -73,3 +73,10 @@ task :send_conference_email => :environment do
     puts "Couldn't find users"
   end
 end
+
+desc "Send out the confirmation instructions email"
+task :send_confirmation_email, [:email] => :environment do |t, args|
+  email = args[:email] || 'blakem@15minutecalls.com'
+  user = User.find_by_email(email)
+  Devise::Mailer.confirmation_instructions(user).deliver if user
+end
