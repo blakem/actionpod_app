@@ -59,11 +59,6 @@
 <% else %>
   <p><strong><%= @youhave %> no calls scheduled.</strong></p>
 <% end %>
-
-<% if @view_options[:show_user_preferences] %>
-  <%= render 'user_preferences'%>
-<% end %>
-
 <% if @view_options[:show_users_preferences] %>
   <%= render 'users_preferences'%>
 <% end %>
