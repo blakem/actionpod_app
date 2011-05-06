@@ -1,6 +1,6 @@
 <p>Hey there, <%= @resource.first_name %>.  Welcome to 15minutecalls.com!</p>
 <p>&nbsp;</p>
-<p>Please confirm your account through the link below:</p>
+<p>Below you will find a link to confirm your account and instructions for getting yourself all set for your first call:</p>
 <p>&nbsp;</p>
 <p><%= link_to 'Confirm my account', confirmation_url(@resource, :confirmation_token => @resource.confirmation_token) %></p>
 <p>&nbsp;</p>
