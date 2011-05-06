@@ -299,5 +299,11 @@ describe User do
       user.avoid!(other_user)
       user.preferences.count.should == 1
     end
+    
+    it "should have a profile_path and remote_profile_path" do
+      user = Factory(:user)
+      user.profile_path.should == '/u/' + user.handle
+      user.remote_profile_path.should == 'http://www.15minutecalls.com/u/' + user.handle
+    end
   end
 end

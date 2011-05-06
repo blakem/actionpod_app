@@ -11,7 +11,7 @@
     <%= conference.status.titleize %>
     <br/>
     <% conference.users.each do |user| %>
-       <%= gravatar_for user, :size => 30 %> <%= link_to user.name, "/u/" + user.handle %><br/>
+       <%= gravatar_for user, :size => 30 %> <%= link_to user.name, user.profile_path %><br/>
     <% end %>
     </p>
   <% end %>

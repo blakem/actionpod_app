@@ -196,6 +196,14 @@ class User < ActiveRecord::Base
     day + time
   end
   
+  def profile_path
+    '/u/' + self.handle
+  end
+
+  def remote_profile_path
+    'http://www.15minutecalls.com' + profile_path
+  end
+  
   def self.human_attribute_name(attribute_key_name, options = {})
     return "Primary Phone" if attribute_key_name.to_s == 'phones.string'
     return "Primary Phone" if attribute_key_name.to_s == 'phones.number'

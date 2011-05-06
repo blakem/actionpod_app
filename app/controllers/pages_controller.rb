@@ -73,7 +73,7 @@ class PagesController < ApplicationController
         flash[:notice] = notice
         redirect_to(:controller => :pages, :action => :conference, :id => params[:conference])
       else
-        redirect_to('/u/' + other_user.handle, :notice => notice)
+        redirect_to(other_user.profile_path, :notice => notice)
       end
     else
       redirect_to(root_path)
@@ -106,7 +106,7 @@ class PagesController < ApplicationController
   def plan_create
     @plan = Plan.new(params[:plan].merge(:user_id => current_user.id))
     if @plan.save
-      redirect_to('/u/' + current_user.handle, :notice => 'Your goals were successfully updated.')
+      redirect_to(current_user.profile_path, :notice => 'Your goals were successfully updated.')
     else
       set_profile_values
       @view_options = {:hide_create_plan => true}
@@ -121,7 +121,7 @@ class PagesController < ApplicationController
 
   def intro_update
     if current_user.update_attributes(params[:user])
-      redirect_to('/u/' + current_user.handle, :notice => 'Your introduction was successfully updated.')
+      redirect_to(current_user.profile_path, :notice => 'Your introduction was successfully updated.')
     else
       render :action => :intro
     end
@@ -186,7 +186,7 @@ class PagesController < ApplicationController
       tc.start_call_for_user(@user, {
         'Url' => tc.base_url + '/place_test_call.xml',
       })
-      redirect_to('/u/' + @user.handle, :notice => "Placing test call to: #{@user.primary_phone.number_pretty}")
+      redirect_to(@user.profile_path, :notice => "Placing test call to: #{@user.primary_phone.number_pretty}")
     end
   end
   

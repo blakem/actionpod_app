@@ -368,7 +368,7 @@ describe PagesController do
         other_user = Factory(:user)
         get :prefer, :other_user_id => other_user.id, :prefer => '3'
         flash[:notice].should =~ /more calls with #{other_user.first_name}./
-        response.should redirect_to('/u/' + other_user.handle)
+        response.should redirect_to(other_user.profile_path)
         @current_user.reload
         @current_user.prefers?(other_user).should be_true
         @current_user.avoids?(other_user).should be_false
@@ -379,7 +379,7 @@ describe PagesController do
         other_user = Factory(:user)
         get :prefer, :other_user_id => other_user.id, :prefer => '1'
         flash[:notice].should =~ /fewer calls with #{other_user.first_name}./
-        response.should redirect_to('/u/' + other_user.handle)
+        response.should redirect_to(other_user.profile_path)
         @current_user.reload
         @current_user.prefers?(other_user).should be_false
         @current_user.avoids?(other_user).should be_true
@@ -391,7 +391,7 @@ describe PagesController do
         @current_user.prefer!(other_user)
         get :prefer, :other_user_id => other_user.id, :prefer => '2'
         flash[:notice].should =~ /#{other_user.first_name} according to the standard algorithm./
-        response.should redirect_to('/u/' + other_user.handle)
+        response.should redirect_to(other_user.profile_path)
         @current_user.reload
         @current_user.prefers?(other_user).should be_false
         @current_user.avoids?(other_user).should be_false
@@ -428,7 +428,7 @@ describe PagesController do
       @current_user.prefer!(other_user)
       get :prefer, :other_user_id => other_user.id, :prefer => 'moreorless'
       flash[:notice].should =~ /We couldn't understand that preference setting/
-      response.should redirect_to('/u/' + other_user.handle)
+      response.should redirect_to(other_user.profile_path)
       @current_user.reload
       @current_user.prefers?(other_user).should be_true
       @current_user.avoids?(other_user).should be_false
