@@ -1,6 +1,6 @@
 <p>Hey there, <%= @resource.first_name %>.  Welcome to 15minutecalls.com</p>
 <p>&nbsp;</p>
-<p>I'm excited you've decided to sign up! There are just a few steps to get you to your first call.</p>
+<p>I'm excited you've decided to sign up! There are four steps to get you to your first call.</p>
 <p>&nbsp;</p>
 <ol>
 	<li><%= link_to 'Click here to confirm your account', confirmation_url(@resource, :confirmation_token => @resource.confirmation_token) %></li>
@@ -9,3 +9,6 @@
     <li>Join one of <%= link_to 'the existing call groups.', 'http://www.15minutecalls.com/pages/my_profile' %></li>
     <li>Enter in a few of <%= link_to 'your goals or projects.', 'http://www.15minutecalls.com/pages/plan' %></li>
 </ol>
+
+That's it.  You're all set.  If you have encounter any problems with these steps please contact me directly at blakem@15minutecalls.com
+There is also some helpful information on the <%= link_to 'help page', 'http://www.15minutecalls.com/pages/help' %>
