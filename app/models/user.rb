@@ -1,5 +1,5 @@
 # == Schema Information
-# Schema version: 20110430205507
+# Schema version: 20110506211752
 #
 # Table name: users
 #
@@ -37,6 +37,8 @@
 #  answered_count       :integer         default(0)
 #  placed_count         :integer         default(0)
 #  incoming_count       :integer         default(0)
+#  missed_in_a_row      :integer         default(0)
+#  made_in_a_row        :integer         default(0)
 #
 
 class User < ActiveRecord::Base
