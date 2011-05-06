@@ -396,6 +396,19 @@ describe PagesController do
         @current_user.prefers?(other_user).should be_false
         @current_user.avoids?(other_user).should be_false
       end
+
+      it "should redirect to the conference page if given a conference value" do
+        login_user
+        other_user = Factory(:user)
+        @current_user.prefer!(other_user)
+        conference = Conference.first
+        get :prefer, :other_user_id => other_user.id, :prefer => '3', :conference => conference.id
+        flash[:notice].should =~ /more calls with #{other_user.first_name}./
+        response.should redirect_to(:controller => :pages, :action => :conference, :id => conference.id)
+        @current_user.reload
+        @current_user.prefers?(other_user).should be_true
+        @current_user.avoids?(other_user).should be_false
+      end
     end
 
     it "should handle bad other_user_id gracefully" do

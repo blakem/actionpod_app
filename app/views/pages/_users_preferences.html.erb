@@ -1,0 +1,40 @@
+<meta charset="utf-8">
+<% @users.each do |user| %>
+<% next if user == current_user %>
+
+	<style>
+	#prefs<%= user.id %>-frame > div.prefs<%= user.id %> { padding: 10px !important; };
+	</style>
+	<script>
+	$(function() {
+		$( "#slider-range-min<%= user.id %>" ).slider({
+			range: "min",
+			value: <%= current_user.prefers?(user) ? 3 : (current_user.avoids?(user) ? 1 : 2) %>,
+			min: 1,
+			max: 3,
+			change: function( event, ui ) { document.forms["prefform<%= user.id %>"].submit(); },
+			slide: function( event, ui ) {
+				$( "#amount<%= user.id %>" ).val( ui.value );
+			}
+		});
+		$( "#amount<%= user.id %>" ).val( $( "#slider-range-min<%= user.id %>" ).slider( "value" ) );
+	});
+	</script>
+<% end %>
+
+<label for="amount">Matching Preference for:</label><br/>
+<center><img src="/images/icons/users_two_48.png"></center>
+<% @users.each do |user| %>
+<% next if user == current_user %>
+	<div class="prefs<%= user.id %>">
+	  <%= form_tag '/pages/prefer', :id => "prefform#{user.id}" %>
+	  <p>
+		<center>You and <%= user.first_name %></center>
+		<input type="hidden" name="other_user_id" value="<%= user.id %>">
+		<input type="hidden" id="amount<%= user.id %>" name="prefer" style="border:0; color:#f6931f; font-weight:bold;" />
+		<input type="hidden" name="conference" value="<%= @conference ? @conference.id : ''%>">
+	  </p>
+	  <div id="slider-range-min<%= user.id %>"></div>
+	  </form>
+	</div>
+<% end %>

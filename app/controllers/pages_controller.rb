@@ -68,7 +68,12 @@ class PagesController < ApplicationController
         notice = "We will try to place you on more calls with #{other_user.first_name}."
       end
       notice ||= "We couldn't understand that preference setting"
-      redirect_to('/u/' + other_user.handle, :notice => notice)
+      if params[:conference]
+        flash[:notice] = notice
+        redirect_to(:controller => :pages, :action => :conference, :id => params[:conference])
+      else
+        redirect_to('/u/' + other_user.handle, :notice => notice)
+      end
     else
       redirect_to(root_path)
     end
@@ -80,7 +85,10 @@ class PagesController < ApplicationController
       @users = @conference.users.select { |u| u.id == current_user.id } +
                @conference.users.select { |u| u.id != current_user.id }
       set_profile_values
-      @view_options = {:hide_view_current_conference => @conference == current_user.conferences.first}
+      @view_options = {
+        :hide_view_current_conference => @conference == current_user.conferences.first,
+        :show_users_preferences => true,
+      }
     else
       redirect_to(root_path, :alert => "There is no conference with that id")
     end
