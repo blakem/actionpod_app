@@ -2,7 +2,7 @@
 <% unless @view_options[:hide_view_current_conference] %>
   <% conference = current_user.conferences.first %>
   <% if conference and conference.status == 'in_progress' %>
-    <b><%= link_to "View Current Conference", :controller => :pages, :action => :conference, :id => conference.id %></b>
+    <b><%= link_to "View Current Conference", :controller => :pages, :action => :conference, :id => conference.id %></b><br/>
   <% end %>
 <% end %>
 <% unless @view_options[:hide_create_plan] %>
@@ -31,6 +31,12 @@
 <% end %>
 <% unless @view_options[:hide_edit_profile] %>
   <%= link_to('Edit Your Profile Information', edit_user_registration_path) %><br/>
+<% end %>
+<% unless @view_options[:hide_view_current_conference] %>
+	<% conference = current_user.conferences.first %>
+	<% if conference and conference.status != 'in_progress' %>
+	  <%= link_to "View Recent Conference", :controller => :pages, :action => :conference, :id => conference.id %><br/>
+	<% end %>
 <% end %>
 <% unless @view_options[:hide_call_groups] or @user.events.empty? %>
   <% if current_user.admin? %>
