@@ -13,5 +13,5 @@ git commit -am "$comment"
 echo; echo "************ git push"
 git push
 
-echo; echo "************ rm tmp/*.html"
-rm tmp/*.html
+echo; echo "************ rm -f tmp/*.html"
+rm -f tmp/*.html
