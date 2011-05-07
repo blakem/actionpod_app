@@ -1,37 +1,37 @@
 15 Minute Calls Features and Todo list:
- FrontEnd:
-  Copy for JVD Newsletter
-  Add "tips" to outbound email
-  Slider UI for user preferences
-  Add count-down timer on Current Conference page
+  FrontEnd:
+    Copy for JVD Newsletter
+    Add "tips" to outbound email
+    Slider UI for user preferences
+    Add count-down timer on Current Conference page
 
- BackEnd:
-  Merge pools only after all calls have been completed.... or a default timeout time is hit.
-  Send emails to stranded clients
-  Set up Recurly
-  Incoming Call matching... is there a bug with call_sid?
-  Send email to accountability buddies if their friend misses 3 calls in a row.
+  BackEnd:
+    Merge pools only after all calls have been completed.... or a default timeout time is hit.
+    Send emails to stranded clients
+    Set up Recurly
+    Send email to accountability buddies if their friend misses 3 calls in a row.
 
- Bugs:
-   Direct 'onhold' is missing
+  Bugs:
+    Send support request to Twilio about Tom's call
+    Incoming Call matching... is there a bug with call_sid?
 
- Community:
-  Ask Garret about Tweet (@15mincalls)
-  Email Team IO about 15mc
-  Email TMC about 15mc
-  Facebook Fan Page
-  Facebook Like buttons (with friends)
-  Follow up with Dancing Cloud....
+  Community:
+    Ask Garret about Tweet (@15mincalls)
+    Email Team IO about 15mc
+    Email TMC about 15mc
+    Facebook Fan Page
+    Facebook Like buttons (with friends)
+    Follow up with Dancing Cloud....
 
- Business:
-  
- Other:
-  Fix Leather Bracelet
-  Watch Haml Screencast
-  Phones per event / per occurrence
-  Pool management
-  Change all 'User' copy to 'Member'
-  Add Feedback Form
-  Cancel Judds Hill
-  Send support request to Twilio about Tom's call
+  Business:
+    Add expenses to Expenses spreadsheet  
+
+  Other:
+    Fix Leather Bracelet
+    Watch Haml Screencast
+    Phones per event / per occurrence
+    Pool management
+    Change all 'User' copy to 'Member'
+    Add Feedback Form
+    Cancel Judds Hill
   
