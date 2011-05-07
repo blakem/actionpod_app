@@ -1,8 +1,6 @@
 15 Minute Calls Features and Todo list:
   FrontEnd:
-    Copy for JVD Newsletter
     Add "tips" to outbound email
-    Slider UI for user preferences
     Add count-down timer on Current Conference page
 
   BackEnd:
@@ -14,16 +12,16 @@
   Bugs:
     Send support request to Twilio about Tom's call
     Incoming Call matching... is there a bug with call_sid?
+    Admin page is broken
 
   Community:
     Ask Garret about Tweet (@15mincalls)
-    Email Team IO about 15mc
     Email TMC about 15mc
     Facebook Fan Page
     Facebook Like buttons (with friends)
-    Follow up with Dancing Cloud....
 
   Business:
+    Copy for JVD Newsletter
     Add expenses to Expenses spreadsheet  
 
   Other:
