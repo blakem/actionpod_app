@@ -16,6 +16,7 @@ class TwilioController < ApplicationController
   end
   
   def greeting_fallback
+    TwilioCaller.new.send_error_to_blake('Fallback: ' + params[:CallSid])
     event = find_event_from_params(params)
     unless event
       update_call_status_from_params(params, 'fallback:nomatch')

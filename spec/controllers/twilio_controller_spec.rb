@@ -62,6 +62,9 @@ describe TwilioController do
 
   describe "greeting_fallback" do
     it "should say can't match this number when it can't find an event" do
+      tc = mock('TwilioCaller')
+      tc.should_receive(:send_error_to_blake).with('Fallback: 12345')
+      TwilioCaller.should_receive(:new).and_return(tc)
       call = Call.create(:Sid => '12345', :status => 'outgoing')
       post :greeting_fallback, :CallSid => '12345'
       hash = (Hash.from_xml response.body).with_indifferent_access
@@ -73,6 +76,9 @@ describe TwilioController do
     end
 
     it "should put on hold on CallSid" do
+      tc = mock('TwilioCaller')
+      tc.should_receive(:send_error_to_blake).with('Fallback: 543211')
+      TwilioCaller.should_receive(:new).and_return(tc)
       user = Factory(:user)
       pool = Factory(:pool, :timelimit => 33)
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
