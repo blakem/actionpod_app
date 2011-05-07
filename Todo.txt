@@ -12,6 +12,9 @@
   Incoming Call matching... is there a bug with call_sid?
   Send email to accountability buddies if their friend misses 3 calls in a row.
 
+ Bugs:
+   Direct 'onhold' is missing
+
  Community:
   Ask Garret about Tweet (@15mincalls)
   Email Team IO about 15mc

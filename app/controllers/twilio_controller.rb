@@ -38,7 +38,7 @@ class TwilioController < ApplicationController
       update_call_object_status(call, 'callback:nomatch')
     else
       update_call_object_status(call, 'callback:match')
-      if call.status =~ /^outgoing/ && call.status !~ /-onhold/
+      if call.status =~ /^outgoing/ && (call.status !~ /-onhold/ && call.status !~ /-direct:match-/)
         update_missed_count(event.user) unless bailed_before_greeting
       end
     end

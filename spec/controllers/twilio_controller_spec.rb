@@ -137,8 +137,24 @@ describe TwilioController do
       user.missed_in_a_row.should == 3
     end
 
-    it "should not update the missed count if twilio bug hit where we never got to the greeting page" do
+    it "should update the made count for ifmachine direct callers" do
+      user = Factory(:user, :made_in_a_row => 3, :missed_in_a_row => 2)
+      pool = Factory(:pool, :timelimit => 33)
+      event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
+      call = Call.create(:Sid => '12345', :event_id => event.id, :status => 'outgoing-direct:match-placing:15mcPool1Room1-placed:15mcPool1Room1')
+      post :callback, :CallSid => call.Sid, :CallDuration => 33
+      hash = (Hash.from_xml response.body).with_indifferent_access
+      hash[:Response].should be_true
+      response.content_type.should =~ /^application\/xml/
+      call.reload
+      call.status.should == 'outgoing-direct:match-placing:15mcPool1Room1-placed:15mcPool1Room1-callback:match-completed'
+      call.Duration.should == 33
+      user.reload
+      user.made_in_a_row.should == 3
+      user.missed_in_a_row.should == 2
+    end
 
+    it "should not update the missed count if twilio bug hit where we never got to the greeting page" do
       tc = mock('TwilioCaller')
       tc.should_receive(:send_error_to_blake).with('OutgoingBug: 12345')
       TwilioCaller.should_receive(:new).and_return(tc)

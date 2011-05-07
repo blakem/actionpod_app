@@ -197,10 +197,10 @@ describe User do
     user.member_status.should == 'Never been called'
     user.made_in_a_row = 3
     user.missed_in_a_row = 0
-    user.member_status.should == 'Made 3 in a row'
+    user.member_status.should == 'Made 3 calls in a row'
     user.missed_in_a_row = 3
     user.made_in_a_row = 0
-    user.member_status.should == 'Missed 3 in a row'
+    user.member_status.should == 'Missed 3 calls in a row'
   end
   
   describe "handle" do
