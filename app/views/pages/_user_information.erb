@@ -7,5 +7,15 @@ From: <%= @user.location.blank? ? 'None' : @user.location %><br/>
   Phone: <%= link_to @user.primary_phone.number_pretty, 
                      :controller => :pages, :action => :place_test_call, :user_id => @user.id %><br/>
 <% end %>
-Member Since: <%= @user.created_at.strftime("%B #{@user.created_at.day.ordinalize}, %Y") %>
+Member Since: <%= @user.created_at.strftime("%B #{@user.created_at.day.ordinalize}, %Y") %><br/>
+Status: <%= @user.member_status %><br/>
+Last Completed Call: 
+  <% last_call_time = @user.last_successful_call_time %>
+  <% if last_call_time %>
+    <%= time_ago_in_words(last_call_time) %> ago
+  <% else %>
+    None
+  <% end %>
+<br/>
+
 <p>&nbsp;</p>

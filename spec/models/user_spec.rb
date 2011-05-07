@@ -180,6 +180,29 @@ describe User do
     user.conferences.should include(conference1, conference2)
   end
   
+  it "has a last_successful_call_time" do
+    user = Factory(:user)
+    user.last_successful_call_time.should == nil
+    conference1 = Conference.create(:status => 'only_one_answered')
+    conference2 = Conference.create(:status => 'only_one_scheduled')
+    conference3 = Conference.create(:status => 'in_progress')
+    conference4 = Conference.create(:status => 'completed')
+    conference5 = Conference.create(:status => 'completed')
+    user.conferences = [conference1, conference2, conference3, conference4, conference5]
+    user.last_successful_call_time.should == conference4.created_at
+  end
+
+  it "has a member_status" do
+    user = Factory(:user)
+    user.member_status.should == 'Never been called'
+    user.made_in_a_row = 3
+    user.missed_in_a_row = 0
+    user.member_status.should == 'Made 3 in a row'
+    user.missed_in_a_row = 3
+    user.made_in_a_row = 0
+    user.member_status.should == 'Missed 3 in a row'
+  end
+  
   describe "handle" do
     it "can be generated from the email address" do
       user1 = Factory(:user, :email => 'foobar@example.com')

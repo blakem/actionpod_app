@@ -191,6 +191,21 @@ class User < ActiveRecord::Base
     day + time
   end
   
+  def last_successful_call_time
+    conference = self.conferences.select { |c| c.status == 'completed' }.first
+    conference ? conference.created_at : nil
+  end
+  
+  def member_status
+    if made_in_a_row > 0
+      "Made #{made_in_a_row} in a row"
+    elsif missed_in_a_row > 0
+      "Missed #{missed_in_a_row} in a row"
+    else
+      "Never been called"
+    end
+  end
+  
   def profile_path
     "/member/#{self.handle}"
   end
