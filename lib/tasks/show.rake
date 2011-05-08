@@ -86,9 +86,9 @@ namespace :show do
 
   desc "Show information about calls"
   task :calls, [:count]  => :environment do |t, args|
-    args.with_defaults(:count => 20)
+    args.with_defaults(:count => '20')
     calls = Call.all.sort{ |a,b| a.created_at <=> b.created_at }
-    calls[(0-args[:count])..-1].each do |c|
+    calls[(0-args[:count].to_i)..-1].each do |c|
       time = c.created_at.in_time_zone('Pacific Time (US & Canada)')
       date = time.strftime("%a %b %e")
       user = ''
