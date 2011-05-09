@@ -37,16 +37,47 @@ describe PoolMerger do
     describe "zero participants" do
       it "should clear out the on_hold status of anyone who's not currently there" do
         new_participants = participant_list(0)
-        data = @pm.initialize_data({})
-        data[:on_hold] = {
-          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 1,          
-        }
+        data = @pm.initialize_data({}).merge({
+          :on_hold => { "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 1 },
+          :waiting_for_events => [77, 33],
+        })
         @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
         @pm.merge_calls_for_pool(@pool, @pool_runs_at, data).should == @data.merge({
-          :next_room   => 1,
+          :waiting_for_events => [77, 33],
           :on_hold     => {},
-          :placed      => {},
-          :apologized  => {},
+        })
+      end
+
+      it "should clear out the waiting_for_events info of someone who missed the call" do
+        new_participants = participant_list(0)
+        call1 = Call.create!( # completed => remove me
+          :event_id       => 77,
+          :status         => 'outgoing-callback:match-completed',
+        )
+        call2 = Call.create!( # onhold => remove me
+          :event_id       => 76,
+          :status         => ' outgoing-greeting:match-onhold:match',
+        )
+        call3 = Call.create!( # call is still waiting for answer/hangup
+          :event_id       => 66,
+          :status         => 'outgoing-direct:match',
+        )
+        call4 = Call.create!( # event from a long time ago
+          :event_id       => 44,
+          :status         => 'outgoing-completed',
+        )
+        ActiveRecord::Base.record_timestamps = false
+        call4.created_at = Time.now - (@pool.timelimit + 1).minutes
+        call4.updated_at = Time.now - (@pool.timelimit + 1).minutes
+        call4.save
+        ActiveRecord::Base.record_timestamps = true
+  
+        data = @pm.initialize_data({}).merge({
+          :waiting_for_events => [77, 76, 33, 44, 66],
+        })
+        @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
+        @pm.merge_calls_for_pool(@pool, @pool_runs_at, data).should == @data.merge({
+          :waiting_for_events => [33, 44, 66],
         })
       end
     end

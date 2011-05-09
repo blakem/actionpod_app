@@ -19,16 +19,16 @@ class PoolMerger
     @tc = TwilioCaller.new
     data = initialize_data(data)
     participants_on_hold_for_pool = @tc.participants_on_hold_for_pool(pool)
-    update_meta_data_for_timeslot(participants_on_hold_for_pool, data)
+    update_meta_data_for_timeslot(participants_on_hold_for_pool, pool, data)
     (new_participants, placed_participants) = filter_new_participants_that_have_been_placed(participants_on_hold_for_pool, data)
     new_participants = sort_participants(new_participants, data)
     handle_placed_participants(placed_participants, pool, pool_runs_at, data)
     handle_new_participants(new_participants, pool, pool_runs_at, data)
   end
 
-  def update_meta_data_for_timeslot(participants, data)
+  def update_meta_data_for_timeslot(participants, pool, data)
     remove_stale_on_hold_records(participants, data)
-    remove_events_from_waiting_list(participants, data)
+    remove_events_from_waiting_list(participants, pool, data)
   end
 
   def remove_stale_on_hold_records(participants, data)
@@ -39,9 +39,15 @@ class PoolMerger
     end
   end
 
-  def remove_events_from_waiting_list(participants, data)
+  def remove_events_from_waiting_list(participants, pool, data)
     participants.each do |p|
       data[:waiting_for_events].delete(participant_event_id(p))
+    end
+    if data[:waiting_for_events].any?
+      calls = Call.where("created_at >= ?", Time.now - pool.timelimit.minutes)
+      calls.each do |call|
+        data[:waiting_for_events].delete(call.event_id) if call.status =~ /completed|onhold/
+      end
     end
   end
 
