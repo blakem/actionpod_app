@@ -1,6 +1,5 @@
 15 Minute Calls Features and Todo list:
   FrontEnd:
-    Add "tips" to outbound email
     Add count-down timer on Current Conference page
 
   BackEnd:
@@ -27,10 +26,7 @@
     Add expenses to Expenses spreadsheet  
 
   Other:
-    Fix Leather Bracelet
     Watch Haml Screencast
-    Phones per event / per occurrence
-    Pool management
     Change all 'User' copy to 'Member'
     Add Feedback Form
     Cancel Judds Hill
