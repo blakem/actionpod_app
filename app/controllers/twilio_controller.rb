@@ -67,11 +67,11 @@ class TwilioController < ApplicationController
   def go_directly_to_conference
     event = find_event_from_params(params)
     unless event
-      update_call_status_from_params(params, 'direct:nomatch')
+      update_call_status_from_params(params, 'direct:nomatch', 'AnsweredBy' => params[:AnsweredBy])
       self.say_sorry
       render :action => :say_sorry
     else
-      update_call_status_from_params(params, 'direct:match')
+      update_call_status_from_params(params, 'direct:match', 'AnsweredBy' => params[:AnsweredBy])
       update_answered_count(event.user)
       @event_name = event.name_in_second_person
       @timelimit = event.pool.timelimit
@@ -154,15 +154,16 @@ class TwilioController < ApplicationController
       user.save
     end
 
-    def update_call_object_status(call, status)
+    def update_call_object_status(call, status, args = {})
       return unless call
       call.status = call.status.nil? ? status : call.status + "-#{status}"
+      call.update_attributes(args) unless args.empty?      
       call.save
     end
 
-    def update_call_status_from_params(params, status)
+    def update_call_status_from_params(params, status, args = {})
       call = Call.find_by_Sid(params[:CallSid])
-      update_call_object_status(call, status)
+      update_call_object_status(call, status, args)
     end
 
     def find_event_from_params(params)

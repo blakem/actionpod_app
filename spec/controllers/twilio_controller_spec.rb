@@ -198,7 +198,7 @@ describe TwilioController do
       pool = Factory(:pool, :timelimit => 33)
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
       call = Call.create(:Sid => '12345', :event_id => event.id)
-      post :go_directly_to_conference, :CallSid => '12345'
+      post :go_directly_to_conference, :CallSid => '12345', :AnsweredBy => 'human'
       hash = (Hash.from_xml response.body).with_indifferent_access
       hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
@@ -209,6 +209,7 @@ describe TwilioController do
       response.should have_selector('response>say', :content => 'Time is up. Goodbye.')
       call.reload
       call.status.should == 'direct:match'
+      call.AnsweredBy.should == 'human'
       user.reload
       user.answered_count.should == 4
       user.missed_in_a_row.should == 0

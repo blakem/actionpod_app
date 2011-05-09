@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110509053936) do
+ActiveRecord::Schema.define(:version => 20110509184915) do
 
   create_table "calls", :force => true do |t|
     t.string   "Sid"
@@ -26,6 +26,7 @@ ActiveRecord::Schema.define(:version => 20110509053936) do
     t.string   "Direction"
     t.integer  "Duration"
     t.string   "status"
+    t.string   "AnsweredBy"
   end
 
   create_table "conferences", :force => true do |t|
