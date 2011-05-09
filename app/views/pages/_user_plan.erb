@@ -13,7 +13,7 @@
       - <i><%= link_to "Update Goals", :controller => :pages, :action => :plan %></i>
     <% end %>
     <dl><dd>
-    <span class="plan"><%= simple_format(h(plan.body.strip)).gsub(/<br \/>(\s+)/) { "<br />#{'&nbsp;' * $1.length}" } %></span>
+    <span class="plan"><%= simple_format(h(plan.body.strip)).gsub(/<(br \/|p)>(\s+)/) { "<#{$1}>#{'&nbsp;' * $2.length}" } %></span>
     </dd></dl>
   <% end %>
 <% else %>
