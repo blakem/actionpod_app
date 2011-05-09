@@ -129,7 +129,7 @@ describe "Users" do
         fill_in "Title",              :with => 'newtitle'
         fill_in "Location",           :with => 'newlocation'
         fill_in "Time Zone",          :with => 'Mountain Time (US & Canada)'
-        check   "Hide my email address from other users"
+        check   "Hide my email address from other members"
         check   "Go directly to conference"
         fill_in "Current Password",   :with => user.password
         click_button
