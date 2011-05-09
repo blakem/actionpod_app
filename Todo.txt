@@ -10,8 +10,8 @@
 
   Bugs:
     Send support request to Twilio about Tom's call
-    Incoming Call matching... is there a bug with call_sid?
-    Admin page is broken
+    Incoming callers that were previously placed have new call_sid and are treated as new callers.
+    Admin page is broken - Will automatically fix on June 1st.
 
   Community:
     Ask Garret about Tweet (@15mincalls)
