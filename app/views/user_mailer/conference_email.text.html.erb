@@ -6,15 +6,19 @@
   <body>
     <h2>Notes for your 15 Minute Call on <%= @date %></h2>
     <font size="+1">(Your next call is scheduled for <%= @current_user.next_call_time_string %>)</font>
-	<% @participants.each do |user| %>
+	<% @participants.each_with_index do |user, i| %>
 	  <% @user = user %>
 	  <% @my = @user == @current_user ? 'My' : @user.first_name + "'s" %>
 	  <%= render 'pages/user_link' %>
 	  <%= render 'pages/user_information' %>
 	  <%= render 'pages/user_about' %>
 	  <%= render 'pages/user_plan' %>
-	  <hr>
+	  <% unless i >= @participants.count - 1 %>
+  	    <hr>
+      <% end %>
 	<% end %>
+	<%= render 'pages/random_tip' %>
+	<hr>
     <p>Thanks for joining and have a great day!</p>
   </body>
 </html>
