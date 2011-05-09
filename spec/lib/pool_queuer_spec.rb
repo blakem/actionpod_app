@@ -113,11 +113,10 @@ describe PoolQueuer do
 
     it "should have a time_between_merges" do
       @pq.time_between_merges.should == 5.seconds
-    
     end
     
     it "should have a time_before_first_merge" do
-      @pq.time_before_first_merge.should == 25.seconds
+      @pq.time_before_first_merge.should == 15.seconds
     end
     
     it "should queue merge_calls_for_pool on success" do
@@ -185,8 +184,8 @@ describe PoolQueuer do
       ).count.should == 1
     end
     
-    it "should run on the 175th time" do
-      test_count = 175
+    it "should run on the 177th time" do
+      test_count = 177
       pool_runs_at = @now + 5.minutes
       pool_merger = mock('PoolMerger')
       pool_merger.should_receive(:merge_calls_for_pool).with(@pool, pool_runs_at, {})
@@ -202,8 +201,8 @@ describe PoolQueuer do
       ).count.should == 1
     end
 
-    it "should exit and update the conference on the 176th time" do
-      test_count = 176
+    it "should exit and update the conference on the 178th time" do
+      test_count = 178
       user1 = Factory(:user)
       user2 = Factory(:user)
       user3 = Factory(:user)

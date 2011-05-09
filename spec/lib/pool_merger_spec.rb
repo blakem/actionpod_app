@@ -11,6 +11,10 @@ describe PoolMerger do
     @timelimit_insec = (((@pool.timelimit + 1) * 60) - offset_time) - 1
     @data = @pm.initialize_data({})
   end
+  
+  it "should have a max_wait_time_to_answer" do
+    @pm.max_wait_time_to_answer.should == 30.seconds
+  end
 
   describe "merge_calls_for_pool" do
     it "does nothing with zero new participants" do
@@ -336,6 +340,62 @@ describe PoolMerger do
           },
           :placed      => {},
           :apologized  => {},
+        })
+      end
+
+      it "should carry over if we are still waiting on another participant" do
+        new_participants = participant_list(2)
+        pool_runs_at = Time.now
+        @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
+        data = @pm.initialize_data({}).merge({
+          :on_hold     => {
+            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 1,
+            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2" => 1,
+          },
+          :waiting_for_events => [333],
+        })
+        @pm.merge_calls_for_pool(@pool, pool_runs_at, data).should == @data.merge({
+          :on_hold     => {
+            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 1,
+            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2" => 1,
+          },
+          :waiting_for_events => [333],
+        })
+      end
+
+      it "should merge them after a long time even if we are still waiting on another participant" do
+        new_participants = participant_list(2)
+        pool_runs_at = Time.now
+        @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
+        data = @pm.initialize_data({}).merge({
+          :on_hold     => {
+            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 1,
+            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2" => 1,
+          },
+          :waiting_for_events => [333],
+        })
+        offset = 60.seconds
+        timelimit_insec = (((@pool.timelimit + 1) * 60) - offset) - 1
+        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1", "15mcPool#{@pool.id}Room1",
+         be_within(3).of(timelimit_insec),
+         1, [1, 2])
+        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2", "15mcPool#{@pool.id}Room1",
+         be_within(3).of(timelimit_insec), 
+         2, [1, 2])
+        @pm.merge_calls_for_pool(@pool, pool_runs_at - offset, data).should == @data.merge({
+          :on_hold     => {},
+          :next_room   => 2,
+          :placed      => {
+            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => {
+              :room_name => "15mcPool#{@pool.id}Room1",
+              :event_id => 1,
+            },
+            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2" => {
+              :room_name => "15mcPool#{@pool.id}Room1",
+              :event_id => 2,
+            }
+          },
+          :waiting_for_events => [333],
         })
       end
 

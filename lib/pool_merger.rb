@@ -20,10 +20,17 @@ class PoolMerger
     data = initialize_data(data)
     participants_on_hold_for_pool = @tc.participants_on_hold_for_pool(pool)
     update_meta_data_for_timeslot(participants_on_hold_for_pool, pool, data)
-    (new_participants, placed_participants) = filter_new_participants_that_have_been_placed(participants_on_hold_for_pool, data)
-    new_participants = sort_participants(new_participants, data)
-    handle_placed_participants(placed_participants, pool, pool_runs_at, data)
-    handle_new_participants(new_participants, pool, pool_runs_at, data)
+    if data[:waiting_for_events].empty? or pool_runs_at < Time.now - self.max_wait_time_to_answer.seconds
+      (new_participants, placed_participants) = filter_new_participants_that_have_been_placed(participants_on_hold_for_pool, data)
+      new_participants = sort_participants(new_participants, data)
+      handle_placed_participants(placed_participants, pool, pool_runs_at, data)
+      handle_new_participants(new_participants, pool, pool_runs_at, data)
+    end
+    data
+  end
+
+  def max_wait_time_to_answer
+    30
   end
 
   def update_meta_data_for_timeslot(participants, pool, data)
@@ -60,14 +67,13 @@ class PoolMerger
         handle_three_new_participants(three_participants, pool, pool_runs_at, data)
       end
     end
-    return data if participants.empty?
+    return if participants.empty?
 
     if participants.count == 1
       handle_one_new_participant(participants[0], pool, pool_runs_at, data)
     else
       handle_two_new_participants(participants, pool, pool_runs_at, data)
     end
-    data
   end
 
   def handle_one_new_participant(participant, pool, pool_runs_at, data)
