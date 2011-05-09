@@ -19,11 +19,16 @@ class PoolMerger
     @tc = TwilioCaller.new
     data = initialize_data(data)
     participants_on_hold_for_pool = @tc.participants_on_hold_for_pool(pool)
-    remove_stale_on_hold_records(participants_on_hold_for_pool, data)
+    update_meta_data_for_timeslot(participants_on_hold_for_pool, data)
     (new_participants, placed_participants) = filter_new_participants_that_have_been_placed(participants_on_hold_for_pool, data)
     new_participants = sort_participants(new_participants, data)
     handle_placed_participants(placed_participants, pool, pool_runs_at, data)
     handle_new_participants(new_participants, pool, pool_runs_at, data)
+  end
+
+  def update_meta_data_for_timeslot(participants, data)
+    remove_stale_on_hold_records(participants, data)
+    remove_events_from_waiting_list(participants, data)
   end
 
   def remove_stale_on_hold_records(participants, data)
@@ -31,6 +36,12 @@ class PoolMerger
     new_participant_sids = participants.map{ |p| p[:call_sid] }
     participants_on_hold.each do |sid|
       data[:on_hold].delete(sid) unless new_participant_sids.include?(sid)
+    end
+  end
+
+  def remove_events_from_waiting_list(participants, data)
+    participants.each do |p|
+      data[:waiting_for_events].delete(participant_event_id(p))
     end
   end
 
@@ -364,10 +375,12 @@ class PoolMerger
 
   def initialize_data(data)
     data = {} if data.empty?
-    data[:next_room]   = 1  unless data.has_key?(:next_room)
-    data[:on_hold]     = {} unless data.has_key?(:on_hold)
-    data[:placed]      = {} unless data.has_key?(:placed)
-    data[:apologized]  = {} unless data.has_key?(:apologized)
+    data[:total]              = 0 unless data.has_key?(:total)
+    data[:waiting_for_events] = [] unless data.has_key?(:waiting_for_events)
+    data[:next_room]          = 1  unless data.has_key?(:next_room)
+    data[:on_hold]            = {} unless data.has_key?(:on_hold)
+    data[:placed]             = {} unless data.has_key?(:placed)
+    data[:apologized]         = {} unless data.has_key?(:apologized)
     data
   end
 

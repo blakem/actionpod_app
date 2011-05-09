@@ -67,7 +67,10 @@ class PoolQueuer
           twilio_caller.send_sms(event.user.primary_phone.number, event.sms_reminder_text)
         end
       end
-      queue_merge_calls_for_pool(pool, pool_runs_at, 0, {:total => jobs.count})
+      queue_merge_calls_for_pool(pool, pool_runs_at, 0, {
+        :total => jobs.count,
+        :waiting_for_events => jobs.map(&:obj_id),
+      })
     end
   end
   

@@ -9,28 +9,29 @@ describe PoolMerger do
     offset_time = 5.minutes
     @pool_runs_at = Time.now - offset_time
     @timelimit_insec = (((@pool.timelimit + 1) * 60) - offset_time) - 1
+    @data = @pm.initialize_data({})
   end
 
   describe "merge_calls_for_pool" do
     it "does nothing with zero new participants" do
       @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(participant_list(0))
-      @pm.merge_calls_for_pool(@pool, @pool_runs_at, {}).should == {
+      @pm.merge_calls_for_pool(@pool, @pool_runs_at, {}).should == @data.merge({
         :next_room   => 1,
         :on_hold     => {},
         :placed      => {},
         :apologized  => {},
-      }
+      })
     end
 
     it "initializes the hash even when passed :total" do
       @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(participant_list(0))
-      @pm.merge_calls_for_pool(@pool, @pool_runs_at, {:total => 3}).should == {
+      @pm.merge_calls_for_pool(@pool, @pool_runs_at, {:total => 3}).should == @data.merge({
         :next_room   => 1,
         :total => 3,
         :on_hold     => {},
         :placed      => {},
         :apologized  => {},
-      }
+      })
     end
     
     describe "zero participants" do
@@ -41,20 +42,25 @@ describe PoolMerger do
           "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 1,          
         }
         @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
-        @pm.merge_calls_for_pool(@pool, @pool_runs_at, data).should == {
+        @pm.merge_calls_for_pool(@pool, @pool_runs_at, data).should == @data.merge({
           :next_room   => 1,
           :on_hold     => {},
           :placed      => {},
           :apologized  => {},
-        }
+        })
       end
     end
     
     describe "single participant" do      
-      it "should carry over if we haven't seen them" do
+      it "should carry over if we haven't seen them before" do
         new_participants = participant_list(1)
         @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
-        @pm.merge_calls_for_pool(@pool, @pool_runs_at, {}).should == {
+        @pm.merge_calls_for_pool(@pool, @pool_runs_at, {
+          :total => 1,
+          :waiting_for_events => [1],
+        }).should == {
+          :total       => 1,
+          :waiting_for_events => [],
           :next_room   => 1,
           :on_hold     => {
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 1,
@@ -71,14 +77,14 @@ describe PoolMerger do
         data[:on_hold] = {
           "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 1,          
         }
-        @pm.merge_calls_for_pool(@pool, @pool_runs_at, data).should == {
+        @pm.merge_calls_for_pool(@pool, @pool_runs_at, data).should == @data.merge({
           :next_room   => 1,
           :on_hold     => {
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 2,
           },
           :placed      => {},
           :apologized  => {},
-        }
+        })
       end
 
       it "should tell him sorry and end call if he's been waiting a long time" do
@@ -98,7 +104,7 @@ describe PoolMerger do
         }
         data[:total] = 2
         data = @pm.merge_calls_for_pool(@pool, @pool_runs_at, data)
-        data.should == {
+        data.should == @data.merge({
           :total       => 2,
           :next_room   => 1,
           :on_hold     => {
@@ -106,9 +112,9 @@ describe PoolMerger do
           },
           :placed      => {},
           :apologized  => {},
-        }
+        })
         data = @pm.merge_calls_for_pool(@pool, @pool_runs_at, data)
-        data.should == {
+        data.should == @data.merge({
           :total       => 2,
           :next_room   => 1,
           :on_hold     => {
@@ -118,9 +124,9 @@ describe PoolMerger do
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 1,
           },
           :placed      => {},
-        }
+        })
         data = @pm.merge_calls_for_pool(@pool, @pool_runs_at, data)
-        data.should == {
+        data.should == @data.merge({
           :total       => 2,
           :next_room   => 1,
           :on_hold     => {
@@ -130,7 +136,7 @@ describe PoolMerger do
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 1,
           },
           :placed      => {},
-        }
+        })
         conference = Conference.where(
           :pool_id    => event.pool_id,
           :started_at => @pool_runs_at,
@@ -158,7 +164,7 @@ describe PoolMerger do
         }
         data[:total] = 2
         data = @pm.merge_calls_for_pool(@pool, @pool_runs_at, data)
-        data.should == {
+        data.should == @data.merge({
           :total       => 2,
           :next_room   => 1,
           :on_hold     => {
@@ -166,9 +172,9 @@ describe PoolMerger do
           },
           :placed      => {},
           :apologized  => {},
-        }
+        })
         data = @pm.merge_calls_for_pool(@pool, @pool_runs_at, data)
-        data.should == {
+        data.should == @data.merge({
           :total       => 2,
           :next_room   => 1,
           :on_hold     => {
@@ -178,7 +184,7 @@ describe PoolMerger do
           :apologized  => {
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 1,
           },
-        }
+        })
         conference = Conference.where(
           :pool_id    => event.pool_id,
           :started_at => @pool_runs_at,
@@ -210,7 +216,7 @@ describe PoolMerger do
           event.id,
           [32, 33],
         )
-        data = {
+        data = @data.merge({
           :on_hold => {"CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 1},
           :next_room => 5,
           :apologized  => {},
@@ -260,7 +266,7 @@ describe PoolMerger do
               :event_id => 43,
             },
           },
-        }
+        })
         data2 = Marshal.load(Marshal.dump(data))
         expected = Marshal.load(Marshal.dump(data))
         got = @pm.merge_calls_for_pool(@pool, @pool_runs_at, data)
@@ -291,7 +297,7 @@ describe PoolMerger do
       it "should carry over if we haven't seen either one of them" do
         new_participants = participant_list(2)
         @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
-        @pm.merge_calls_for_pool(@pool, @pool_runs_at, {}).should == {
+        @pm.merge_calls_for_pool(@pool, @pool_runs_at, {}).should == @data.merge({
           :next_room   => 1,
           :on_hold     => {
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 1,
@@ -299,7 +305,7 @@ describe PoolMerger do
           },
           :placed      => {},
           :apologized  => {},
-        }
+        })
       end
 
       it "should join them together if we've seen one of them before" do
@@ -319,7 +325,7 @@ describe PoolMerger do
           event1.id, [event1.id, event2.id])
         @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2", "15mcPool#{@pool.id}Room1", @timelimit_insec, 
           event2.id, [event1.id, event2.id])
-        @pm.merge_calls_for_pool(@pool, @pool_runs_at, data).should == {
+        @pm.merge_calls_for_pool(@pool, @pool_runs_at, data).should == @data.merge({
           :next_room   => 2,
           :on_hold     => {},
           :apologized  => {},
@@ -333,7 +339,7 @@ describe PoolMerger do
               :event_id => event2.id,
             }
           },
-        }
+        })
         conference = Conference.where(
           :room_name  => "15mcPool#{@pool.id}Room1",
           :pool_id    => @pool.id,
@@ -355,7 +361,7 @@ describe PoolMerger do
          1, [1, 2])
         @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2", "15mcPool#{@pool.id}Room1", @timelimit_insec, 
          2, [1, 2])
-        @pm.merge_calls_for_pool(@pool, @pool_runs_at, data).should == {
+        @pm.merge_calls_for_pool(@pool, @pool_runs_at, data).should == @data.merge({
           :next_room   => 2,
           :on_hold     => {},
           :apologized  => {},
@@ -369,7 +375,7 @@ describe PoolMerger do
               :event_id => 2,
             },
           },
-        }
+        })
       end
     end
 
@@ -383,7 +389,7 @@ describe PoolMerger do
           2, [1, 2, 3])
         @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX3", "15mcPool#{@pool.id}Room1", @timelimit_insec, 
           3, [1, 2, 3])
-        @pm.merge_calls_for_pool(@pool, @pool_runs_at, {}).should == {
+        @pm.merge_calls_for_pool(@pool, @pool_runs_at, {}).should == @data.merge({
           :next_room   => 2,
           :on_hold     => {},
           :apologized  => {},
@@ -401,7 +407,7 @@ describe PoolMerger do
               :event_id => 3,
             },
           },
-        }
+        })
       end
 
       it "with six we should get two new conferences ordered by user_id" do
@@ -426,7 +432,7 @@ describe PoolMerger do
         @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX6", "15mcPool#{@pool.id}Room2",
           be_within(3).of(@timelimit_insec),
           events[5].id, [events[3].id, events[4].id, events[5].id])
-        @pm.merge_calls_for_pool(@pool, @pool_runs_at, {}).should == {
+        @pm.merge_calls_for_pool(@pool, @pool_runs_at, {}).should == @data.merge({
           :next_room   => 3,
           :on_hold     => {},
           :apologized  => {},
@@ -456,7 +462,7 @@ describe PoolMerger do
               :event_id => events[5].id,
             },
           },
-        }
+        })
       end
       
       it "should skip participants that have already been placed" do
@@ -476,7 +482,7 @@ describe PoolMerger do
           1, [1, 2])
         @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2", "15mcPool#{@pool.id}Room1", @timelimit_insec,
           2, [1, 2])
-        @pm.merge_calls_for_pool(@pool, @pool_runs_at, data).should == {
+        @pm.merge_calls_for_pool(@pool, @pool_runs_at, data).should == @data.merge({
           :next_room   => 2,
           :on_hold     => {
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX3" => 1,
@@ -496,7 +502,7 @@ describe PoolMerger do
               :event_id => 2,
             },
           },
-        }
+        })
       end
 
       it "should skip participants that have already been placed and are Incoming when they're on hold for 1" do
@@ -518,7 +524,7 @@ describe PoolMerger do
           1, [1, 2])
         @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2", "15mcPool#{@pool.id}Room1", @timelimit_insec,
           2, [1, 2])
-        @pm.merge_calls_for_pool(@pool, @pool_runs_at, data).should == {
+        @pm.merge_calls_for_pool(@pool, @pool_runs_at, data).should == @data.merge({
           :next_room   => 2,
           :on_hold     => {
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX3" => 2,
@@ -538,7 +544,7 @@ describe PoolMerger do
               :event_id => 2,
             },
           },
-        }
+        })
       end
 
       it "should place participants that have already been placed and are Incoming when they're on hold for 2" do
@@ -575,7 +581,7 @@ describe PoolMerger do
           2, [1, 2])
         @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX3", "15mcPool#{@pool.id}Room1", @timelimit_insec,
           3, [3, 4, 5])
-        @pm.merge_calls_for_pool(@pool, @pool_runs_at, data).should == {
+        @pm.merge_calls_for_pool(@pool, @pool_runs_at, data).should == @data.merge({
           :next_room   => 3,
           :on_hold     => {},
           :apologized  => {},
@@ -605,7 +611,7 @@ describe PoolMerger do
               :event_id => 5,
             },
           },
-        }
+        })
       end
 
       it "should not duplicate the event_ids when merging in a callback" do
@@ -781,7 +787,7 @@ describe PoolMerger do
         @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX4", "15mcPool#{@pool.id}Room2",
           be_within(3).of(@timelimit_insec), 
           events[3].id, [events[3].id, events[1].id])
-        @pm.merge_calls_for_pool(@pool, @pool_runs_at, @pm.merge_calls_for_pool(@pool, @pool_runs_at, {})).should == {
+        @pm.merge_calls_for_pool(@pool, @pool_runs_at, @pm.merge_calls_for_pool(@pool, @pool_runs_at, {})).should == @data.merge({
           :next_room   => 3,
           :on_hold     => {},
           :apologized  => {},
@@ -803,7 +809,7 @@ describe PoolMerger do
               :event_id => events[3].id,
             },
           },
-        }
+        })
       end
 
       it "another way to write the handle_four test..... Needs plumbing test to go along with it" do
@@ -858,7 +864,7 @@ describe PoolMerger do
           "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX4" => 2,
           "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 1,
         }
-        @pm.merge_calls_for_pool(@pool, @pool_runs_at, data).should == {
+        @pm.merge_calls_for_pool(@pool, @pool_runs_at, data).should == @data.merge({
           :next_room   => 2,
           :on_hold     => { 
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX5" => 1,
@@ -879,7 +885,7 @@ describe PoolMerger do
               :event_id => events[1].id,
             },
           },
-        }
+        })
       end
     end
   end
@@ -966,10 +972,12 @@ describe PoolMerger do
   describe "initialize_data" do
     it "should initialize the empty hash" do
       @pm.initialize_data({}).should == {
-        :next_room   => 1,
-        :on_hold     => {},
-        :placed      => {},
-        :apologized  => {},
+        :next_room          => 1,
+        :on_hold            => {},
+        :placed             => {},
+        :apologized         => {},
+        :total              => 0,
+        :waiting_for_events => [],
       }
     end
 

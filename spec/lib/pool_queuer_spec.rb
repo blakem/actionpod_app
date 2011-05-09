@@ -135,9 +135,13 @@ describe PoolQueuer do
     end
 
     it "should send total to queue_merge_calls_for_pool" do
+      event2 = Factory(:event, :pool_id => @pool.id, :send_sms_reminder => false)
       DelayedJob.create(@delay_args.merge(:obj_id => @event.id))
-      DelayedJob.create(@delay_args.merge(:obj_id => @event.id))
-      @pq.should_receive(:queue_merge_calls_for_pool).with(@pool, @now + 5.minutes, 0, {:total => 2})
+      DelayedJob.create(@delay_args.merge(:obj_id => event2.id))
+      @pq.should_receive(:queue_merge_calls_for_pool).with(@pool, @now + 5.minutes, 0, {
+        :total => 2,
+        :waiting_for_events => [@event.id, event2.id]
+      })
       @pq.check_before_calls_go_out(@pool, @now + 5.minutes)
     end
   end
