@@ -32,6 +32,7 @@ class TwilioController < ApplicationController
   def callback
     call = Call.find_by_Sid(params[:CallSid])
     call.Duration = params[:CallDuration]
+    call.AnsweredBy = params[:AnsweredBy] if params[:AnsweredBy]
     call.save
     bailed_before_greeting = call.status == 'outgoing'
     event = find_event_from_params(params)

@@ -117,12 +117,13 @@ describe TwilioController do
       pool = Factory(:pool, :timelimit => 33)
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
       call = Call.create(:Sid => '12345', :event_id => event.id, :status => 'foo')
-      post :callback, :CallSid => call.Sid, :CallDuration => 33
+      post :callback, :CallSid => call.Sid, :CallDuration => 33, :AnsweredBy => 'human'
       hash = (Hash.from_xml response.body).with_indifferent_access
       hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
       call.reload
       call.status.should == 'foo-callback:match-completed'
+      call.AnsweredBy.should == 'human'
       call.Duration.should == 33
     end
 
@@ -130,7 +131,7 @@ describe TwilioController do
       user = Factory(:user, :made_in_a_row => 3, :missed_in_a_row => 2)
       pool = Factory(:pool, :timelimit => 33)
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
-      call = Call.create(:Sid => '12345', :event_id => event.id, :status => 'outgoing-greeting:match')
+      call = Call.create(:Sid => '12345', :event_id => event.id, :status => 'outgoing-greeting:match', :AnsweredBy => 'human')
       post :callback, :CallSid => call.Sid, :CallDuration => 33
       hash = (Hash.from_xml response.body).with_indifferent_access
       hash[:Response].should be_true
@@ -138,6 +139,7 @@ describe TwilioController do
       call.reload
       call.status.should == 'outgoing-greeting:match-callback:match-completed'
       call.Duration.should == 33
+      call.AnsweredBy.should == 'human'
       user.reload
       user.made_in_a_row.should == 0
       user.missed_in_a_row.should == 3
