@@ -69,7 +69,7 @@ class PoolQueuer
       end
       queue_merge_calls_for_pool(pool, pool_runs_at, 0, {
         :total => jobs.count,
-        :waiting_for_events => jobs.map(&:obj_id),
+        :waiting_for_events => jobs.map(&:obj_id).sort,
       })
     end
   end
