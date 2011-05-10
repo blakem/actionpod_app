@@ -1,19 +1,21 @@
-Over the last few years I've tried several different structures to light a fire under my ass.  When I look back
-on the times that I've been the most productive is that I've had some structure in place to keep me pointed in the
-right direction.  And most of the time that's been with someone else.  I seem to get more motivated when I have
-someone watching me and cheering me on.
+15 Minute Calls: Accountability calls made easy
 
-However, those structures tended to fade away over time.  One or both of us would start slipping.  The other one wouldn't
-call it out.  Something would just happen over time and the container would lose momentum.  Pretty soon the container would
-just slip away all together.  I had to work hard at maintaining my side of the bargain and eventually it would just
-fade away.
+I'll admit it, I'm not the most organized person out there.  Emails go unanswered, projects get left idle for months, and my todo list 
+sometimes seems frozen in time.  One of the best structures I've found for getting out of the rut is the accountability group.  It's a
+simple concept:  Get a few motivated people together to support each other in getting their projects done.
 
-And if you've ever tried to set up an accountability group, that's tough too.  You've got to find a group of people who are
-dedicated enough to go for it that can all agree on a time that works for all of them.  It's a challenge.  And most of 
-the time it doesn't work.
+Over the last six-months I've been participating in regular short accountability calls with three other people.  And for the most part 
+it's been great!  It's helped me stay organized and focused on what's important to me.
 
-I was in that position a couple months ago, an accountabiltiy team that was slowly drifting apart.  And I thought about
+However, accountability groups have two major drawbacks.  First, they're difficult to get started. Second, they seem to fade away after 
+a very short amount of time.  Finding a dedicated group that's available and committed to making the calls is a challenge.  Then life
+happens, schedules shift, emergencies crop up, and pretty soon the accountability group slips away, often without anyone even 
+acknowledging that it's gone.
+
+I was in that position a couple months ago, my accountability group was slowly drifting apart.  I thought about
 what I could do to bring more people into it.  Over the course of a few weeks I came up with an idea.  Solve it all at once
-for everyone.  Just put people into timeslots and then dish out the conference rooms as they come.  You aren't 
-guaranteed to have the same people all the time, but with a little bit of structure you can get a lot out of it.
+for everyone.  Here was my plan:
+    1. Build a system that can match people up with others who are available at the same time
+    2. Have that system call each person and connect them with two others for their accountability group
+    3. Let them run wild
 
