@@ -48,17 +48,21 @@ class PoolMerger
 
   def remove_events_from_waiting_list(participants, pool, data)
     if data[:waiting_for_events].any?
-      puts "Before:" + data[:waiting_for_events].inspect
+      log_message("Before:" + data[:waiting_for_events].inspect)
       participants.each do |p|
         data[:waiting_for_events].delete(participant_event_id(p))
       end
-      puts "Between:" + data[:waiting_for_events].inspect
+      log_message("Between:" + data[:waiting_for_events].inspect)
       calls = Call.where("created_at >= ?", Time.now - pool.timelimit.minutes)
       calls.each do |call|
         data[:waiting_for_events].delete(call.event_id) if call.status =~ /completed|onhold/
       end
-      puts "After:" + data[:waiting_for_events].inspect
+      log_message("After:" + data[:waiting_for_events].inspect)
     end
+  end
+  
+  def log_message(message)
+    puts message if Rails.env.production?
   end
 
   def handle_new_participants(participants, pool, pool_runs_at, data)
