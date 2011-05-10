@@ -25,7 +25,24 @@ describe TwilioController do
       hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
       response.should be_success
-      response.should have_selector('response>say', :content => "Welcome. Your phone is now set up and ready to go.  Thank you and have an awesome day.")
+      response.should have_selector('response>gather', :numdigits => '1')
+      response.should have_selector('response>gather', :finishonkey => '#')
+      response.should have_selector('response>gather', :action => 'http://www.15minutecalls.com/twilio/place_test_call_thanks.xml')
+      response.should have_selector('response>gather>say', :content => 'Welcome. Please press 1 on your handset.')
+      response.should have_selector('response>say', 
+        :content => 'Sorry, We didn\'t receive any input.  For help, please contact support.')
+    end
+  end
+
+  describe "place_test_call_thanks" do
+    it "should be success" do
+  	  controller.user_signed_in?.should be_false
+      post :place_test_call_thanks
+      hash = (Hash.from_xml response.body).with_indifferent_access
+      hash[:Response].should be_true
+      response.content_type.should =~ /^application\/xml/
+      response.should be_success
+      response.should have_selector('response>say', :content => "Excellent. Your phone is now set up and ready to go.  Thank you and have an awesome day.")
     end
   end
   

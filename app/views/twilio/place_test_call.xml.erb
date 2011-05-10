@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Response>
-  <Say>"Welcome. Your phone is now set up and ready to go.  Thank you and have an awesome day."</Say>
+  <Gather action="<%= @postto %>" numDigits="1" finishOnKey="#">
+    <Say>Welcome. Please press 1 on your handset.</Say>
+  </Gather>
+  <Say>Sorry, We didn't receive any input.  For help, please contact support.</Say>
 </Response>

@@ -52,6 +52,9 @@ class TwilioController < ApplicationController
   end
   
   def place_test_call
+    @postto = base_url + '/place_test_call_thanks.xml'
+  end
+  def place_test_call_thanks
   end
 
   def apologize_no_other_participants
