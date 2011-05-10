@@ -96,13 +96,7 @@ class PoolMerger
   end
   
   def handle_two_new_participants(participants, pool, pool_runs_at, data)
-    if on_hold?(participants[0], data) || on_hold?(participants[1], data)
-      create_new_group(participants, pool, pool_runs_at, data)
-    else
-      participants.each do |participant|
-        put_on_hold(participant, data)
-      end
-    end
+    create_new_group(participants, pool, pool_runs_at, data)
   end
 
   def handle_three_new_participants(participants, pool, pool_runs_at, data)
