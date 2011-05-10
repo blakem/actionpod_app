@@ -27,7 +27,7 @@ describe "Users" do
       it "should make a new user" do
         expect { expect {
           visit new_user_registration_path
-          fill_in "Invite Code",            :with => "xyzzy"
+          fill_in "Invite Code",            :with => " xYzZy "
           fill_in "Full Name",              :with => "Example User"
           fill_in "Email",                  :with => "newuserpurple@example.org"
           fill_in "Primary Phone",          :with => "415 111 2222"
