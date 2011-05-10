@@ -1,16 +1,8 @@
 class PoolQueuer
   
-  def time_before_calls_go_out
-    10.minutes
-  end
-  
-  def time_between_merges
-    5.seconds
-  end
-
-  def time_before_first_merge
-    15.seconds
-  end
+  def time_before_calls_go_out() 10.minutes end
+  def time_between_merges()       5.seconds end
+  def time_before_first_merge()  15.seconds end
 
   def queue_pool(pool, run_time)
     queue_check_before_calls_go_out(pool, run_time)
