@@ -1,21 +1,28 @@
 15 Minute Calls: Accountability calls made easy
 
-I'll admit it, I'm not the most organized person out there.  Emails go unanswered, projects get left idle for months, and my todo list 
-sometimes seems frozen in time.  One of the best structures I've found for getting out of the rut is the accountability group.  It's a
-simple concept:  Get a few motivated people together to support each other in getting their projects done.
+I'll admit it, I'm not the most organized person out there.  Emails go unanswered, projects get left idle for months, 
+and my todo list sometimes seems frozen in time.  One of the best structures I've found for getting out of the rut is 
+the accountability group.  It's a simple concept:  Get a few motivated people together to support each other in getting
+their projects done.
 
-Over the last six-months I've been participating in regular short accountability calls with three other people.  And for the most part 
-it's been great!  It's helped me stay organized and focused on what's important to me.
+Over the last six-months I've been participating in regular short accountability calls with three other people.  And for 
+the most part it's been great!  It's helped me stay organized and focused on what's important to me.
 
-However, accountability groups have two major drawbacks.  First, they're difficult to get started. Second, they seem to fade away after 
-a very short amount of time.  Finding a dedicated group that's available and committed to making the calls is a challenge.  Then life
-happens, schedules shift, emergencies crop up, and pretty soon the accountability group slips away, often without anyone even 
-acknowledging that it's gone.
+However, accountability groups have two major drawbacks.  First, they're difficult to get started. Second, they seem to 
+fade away fairly quickly.  Finding a dedicated group that's available and committed to making the calls is a challenge.  
+Then life happens, schedules shift, emergencies come up, and pretty soon the accountability group slips away, often without 
+anyone even acknowledging that it's gone.
 
-I was in that position a couple months ago, my accountability group was slowly drifting apart.  I thought about
-what I could do to bring more people into it.  Over the course of a few weeks I came up with an idea.  Solve it all at once
-for everyone.  Here was my plan:
-    1. Build a system that can match people up with others who are available at the same time
-    2. Have that system call each person and connect them with two others for their accountability group
-    3. Let them run wild
+I was in that position a couple months ago, my accountability group was slowly drifting apart.  I thought about what I 
+could do to bring more people into it.  Over the course of a few weeks I came up with an idea.  Solve it all at once for 
+everyone!  If I built a system that could handle hundreds of accountability calls at different times, all anyone else would 
+have to do was pick a time that worked for them and join that group.  Perfect!
+
+That system is now built and is called 15 Minute Calls (www.15minutecalls.com).  Here's how it works:
+    1. Become one of the beta members
+    2. Enter in a few goals or a project that you're working on
+    3. Pick a few times during the week you're available for a regular short accountability call.
+
+That's it.  Once you're set up, the system will call you and connect you with two other members.  Your team will have 15 minutes to 
+check-in and support each other around your goals.  The call ends promptly and automatically after 15 minutes.
 
