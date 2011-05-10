@@ -194,13 +194,19 @@ describe User do
 
   it "has a member_status" do
     user = Factory(:user)
-    user.member_status.should == 'Never been called'
+    user.member_status.should == 'Has never been called'
     user.made_in_a_row = 3
     user.missed_in_a_row = 0
     user.member_status.should == 'Made 3 calls in a row'
     user.missed_in_a_row = 3
     user.made_in_a_row = 0
     user.member_status.should == 'Missed 3 calls in a row'
+    user.made_in_a_row = 1
+    user.missed_in_a_row = 0
+    user.member_status.should == 'Made last call'
+    user.missed_in_a_row = 1
+    user.made_in_a_row = 0
+    user.member_status.should == 'Missed last call'
   end
   
   describe "handle" do

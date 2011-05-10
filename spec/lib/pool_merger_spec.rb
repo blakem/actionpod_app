@@ -13,7 +13,7 @@ describe PoolMerger do
   end
   
   it "should have a max_wait_time_to_answer" do
-    @pm.max_wait_time_to_answer.should == 30.seconds
+    @pm.max_wait_time_to_answer.should == 35.seconds
   end
 
   describe "merge_calls_for_pool" do

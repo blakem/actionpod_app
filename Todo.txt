@@ -3,7 +3,6 @@
     Add count-down timer on Current Conference page
 
   BackEnd:
-    Merge pools only after all calls have been completed.... or a default timeout time is hit.
     Send emails to stranded clients
     Set up Recurly
     Send email to accountability buddies if their friend misses 3 calls in a row.
@@ -12,7 +11,6 @@
   Bugs:
     Incoming callers that were previously placed have new call_sid and are treated as new callers.
     Admin page is broken - Will automatically fix on June 1st.
-    'Missed 1 calls in a row'
 
   Community:
     Ask Garret about Tweet (@15mincalls)

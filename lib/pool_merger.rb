@@ -30,7 +30,7 @@ class PoolMerger
   end
 
   def max_wait_time_to_answer
-    30
+    35
   end
 
   def update_meta_data_for_timeslot(participants, pool, data)
@@ -48,16 +48,13 @@ class PoolMerger
 
   def remove_events_from_waiting_list(participants, pool, data)
     if data[:waiting_for_events].any?
-      puts "Before:" + data[:waiting_for_events].inspect
       participants.each do |p|
         data[:waiting_for_events].delete(participant_event_id(p))
       end
-      puts "Between:" + data[:waiting_for_events].inspect
       calls = Call.where("created_at >= ?", Time.now - pool.timelimit.minutes)
       calls.each do |call|
         data[:waiting_for_events].delete(call.event_id) if call.status =~ /completed|onhold/
       end
-      puts "After:" + data[:waiting_for_events].inspect
     end
   end
 

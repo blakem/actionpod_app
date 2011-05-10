@@ -197,12 +197,16 @@ class User < ActiveRecord::Base
   end
   
   def member_status
-    if made_in_a_row > 0
+    if made_in_a_row == 1
+      "Made last call"
+    elsif made_in_a_row > 1
       "Made #{made_in_a_row} calls in a row"
-    elsif missed_in_a_row > 0
+    elsif missed_in_a_row == 1
+      "Missed last call"
+    elsif missed_in_a_row > 1
       "Missed #{missed_in_a_row} calls in a row"
     else
-      "Never been called"
+      "Has never been called"
     end
   end
   
