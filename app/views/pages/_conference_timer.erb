@@ -1,0 +1,19 @@
+<% end_time = @conference.started_at + 16.minutes %>
+<% end_time = Time.now + 10.seconds if false %>
+<% if end_time > Time.now %>
+  <script type="text/javascript" src="/javascripts/countdownpro.js" defer="defer"></script>
+  <meta scheme="countdown1" name="d_hidezero"  content="1">
+  <meta scheme="countdown1" name="h_hidezero"  content="1">
+  <meta scheme="countdown1" name="m_mindigits" content="2">
+  <meta scheme="countdown1" name="m_after"     content=":">
+  <meta scheme="countdown1" name="m_unit"      content="">
+  <meta scheme="countdown1" name="m_units"     content="">
+  <meta scheme="countdown1" name="s_unit"      content="">
+  <meta scheme="countdown1" name="s_units"     content="">
+  <meta scheme="countdown1" name="event_msg"   content="Time is up. Have an awesome day!">
+  <meta scheme="countdown1" name="m_before"    content="Time Remaining: ">
+  <counter>
+  <span id="countdown1" class="counter round"><%= end_time.utc.strftime("%Y-%m-%d %H:%M:%S GMT+00:00") %></span>
+  </counter>
+<% end %>
+

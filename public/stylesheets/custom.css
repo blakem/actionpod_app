@@ -23,6 +23,20 @@ ul.home li {
     color: #09c;
 }
 
+/* timer */
+counter {
+	margin:0 auto;
+	width:70%;
+	font-size:130%;
+	color:#000000;
+	background:#ffffff;
+	border:1px solid #000000;
+	padding:6px;
+	letter-spacing:2px;
+	white-space:nowrap;
+}
+
+
 /* hr */
 
 hr.short {
@@ -65,7 +79,7 @@ devise ul li a:visited {
 	color: #09c;
 }
 devise ul li a:hover {
-	text-ecoration: underline;
+	text-decoration: underline;
 }
 
 
@@ -139,7 +153,7 @@ nav ul li a:visited {
 	color: #09c;
 }
 nav ul li a:hover {
-	text-ecoration: underline;
+	text-decoration: underline;
 }
 
 a.signup_button { 

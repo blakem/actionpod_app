@@ -1,6 +1,5 @@
 15 Minute Calls Features and Todo list:
   FrontEnd:
-    Add count-down timer on Current Conference page
 
   BackEnd:
     Send emails to stranded clients

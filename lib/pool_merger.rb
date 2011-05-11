@@ -1,5 +1,6 @@
 class PoolMerger
 
+  # Wait until all calls have been answered or hung-up on
   # Get list of new participants
   # Four gets split into two groups of two
   # Split them into groups of 3 using old participants first
@@ -12,8 +13,7 @@ class PoolMerger
        # leave him there if he's new
        # put him in the smallest conference room if he's old
     # 2 left
-       # if either is old unite them
-       # if they are both new leave them there
+       # unite them into a group
 
   def merge_calls_for_pool(pool, pool_runs_at, data)
     @tc = TwilioCaller.new
