@@ -12,6 +12,7 @@
   <meta scheme="countdown1" name="s_units"     content="">
   <meta scheme="countdown1" name="event_msg"   content="Time is up. Have an awesome day!">
   <meta scheme="countdown1" name="m_before"    content="Time Remaining: ">
+  <meta scheme="countdown1" name="servertime"  content="<%= Time.now.utc.strftime("%Y-%m-%d %H:%M:%S GMT+00:00") %>">
   <counter>
   <span id="countdown1" class="counter round"><%= end_time.utc.strftime("%Y-%m-%d %H:%M:%S GMT+00:00") %></span>
   </counter>

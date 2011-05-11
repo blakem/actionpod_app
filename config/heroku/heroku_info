@@ -8,7 +8,7 @@ Repo size:      37M
 Slug size:      12M
 Stack:          bamboo-mri-1.9.2
 Data size:      1M
-Next cron:      2011-05-11 00:30 PDT (scheduled)
-Last cron:      2011-05-10 00:30 PDT (finished)
+Next cron:      2011-05-12 00:30 PDT (scheduled)
+Last cron:      2011-05-11 00:30 PDT (finished)
 Addons:         Cron Daily Cron, Custom Domains, Expanded Logging, New Relic Bronze, PG Backups Basic, Ranger Test, Recurly Test, Basic Release Management, Sendgrid Free, Shared Database 5MB, StillAlive Basic
 Owner:          blakem30@yahoo.com
