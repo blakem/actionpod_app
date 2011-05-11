@@ -16,3 +16,5 @@ SENDGRID_DOMAIN         => froom.com
 SENDGRID_PASSWORD       => 638d9840370d5c41d9
 SENDGRID_USERNAME       => app477680@heroku.com
 SHARED_DATABASE_URL     => postgres://shragsqatn:K7wpTVJushd-sDU0uf9c@ec2-50-17-213-59.compute-1.amazonaws.com/shragsqatn
+TRIPWIRE_API_KEY        => daf9102159d7b7f542f901bf30b804f1
+TRIPWIRE_URL            => https://tripwireapp.com/projects/83-app477680

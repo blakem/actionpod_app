@@ -146,6 +146,7 @@ GEM
     thor (0.14.6)
     treetop (1.4.9)
       polyglot (>= 0.3.1)
+    tripwire_notifier (0.2.8)
     tzinfo (0.3.27)
     warden (1.0.4)
       rack (>= 1.0)
@@ -181,5 +182,6 @@ DEPENDENCIES
   spork (= 0.9.0.rc4)
   sqlite3
   taps
+  tripwire_notifier
   webrat
   will_paginate (= 3.0.pre2)

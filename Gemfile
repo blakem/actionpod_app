@@ -15,7 +15,8 @@ gem 'heroku_san'
 gem 'faker'
 gem 'hpricot'
 gem 'jquery-rails', '>= 0.2.6'
-gem "recurly", ">= 0.3.0"
+gem 'recurly', '>= 0.3.0'
+gem 'tripwire_notifier'
 
 group :test, :development do
   gem 'taps'
