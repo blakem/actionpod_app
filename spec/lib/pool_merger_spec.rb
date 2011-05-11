@@ -944,17 +944,40 @@ describe PoolMerger do
       end
 
       it "groups all four together if there is a newbie" do
-        events = create_events(4)
-        events[0].user.placed_count = 0
-        events[1].user.placed_count = 1
-        events[2].user.placed_count = 2
-        events[3].user.placed_count = 3
-        events.each { |e| e.save; e.user.save }
+        events = create_events_with_placed(4)
+        newbie = events[0].user
+        newbie.placed_count = 0
+        newbie.save
         new_participants = participant_list(4, events)
         pool = Pool.default_pool
         pool_runs_at = Time.now
         @pm.should_receive(:create_new_group).with([new_participants[0], new_participants[1], new_participants[2], new_participants[3]], 
           pool, pool_runs_at, {})
+        @pm.handle_four_new_participants(new_participants, pool, pool_runs_at, {})
+        new_participants.should be_empty
+      end
+      
+      it "makes two groups of two and respects a single persons pref for another" do
+        events = create_events_with_placed(4)
+        events[0].user.prefer!(events[1].user)
+        new_participants = participant_list(4, events)
+        pool = Pool.default_pool
+        pool_runs_at = Time.now
+        @pm.should_receive(:handle_two_new_participants).with([new_participants[0], new_participants[1]], pool, pool_runs_at, {})
+        @pm.should_receive(:handle_two_new_participants).with([new_participants[2], new_participants[3]], pool, pool_runs_at, {})
+        @pm.handle_four_new_participants(new_participants, pool, pool_runs_at, {})
+        new_participants.should be_empty
+      end
+      
+      it "makes two groups of two and respects a single persons avoids for two others" do
+        events = create_events_with_placed(4)
+        events[0].user.avoid!(events[1].user)
+        events[0].user.avoid!(events[3].user)
+        new_participants = participant_list(4, events)
+        pool = Pool.default_pool
+        pool_runs_at = Time.now
+        @pm.should_receive(:handle_two_new_participants).with([new_participants[0], new_participants[2]], pool, pool_runs_at, {})
+        @pm.should_receive(:handle_two_new_participants).with([new_participants[1], new_participants[3]], pool, pool_runs_at, {})
         @pm.handle_four_new_participants(new_participants, pool, pool_runs_at, {})
         new_participants.should be_empty
       end
@@ -1145,16 +1168,24 @@ def participant_list(participant_count, events = [])
   list
 end
 
-def create_events(count)
+def create_events(count, placed = false)
   list = []
   i = 0
   count.times do
     user = Factory(:user)
     event = Factory(:event, :name => "Event #{i}", :user_id => user.id)
+    if placed
+      user.placed_count = i+1
+      user.save
+    end
     list << event
     i += 1
   end
   list
+end
+
+def create_events_with_placed(count)
+  create_events(count, true)
 end
 
 def participant_list_for_events(events = [])

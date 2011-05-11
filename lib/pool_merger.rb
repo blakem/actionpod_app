@@ -104,25 +104,71 @@ class PoolMerger
   end
 
   def handle_four_new_participants(participants, pool, pool_runs_at, data)
-    users = {}
     all_participants = participants.shift(4)
-    all_participants.each_with_index do |participant, i|
-      user = User.find_by_id(participant_user_id(participant))
-      users[user.id] = {
-        :user => user,
-        :index => i,
-      }
-    end
-    sorted = users.sort{ |a,b| 
-      first = a[1][:user].placed_count <=> b[1][:user].placed_count
-      first != 0 ? first : a[0] <=> b[0]
-    }
-    if sorted[0][1][:user].placed_count == 0
+    sorted = sort_participants_by_placed_count(all_participants)
+    if sorted[0][:user].placed_count == 0
       create_new_group(all_participants, pool, pool_runs_at, data)
     else
-      handle_two_new_participants([all_participants[sorted[0][1][:index]], all_participants[sorted[3][1][:index]]], pool, pool_runs_at, data)
-      handle_two_new_participants([all_participants[sorted[1][1][:index]], all_participants[sorted[2][1][:index]]], pool, pool_runs_at, data)
+      two_pairs = group_four_by_preference(sorted)
+      handle_two_new_participants(two_pairs[0], pool, pool_runs_at, data)
+      handle_two_new_participants(two_pairs[1], pool, pool_runs_at, data)
     end
+  end
+  
+  def group_four_by_preference(sorted)
+    score1 = compute_pref_score(sorted[0][:user], sorted[1][:user]) + compute_pref_score(sorted[2][:user], sorted[3][:user])
+    score2 = compute_pref_score(sorted[0][:user], sorted[2][:user]) + compute_pref_score(sorted[1][:user], sorted[3][:user]) 
+    score3 = compute_pref_score(sorted[0][:user], sorted[3][:user]) + compute_pref_score(sorted[1][:user], sorted[2][:user]) 
+    
+    sorted_scores = [[score1, 1], [score2, 2], [score3, 3]].sort{|a,b| b[0] <=> a[0]}
+    best_match = sorted_scores[0][1]
+    best_match = 3 if sorted_scores.select { |ss| ss[0] != 0 }.empty?
+    if best_match == 3
+      return [[
+        sorted[0][:participant],
+        sorted[3][:participant],
+      ], [
+        sorted[1][:participant],
+        sorted[2][:participant],
+      ]]
+    elsif best_match == 2
+      return [[
+        sorted[0][:participant],
+        sorted[2][:participant],
+      ], [
+        sorted[1][:participant],
+        sorted[3][:participant],
+      ]]
+    else
+      return [[
+        sorted[0][:participant],
+        sorted[1][:participant],
+      ], [
+        sorted[2][:participant],
+        sorted[3][:participant],
+      ]]      
+    end
+  end
+  
+  def compute_pref_score(user1, user2)
+    score = 0
+    score += 1 if user1.prefers?(user2)
+    score += 1 if user2.prefers?(user1)
+    score -= 2 if user1.avoids?(user2)
+    score -= 2 if user2.avoids?(user1)
+    score
+  end
+
+  def sort_participants_by_placed_count(participants)
+    participants.map{ |participant|
+      {
+        :user => User.find_by_id(participant_user_id(participant)),
+        :participant => participant,
+      }
+    }.sort{ |a,b|
+      first = a[:user].placed_count <=> b[:user].placed_count
+      first != 0 ? first : a[:user].id <=> b[:user].id
+    }
   end
 
   def pick_three_participants(participants)
