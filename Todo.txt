@@ -1,6 +1,5 @@
 15 Minute Calls Features and Todo list:
   FrontEnd:
-    Tripwire?
     Show all conferences in slot to users
 
   BackEnd:
@@ -17,7 +16,6 @@
     Email TMC about 15mc
     Facebook Fan Page
     Facebook Like buttons (with friends)
-    Email Garrison
 
   Business:
     Copy for JVD Newsletter
