@@ -937,8 +937,8 @@ describe PoolMerger do
         new_participants = participant_list(4, events)
         pool = Pool.default_pool
         pool_runs_at = Time.now
-        @pm.should_receive(:handle_two_new_participants).with([new_participants[2], new_participants[0]], pool, pool_runs_at, {})
-        @pm.should_receive(:handle_two_new_participants).with([new_participants[3], new_participants[1]], pool, pool_runs_at, {})
+        @pm.should_receive(:create_new_group).with([new_participants[2], new_participants[0]], pool, pool_runs_at, {})
+        @pm.should_receive(:create_new_group).with([new_participants[3], new_participants[1]], pool, pool_runs_at, {})
         @pm.handle_four_new_participants(new_participants, pool, pool_runs_at, {})
         new_participants.should be_empty
       end
@@ -963,8 +963,8 @@ describe PoolMerger do
         new_participants = participant_list(4, events)
         pool = Pool.default_pool
         pool_runs_at = Time.now
-        @pm.should_receive(:handle_two_new_participants).with([new_participants[0], new_participants[1]], pool, pool_runs_at, {})
-        @pm.should_receive(:handle_two_new_participants).with([new_participants[2], new_participants[3]], pool, pool_runs_at, {})
+        @pm.should_receive(:create_new_group).with([new_participants[0], new_participants[1]], pool, pool_runs_at, {})
+        @pm.should_receive(:create_new_group).with([new_participants[2], new_participants[3]], pool, pool_runs_at, {})
         @pm.handle_four_new_participants(new_participants, pool, pool_runs_at, {})
         new_participants.should be_empty
       end
@@ -976,11 +976,27 @@ describe PoolMerger do
         new_participants = participant_list(4, events)
         pool = Pool.default_pool
         pool_runs_at = Time.now
-        @pm.should_receive(:handle_two_new_participants).with([new_participants[0], new_participants[2]], pool, pool_runs_at, {})
-        @pm.should_receive(:handle_two_new_participants).with([new_participants[1], new_participants[3]], pool, pool_runs_at, {})
+        @pm.should_receive(:create_new_group).with([new_participants[0], new_participants[2]], pool, pool_runs_at, {})
+        @pm.should_receive(:create_new_group).with([new_participants[1], new_participants[3]], pool, pool_runs_at, {})
         @pm.handle_four_new_participants(new_participants, pool, pool_runs_at, {})
         new_participants.should be_empty
       end
+      
+      it "groups all four together if there is a four way pref loop" do
+        events = create_events_with_placed(4)
+        events[0].user.prefer!(events[1].user)
+        events[1].user.prefer!(events[2].user)
+        events[2].user.prefer!(events[3].user)
+        events[3].user.prefer!(events[0].user)
+        new_participants = participant_list(4, events)
+        pool = Pool.default_pool
+        pool_runs_at = Time.now
+        @pm.should_receive(:create_new_group).with([new_participants[0], new_participants[1], new_participants[2], new_participants[3]], 
+          pool, pool_runs_at, {})
+        @pm.handle_four_new_participants(new_participants, pool, pool_runs_at, {})
+        new_participants.should be_empty
+      end
+      
     end
     
     describe "Handle those who are on hold first" do

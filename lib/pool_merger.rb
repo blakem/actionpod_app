@@ -107,23 +107,35 @@ class PoolMerger
     all_participants = participants.shift(4)
     sorted = sort_participants_by_placed_count(all_participants)
     if sorted[0][:user].placed_count == 0
-      create_new_group(all_participants, pool, pool_runs_at, data)
-    else
-      two_pairs = group_four_by_preference(sorted)
-      handle_two_new_participants(two_pairs[0], pool, pool_runs_at, data)
-      handle_two_new_participants(two_pairs[1], pool, pool_runs_at, data)
+       participant_groups = [all_participants]
+    else 
+       participant_groups = group_four_by_preference(sorted)
+    end
+    participant_groups.each do |participant_group|
+      create_new_group(participant_group, pool, pool_runs_at, data)
     end
   end
   
   def group_four_by_preference(sorted)
-    score1 = compute_pref_score([sorted[0][:user], sorted[1][:user]]) + compute_pref_score([sorted[2][:user], sorted[3][:user]])
-    score2 = compute_pref_score([sorted[0][:user], sorted[2][:user]]) + compute_pref_score([sorted[1][:user], sorted[3][:user]]) 
-    score3 = compute_pref_score([sorted[0][:user], sorted[3][:user]]) + compute_pref_score([sorted[1][:user], sorted[2][:user]]) 
+    score1 = compute_pref_score([sorted[0][:user], sorted[1][:user]]) + 
+             compute_pref_score([sorted[2][:user], sorted[3][:user]])
+    score2 = compute_pref_score([sorted[0][:user], sorted[2][:user]]) + 
+             compute_pref_score([sorted[1][:user], sorted[3][:user]]) 
+    score3 = compute_pref_score([sorted[0][:user], sorted[3][:user]]) + 
+             compute_pref_score([sorted[1][:user], sorted[2][:user]]) 
+    score4 = compute_pref_score(sorted.map{ |s| s[:user] })
 
-    sorted_scores = [[score1, 1], [score2, 2], [score3, 3]].sort{|a,b| b[0] <=> a[0]}
+    sorted_scores = [[score1, 1], [score2, 2], [score3, 3], [score4, 4]].sort{|a,b| b[0] <=> a[0]}
     best_match = sorted_scores[0][1]
     best_match = 3 if sorted_scores.select { |ss| ss[0] != 0 }.empty?
-    if best_match == 3
+    if best_match == 4
+      return [[
+        sorted[0][:participant],
+        sorted[1][:participant],
+        sorted[2][:participant],
+        sorted[3][:participant],
+      ]]
+    elsif best_match == 3
       return [[
         sorted[0][:participant],
         sorted[3][:participant],
