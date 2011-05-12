@@ -1132,6 +1132,22 @@ describe PoolMerger do
       extract_event_names(three).should == [events[0], events[2], events[4]].map(&:name)
       extract_event_names(participants).should == [events[1], events[3], events[5]].map(&:name)
     end
+
+    it "it picks three people that don't have prefs for each other if they all avoid the others" do
+      events = create_events_with_placed(5)
+      events[0].user.avoid!(events[1].user)
+      events[0].user.avoid!(events[4].user)
+      events[3].user.avoid!(events[1].user)
+      events[3].user.avoid!(events[4].user)
+      events[2].user.avoid!(events[1].user)
+      events[2].user.avoid!(events[4].user)
+      participants = participant_list_for_events(events)
+
+      three = @pm.pick_three_participants(participants)
+
+      extract_event_names(three).should == [events[0], events[2], events[3]].map(&:name)
+      extract_event_names(participants).should == [events[1], events[4]].map(&:name)
+    end
   end
  
   describe "compute_pref_score" do
@@ -1155,6 +1171,20 @@ describe PoolMerger do
       @pm.compute_pref_score([user1, user2, user3]).should == 0
       user3.avoid!(user1)
       @pm.compute_pref_score([user1, user2, user3]).should == -3
+    end
+
+    it "should shortcut to 0 if no one has any prefs" do
+      user1 = mock('User')
+      user2 = mock('User')
+      user1.should_receive(:preferences).and_return([])
+      user2.should_receive(:preferences).and_return([])
+      user1.should_not_receive(:id)
+      user1.should_not_receive(:prefers?)
+      user1.should_not_receive(:avoids?)
+      user2.should_not_receive(:id)
+      user2.should_not_receive(:prefers?)
+      user2.should_not_receive(:avoids?)
+      @pm.compute_pref_score([user1, user2]).should == 0
     end
   end
   

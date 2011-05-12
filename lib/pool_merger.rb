@@ -152,11 +152,13 @@ class PoolMerger
   
   def compute_pref_score(users)
     score = 0
-    users.each do |a|
-      users.each do |b|
-        next if a.id == b.id
-        score += 1 if a.prefers?(b)
-        score -= 2 if a.avoids?(b)
+    if users.select{ |u| u.preferences.any? }.any?
+      users.each do |a|
+        users.each do |b|
+          next if a.id == b.id
+          score += 1 if a.prefers?(b)
+          score -= 2 if a.avoids?(b)
+        end
       end
     end
     score
