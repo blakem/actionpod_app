@@ -1,4 +1,4 @@
-<% end_time = @conference.started_at + 16.minutes %>
+<% end_time = @conference.started_at + 16.minutes + 10.seconds %>
 <% end_time = Time.now + 10.seconds if false %>
 <% if end_time > Time.now %>
   <script type="text/javascript" src="/javascripts/countdownpro.js" defer="defer"></script>
