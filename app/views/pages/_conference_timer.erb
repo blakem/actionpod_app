@@ -1,6 +1,4 @@
-<% end_time = @conference.started_at + 16.minutes + 10.seconds %>
-<% end_time = Time.now + 10.seconds if false %>
-<% if end_time > Time.now %>
+<% if @view_options[:show_conference_timer] %>
   <script type="text/javascript" src="/javascripts/countdownpro.js" defer="defer"></script>
   <meta scheme="countdown1" name="d_hidezero"  content="1">
   <meta scheme="countdown1" name="h_hidezero"  content="1">
@@ -14,7 +12,7 @@
   <meta scheme="countdown1" name="m_before"    content="Time Remaining: ">
   <meta scheme="countdown1" name="servertime"  content="<%= Time.now.utc.strftime("%Y-%m-%d %H:%M:%S GMT+00:00") %>">
   <counter>
-  <span id="countdown1" class="counter round"><%= end_time.utc.strftime("%Y-%m-%d %H:%M:%S GMT+00:00") %></span>
+  <span id="countdown1" class="counter round"><%= @end_time.utc.strftime("%Y-%m-%d %H:%M:%S GMT+00:00") %></span>
   </counter>
 <% end %>
 

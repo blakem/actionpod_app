@@ -86,10 +86,14 @@ class PagesController < ApplicationController
       @users = @conference.users.select { |u| u.id == current_user.id } +
                @conference.users.select { |u| u.id != current_user.id }
       set_profile_values
-      @view_options = {
+      @end_time = @conference.started_at + 16.minutes + 10.seconds
+      @end_time = Time.now + 10.seconds if false
+      @view_options.merge!({
+        :show_conference_timer => @end_time > Time.now,
+        :hide_tip_hr => @end_time > Time.now,
         :hide_view_current_conference => @conference == current_user.conferences.first,
         :show_users_preferences => @conference.users.count > 1 || @conference.users.first != current_user,
-      }
+      })
     else
       redirect_to(root_path, :alert => "There is no conference with that id")
     end

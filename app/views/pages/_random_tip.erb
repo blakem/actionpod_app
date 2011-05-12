@@ -1,5 +1,10 @@
 <% tips = Tip.all %>
 <% tip = tips[rand(tips.size)]%>
 <% if tip %>
-  <hr><img src="http://www.15minutecalls.com/images/tip.jpg" align="absmiddle"> <%= tip.body.html_safe %>
+  <% if @view_options && @view_options[:hide_tip_hr] %>
+    <hr class="white">
+  <% else %>
+    <hr>
+  <% end %>
+  <img src="http://www.15minutecalls.com/images/tip.jpg" align="absmiddle"> <%= tip.body.html_safe %>
 <% end %>
