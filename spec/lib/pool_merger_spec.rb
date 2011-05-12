@@ -1116,8 +1116,48 @@ describe PoolMerger do
       extract_event_names(three).should == [events[2], events[3], events[4]].map(&:name)
       extract_event_names(participants).should == [events[0], events[1], events[5]].map(&:name)
     end
-  end
 
+    it "it finds a group of three that all prefer each other" do
+      events = create_events_with_placed(6)
+      events[0].user.prefer!(events[2].user)
+      events[0].user.prefer!(events[4].user)
+      events[2].user.prefer!(events[0].user)
+      events[2].user.prefer!(events[4].user)
+      events[4].user.prefer!(events[0].user)
+      events[4].user.prefer!(events[2].user)
+      participants = participant_list_for_events(events)
+
+      three = @pm.pick_three_participants(participants)
+
+      extract_event_names(three).should == [events[0], events[2], events[4]].map(&:name)
+      extract_event_names(participants).should == [events[1], events[3], events[5]].map(&:name)
+    end
+  end
+ 
+  describe "compute_pref_score" do
+    it "should compute a score based on preference among users" do
+      user1 = Factory(:user)
+      user2 = Factory(:user)
+      user3 = Factory(:user)
+      @pm.compute_pref_score([user1, user2, user3]).should == 0
+      user1.prefer!(user2)
+      @pm.compute_pref_score([user1, user2, user3]).should == 1
+      user1.prefer!(user3)
+      @pm.compute_pref_score([user1, user2, user3]).should == 2
+      user2.prefer!(user1)
+      user2.prefer!(user3)
+      user3.prefer!(user1)
+      user3.prefer!(user2)
+      @pm.compute_pref_score([user1, user2, user3]).should == 6
+      user1.avoid!(user2)
+      @pm.compute_pref_score([user1, user2, user3]).should == 3
+      user2.avoid!(user1)
+      @pm.compute_pref_score([user1, user2, user3]).should == 0
+      user3.avoid!(user1)
+      @pm.compute_pref_score([user1, user2, user3]).should == -3
+    end
+  end
+  
   describe "initialize_data" do
     it "should initialize the empty hash" do
       @pm.initialize_data({}).should == {

@@ -116,10 +116,10 @@ class PoolMerger
   end
   
   def group_four_by_preference(sorted)
-    score1 = compute_pref_score(sorted[0][:user], sorted[1][:user]) + compute_pref_score(sorted[2][:user], sorted[3][:user])
-    score2 = compute_pref_score(sorted[0][:user], sorted[2][:user]) + compute_pref_score(sorted[1][:user], sorted[3][:user]) 
-    score3 = compute_pref_score(sorted[0][:user], sorted[3][:user]) + compute_pref_score(sorted[1][:user], sorted[2][:user]) 
-    
+    score1 = compute_pref_score([sorted[0][:user], sorted[1][:user]]) + compute_pref_score([sorted[2][:user], sorted[3][:user]])
+    score2 = compute_pref_score([sorted[0][:user], sorted[2][:user]]) + compute_pref_score([sorted[1][:user], sorted[3][:user]]) 
+    score3 = compute_pref_score([sorted[0][:user], sorted[3][:user]]) + compute_pref_score([sorted[1][:user], sorted[2][:user]]) 
+
     sorted_scores = [[score1, 1], [score2, 2], [score3, 3]].sort{|a,b| b[0] <=> a[0]}
     best_match = sorted_scores[0][1]
     best_match = 3 if sorted_scores.select { |ss| ss[0] != 0 }.empty?
@@ -150,12 +150,15 @@ class PoolMerger
     end
   end
   
-  def compute_pref_score(user1, user2)
+  def compute_pref_score(users)
     score = 0
-    score += 1 if user1.prefers?(user2)
-    score += 1 if user2.prefers?(user1)
-    score -= 2 if user1.avoids?(user2)
-    score -= 2 if user2.avoids?(user1)
+    users.each do |a|
+      users.each do |b|
+        next if a.id == b.id
+        score += 1 if a.prefers?(b)
+        score -= 2 if a.avoids?(b)
+      end
+    end
     score
   end
 
@@ -202,7 +205,16 @@ class PoolMerger
       pick_users_with_minimum_placed_count(picked_indices, sorted, 1)
       pick_users_with_minimum_placed_count(picked_indices, sorted, 0)
     else
-      picked_indices = [0,1,2]
+      puts "Computing highest score for #{users.size}" if Rails.env.production?
+      count = 0
+      highest_score = [-18, [0,1,2]]
+      users.values.combination(3).each do |combo|
+        score = compute_pref_score(combo.map { |a| a[:user] })
+        highest_score = [score, combo.map { |a| a[:index] }] if score > highest_score[0]
+        count += 1
+      end
+      picked_indices = highest_score[1]
+      puts "Done Computing highest score for #{users.size} : #{count} computations" if Rails.env.production?
     end
     
     picked = []

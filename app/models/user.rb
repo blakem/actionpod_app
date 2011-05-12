@@ -118,16 +118,19 @@ class User < ActiveRecord::Base
   end
   
   def prefer!(other_user)
+    return if other_user.id == self.id
     unprefer!(other_user)
     preferences.create!(:other_user_id => other_user.id, :prefer_more => true)
   end
   
   def avoid!(other_user)
+    return if other_user.id == self.id
     unprefer!(other_user)
     preferences.create!(:other_user_id => other_user.id, :prefer_more => false)
   end
   
   def unprefer!(other_user)
+    return if other_user.id == self.id
     preference = preferences.find_by_other_user_id(other_user.id)
     preference.destroy if preference
   end

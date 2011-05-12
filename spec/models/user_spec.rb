@@ -332,6 +332,19 @@ describe User do
       user.avoids?(other_user).should be_false
     end
 
+    it "user cannot prefer or avoid himself" do
+      user = Factory(:user)
+      user.avoid!(user)
+      user.preferences.count.should == 0
+      user.avoids?(user).should be_false
+      user.prefers?(user).should be_false
+
+      user.prefer!(user)
+      user.preferences.count.should == 0
+      user.avoids?(user).should be_false
+      user.prefers?(user).should be_false
+    end
+
     it "should delete existing preferences for a user when prefer! or avoid! is called" do
       user = Factory(:user)
       other_user = Factory(:user)
