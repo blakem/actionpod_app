@@ -1,37 +1,36 @@
 15-Minute Calls: Accountability groups made easy
  
-Ok, I'll admit it. I'm not the most organized person. Emails go unanswered, projects get left idle for months
-and my to-do list sometimes seems frozen in time. One of the best structures I've found for getting out of a rut is
-the accountability group. It's a simple concept: get a few motivated people together to support each other in getting
-projects done.
+I'm not the most organized person. Emails go unanswered, projects get left idle for months and my to-do list 
+sometimes seems frozen in time. One of the best structures I've found for getting out of a rut is the accountability
+group. It's a simple concept: get a few motivated people together to support each other in getting projects done.
  
-Over the last six months I've been participating in regular short accountability calls with three other people. 
-And for the most part, it's been great! It's helped me stay organized and focused on what's important to me.
+Over the last six months I've been participating in regular short accountability calls with three other people. For 
+the most part, they've been great! The calls have helped me stay organized and focused on what's important to me.
  
-However, accountability groups have two major drawbacks. First, they're difficult to get started. Second, 
-they seem to fade away fairly quickly. Finding a dedicated group that's available and committed to making the 
-calls is a challenge. Life happens: schedules shift, emergencies come up and pretty soon the accountability 
-group slips away, often without anyone even acknowledging that it's gone.
+However, accountability groups have two major drawbacks: they're difficult to get started and they seem to fade away 
+fairly quickly. Finding a dedicated group that's available and committed to making the calls is a challenge. Life
+happens, schedules shift, emergencies come up and pretty soon the accountability group slips away, often without anyone
+even acknowledging that it's gone.
  
-I was in that position a couple months ago. My group was slowly drifting apart. I thought about what I could 
-do to bring more people into it.  As I asked around I found that a lot of people were interested, but finding someone
-whose schedule matched up with our existing call was difficult.
+I was in that position a couple months ago. My group was slowly drifting apart. I thought about what I could do to 
+bring more people into it. As I asked around I found a lot of interest, but finding people whose schedules matched up 
+with our existing call was difficult.
 
-Over the course of a few weeks I came up with an idea I felt could solve several problems at once. I could build a 
-software system to handle hundreds of accountability calls automatically.  Members could pick and choose which 
-times worked for them and the software would match them up with others who were available at that time.  Problem solved!
+Over the course of a few weeks I came up with an idea I felt could solve several problems at once. By building a
+software system to handle hundreds of accountability calls automatically, members could pick and choose which times
+worked for them and the software would match them up with others who were available at that time. Problem solved!
  
-That system has now been built, and it’s called 15-Minute Calls (www.15minutecalls.com). Here's how it works:
-    1. Become one of the invite-only beta members
-    2. Enter a few goals or a project that you're working on into your member profile
+That system has now been built, and it lives at www.15minutecalls.com. Here's how it works:
+    1. Become one of the invite-only beta members by clicking the link above and signing up (it takes less than five minutes).
+    2. Enter a few goals — or a project you're working on — into your member profile.
     3. Pick a few times during the week you're available for a short accountability call.
  
-That's it! Once you're set up, the system will call you and connect you with two other members. Your team will 
-have a total of 15 minutes, during which each person checks in and members support each other in reaching their 
-daily and weekly goals. The call ends promptly and automatically after 15 minutes.
+That's it! Once you're set up, the system will call you at the times you specified and connect you with two other
+members. Your team will have a total of 15 minutes, during which each person checks in and members support each other
+in reaching their daily and weekly goals. The call ends promptly and automatically after 15 minutes.
 
-The system is only as good as the community that uses it. You are invited to join 15 Minute Calls and experience 
-yourself the value of automatic accountability calls that work with your schedule (early morning, afternoons, evenings, 
-any day of the week). During the beta release, the service is free and your input will directly affect how this idea develops.
+You are invited to join 15-Minute Calls and experience the value of automatic accountability calls that work with
+your schedule. Early morning, afternoon and evening times are available on any day of the week. During the beta release,
+the service is free and your input will help us make the service even more valuable.
 
 
