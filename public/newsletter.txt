@@ -1,4 +1,4 @@
-15-Minute Calls: Accountability groups made easy
+15 Minute Calls: Accountability groups made easy
  
 I'm not the most organized person. Emails go unanswered, projects get left idle for months and my to-do list 
 sometimes seems frozen in time. One of the best structures I've found for getting out of a rut is the accountability
@@ -20,7 +20,7 @@ Over the course of a few weeks I came up with an idea I felt could solve several
 software system to handle hundreds of accountability calls automatically, members could pick and choose which times
 worked for them and the software would match them up with others who were available at that time. Problem solved!
  
-That system has now been built, and it lives at www.15minutecalls.com. Here's how it works:
+That system has now been built, and it lives at 15minutecalls.com. Here's how it works:
     1. Become one of the invite-only beta members by clicking the link above and signing up (it takes less than five minutes).
     2. Enter a few goals — or a project you're working on — into your member profile.
     3. Pick a few times during the week you're available for a short accountability call.
@@ -29,8 +29,8 @@ That's it! Once you're set up, the system will call you at the times you specifi
 members. Your team will have a total of 15 minutes, during which each person checks in and members support each other
 in reaching their daily and weekly goals. The call ends promptly and automatically after 15 minutes.
 
-You are invited to join 15-Minute Calls and experience the value of automatic accountability calls that work with
+You are invited to join 15 Minute Calls and experience the value of automatic accountability calls that work with
 your schedule. Early morning, afternoon and evening times are available on any day of the week. During the beta release,
-the service is free and your input will help us make the service even more valuable.
+the service is free and your input will help us make the service even more valuable.  Give it a shot, join here.
 
 
