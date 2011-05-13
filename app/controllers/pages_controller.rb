@@ -2,7 +2,7 @@ class PagesController < ApplicationController
   before_filter :authenticate_user!, :except => [:home, :help, :homepage]
   
   def home
-    @title = 'Accountability Calls You Can Count On'
+    @title = 'Accountability Calls Made Easy'
     if user_signed_in?
       self.my_profile
       render :my_profile
@@ -10,7 +10,7 @@ class PagesController < ApplicationController
   end
   
   def homepage
-    @title = 'Accountability Calls You Can Count On'
+    @title = 'Accountability Calls Made Easy'
     render :home
   end
   
