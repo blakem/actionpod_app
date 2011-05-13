@@ -119,18 +119,17 @@ class PoolMerger
   def group_four_by_preference(sorted)
     score1a = compute_pref_score([sorted[0][:user], sorted[1][:user]]) 
     score1b = compute_pref_score([sorted[2][:user], sorted[3][:user]])
-    score1 = [score1a[0] + score1b[0], score1a[1] + score1b[1]]
+    score1 = [score1a[0] + score1b[0], score1a[1] + score1b[1], score1a[2]]
     score2a = compute_pref_score([sorted[0][:user], sorted[2][:user]]) 
     score2b = compute_pref_score([sorted[1][:user], sorted[3][:user]]) 
-    score2 = [score2a[0] + score2b[0], score2a[1] + score2b[1]]
+    score2 = [score2a[0] + score2b[0], score2a[1] + score2b[1], score2a[2]]
     score3a = compute_pref_score([sorted[0][:user], sorted[3][:user]]) 
     score3b = compute_pref_score([sorted[1][:user], sorted[2][:user]]) 
-    score3 = [score3a[0] + score3b[0], score3a[1] + score3b[1]]
+    score3 = [score3a[0] + score3b[0], score3a[1] + score3b[1], score3a[2]]
     score4 = compute_pref_score(sorted.map{ |s| s[:user] })
 
-    sorted_scores = [[score1, 1], [score2, 2], [score3, 3], [score4, 4]].sort{|a,b| 
-      first = b[0][0] <=> a[0][0];
-      first != 0 ? first : a[0][1] <=> b[0][1]
+    sorted_scores = [[score1, 1], [score2, 2], [score3, 3], [score4, 4]].sort_by{ |s|
+      [ -s[0][0], s[0][2], s[0][1], -s[1] ]
     }
     best_match = sorted_scores[0][1]
     best_match = 3 if sorted_scores.select { |ss| ss[0][0] != 0 }.empty?
@@ -182,7 +181,7 @@ class PoolMerger
         end
       end
     end
-    [score, user_id_diff]
+    [score, user_id_diff, users.count]
   end
 
   def sort_participants_by_placed_count(participants)
