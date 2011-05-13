@@ -170,8 +170,10 @@ class PoolMerger
   def compute_pref_score(users)
     score = 0
     user_id_diff = 0
+    lowest_user_id = users.first.id
     do_pref_check = users.select{ |u| u.preferences.any? }.any?
     users.each do |a|
+      lowest_user_id = a.id if a.id < lowest_user_id
       users.each do |b|
         next if a.id == b.id
         user_id_diff += a.id - b.id if a.id > b.id
@@ -181,7 +183,7 @@ class PoolMerger
         end
       end
     end
-    [score, user_id_diff, users.count]
+    [score, user_id_diff, users.count, lowest_user_id]
   end
 
   def sort_participants_by_placed_count(participants)
@@ -229,10 +231,11 @@ class PoolMerger
     else
       puts "Computing highest score for #{users.size}" if Rails.env.production?
       count = 0
-      highest_score = [[-18, 9999], [0,1,2]]
+      highest_score = []
       users.values.combination(3).each do |combo|
-        score = compute_pref_score(combo.map { |a| a[:user] })
-        highest_score = [score, combo.map { |a| a[:index] }] if score[0] > highest_score[0][0]
+        new_score = compute_pref_score(combo.map { |a| a[:user] })
+        highest_score = [new_score, combo.map { |a| a[:index] }] if highest_score.empty? or 
+          new_score_is_higher?(new_score, highest_score[0])
         count += 1
       end
       picked_indices = highest_score[1]
@@ -244,6 +247,17 @@ class PoolMerger
       picked << participants.slice!(i)
     end
     return picked.reverse
+  end
+  
+  def new_score_is_higher?(new_score, old_score)
+    return true if new_score[0] > old_score[0]
+    if new_score[0] == old_score[0]
+      return true if new_score[1] < old_score[1]
+      if new_score[1] == old_score[1]
+        return true if new_score[3] < old_score[3]
+      end
+    end
+    return false
   end
 
   def pick_users_with_minimum_placed_count(picked_indices, sorted, value)

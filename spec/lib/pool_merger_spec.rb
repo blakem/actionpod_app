@@ -1190,8 +1190,14 @@ describe PoolMerger do
       extract_event_names(participants).should == [events[1], events[4]].map(&:name)
     end
     
-    it "ha" do
-      1.should == 2
+    it "prefers users who's ids are close if there is no other information to go by" do
+      events = create_events_with_placed(6)
+      participants = participant_list_for_events(events).shuffle
+
+      three = @pm.pick_three_participants(participants)
+
+      extract_event_names(three).sort.should == [events[0], events[1], events[2]].map(&:name)
+      extract_event_names(participants).sort.should == [events[3], events[4], events[5]].map(&:name)      
     end
   end
  
@@ -1200,24 +1206,24 @@ describe PoolMerger do
       user1 = Factory(:user)
       user2 = Factory(:user)
       user3 = Factory(:user)
-      @pm.compute_pref_score([user1, user2, user3]).should == [0, 4, 3]
-      @pm.compute_pref_score([user1, user3]).should        == [0, 2, 2]
-      @pm.compute_pref_score([user1, user2]).should        == [0, 1, 2]
+      @pm.compute_pref_score([user1, user2, user3]).should == [0, 4, 3, user1.id]
+      @pm.compute_pref_score([user1, user3]).should        == [0, 2, 2, user1.id]
+      @pm.compute_pref_score([user1, user2]).should        == [0, 1, 2, user1.id]
       user1.prefer!(user2)
-      @pm.compute_pref_score([user1, user2, user3]).should == [1, 4, 3]
+      @pm.compute_pref_score([user1, user2, user3]).should == [1, 4, 3, user1.id]
       user1.prefer!(user3)
-      @pm.compute_pref_score([user1, user2, user3]).should == [2, 4, 3]
+      @pm.compute_pref_score([user1, user2, user3]).should == [2, 4, 3, user1.id]
       user2.prefer!(user1)
       user2.prefer!(user3)
       user3.prefer!(user1)
       user3.prefer!(user2)
-      @pm.compute_pref_score([user1, user2, user3]).should == [6, 4, 3]
+      @pm.compute_pref_score([user1, user2, user3]).should == [6, 4, 3, user1.id]
       user1.avoid!(user2)
-      @pm.compute_pref_score([user1, user2, user3]).should == [3, 4, 3]
+      @pm.compute_pref_score([user1, user2, user3]).should == [3, 4, 3, user1.id]
       user2.avoid!(user1)
-      @pm.compute_pref_score([user1, user2, user3]).should == [0, 4, 3]
+      @pm.compute_pref_score([user1, user2, user3]).should == [0, 4, 3, user1.id]
       user3.avoid!(user1)
-      @pm.compute_pref_score([user1, user2, user3]).should == [-3, 4, 3]      
+      @pm.compute_pref_score([user1, user2, user3]).should == [-3, 4, 3, user1.id]      
     end
 
     it "should shortcut to 0 if no one has any prefs" do
@@ -1231,7 +1237,7 @@ describe PoolMerger do
       user1.should_not_receive(:avoids?)
       user2.should_not_receive(:prefers?)
       user2.should_not_receive(:avoids?)
-      @pm.compute_pref_score([user1, user2]).should == [0, 1, 2]
+      @pm.compute_pref_score([user1, user2]).should == [0, 1, 2, user1.id]
     end
   end
   
