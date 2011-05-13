@@ -881,7 +881,7 @@ describe PoolMerger do
     end
 
     describe "four participants" do
-      it "should form two new conference of two participants each sorted by placed_id" do
+      it "should form two new conference of two participants each sorted by placed_id if there are no prefs" do
         events = create_events(4)
         events[2].user.placed_count = 11
         events[3].user.placed_count = 12
@@ -927,7 +927,7 @@ describe PoolMerger do
         })
       end
 
-      it "another way to write the handle_four test..... Needs plumbing test to go along with it" do
+      it "another way to write the above test..... Needs plumbing test to go along with it" do
         events = create_events(4)
         events[2].user.placed_count = 11
         events[3].user.placed_count = 12
@@ -943,11 +943,13 @@ describe PoolMerger do
         new_participants.should be_empty
       end
 
-      it "groups all four together if there is a newbie" do
+      it "groups all four together if there is a newbie even if their are prefs" do
         events = create_events_with_placed(4)
         newbie = events[0].user
         newbie.placed_count = 0
         newbie.save
+        events[2].user.prefer!(events[3].user)
+        events[3].user.prefer!(events[2].user)
         new_participants = participant_list(4, events)
         pool = Pool.default_pool
         pool_runs_at = Time.now
@@ -996,7 +998,50 @@ describe PoolMerger do
         @pm.handle_four_new_participants(new_participants, pool, pool_runs_at, {})
         new_participants.should be_empty
       end
+
+      it "groups all four together if one member prefers the other three" do
+        events = create_events_with_placed(4)
+        events[0].user.prefer!(events[1].user)
+        events[0].user.prefer!(events[2].user)
+        events[0].user.prefer!(events[3].user)
+        new_participants = participant_list(4, events)
+        pool = Pool.default_pool
+        pool_runs_at = Time.now
+        @pm.should_receive(:create_new_group).with([new_participants[0], new_participants[1], new_participants[2], new_participants[3]], 
+          pool, pool_runs_at, {})
+        @pm.handle_four_new_participants(new_participants, pool, pool_runs_at, {})
+        new_participants.should be_empty
+      end      
+
+      it "splits into two if one member prefers the other three and one avoids the other" do
+        events = create_events_with_placed(4)
+        events[0].user.prefer!(events[1].user)
+        events[0].user.prefer!(events[2].user)
+        events[0].user.prefer!(events[3].user)
+        events[1].user.avoid!(events[2].user)
+        new_participants = participant_list(4, events)
+        pool = Pool.default_pool
+        pool_runs_at = Time.now
+        @pm.should_receive(:create_new_group).with([new_participants[0], new_participants[1]], pool, pool_runs_at, {})
+        @pm.should_receive(:create_new_group).with([new_participants[2], new_participants[3]], pool, pool_runs_at, {})
+        @pm.handle_four_new_participants(new_participants, pool, pool_runs_at, {})
+        new_participants.should be_empty
+      end
       
+      it "splits into two if one member prefers the other three and one avoids the one prefering" do
+        events = create_events_with_placed(4)
+        events[0].user.prefer!(events[1].user)
+        events[0].user.prefer!(events[2].user)
+        events[0].user.prefer!(events[3].user)
+        events[1].user.avoid!(events[0].user)
+        new_participants = participant_list(4, events)
+        pool = Pool.default_pool
+        pool_runs_at = Time.now
+        @pm.should_receive(:create_new_group).with([new_participants[0], new_participants[3]], pool, pool_runs_at, {})
+        @pm.should_receive(:create_new_group).with([new_participants[1], new_participants[2]], pool, pool_runs_at, {})
+        @pm.handle_four_new_participants(new_participants, pool, pool_runs_at, {})
+        new_participants.should be_empty
+      end
     end
     
     describe "Handle those who are on hold first" do
@@ -1171,22 +1216,25 @@ describe PoolMerger do
       user1 = Factory(:user)
       user2 = Factory(:user)
       user3 = Factory(:user)
-      @pm.compute_pref_score([user1, user2, user3]).should == 0
+      @pm.compute_pref_score([user1, user2, user3]).should == [0, 4]
+      @pm.compute_pref_score([user1, user3]).should        == [0, 2]
+      @pm.compute_pref_score([user1, user2]).should        == [0, 1]
       user1.prefer!(user2)
-      @pm.compute_pref_score([user1, user2, user3]).should == 1
+      @pm.compute_pref_score([user1, user2, user3]).should == [1, 4]
       user1.prefer!(user3)
-      @pm.compute_pref_score([user1, user2, user3]).should == 2
+      @pm.compute_pref_score([user1, user2, user3]).should == [2, 4]
       user2.prefer!(user1)
       user2.prefer!(user3)
       user3.prefer!(user1)
       user3.prefer!(user2)
-      @pm.compute_pref_score([user1, user2, user3]).should == 6
+      @pm.compute_pref_score([user1, user2, user3]).should == [6, 4]
       user1.avoid!(user2)
-      @pm.compute_pref_score([user1, user2, user3]).should == 3
+      @pm.compute_pref_score([user1, user2, user3]).should == [3, 4]
       user2.avoid!(user1)
-      @pm.compute_pref_score([user1, user2, user3]).should == 0
+      @pm.compute_pref_score([user1, user2, user3]).should == [0, 4]
       user3.avoid!(user1)
-      @pm.compute_pref_score([user1, user2, user3]).should == -3
+      @pm.compute_pref_score([user1, user2, user3]).should == [-3, 4]
+      
     end
 
     it "should shortcut to 0 if no one has any prefs" do
@@ -1194,13 +1242,13 @@ describe PoolMerger do
       user2 = mock('User')
       user1.should_receive(:preferences).and_return([])
       user2.should_receive(:preferences).and_return([])
-      user1.should_not_receive(:id)
+      user1.should_receive(:id).at_least(1).times.and_return(1)
+      user2.should_receive(:id).at_least(1).times.and_return(2)
       user1.should_not_receive(:prefers?)
       user1.should_not_receive(:avoids?)
-      user2.should_not_receive(:id)
       user2.should_not_receive(:prefers?)
       user2.should_not_receive(:avoids?)
-      @pm.compute_pref_score([user1, user2]).should == 0
+      @pm.compute_pref_score([user1, user2]).should == [0, 1]
     end
   end
   

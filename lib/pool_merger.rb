@@ -117,17 +117,23 @@ class PoolMerger
   end
   
   def group_four_by_preference(sorted)
-    score1 = compute_pref_score([sorted[0][:user], sorted[1][:user]]) + 
-             compute_pref_score([sorted[2][:user], sorted[3][:user]])
-    score2 = compute_pref_score([sorted[0][:user], sorted[2][:user]]) + 
-             compute_pref_score([sorted[1][:user], sorted[3][:user]]) 
-    score3 = compute_pref_score([sorted[0][:user], sorted[3][:user]]) + 
-             compute_pref_score([sorted[1][:user], sorted[2][:user]]) 
+    score1a = compute_pref_score([sorted[0][:user], sorted[1][:user]]) 
+    score1b = compute_pref_score([sorted[2][:user], sorted[3][:user]])
+    score1 = [score1a[0] + score1b[0], score1a[1] + score1b[1]]
+    score2a = compute_pref_score([sorted[0][:user], sorted[2][:user]]) 
+    score2b = compute_pref_score([sorted[1][:user], sorted[3][:user]]) 
+    score2 = [score2a[0] + score2b[0], score2a[1] + score2b[1]]
+    score3a = compute_pref_score([sorted[0][:user], sorted[3][:user]]) 
+    score3b = compute_pref_score([sorted[1][:user], sorted[2][:user]]) 
+    score3 = [score3a[0] + score3b[0], score3a[1] + score3b[1]]
     score4 = compute_pref_score(sorted.map{ |s| s[:user] })
 
-    sorted_scores = [[score1, 1], [score2, 2], [score3, 3], [score4, 4]].sort{|a,b| b[0] <=> a[0]}
+    sorted_scores = [[score1, 1], [score2, 2], [score3, 3], [score4, 4]].sort{|a,b| 
+      first = b[0][0] <=> a[0][0];
+      first != 0 ? first : a[0][1] <=> b[0][1]
+    }
     best_match = sorted_scores[0][1]
-    best_match = 3 if sorted_scores.select { |ss| ss[0] != 0 }.empty?
+    best_match = 3 if sorted_scores.select { |ss| ss[0][0] != 0 }.empty?
     if best_match == 4
       return [[
         sorted[0][:participant],
@@ -164,16 +170,19 @@ class PoolMerger
   
   def compute_pref_score(users)
     score = 0
-    if users.select{ |u| u.preferences.any? }.any?
-      users.each do |a|
-        users.each do |b|
-          next if a.id == b.id
+    user_id_diff = 0
+    do_pref_check = users.select{ |u| u.preferences.any? }.any?
+    users.each do |a|
+      users.each do |b|
+        next if a.id == b.id
+        user_id_diff += a.id - b.id if a.id > b.id
+        if do_pref_check
           score += 1 if a.prefers?(b)
           score -= 2 if a.avoids?(b)
         end
       end
     end
-    score
+    [score, user_id_diff]
   end
 
   def sort_participants_by_placed_count(participants)
@@ -221,10 +230,10 @@ class PoolMerger
     else
       puts "Computing highest score for #{users.size}" if Rails.env.production?
       count = 0
-      highest_score = [-18, [0,1,2]]
+      highest_score = [[-18, 9999], [0,1,2]]
       users.values.combination(3).each do |combo|
         score = compute_pref_score(combo.map { |a| a[:user] })
-        highest_score = [score, combo.map { |a| a[:index] }] if score > highest_score[0]
+        highest_score = [score, combo.map { |a| a[:index] }] if score[0] > highest_score[0][0]
         count += 1
       end
       picked_indices = highest_score[1]
