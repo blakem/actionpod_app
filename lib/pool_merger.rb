@@ -77,9 +77,9 @@ class PoolMerger
     return if participants.empty?
 
     if participants.count == 1
-      handle_one_new_participant(participants[0], pool, pool_runs_at, data)
+      handle_one_new_participant(participants.shift, pool, pool_runs_at, data)
     else
-      handle_two_new_participants(participants, pool, pool_runs_at, data)
+      handle_two_new_participants(participants.shift(2), pool, pool_runs_at, data)
     end
   end
 
@@ -323,8 +323,7 @@ class PoolMerger
   
   def sort_participants(participants, data)
     participants.sort{ |a,b| 
-      first_check = hold_count(b, data) <=> hold_count(a, data)
-      first_check != 0 ? first_check : participant_user_id(a) <=> participant_user_id(b)
+      participant_user_id(a) <=> participant_user_id(b)
     }
   end
 

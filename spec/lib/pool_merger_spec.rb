@@ -1049,7 +1049,7 @@ describe PoolMerger do
         events[1].user.prefer!(events[2].user)
         events[1].user.prefer!(events[3].user)
         events[0].user.avoid!(events[1].user)
-        new_participants = participant_list(4, events)
+        new_participants = participant_list_for_events(events)
         pool = Pool.default_pool
         pool_runs_at = Time.now
         @pm.should_receive(:create_new_group).with([new_participants[0], new_participants[3]], pool, pool_runs_at, {})
@@ -1059,58 +1059,23 @@ describe PoolMerger do
       end
     end
     
-    describe "Handle those who are on hold first" do
-      it "should put someone who's on hold at the front of the list" do
+    describe "five particpants" do
+      it "should ignore on_hold count and create two groups based on user_ids when there are no user prefs" do
         events = create_events(5)
         new_participants = participant_list_for_events(events)
-        @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
-        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX4", "15mcPool#{@pool.id}Room1",
-          be_within(3).of(@timelimit_insec), 
-          events[3].id, [events[3].id, events[0].id, events[1].id]).ordered
-        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1", "15mcPool#{@pool.id}Room1",
-          be_within(3).of(@timelimit_insec), 
-          events[0].id, [events[3].id, events[0].id, events[1].id]).ordered
-        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2", "15mcPool#{@pool.id}Room1",
-          be_within(3).of(@timelimit_insec), 
-          events[1].id, [events[3].id, events[0].id, events[1].id]).ordered
-        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX3", "15mcPool#{@pool.id}Room2",
-          be_within(3).of(@timelimit_insec), 
-          events[2].id, [events[2].id, events[4].id]).ordered
-        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX5", "15mcPool#{@pool.id}Room2",
-          be_within(3).of(@timelimit_insec), 
-          events[4].id, [events[2].id, events[4].id]).ordered
+        pool = Pool.default_pool
+        pool_runs_at = Time.now
         data = @pm.initialize_data({})
         data[:on_hold] = {
           "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX4" => 2,
           "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 1,
         }
-        @pm.merge_calls_for_pool(@pool, @pool_runs_at, data).should == @data.merge({
-          :next_room   => 3,
-          :on_hold     => {},
-          :apologized  => {},
-          :placed      => {
-            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX4" => {
-              :room_name => "15mcPool#{@pool.id}Room1",
-              :event_id => events[3].id,
-            },
-            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => {
-              :room_name => "15mcPool#{@pool.id}Room1",
-              :event_id => events[0].id,
-            },
-            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2" => {
-              :room_name => "15mcPool#{@pool.id}Room1",
-              :event_id => events[1].id,
-            },
-            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX3" => {
-              :room_name => "15mcPool#{@pool.id}Room2",
-              :event_id => events[2].id,
-            },
-            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX5" => {
-              :room_name => "15mcPool#{@pool.id}Room2",
-              :event_id => events[4].id,
-            },
-          },
-        })
+        @pm.should_receive(:create_new_group).with(
+          [new_participants[0], new_participants[1], new_participants[2]], pool, pool_runs_at, data)
+        @pm.should_receive(:create_new_group).with(
+          [new_participants[3], new_participants[4]], pool, pool_runs_at, data)
+        @pm.handle_new_participants(new_participants, pool, pool_runs_at, data)
+        new_participants.should be_empty
       end
     end
   end
@@ -1223,6 +1188,10 @@ describe PoolMerger do
 
       extract_event_names(three).should == [events[0], events[2], events[3]].map(&:name)
       extract_event_names(participants).should == [events[1], events[4]].map(&:name)
+    end
+    
+    it "ha" do
+      1.should == 2
     end
   end
  
