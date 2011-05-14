@@ -231,17 +231,20 @@ class PoolMerger
       pick_users_with_minimum_placed_count(picked_indices, sorted, 1)
       pick_users_with_minimum_placed_count(picked_indices, sorted, 0)
     else
-      puts "Computing highest score for #{users.size}" if Rails.env.production?
+      print_debug_info = true if Rails.env.production?
+      puts "Computing highest score for #{users.size}" if print_debug_info
       count = 0
       highest_score = []
-      users.combination(3).each do |combo|
+      users[0..11].combination(3).each do |combo|
         new_score = compute_pref_score(combo.map { |a| a[:user] })
+        # puts "ExistingScore: " + highest_score.inspect + " - NewScore: " + new_score.inspect
         highest_score = [new_score, combo.map { |a| a[:index] }] if highest_score.empty? or 
           new_score_is_higher?(new_score, highest_score[0])
+          # puts "PickedScore:   " + highest_score.inspect
         count += 1
       end
       picked_indices = highest_score[1]
-      puts "Done Computing highest score for #{users.size} : #{count} computations" if Rails.env.production?
+      puts "Done Computing highest score for #{users.size} : #{count} computations" if print_debug_info
     end
     
     picked = []

@@ -1199,6 +1199,39 @@ describe PoolMerger do
       extract_event_names(three).sort.should == [events[0], events[1], events[2]].map(&:name)
       extract_event_names(participants).sort.should == [events[3], events[4], events[5]].map(&:name)      
     end
+
+    it "finds a good match in the front of the list" do
+      events = create_events_with_placed(14)
+      matched_events = [events[0], events[1], events[2]]
+      matched_events[0].user.prefer!(matched_events[1].user)
+      matched_events[1].user.prefer!(matched_events[2].user)
+      matched_events[2].user.prefer!(matched_events[0].user)
+      participants = participant_list_for_events(events)
+      three = @pm.pick_three_participants(participants)
+      extract_event_names(three).should == matched_events.map(&:name)
+    end
+
+    it "finds a good match in the middle of the list" do
+      events = create_events_with_placed(14)
+      matched_events = [events[4], events[6], events[10]]
+      matched_events[0].user.prefer!(matched_events[1].user)
+      matched_events[1].user.prefer!(matched_events[2].user)
+      matched_events[2].user.prefer!(matched_events[0].user)
+      participants = participant_list_for_events(events)
+      three = @pm.pick_three_participants(participants)
+      extract_event_names(three).should == matched_events.map(&:name)
+    end
+
+    it "will miss a good match if the users are spread out past 12" do
+      events = create_events_with_placed(14)
+      matched_events = [events[0], events[12], events[13]]
+      matched_events[0].user.prefer!(matched_events[1].user)
+      matched_events[1].user.prefer!(matched_events[2].user)
+      matched_events[2].user.prefer!(matched_events[0].user)
+      participants = participant_list_for_events(events)
+      three = @pm.pick_three_participants(participants)
+      extract_event_names(three).should == [events[0], events[1], events[2]].map(&:name)
+    end
   end
  
   describe "compute_pref_score" do
