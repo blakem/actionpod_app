@@ -1,6 +1,5 @@
 15 Minute Calls Features and Todo list:
   FrontEnd:
-    Show all conferences in slot to users
 
   BackEnd:
     Send emails to stranded clients

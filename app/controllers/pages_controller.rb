@@ -19,7 +19,10 @@ class PagesController < ApplicationController
     if current_user.admin?
       @conferences = Conference.order("id DESC").paginate(:page => params[:page], :per_page => 5)
     else
-      @conferences = current_user.conferences.paginate(:page => params[:page], :per_page => 5)
+      user_ids = current_user.preferred_members.map(&:id) + [current_user.id]
+      @conferences = Conference.order("id DESC").select{ |c| 
+        c.users.select{ |u| user_ids.include?(u.id) }.any?
+      }.paginate(:page => params[:page], :per_page => 5)
     end
     @timeslots = build_timeslots
     set_profile_values
