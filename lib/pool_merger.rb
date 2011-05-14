@@ -200,15 +200,15 @@ class PoolMerger
 
   def pick_three_participants(participants)
     index = 0
-    users = {}
+    users = []
     admin = nil
     newbie = nil
     participants.each do |participant|
       user = User.find_by_id(participant_user_id(participant))
-      users[user.id] = {
+      users.push({
         :user => user,
         :index => index,
-      }
+      })
       if user.admin
         admin ||= user
       elsif user.placed_count == 0
@@ -218,12 +218,14 @@ class PoolMerger
     end
 
     if admin
-      admin_hash = users.delete(admin.id)
-      sorted = users.sort{ |a,b| a[1][:user].placed_count <=> b[1][:user].placed_count }
-      picked_indices = [admin_hash[:index], sorted[0][1][:index], sorted[1][1][:index]]
+      admin_hash = users.select{ |h| h[:user] == admin}.first
+      users.delete_if{ |h| h[:user] == admin }
+      sorted = users.sort_by{ |u| u[:user].placed_count }
+      picked_indices = [admin_hash, sorted[0], sorted[1]].map { |h| h[:index] }
     elsif newbie
-      newbie_hash = users.delete(newbie.id)
-      sorted = users.sort{ |a,b| a[1][:user].placed_count <=> b[1][:user].placed_count }
+      newbie_hash = users.select{ |h| h[:user] == newbie }.first
+      users.delete_if{ |h| h[:user] == newbie }
+      sorted = users.sort_by{ |u| u[:user].placed_count }
       picked_indices = [newbie_hash[:index]]
       pick_users_with_minimum_placed_count(picked_indices, sorted, 16)
       pick_users_with_minimum_placed_count(picked_indices, sorted, 1)
@@ -232,7 +234,7 @@ class PoolMerger
       puts "Computing highest score for #{users.size}" if Rails.env.production?
       count = 0
       highest_score = []
-      users.values.combination(3).each do |combo|
+      users.combination(3).each do |combo|
         new_score = compute_pref_score(combo.map { |a| a[:user] })
         highest_score = [new_score, combo.map { |a| a[:index] }] if highest_score.empty? or 
           new_score_is_higher?(new_score, highest_score[0])
@@ -264,13 +266,13 @@ class PoolMerger
     return if picked_indices.count >= 3
     delete_ids = []
     sorted.each do |data|
-      user = data[1][:user]
+      user = data[:user]
       if picked_indices.count < 3 and user.placed_count >= value
-        picked_indices << data[1][:index]
+        picked_indices << data[:index]
         delete_ids << user.id
       end
     end
-    delete_ids.each { |i| sorted.delete(i) }
+    sorted.delete_if{ |h| delete_ids.include?(h[:user].id) }
   end
 
   def apologize_to_participant(participant, pool, pool_runs_at, data)
