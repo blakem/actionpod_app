@@ -29,9 +29,8 @@ class PoolMerger
     data
   end
 
-  def max_wait_time_to_answer
-    35
-  end
+  def max_wait_time_to_answer() 35 end
+  def rolling_window_size()     12 end
 
   def update_meta_data_for_timeslot(participants, pool, data)
     remove_stale_on_hold_records(participants, data)
@@ -235,7 +234,7 @@ class PoolMerger
       puts "Computing highest score for #{users.size}" if print_debug_info
       count = 0
       highest_score = []
-      users[0..11].combination(3).each do |combo|
+      users[0..self.rolling_window_size-1].combination(3).each do |combo|
         new_score = compute_pref_score(combo.map { |a| a[:user] })
         # puts "ExistingScore: " + highest_score.inspect + " - NewScore: " + new_score.inspect
         highest_score = [new_score, combo.map { |a| a[:index] }] if highest_score.empty? or 

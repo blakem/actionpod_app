@@ -1232,6 +1232,33 @@ describe PoolMerger do
       three = @pm.pick_three_participants(participants)
       extract_event_names(three).should == [events[0], events[1], events[2]].map(&:name)
     end
+
+    describe "rolling windows" do
+      it "Takes c(6,3)=20 compute_pref_score computations to find the best match in 12" do
+        events = create_events_with_placed(6)
+        participants = participant_list_for_events(events)
+        @pm.should_receive(:compute_pref_score).exactly(20).times.and_return([1, 2, 3, 4])
+        three = @pm.pick_three_participants(participants)
+      end
+
+      it "Takes c(12,3)=220 compute_pref_score computations to find the best match in 12" do
+        events = create_events_with_placed(12)
+        participants = participant_list_for_events(events)
+        @pm.should_receive(:compute_pref_score).exactly(220).times.and_return([1, 2, 3, 4])
+        three = @pm.pick_three_participants(participants)
+      end
+
+      it "Takes c(12,3)=220 compute_pref_score computations to find the best match in 15" do
+        events = create_events_with_placed(15)
+        participants = participant_list_for_events(events)
+        @pm.should_receive(:compute_pref_score).exactly(220).times.and_return([1, 2, 3, 4])
+        three = @pm.pick_three_participants(participants)
+      end
+      # Therfore the numbers look like this
+      # Totals: 3 => 1, 6 => 21, 9 => 105, 12 => 325, 15 => 325+220 = 545, 18 => 765, 21 => 985
+      # Compared to a rolling window of 9
+      # Totals: 3 => 1, 6 => 21, 9 => 105, 12 = 105+84 = 189,   15 => 273, 18 => 357, 21 => 441
+    end
   end
  
   describe "compute_pref_score" do
