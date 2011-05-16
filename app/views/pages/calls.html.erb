@@ -4,9 +4,7 @@
 	<tr>
 	  <th>ID</th>
 	  <th>Time</th>
-	  <th>To</th>
-	  <th>From</th>
-	  <th>Direction</th>
+	  <th>Call</th>
 	  <th>Duration</th>
 	  <th>Member</th>
     </tr>
@@ -21,17 +19,15 @@
     <tr>
 	  <td><%= call.id %></td>
 	  <td><%= date %> <%= time.strftime("%l:%M:%S%p").downcase %></td>
-	  <% if call.To == '+14157669865' %>
-  	    <td>Twilio</td>
+	  <td>
+	  <% if call.Direction == 'inbound' %>
+  	    From: <%= call.From %>
+      <% elsif call.Direction == 'outbound-api' %>
+  	    To: <%= call.To %>
       <% else %>
-  	    <td><%= call.To %></td>
+	    <%= call.From %> --> <%= call.To %>
       <% end %>
-	  <% if call.From == '+14157669865' %>
-  	    <td>Twilio</td>
-      <% else %>
-  	    <td><%= call.From %></td>
-      <% end %>
-	  <td><%= call.Direction %></td>
+      </td>
 	  <% if call.Duration %>
   	    <td><%= sprintf("%02i:%02i", call.Duration / 60, call.Duration % 60)%></td>
       <% else %>
