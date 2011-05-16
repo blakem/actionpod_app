@@ -27,6 +27,8 @@ class Call < ActiveRecord::Base
       'Out InProgress'
     elsif status == 'outgoing-greeting:match-callback:match-completed'
       'NoAnswer'
+    elsif status =~ /outgoing-greeting:match-onhold:match-placing:\w+-placed:\w+-callback:match-completed/
+      'Success'
     else
       '???'
     end
