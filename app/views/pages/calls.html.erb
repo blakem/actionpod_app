@@ -18,7 +18,7 @@
     <%   user = event.user.name if event %>
     <% end %>
     <tr>
-	  <td><%= call.id %></td>
+	  <td><a href="https://www.twilio.com/user/account/log/view-call?callsid=<%= call_sid %>&amp;callsegmentsid="><%= call.id %></a></td>
 	  <td><%= date %> <%= time.strftime("%l:%M:%S%p").downcase %></td>
 	  <td>
 	  <% if call.Direction == 'inbound' %>
