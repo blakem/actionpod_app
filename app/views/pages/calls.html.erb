@@ -1,0 +1,7 @@
+<% if @calls.any? %>
+  <p><b>Recent Calls:</b></p>
+  <% @calls.each do |call| %>
+    <p></p>
+  <% end %>
+ <%= will_paginate @calls %>
+<% end %>

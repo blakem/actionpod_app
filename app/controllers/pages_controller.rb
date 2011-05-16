@@ -146,26 +146,6 @@ class PagesController < ApplicationController
     render :action => :help_logged_in if user_signed_in?
   end
   
-  def callcal
-    if admin_signed_in?
-      @scheduled_events = build_scheduled_events
-      set_profile_values
-      @view_options = {:hide_callcal => true}    
-    else
-      redirect_to(root_path, :alert => "You don't have access to that page")
-    end
-  end
-
-  def stranded_users
-    if admin_signed_in?
-      @users = User.all.sort_by(&:id).select { |u| u.events.empty? }
-      set_profile_values
-      @view_options = {:hide_stranded_users => true}    
-    else
-      redirect_no_access
-    end
-  end
-  
   def call_groups
     set_profile_values
     @view_options = {:hide_call_groups => true}    
@@ -196,28 +176,48 @@ class PagesController < ApplicationController
       redirect_to(@user.profile_path, :notice => "Placing test call to: #{@user.primary_phone.number_pretty}")
     end
   end
-  
+
+  def calls
+    return unless check_for_admin_user
+    @calls = Call.all
+    set_profile_values
+    @view_options = {:hide_calls => true}    
+  end
+
+  def callcal
+    return unless check_for_admin_user
+    @scheduled_events = build_scheduled_events
+    set_profile_values
+    @view_options = {:hide_callcal => true}    
+  end
+
+  def stranded_users
+    return unless check_for_admin_user
+    @users = User.all.sort_by(&:id).select { |u| u.events.empty? }
+    set_profile_values
+    @view_options = {:hide_stranded_users => true}    
+  end
+    
   def conference_email
-    if admin_signed_in?
-      set_profile_values
-      conference = current_user.conferences.select { |c| c.users.count == 3 }.first
-      render :inline => message = UserMailer.conference_email(current_user, conference.users).body.raw_source.html_safe, :layout => true
-    else
-      redirect_no_access
-    end
+    return unless check_for_admin_user
+    set_profile_values
+    conference = current_user.conferences.select { |c| c.users.count == 3 }.first
+    render :inline => message = UserMailer.conference_email(current_user, conference.users).body.raw_source.html_safe, :layout => true
   end
 
   def confirmation_email
-    if admin_signed_in?
-      set_profile_values
-      render :inline => Devise::Mailer.confirmation_instructions(current_user).body.raw_source.html_safe, :layout => true
-    else
-      redirect_no_access
-    end
+    return unless check_for_admin_user
+    set_profile_values
+    render :inline => Devise::Mailer.confirmation_instructions(current_user).body.raw_source.html_safe, :layout => true
   end
 
   private
-      def redirect_no_access
-        redirect_to(root_path, :alert => "You don't have access to that page")      
+      def check_for_admin_user
+        if admin_signed_in?
+          return true
+        else
+          redirect_to(root_path, :alert => "You don't have access to that page")
+          return false
+        end
       end
 end
