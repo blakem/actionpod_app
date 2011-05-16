@@ -1,7 +1,16 @@
 <% if @calls.any? %>
   <p><b>Recent Calls:</b></p>
   <% @calls.each do |call| %>
-    <p></p>
+    <% time = call.created_at.in_time_zone('Pacific Time (US & Canada)') %>
+    <% date = time.strftime("%a %b %e") %>
+    <% user = '' %>
+    <% if call.event_id %>
+    <%   event = Event.find_by_id(call.event_id) %>
+    <%   user = event.user.name if event %>
+    <% end %>
+    <%= "#{sprintf("%3s", call.id)}: #{date} #{time.strftime("%l:%M:%S%p").downcase} #{call.To} #{call.From}" %>
+    <%= "#{sprintf("%-12s", call.Direction)} #{sprintf("%-4s", call.Duration)} #{sprintf("%17s",user)}" %>
+    <%= "#{call.status}" %>
   <% end %>
  <%= will_paginate @calls %>
 <% end %>

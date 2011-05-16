@@ -382,6 +382,7 @@ describe PagesController do
     describe "when admin logged in" do
       it "should be a success" do
         login_admin
+        call = Call.create!(:status => 'outbound')
         get :calls
         response.should be_success
       end
