@@ -24,7 +24,11 @@
 	  <td><%= call.To %></td>
 	  <td><%= call.From %></td>
 	  <td><%= call.Direction %></td>
-	  <td><%= time_ago_in_words(Time.now - call.Duration.seconds) %></td>
+	  <% if call.Duration %>
+  	    <td><%= time_ago_in_words(Time.now - call.Duration.seconds) %></td>
+      <% else %>
+        <td>None</td>
+      <% end %>
 	  <td><%= user %></td>
 	</tr>
 	<tr>

@@ -382,7 +382,8 @@ describe PagesController do
     describe "when admin logged in" do
       it "should be a success" do
         login_admin
-        call = Call.create!(:status => 'outbound')
+        call1 = Call.create!(:status => 'outbound', :Duration => 45)
+        call2 = Call.create!(:status => 'outbound', :Duration => nil)
         get :calls
         response.should be_success
       end
