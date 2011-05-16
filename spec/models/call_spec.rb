@@ -26,8 +26,7 @@ describe Call do
     call.status = 'outgoing-greeting:match-onhold:match-apologizing-apologized-callback:match-completed'
     call.status_category.should == 'OutOnlyOne'
     call.status = 'outgoing-callback:match-completed'
-    call.status_category.should == '????'
-    
+    call.status_category.should == '????'    
     event = Factory(:event)
     user = event.user
     call.event_id = event.id
@@ -38,5 +37,7 @@ describe Call do
     user.use_ifmachine = false
     user.save
     call.status_category.should == 'PossibleError'
+    call.status = 'outgoing-fallback:match-onhold:match-callback:match-completed'
+    call.status_category.should == 'FallbackError'
   end
 end
