@@ -31,20 +31,20 @@ class Call < ActiveRecord::Base
       'Got Greeting'
     elsif status == 'outgoing-greeting:match-callback:match-completed'
       'NoAnswer'
-    elsif status =~ /outgoing-greeting:match-onhold:match-placing:\w+-placed:\w+-callback:match-completed/
+    elsif status =~ /^outgoing-greeting:match-onhold:match-placing:\w+-placed:\w+-callback:match-completed$/
       'Success'
-    elsif status =~ /incoming-onhold-placing:\w+-placed:\w+-callback:match-completed/
+    elsif status =~ /^incoming-onhold-placing:\w+-placed:\w+-callback:match-completed$/
       'InSuccess'
-    elsif status =~ /outgoing-direct:match-placing:\w+-placed:\w+-callback:match-completed/
+    elsif status =~ /^outgoing-direct:match-placing:\w+-placed:\w+-callback:match-completed$/
       'DirSuccess'
     elsif status =~ /fallback/
       'FallbackError'
+    elsif status =~ /^outgoing-greeting:match-onhold:match-(apologizing-apologized-)?callback:match-completed$/
+      'OutOnlyOne'
     elsif status == 'incoming-onhold-apologizing-apologized-callback:match-completed'
       'InOnlyOne'
     elsif status == 'outgoing-direct:match-apologizing-apologized-callback:match-completed'
       'DirOnlyOne'
-    elsif status == 'outgoing-greeting:match-onhold:match-apologizing-apologized-callback:match-completed'
-      'OutOnlyOne'
     elsif status == 'outgoing-callback:match-completed'
       if event_id
         event = Event.find_by_id(event_id)
