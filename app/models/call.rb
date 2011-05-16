@@ -35,6 +35,8 @@ class Call < ActiveRecord::Base
       'Success'
     elsif status =~ /incoming-onhold-placing:\w+-placed:\w+-callback:match-completed/
       'InSuccess'
+    elsif status =~ /outgoing-direct:match-placing:\w+-placed:\w+-callback:match-completed/
+      'DirSuccess'
     else
       '???'
     end

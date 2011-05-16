@@ -17,5 +17,7 @@ describe Call do
     call.status_category.should == 'Got Greeting'
     call.status = 'incoming-onhold-placing:15mcPool1Room1-placed:15mcPool1Room1-callback:match-completed'
     call.status_category.should == 'InSuccess'
+    call.status = 'outgoing-direct:match-placing:15mcPool1Room1-placed:15mcPool1Room1-callback:match-completed'
+    call.status_category.should == 'DirSuccess'
   end
 end
