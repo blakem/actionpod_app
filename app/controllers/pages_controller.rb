@@ -180,8 +180,6 @@ class PagesController < ApplicationController
   def calls
     return unless check_for_admin_user
     @calls = Call.order("id DESC").paginate(:page => params[:page], :per_page => 20)
-    set_profile_values
-    @view_options = {:hide_calls => true}    
   end
 
   def callcal
