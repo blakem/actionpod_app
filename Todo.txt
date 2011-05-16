@@ -19,14 +19,12 @@
     
 
   Business:
-    Copy for JVD Newsletter
     Add expenses to Expenses spreadsheet  
 
   Other:
     Watch Haml Screencast
     Change all 'User' copy to 'Member'
     Add Feedback Form
-    Cancel Judds Hill
 
 
   
