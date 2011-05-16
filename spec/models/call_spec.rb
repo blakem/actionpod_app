@@ -11,5 +11,11 @@ describe Call do
     call.status_category.should == '???'
     call.status = 'outgoing-greeting:match-onhold:match-placing:15mcPool1Room1-placed:15mcPool1Room1-callback:match-completed'
     call.status_category.should == 'Success'
+    call.status = 'outgoing-greeting:match-callback:match'
+    call.status_category.should == 'Got CallBack'
+    call.status = 'outgoing-greeting:match'
+    call.status_category.should == 'Got Greeting'
+    call.status = 'incoming-onhold-placing:15mcPool1Room1-placed:15mcPool1Room1-callback:match-completed'
+    call.status_category.should == 'InSuccess'
   end
 end

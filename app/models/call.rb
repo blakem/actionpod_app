@@ -25,10 +25,16 @@ class Call < ActiveRecord::Base
   def status_category
     if status == 'outgoing'
       'Out InProgress'
+    elsif status == 'outgoing-greeting:match-callback:match'
+      'Got CallBack'
+    elsif status == 'outgoing-greeting:match'
+      'Got Greeting'
     elsif status == 'outgoing-greeting:match-callback:match-completed'
       'NoAnswer'
     elsif status =~ /outgoing-greeting:match-onhold:match-placing:\w+-placed:\w+-callback:match-completed/
       'Success'
+    elsif status =~ /incoming-onhold-placing:\w+-placed:\w+-callback:match-completed/
+      'InSuccess'
     else
       '???'
     end
