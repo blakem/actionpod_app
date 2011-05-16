@@ -12,6 +12,7 @@ class TwilioController < ApplicationController
       update_call_status_from_params(params, 'greeting:match')
       @event_name = event.name_in_second_person
       @postto = base_url + '/put_on_hold.xml'
+      sleep 30
     end
   end
   
