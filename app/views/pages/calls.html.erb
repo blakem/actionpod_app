@@ -8,7 +8,7 @@
 	  <th>From</th>
 	  <th>Direction</th>
 	  <th>Duration</th>
-	  <th>User</th>
+	  <th>Member</th>
     </tr>
   <% @calls.each do |call| %>
     <% time = call.created_at.in_time_zone('Pacific Time (US & Canada)') %>
@@ -21,8 +21,16 @@
     <tr>
 	  <td><%= call.id %></td>
 	  <td><%= date %> <%= time.strftime("%l:%M:%S%p").downcase %></td>
-	  <td><%= call.To %></td>
-	  <td><%= call.From %></td>
+	  <% if call.To == '+14157669865' %>
+  	    <td>Twilio</td>
+      <% else %>
+  	    <td><%= call.To %></td>
+      <% end %>
+	  <% if call.From == '+14157669865' %>
+  	    <td>Twilio</td>
+      <% else %>
+  	    <td><%= call.From %></td>
+      <% end %>
 	  <td><%= call.Direction %></td>
 	  <% if call.Duration %>
   	    <td><%= sprintf("%02i:%02i", call.Duration / 60, call.Duration % 60)%></td>
