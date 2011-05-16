@@ -41,6 +41,8 @@ class Call < ActiveRecord::Base
       'InOnlyOne'
     elsif status == 'outgoing-direct:match-apologizing-apologized-callback:match-completed'
       'DirOnlyOne'
+    elsif status == 'outgoing-greeting:match-onhold:match-apologizing-apologized-callback:match-completed'
+      'OutOnlyOne'
     else
       '???'
     end

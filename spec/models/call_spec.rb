@@ -23,5 +23,7 @@ describe Call do
     call.status_category.should == 'InOnlyOne'
     call.status = 'outgoing-direct:match-apologizing-apologized-callback:match-completed'
     call.status_category.should == 'DirOnlyOne'
+    call.status = 'outgoing-greeting:match-onhold:match-apologizing-apologized-callback:match-completed'
+    call.status_category.should == 'OutOnlyOne'
   end
 end
