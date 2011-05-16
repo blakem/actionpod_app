@@ -4,7 +4,6 @@ class TwilioController < ApplicationController
 
   def greeting
     event = find_event_from_params(params)
-    event.MuckyMuckyMucky.foo
     unless event
       update_call_status_from_params(params, 'greeting:nomatch')
       self.say_sorry
@@ -19,7 +18,6 @@ class TwilioController < ApplicationController
   def greeting_fallback
     TwilioCaller.new.send_error_to_blake('Fallback: ' + params[:CallSid])
     event = find_event_from_params(params)
-    event.MuckyMuckyMucky.foo
     unless event
       update_call_status_from_params(params, 'fallback:nomatch')
       self.say_sorry
