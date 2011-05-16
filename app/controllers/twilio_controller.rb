@@ -4,6 +4,7 @@ class TwilioController < ApplicationController
 
   def greeting
     event = find_event_from_params(params)
+    event.MuckyMuckyMucky.foo
     unless event
       update_call_status_from_params(params, 'greeting:nomatch')
       self.say_sorry
