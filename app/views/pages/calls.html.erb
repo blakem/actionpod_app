@@ -22,11 +22,11 @@
 	  <td><%= date %> <%= time.strftime("%l:%M:%S%p").downcase %></td>
 	  <td>
 	  <% if call.Direction == 'inbound' %>
-  	    From: <%= call.From %>
+  	    In: <%= call.From.sub(/\+1(\d{3})(\d{3})/, '(\1) \2-') %>
       <% elsif call.Direction == 'outbound-api' %>
-  	    To: <%= call.To %>
+  	    <%= call.To.sub(/\+1(\d{3})(\d{3})/, '(\1) \2-') %>
       <% else %>
-	    <%= call.From %> --> <%= call.To %>
+	    <%= call.From.sub(/\+1(\d{3})(\d{3})/, '(\1) \2-') %> --> <%= call.To.sub(/\+1(\d{3})(\d{3})/, '(\1) \2-') %>
       <% end %>
       </td>
 	  <% if call.Duration %>
