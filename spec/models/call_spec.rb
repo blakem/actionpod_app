@@ -25,5 +25,18 @@ describe Call do
     call.status_category.should == 'DirOnlyOne'
     call.status = 'outgoing-greeting:match-onhold:match-apologizing-apologized-callback:match-completed'
     call.status_category.should == 'OutOnlyOne'
+    call.status = 'outgoing-callback:match-completed'
+    call.status_category.should == '????'
+    
+    event = Factory(:event)
+    user = event.user
+    call.event_id = event.id
+    call.save
+    user.use_ifmachine = true
+    user.save
+    call.status_category.should == 'DirNoAnswer'
+    user.use_ifmachine = false
+    user.save
+    call.status_category.should == 'PossibleError'
   end
 end

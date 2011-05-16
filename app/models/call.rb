@@ -43,6 +43,16 @@ class Call < ActiveRecord::Base
       'DirOnlyOne'
     elsif status == 'outgoing-greeting:match-onhold:match-apologizing-apologized-callback:match-completed'
       'OutOnlyOne'
+    elsif status == 'outgoing-callback:match-completed'
+      if event_id
+        event = Event.find_by_id(event_id)
+        if event && event.user.use_ifmachine
+          return 'DirNoAnswer'
+        elsif event && !event.user.use_ifmachine
+          return 'PossibleError'
+        end
+      end
+      '????'
     else
       '???'
     end
