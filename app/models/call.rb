@@ -21,4 +21,14 @@
 #
 
 class Call < ActiveRecord::Base
+
+  def status_category
+    if status == 'outgoing'
+      'Out InProgress'
+    elsif status == 'outgoing-greeting:match-callback:match-completed'
+      'NoAnswer'
+    else
+      '???'
+    end
+  end
 end

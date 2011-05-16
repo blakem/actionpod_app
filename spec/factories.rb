@@ -78,3 +78,10 @@ Factory.define :delayed_job do |dj|
   dj.obj_id      456
   dj.obj_jobtype "pingme"
 end
+
+Factory.define :call do |c|
+  c.status          'foo'
+  c.sequence(:To)   { Factory.next(:phone) }
+  c.sequence(:From) { Factory.next(:phone) }
+  c.Duration        45
+end
