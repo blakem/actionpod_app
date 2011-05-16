@@ -39,6 +39,8 @@ class Call < ActiveRecord::Base
       'DirSuccess'
     elsif status == 'incoming-onhold-apologizing-apologized-callback:match-completed'
       'InOnlyOne'
+    elsif status == 'outgoing-direct:match-apologizing-apologized-callback:match-completed'
+      'DirOnlyOne'
     else
       '???'
     end
