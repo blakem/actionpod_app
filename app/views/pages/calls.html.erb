@@ -25,7 +25,7 @@
 	  <td><%= call.From %></td>
 	  <td><%= call.Direction %></td>
 	  <% if call.Duration %>
-  	    <td><%= sprintf("%02i:%02i", Duration / 60, Duration % 60)%></td>
+  	    <td><%= sprintf("%02i:%02i", call.Duration / 60, call.Duration % 60)%></td>
       <% else %>
         <td>None</td>
       <% end %>
