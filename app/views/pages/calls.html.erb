@@ -9,7 +9,6 @@
 	  <th>Direction</th>
 	  <th>Duration</th>
 	  <th>User</th>
-	  <th>Status</th>
     </tr>
   <% @calls.each do |call| %>
     <% time = call.created_at.in_time_zone('Pacific Time (US & Canada)') %>
@@ -27,7 +26,9 @@
 	  <td><%= call.Direction %></td>
 	  <td><%= call.Duration %></td>
 	  <td><%= user %></td>
-	  <td><%= call.status %></td>
+	</tr>
+	<tr>
+	  <td colspan="7"><%= call.status %></td>
     </tr>
   <% end %>
   </table>
