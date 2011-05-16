@@ -19,14 +19,16 @@
     <%   event = Event.find_by_id(call.event_id) %>
     <%   user = event.user.name if event %>
     <% end %>
-    <td><%= call.id %></td>
-    <td><%= date %> <%= time.strftime("%l:%M:%S%p").downcase %></td>
-    <td><%= call.To %></td>
-    <td><%= call.From %></td>
-    <td><%= call.Direction %></td>
-    <td><%= call.Duration %></td>
-    <td><%= user %></td>
-    <td><%= call.status %></td>
+    <tr>
+	  <td><%= call.id %></td>
+	  <td><%= date %> <%= time.strftime("%l:%M:%S%p").downcase %></td>
+	  <td><%= call.To %></td>
+	  <td><%= call.From %></td>
+	  <td><%= call.Direction %></td>
+	  <td><%= call.Duration %></td>
+	  <td><%= user %></td>
+	  <td><%= call.status %></td>
+    </tr>
   <% end %>
   </table>
  <%= will_paginate @calls %>
