@@ -88,12 +88,9 @@ class PoolQueuer
   end
   
   def set_heroku_dynos_and_workers(workers, dynos)
-    puts "Username: #{ENV['HEROKU_USERNAME']}"
-    puts "Password: #{ENV['HEROKU_PASSWORD']}"
-    puts "APP:      #{ENV['HEROKU_APP']}"
-    heroku = Heroku::Client.new(ENV['HEROKU_USERNAME'], ENV['HEROKU_PASSWORD'])
-    heroku.set_workers(ENV['HEROKU_APP'], workers)
-    heroku.set_dynos(ENV['HEROKU_APP'], dynos)
+    heroku = Heroku::Client.new('blakem30@yahoo.com', 'biv1ukor')
+    heroku.set_workers('actionpods', workers)
+    heroku.set_dynos('actionpods', dynos)
   end    
 
   def update_conferences(pool, started_at, data)
