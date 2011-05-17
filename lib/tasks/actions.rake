@@ -41,8 +41,9 @@ task :call_phones, [:event1_id, :event2_id, :event3_id, :event4_id, :event5_id] 
     run_time = Time.now + 1.minute
     run_time = run_time + 1.minute if run_time.min == 0
     events.each do |event|
-      event.days = [run_time.wday]
-      event.time = run_time.in_time_zone(event.user.time_zone).strftime("%I:%M%p")
+      user_run_time = run_time.in_time_zone(event.user.time_zone)
+      event.days = [user_run_time.wday]
+      event.time = user_run_time.strftime("%I:%M%p")
     end
     events.each do |event|
       event.save
