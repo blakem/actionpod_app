@@ -32,9 +32,9 @@ class PagesController < ApplicationController
   def profile
     breadcrumbs.add 'Member Profile'
     @user = User.find_by_handle(params[:handle])
-    breadcrumbs.add @user.name
     if (@user)
       set_profile_values(@user)
+      breadcrumbs.add @user.name
       @conferences = @user.conferences.select{ |c| c.started_at.min == 0 }.paginate(:page => params[:page], :per_page => 5)
       @users = [@user]
       @your = @user.first_name + "'s"
