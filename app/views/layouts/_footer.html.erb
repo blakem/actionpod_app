@@ -11,10 +11,14 @@
       <%= render 'devise/menu/registration_items' %> |
 	  <%= render 'devise/menu/login_items' %>
       <% if controller.admin_signed_in? %>
-      | <li><%= link_to "Admin", '/admin' %></li> 
-	  | <li><%= link_to "Data", '/admin_data' %></li>
-	  | <li><%= link_to "Clicky", 'http://getclicky.com/user/' %></li>
-      <% end %>	</ul>
+        | <li><%= link_to "Admin", '/admin' %></li> 
+        | <li><%= link_to "Data", '/admin_data' %></li>
+        | <li><%= link_to "Clicky", 'http://getclicky.com/user/' %></li>
+        | <li><%= link_to "Call Times", :controller => :pages, :action => :callcal %></li>
+        | <li><%= link_to "Stranded Members", :controller => :pages, :action => :stranded_users %></li>
+        | <li><%= link_to "Calls", :controller => :pages, :action => :calls %></li>
+      <% end %>
+    </ul>
   </nav>
 </footer>
 <script src="//static.getclicky.com/js" type="text/javascript"></script>

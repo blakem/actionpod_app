@@ -47,17 +47,6 @@
   <% end %>
 <% end %>
   <%= link_to "Manage Multiple Phones", phones_path %><br/>
-<% if current_user.admin? %>
-  <% unless @view_options[:hide_callcal] %>
-    <%= link_to "Show existing call times", :controller => :pages, :action => :callcal %><br/>
-  <% end %>
-  <% unless @view_options[:hide_stranded_users] %>
-    <%= link_to "Show stranded users", :controller => :pages, :action => :stranded_users %><br/>
-  <% end %>
-  <% unless @view_options[:hide_calls] %>
-    <%= link_to "Show recent calls", :controller => :pages, :action => :calls %><br/>
-  <% end %>
-<% end %>
 </p>
 <% if @nextcalls.any? %>
   <p><strong><%= @your %> next <%= @nextcalls.count == 1 ? 'call' : "#{@nextcalls.count} calls" %>:</strong><br/>
