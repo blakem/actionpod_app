@@ -1,10 +1,11 @@
+<%= breadcrumbs.render(:format => :inline) %>
 <table class="profile" summary="Profile information">
   <tr>
 	<td class="main">
 <%= yield %>
-    </td>
-    <td class="sidebar round">
-	  <%= render 'pages/sidebar' %>
+  </td>
+  <td class="sidebar round">
+<%= render 'pages/sidebar' %>
 	</td>
   </tr>
 </table>

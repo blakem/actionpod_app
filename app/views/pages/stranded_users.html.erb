@@ -1,4 +1,4 @@
-<h3> Stranded Users:</h3>
+<h3> Stranded Members:</h3>
 <% @users.each do |user| %>
    <%= gravatar_for user, :size => 30 %> <%= link_to user.name, user.profile_path %>
    Placed:<%= user.placed_count %>

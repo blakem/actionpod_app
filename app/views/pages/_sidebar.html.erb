@@ -43,7 +43,7 @@
     <%= link_to "All Call Groups", :controller => :pages, :action => :call_groups %><br/>
   <% else %>
     <% call_groups = current_user.events.count > 1 ? 'groups' : 'group'%>
-    <%= link_to "Who's in my call #{call_groups}?", :controller => :pages, :action => :call_groups %><br/>
+    <%= link_to "Who's in My Call #{call_groups}?", :controller => :pages, :action => :call_groups %><br/>
   <% end %>
 <% end %>
   <%= link_to "Manage Multiple Phones", phones_path %><br/>

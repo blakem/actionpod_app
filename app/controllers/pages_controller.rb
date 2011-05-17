@@ -26,9 +26,11 @@ class PagesController < ApplicationController
     end
     @timeslots = build_timeslots
     set_profile_values
+    breadcrumbs.add current_user.name
   end
   
   def profile
+    breadcrumbs.add 'View Member Profile'
     @user = User.find_by_handle(params[:handle])
     if (@user)
       set_profile_values(@user)
@@ -84,6 +86,7 @@ class PagesController < ApplicationController
   end
   
   def conference
+    breadcrumbs.add 'View Conference'
     @conference = Conference.find_by_id(params[:id])
     if @conference
       @users = @conference.users.select { |u| u.id == current_user.id } +
@@ -103,6 +106,7 @@ class PagesController < ApplicationController
   end
 
   def plan    
+    breadcrumbs.add 'Update Your Daily Goals'
     @plan = Plan.new(:body => Plan.default_body)
     current_plan = current_user.current_plan    
     @plan.body = current_plan.body if current_plan
@@ -122,6 +126,7 @@ class PagesController < ApplicationController
   end
   
   def intro
+    breadcrumbs.add 'Update Your Introduction'
     set_profile_values
     @view_options = {:hide_update_intro => true}    
   end
@@ -153,6 +158,7 @@ class PagesController < ApplicationController
     @my = current_user.admin? ? 'All' : 'My'
     @groups = @call_groups.length > 1 ? 'Groups' : 'Group'
     @groups = 'Groups' if current_user.admin?
+    breadcrumbs.add "Who's in My Call " + @groups
   end
 
   def time_slot
@@ -186,7 +192,7 @@ class PagesController < ApplicationController
     return unless check_for_admin_user
     @scheduled_events = build_scheduled_events
     set_profile_values
-    @view_options = {:hide_callcal => true}    
+    breadcrumbs.add 'Call Times'
   end
 
   def stranded_users
@@ -194,6 +200,7 @@ class PagesController < ApplicationController
     @users = User.all.sort_by(&:id).select { |u| u.events.empty? }
     set_profile_values
     @view_options = {:hide_stranded_users => true}    
+    breadcrumbs.add 'Stranded Members'
   end
     
   def conference_email

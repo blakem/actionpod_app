@@ -18,6 +18,7 @@ gem 'hpricot'
 gem 'jquery-rails', '>= 0.2.6'
 gem 'recurly', '>= 0.3.0'
 gem 'tripwire_notifier'
+gem 'breadcrumbs'
 
 group :test, :development do
   gem 'taps'

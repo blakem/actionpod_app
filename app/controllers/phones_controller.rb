@@ -1,6 +1,7 @@
 class PhonesController < ApplicationController
   before_filter :authenticate_user!
-  
+  before_filter :set_breadcrumb
+
   # GET /phones
   def index
     @phones = Phone.where(:user_id => current_user.id)
@@ -77,4 +78,11 @@ class PhonesController < ApplicationController
       redirect_to(root_path, :alert => "You don't have permissions to view that phone.")
     end
   end
+  
+  private
+    def set_breadcrumb
+      set_profile_values
+      breadcrumbs.add 'Manage Multiple Phones'
+    end
+
 end

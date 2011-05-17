@@ -12,6 +12,7 @@ class RegistrationsController < Devise::RegistrationsController
   end
 
   def edit
+    breadcrumbs.add 'Edit Your Member Information'
     set_profile_values
     @view_options = {:hide_edit_profile => true}
     super
