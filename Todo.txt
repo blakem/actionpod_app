@@ -9,7 +9,8 @@
 
   Bugs:
     Incoming callers that were previously placed have new call_sid and are treated as new callers.
-
+    SENDGRID_DOMAIN         => froom.com
+    
   Community:
     Ask Garret about Tweet (@15mincalls)
     Email TMC about 15mc
