@@ -184,6 +184,19 @@ class PagesController < ApplicationController
     end
   end
 
+  def send_member_message
+    user = User.find_by_id(params[:member_id])
+    body = params[:body]
+    if user && !body.blank?
+      UserMailer.deliver_member_message(user, current_user, body)
+      redirect_to(user.profile_path, :notice => "Thank you.  Your message has been sent to #{user.name}.")
+    elsif !user
+      redirect_to(root_path, :alert => "Sorry, we couldn't find that member.")
+    else
+      redirect_to(user.profile_path, :alert => "Please enter a message to send.")
+    end
+  end
+
   def calls
     return unless check_for_admin_user
     @calls = Call.order("id DESC").paginate(:page => params[:page], :per_page => 20)

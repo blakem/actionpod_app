@@ -24,7 +24,6 @@
 
   Other:
     Watch Haml Screencast
-    Change all 'User' copy to 'Member'
     Add Feedback Form
 
 

@@ -390,6 +390,47 @@ describe PagesController do
     end
   end
 
+  describe "GET /pages/send_member_message" do
+    describe "when not logged in" do
+      it "should redirect to the root path" do
+        controller.user_signed_in?.should be_false
+        get :send_member_message
+        response.should redirect_to(new_user_session_path)
+      end
+    end
+
+    describe "when logged in" do
+      login_user_before_each
+      it "should redirect to the root path if no member_id is given" do
+        get :send_member_message
+        flash[:alert].should =~ /Sorry, we couldn't find that member./i
+        response.should redirect_to(root_path)
+      end
+
+      it "should redirect to the user path if no body is given" do
+        user = Factory(:user)
+        get :send_member_message, :member_id => user.id
+        flash[:alert].should =~ /Please enter a message to send./i
+        response.should redirect_to(user.profile_path)
+      end
+
+      it "should redirect to the user path if the body is all blanks" do
+        user = Factory(:user)
+        get :send_member_message, :member_id => user.id, :body => '   '
+        flash[:alert].should =~ /Please enter a message to send./i
+        response.should redirect_to(user.profile_path)
+      end
+
+      it "should send an email with the body to the member_id" do
+        user = Factory(:user)
+        UserMailer.should_receive(:deliver_member_message).with(user, @current_user, 'Test Message')
+        get :send_member_message, :member_id => user.id, :body => 'Test Message'
+        flash[:notice].should =~ /Thank you.  Your message has been sent to #{user.name}./i
+        response.should redirect_to(user.profile_path)
+      end
+    end
+  end
+
   describe "GET /pages/prefer" do
     describe "more" do
       it "should prefer a user" do

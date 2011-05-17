@@ -14,4 +14,13 @@ class UserMailer < ActionMailer::Base
     @mailer = true
     mail(:to => @current_user.email, :subject => "[15mc] Conference Notes for #{@date}")
   end
+  
+  def member_message(user, sender, message)
+    @message_body = message
+    mail(
+      :to => user.email,
+      :subject => "Message from your 15mc buddy: #{sender.name}",
+      :from => sender.email,
+    )
+  end
 end
