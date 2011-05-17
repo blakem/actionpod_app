@@ -168,6 +168,7 @@ DEPENDENCIES
   faker
   fakeweb
   gravatar_image_tag
+  heroku
   heroku_backup_task
   heroku_san
   hpricot

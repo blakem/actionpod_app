@@ -59,6 +59,12 @@ class PoolQueuer
           twilio_caller.send_sms(event.user.primary_phone.number, event.sms_reminder_text)
         end
       end
+      self.delay(
+        :obj_type    => 'PoolMerger',
+        :obj_jobtype => 'set_heroku_dynos_and_workers',
+        :run_at      => pool_runs_at - 1.minute,
+        :pool_id     => pool.id,
+      ).set_heroku_dynos_and_workers(jobs.count, jobs.count)
       queue_merge_calls_for_pool(pool, pool_runs_at, 0, {
         :total => jobs.count,
         :waiting_for_events => jobs.map(&:obj_id).sort,
@@ -69,6 +75,7 @@ class PoolQueuer
   def queue_merge_calls_for_pool(pool, pool_runs_at, count, data)
     if count > ((pool.timelimit.minutes - time_before_first_merge) / time_between_merges)
       update_conferences(pool, pool_runs_at, data)
+      set_heroku_dynos_and_workers(1, 1)
       return true
     end
     data = PoolMerger.new.merge_calls_for_pool(pool, pool_runs_at, data) if count > 0  
@@ -79,6 +86,12 @@ class PoolQueuer
       :pool_id     => pool.id,
     ).queue_merge_calls_for_pool(pool, pool_runs_at, count+1, data)
   end
+  
+  def set_heroku_dynos_and_workers(workers, dynos)
+    heroku = Heroku::Client.new(ENV['HEROKU_USERNAME'], ENV['HEROKU_PASSWORD'])
+    heroku.set_workers(ENV['HEROKU_APP'], workers)
+    heroku.set_dynos(ENV['HEROKU_APP'], dynos)
+  end    
 
   def update_conferences(pool, started_at, data)
     room_names = []
