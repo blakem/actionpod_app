@@ -12,7 +12,7 @@ class TwilioController < ApplicationController
       update_call_status_from_params(params, 'greeting:match')
       @event_name = event.name_in_second_person
       @postto = base_url + '/put_on_hold.xml'
-      log_message("GREETING for #{event.user.first_name}")
+      log_message("GREETING for #{event.user.name}")
     end
   end
   
@@ -44,7 +44,7 @@ class TwilioController < ApplicationController
       if call.status =~ /^outgoing/ && (call.status !~ /-onhold/ && call.status !~ /-direct:match-/)
         update_missed_count(event.user) unless bailed_before_greeting
       end
-      log_message("CALLBACK for #{event.user.first_name}")
+      log_message("CALLBACK for #{event.user.name}")
     end
     update_call_object_status(call, 'completed')
     TwilioCaller.new.send_error_to_blake('OutgoingBug: ' + params[:CallSid]) if bailed_before_greeting
@@ -85,7 +85,7 @@ class TwilioController < ApplicationController
       @user = event.user
       @event = event
       @timelimit *= 60
-      log_message("DIRECT for #{event.user.first_name}")
+      log_message("DIRECT for #{event.user.name}")
     end
   end
 
@@ -103,7 +103,7 @@ class TwilioController < ApplicationController
       @event = event
       @user = event.user
       @timelimit *= 60
-      log_message("ONHOLD for #{event.user.first_name}")
+      log_message("ONHOLD for #{event.user.name}")
     end
   end
 
@@ -124,7 +124,7 @@ class TwilioController < ApplicationController
       @user = event.user
       @event = event
       @timelimit *= 60
-      log_message("INCOMING for #{event.user.first_name}")
+      log_message("INCOMING for #{event.user.name}")
     end
   end
 
@@ -136,7 +136,7 @@ class TwilioController < ApplicationController
     event = Event.find_by_id(params[:event])
     if event
       @next_call_time = event.user.next_call_time_string
-      log_message("CONFERENCE for #{event.user.first_name} - #{@conference}")
+      log_message("CONFERENCE for #{event.user.name} - #{@conference}")
     else
       @next_call_time = ''
     end
