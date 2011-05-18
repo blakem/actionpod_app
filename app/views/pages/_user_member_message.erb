@@ -1,8 +1,11 @@
 <% if @view_options[:show_member_message] %>
-<%= form_tag '/pages/send_member_message' %>
+<%= form_tag '/pages/send_member_message', :name => 'message_form' %>
 <div class="field">
   <member_message>
-  <%= text_area_tag('body', "Enter message to #{@user.first_name} here.", :class => "round") %>
+  <%= text_area_tag('body', "Enter message to #{@user.first_name} here.", 
+    :class => "round",
+    :onclick => "document.message_form.body.value='';",
+  ) %>
   </member_message>
 </div>
   <%= hidden_field_tag 'member_id', @user.id %>
