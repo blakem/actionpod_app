@@ -204,6 +204,11 @@ class PagesController < ApplicationController
     @calls = Call.order("id DESC").paginate(:page => params[:page], :per_page => 20)
   end
 
+  def emails
+    return unless check_for_admin_user
+    @emails = MemberMessage.order("id DESC").paginate(:page => params[:page], :per_page => 20)
+  end
+
   def callcal
     return unless check_for_admin_user
     @scheduled_events = build_scheduled_events

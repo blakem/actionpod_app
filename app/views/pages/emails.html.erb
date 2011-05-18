@@ -1,0 +1,24 @@
+<% if @emails.any? %>
+  <p><b>Recent Emails:</b></p>
+  <table>
+	<tr>
+	  <th>ID</th>
+	  <th>Time</th>
+	  <th>From</th>
+	  <th>To</th>
+    </tr>
+  <% @emails.each do |email| %>
+    <% time = email.created_at.in_time_zone('Pacific Time (US & Canada)') %>
+    <tr>
+	  <td><%= email.id %></td>
+	  <td><%= time.strftime("%a %b %e") %> <%= time.strftime("%l:%M:%S%p").downcase %></td>
+	  <td><%= User.find_by_id(email.sender_id).name %>
+  	<td><%= User.find_by_id(email.to_id).name %>
+	</tr>
+	<tr>
+	  <td colspan="4"><%= email.body %></td>
+  </tr>
+  <% end %>
+  </table>
+ <%= will_paginate @emails %>
+<% end %>

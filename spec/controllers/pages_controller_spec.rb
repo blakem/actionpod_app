@@ -390,6 +390,39 @@ describe PagesController do
     end
   end
 
+  describe "GET /pages/emails" do
+    describe "when not logged in" do
+      it "should redirect to the root path" do
+        controller.user_signed_in?.should be_false
+        get :emails
+        response.should redirect_to(new_user_session_path)
+      end
+    end
+
+    describe "when user logged in" do
+      it "should redirect to the root path" do
+        login_user
+        get :emails
+        flash[:alert].should =~ /You don't have access to that page/i
+        response.should redirect_to(root_path)
+      end
+    end
+
+    describe "when admin logged in" do
+      it "should be a success" do
+        login_admin
+        user1 = Factory(:user)
+        user2 = Factory(:user)
+        MemberMessage.create!(:sender_id => user1.id, :to_id => user2.id, :body => 'Show the Message')
+        get :emails
+        response.should be_success
+        response.body.should =~ /#{user1.name}/
+        response.body.should =~ /#{user2.name}/
+        response.body.should =~ /Show the Message/
+      end
+    end
+  end
+
   describe "GET /pages/send_member_message" do
     describe "when not logged in" do
       it "should redirect to the root path" do
