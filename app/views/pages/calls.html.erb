@@ -12,10 +12,10 @@
   <% @calls.each do |call| %>
     <% time = call.created_at.in_time_zone('Pacific Time (US & Canada)') %>
     <% date = time.strftime("%a %b %e") %>
-    <% user = '' %>
+    <% user = nil %>
     <% if call.event_id %>
     <%   event = Event.find_by_id(call.event_id) %>
-    <%   user = event.user.name if event %>
+    <%   user = event.user if event %>
     <% end %>
     <tr>
 	  <td><a href="https://www.twilio.com/user/account/log/view-call?callsid=<%= call.Sid %>&amp;callsegmentsid="><%= call.id %></a></td>
@@ -34,7 +34,11 @@
       <% else %>
         <td>None</td>
       <% end %>
-	  <td><%= user %></td>
+	  <td>
+      <% if user %>
+        <%= link_to user.name, :controller => :pages, :action => :calls, :member_id => user.id %>
+      <% end %>
+	  </td>
 	  <td><%= call.status_category %></td>
 	</tr>
 	<tr>
