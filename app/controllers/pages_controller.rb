@@ -201,7 +201,14 @@ class PagesController < ApplicationController
 
   def calls
     return unless check_for_admin_user
-    @calls = Call.order("id DESC").paginate(:page => params[:page], :per_page => 20)
+    if params[:member_id]
+      @calls = Call.order("id DESC").select{ |c| 
+        event = Event.find_by_id(c.event_id)
+        event && event.user_id == params[:member_id]
+      }.paginate(:page => params[:page], :per_page => 20)
+    else
+      @calls = Call.order("id DESC").paginate(:page => params[:page], :per_page => 20)
+    end
   end
 
   def emails
