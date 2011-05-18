@@ -113,11 +113,10 @@ GEM
       rake (>= 0.8.7)
       thor (~> 0.14.4)
     rake (0.8.7)
-    recurly (0.4.7)
+    recurly (0.3.4)
       activeresource (>= 2.3)
       activesupport (>= 2.3)
       addressable (>= 2.2)
-      nokogiri (>= 1.4)
     rest-client (1.6.1)
       mime-types (>= 1.16)
     rspec (2.6.0)
@@ -164,7 +163,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  admin_data (= 1.1.11)
+  admin_data (~> 1.1.11)
   annotate-models
   breadcrumbs
   delayed_job
@@ -178,11 +177,11 @@ DEPENDENCIES
   heroku_san
   hpricot
   ice_cube
-  jquery-rails (>= 0.2.6)
+  jquery-rails (~> 1.0.3)
   pg
   rails (~> 3.0.6)
   rails_admin!
-  recurly (>= 0.3.0)
+  recurly (~> 0.3.0)
   rspec
   rspec-rails
   spork (= 0.9.0.rc4)
