@@ -59,9 +59,11 @@ describe EventsController do
   
     describe "GET new" do
       it "assigns a new event as @event" do
-        Event.stub(:new) { mock_event }
+        login_user
+        event = Factory(:event)
+        Event.stub(:new) { event }
         get :new
-        assigns(:event).should be(mock_event)
+        assigns(:event).should be(event)
       end
     end
   
@@ -112,20 +114,15 @@ describe EventsController do
         it "assigns a newly created but unsaved event as @event" do
           pool = Pool.find_by_name('Default Pool')
           pool.should be_a_kind_of(Pool)
+          event = Factory(:event)
           Event.stub(:new).with({
-            'these' => 'params', 
+            'skip_dates' => 'foo', 
             'user_id' => controller.current_user.id,
             'pool_id' => pool.id,
             'days' => []
-          }) { mock_event(:save => false) }
-          post :create, :event => {'these' => 'params'}
-          assigns(:event).should be(mock_event)
-        end
-  
-        it "re-renders the 'new' template" do
-          Event.stub(:new) { mock_event(:save => false) }
-          post :create, :event => {}
-          response.should render_template("new")
+          }) { event }
+          post :create, :event => {:skip_dates => 'foo'}
+          assigns(:event).should be(event)
         end
       end
     end
@@ -153,15 +150,10 @@ describe EventsController do
   
       describe "with invalid params" do
         it "assigns the event as @event" do
-          Event.stub(:where) { [mock_event(:update_attributes => false)] }
-          put :update, :id => "1"
-          assigns(:event).should be(mock_event)
-        end
-  
-        it "re-renders the 'edit' template" do
-          Event.stub(:where) { [mock_event(:update_attributes => false)] }
-          put :update, :id => "1"
-          response.should render_template("edit")
+          login_user
+          event = Factory(:event, :user_id => @current_user.id)
+          put :update, :id => event.id, :skip_dates => 'foo'
+          assigns(:event).should == event
         end
       end
     end
