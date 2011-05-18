@@ -207,6 +207,8 @@ describe User do
     user.missed_in_a_row = 1
     user.made_in_a_row = 0
     user.member_status.should == 'Missed last call'
+    user.confirmed_at = nil
+    user.member_status.should == "Hasn't confirmed email"
   end
   
   describe "handle" do

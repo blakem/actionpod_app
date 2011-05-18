@@ -200,7 +200,9 @@ class User < ActiveRecord::Base
   end
   
   def member_status
-    if made_in_a_row == 1
+    if !confirmed_at
+      "Hasn't confirmed email"
+    elsif made_in_a_row == 1
       "Made last call"
     elsif made_in_a_row > 1
       "Made #{made_in_a_row} calls in a row"
