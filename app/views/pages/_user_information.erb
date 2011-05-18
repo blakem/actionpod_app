@@ -8,7 +8,12 @@ From: <%= @user.location.blank? ? 'None' : @user.location %><br/>
                      :controller => :pages, :action => :place_test_call, :user_id => @user.id %><br/>
 <% end %>
 Member Since: <%= @user.created_at.strftime("%B #{@user.created_at.day.ordinalize}, %Y") %><br/>
-Status: <%= @user.member_status %><br/>
+Status: 
+<% if @current_user.admin? %>
+  <%= link_to @user.member_status, :controller => :pages, :action => :calls, :member_id => @user.id %><br/>
+<% else %>
+  <%= @user.member_status %><br/>
+<% end %>
 Last Completed Call: 
   <% last_call_time = @user.last_successful_call_time %>
   <% if last_call_time %>
