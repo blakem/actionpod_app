@@ -1,5 +1,7 @@
 require 'spec_helper'
 
 describe MemberMessage do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it "can save to the database" do
+    MemberMessage.create!
+  end
 end
