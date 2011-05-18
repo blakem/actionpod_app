@@ -36,7 +36,9 @@
       <% end %>
 	  <td>
       <% if user %>
-        <%= link_to user.name, :controller => :pages, :action => :calls, :member_id => user.id %>
+        <%= link_to user.name, user.profile_path %>
+        -
+        <%= link_to 'C', :controller => :pages, :action => :calls, :member_id => user.id %>
       <% end %>
 	  </td>
 	  <td><%= call.status_category %></td>
