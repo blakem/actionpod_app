@@ -3,7 +3,7 @@ Web URL:        http://actionpods-staging.heroku.com/
 Git Repo:       git@heroku.com:actionpods-staging.git
 Dynos:          1
 Workers:        0
-Repo size:      26M
+Repo size:      27M
 Slug size:      12M
 Stack:          bamboo-mri-1.9.2
 Data size:      696k

@@ -424,9 +424,16 @@ describe PagesController do
       it "should send an email with the body to the member_id" do
         user = Factory(:user)
         UserMailer.should_receive(:deliver_member_message).with(user, @current_user, 'Test Message')
-        get :send_member_message, :member_id => user.id, :body => 'Test Message'
+        expect {
+          get :send_member_message, :member_id => user.id, :body => 'Test Message'
+        }.to change(MemberMessage, :count).by(1)
         flash[:notice].should =~ /Thank you.  Your message has been sent to #{user.name}./i
         response.should redirect_to(user.profile_path)
+        MemberMessage.where(
+          :sender_id => @current_user.id,
+          :to_id => user.id,
+          :body => 'Test Message'
+        ).length.should == 1
       end
     end
   end

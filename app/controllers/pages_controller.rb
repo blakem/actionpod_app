@@ -190,6 +190,7 @@ class PagesController < ApplicationController
     body = params[:body]
     if user && !body.blank?
       UserMailer.deliver_member_message(user, current_user, body)
+      MemberMessage.create(:sender_id => current_user.id, :to_id => user.id, :body => body)
       redirect_to(user.profile_path, :notice => "Thank you.  Your message has been sent to #{user.name}.")
     elsif !user
       redirect_to(root_path, :alert => "Sorry, we couldn't find that member.")
