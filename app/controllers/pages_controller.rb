@@ -204,7 +204,7 @@ class PagesController < ApplicationController
     if params[:member_id]
       @calls = Call.order("id DESC").select{ |c| 
         event = Event.find_by_id(c.event_id)
-        (event && (event.user_id == params[:member_id]))
+        (event && (event.user_id == params[:member_id].to_i))
       }.paginate(:page => params[:page], :per_page => 20)
     else
       @calls = Call.order("id DESC").paginate(:page => params[:page], :per_page => 20)
