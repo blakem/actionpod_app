@@ -20,7 +20,7 @@ class UserMailer < ActionMailer::Base
     mail(
       :to => user.email,
       :subject => "Message from your 15mc buddy: #{sender.name}",
-      :from => sender.email,
+      :from => "#{sender.name} <#{sender.email}>",
     )
   end
 end
