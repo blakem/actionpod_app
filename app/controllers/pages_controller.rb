@@ -52,6 +52,7 @@ class PagesController < ApplicationController
       @view_options = {
         :hide_view_profile => @user == current_user,
         :show_users_preferences => @user != current_user,
+        :show_member_message => @user != current_user,
       }
     else
       redirect_to(root_path, :alert => "There is no handle by that name")
