@@ -201,7 +201,16 @@ class PagesController < ApplicationController
 
   def calls
     return unless check_for_admin_user
-    if params[:member_id]
+    if params[:all] == "1"
+      if params[:member_id]
+        @calls = Call.order("id DESC").select{ |c| 
+          event = Event.find_by_id(c.event_id)
+          (event && (event.user_id == params[:member_id].to_i))
+        }
+      else
+        @calls = Call.order("id DESC")
+      end
+    elsif params[:member_id]
       @calls = Call.order("id DESC").select{ |c| 
         event = Event.find_by_id(c.event_id)
         (event && (event.user_id == params[:member_id].to_i))
