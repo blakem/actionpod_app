@@ -59,4 +59,23 @@ class Call < ActiveRecord::Base
       '???'
     end
   end
+  
+  def cost
+    cost = 0.00
+    if self.Direction == 'outbound-api'
+      cost += self.Duration * 0.02
+    else
+      cost += self.Duration * 0.01
+    end
+    
+    event = Event.find_by_id(self.event_id)
+    if event
+      cost += 0.10 * event.pool.timelimit / 60.0
+      if event.send_sms_reminder
+        cost += 0.02
+      end
+    end
+    
+    cost
+  end
 end

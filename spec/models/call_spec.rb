@@ -42,4 +42,22 @@ describe Call do
     call.status = 'outgoing-fallback:match-onhold:match-callback:match-completed'
     call.status_category.should == 'FallbackError'
   end
+  
+  it "can compute it's cost" do
+    call = Factory(:call)
+    call.Duration = 15
+    call.Direction = 'inbound'
+    call.cost.should == 0.15
+    call.Direction = 'outbound-api'
+    call.cost.should == 0.30
+    pool = Factory(:pool, :timelimit => 30) # 0.10 per hour for heroku workers and dynos
+    event = Factory(:event, :pool_id => pool.id)
+    call.event_id = event.id
+    event.send_sms_reminder = false
+    event.save
+    call.cost.should == 0.35
+    event.send_sms_reminder = true
+    event.save
+    call.cost.should == 0.37
+  end
 end
