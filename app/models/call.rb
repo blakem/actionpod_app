@@ -73,6 +73,6 @@ class Call < ActiveRecord::Base
       end
     end
     
-    cost
+    sprintf("%.2f", cost).to_f
   end
 end
