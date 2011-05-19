@@ -45,6 +45,8 @@ describe Call do
   
   it "can compute it's cost" do
     call = Factory(:call)
+    call.Duration = nil
+    call.cost.should == 0.00
     call.Duration = 15
     call.Direction = 'inbound'
     call.cost.should == 0.15

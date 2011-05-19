@@ -62,11 +62,8 @@ class Call < ActiveRecord::Base
   
   def cost
     cost = 0.00
-    if self.Direction == 'outbound-api'
-      cost += self.Duration * 0.02
-    else
-      cost += self.Duration * 0.01
-    end
+    duration = self.Duration || 0
+    cost += self.Direction == 'outbound-api' ? duration * 0.02 : duration * 0.01
     
     event = Event.find_by_id(self.event_id)
     if event
