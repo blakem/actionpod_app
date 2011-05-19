@@ -47,7 +47,7 @@ describe Call do
     call = Factory(:call)
     call.Duration = nil
     call.cost.should == 0.00
-    call.Duration = 15
+    call.Duration = 15*60
     call.Direction = 'inbound'
     call.cost.should == 0.15
     call.Direction = 'outbound-api'
