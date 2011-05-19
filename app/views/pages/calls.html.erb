@@ -7,7 +7,6 @@
 	  <th>Call</th>
 	  <th>Duration</th>
 	  <th>Member</th>
-	  <th>Cost</th>
 	  <th>Status</th>
     </tr>
   <% @calls.each do |call| %>
@@ -41,7 +40,6 @@
         (<%= link_to 'calls', :controller => :pages, :action => :calls, :member_id => user.id %>)
       <% end %>
 	  </td>
-	  <td>$<%= call.cost %></td>
 	  <td><%= call.status_category %></td>
 	</tr>
 	<tr>
