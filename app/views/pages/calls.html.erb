@@ -51,6 +51,7 @@
     </tr>
   <% end %>
   </table>
-  Total Cost: $<%= sprintf("%.2f", total_cost) %>
+  <% link_to "Total Cost", :controller => :pages, :action => :calls, :member_id => params[:member_id], :all => 1 %>: 
+  $<%= sprintf("%.2f", total_cost) %>
  <%= will_paginate @calls %>
 <% end %>
