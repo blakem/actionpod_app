@@ -10,6 +10,7 @@
 	  <th>Cost</th>
 	  <th>Status</th>
     </tr>
+  <% total_cost = 0.00 %>
   <% @calls.each do |call| %>
     <% time = call.created_at.in_time_zone('Pacific Time (US & Canada)') %>
     <% date = time.strftime("%a %b %e") %>
@@ -18,6 +19,7 @@
     <%   event = Event.find_by_id(call.event_id) %>
     <%   user = event.user if event %>
     <% end %>
+    <% total_cost += call.cost %>
     <tr>
 	  <td><a href="https://www.twilio.com/user/account/log/view-call?callsid=<%= call.Sid %>&amp;callsegmentsid="><%= call.id %></a></td>
 	  <td><%= date %> <%= time.strftime("%l:%M:%S%p").downcase %></td>
@@ -49,5 +51,6 @@
     </tr>
   <% end %>
   </table>
+  Total Cost: $<%= sprintf("%.2f", total_cost) %>
  <%= will_paginate @calls %>
 <% end %>
