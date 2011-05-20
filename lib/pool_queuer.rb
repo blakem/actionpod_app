@@ -61,10 +61,10 @@ class PoolQueuer
       end
       self.delay(
         :obj_type    => 'PoolMerger',
-        :obj_jobtype => 'set_heroku_dynos_and_workers',
+        :obj_jobtype => 'set_heroku_dynos',
         :run_at      => pool_runs_at - 1.minute,
         :pool_id     => pool.id,
-      ).set_heroku_dynos_and_workers(jobs.count, jobs.count)
+      ).set_heroku_dynos(jobs.count)
       queue_merge_calls_for_pool(pool, pool_runs_at, 0, {
         :total => jobs.count,
         :waiting_for_events => jobs.map(&:obj_id).sort,
@@ -75,7 +75,7 @@ class PoolQueuer
   def queue_merge_calls_for_pool(pool, pool_runs_at, count, data)
     if count > ((pool.timelimit.minutes - time_before_first_merge) / time_between_merges)
       update_conferences(pool, pool_runs_at, data)
-      set_heroku_dynos_and_workers(1, 1)
+      set_heroku_dynos(1)
       return true
     end
     data = PoolMerger.new.merge_calls_for_pool(pool, pool_runs_at, data) if count > 0  
@@ -87,9 +87,8 @@ class PoolQueuer
     ).queue_merge_calls_for_pool(pool, pool_runs_at, count+1, data)
   end
   
-  def set_heroku_dynos_and_workers(workers, dynos)
+  def set_heroku_dynos(dynos)
     heroku = Heroku::Client.new('blakem30@yahoo.com', 'biv1ukor')
-    heroku.set_workers('actionpods', workers)
     heroku.set_dynos('actionpods', dynos)
   end    
 

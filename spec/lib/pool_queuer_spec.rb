@@ -134,7 +134,7 @@ describe PoolQueuer do
       DelayedJob.where(
         :obj_type    => 'PoolMerger',
         :pool_id     => @pool.id,
-        :obj_jobtype => 'set_heroku_dynos_and_workers',
+        :obj_jobtype => 'set_heroku_dynos',
         :run_at      => @now + 5.minutes - 1.minute,
       ).count.should == 1
     end
@@ -256,7 +256,7 @@ describe PoolQueuer do
           },
         },
       }
-      @pq.should_receive(:set_heroku_dynos_and_workers).with(1, 1).and_return(true)
+      @pq.should_receive(:set_heroku_dynos).with(1).and_return(true)
       expect {
         rv = @pq.queue_merge_calls_for_pool(@pool, ran_at, test_count, data)
         rv.should == true

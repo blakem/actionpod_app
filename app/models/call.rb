@@ -68,7 +68,7 @@ class Call < ActiveRecord::Base
     
     event = Event.find_by_id(self.event_id)
     if event
-      cost += 0.10 * event.pool.timelimit / 60.0
+      cost += 0.05 * event.pool.timelimit / 60.0
       if event.send_sms_reminder
         cost += 0.02
       end
