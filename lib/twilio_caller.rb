@@ -144,8 +144,12 @@ class TwilioCaller
   end
   
   def self.create_call_from_call_hash(call_hash, event_id)
+    user_id = nil
+    event = Event.find_by_id(event_id)
+    user_id = event.user_id if event
     Call.create(
       :event_id       => event_id,
+      :user_id        => user_id,
       :Sid            => call_hash[:Sid]             || call_hash[:sid],
       :DateCreated    => call_hash[:DateCreated]     || call_hash[:date_created],
       :DateUpdated    => call_hash[:DateUpdated]     || call_hash[:date_updated],    

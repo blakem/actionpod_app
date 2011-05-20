@@ -491,6 +491,7 @@ describe TwilioController do
       call.From.should == user.primary_phone.number
       call.event_id.should == event.id
       call.status.should == 'incoming-onhold'
+      call.user_id.should == user.id
       user.reload
       user.incoming_count.should == 6
     end

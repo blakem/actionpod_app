@@ -117,6 +117,7 @@ describe TwilioCaller do
       call.Uri.should == '/2010-04-01/Accounts/AC2e57bf710b77d765d280786bc07dbacc/Calls/CA6be8176371a8a7a096207feff1044b3e.json'
       call.Direction.should == 'outbound-api'
       call.event_id.should == event.id
+      call.user_id.should == user.id
     end
 
     it "should go straight to put_on_hold if user has use_ifmachine set" do
