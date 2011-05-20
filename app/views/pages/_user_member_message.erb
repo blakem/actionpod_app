@@ -4,7 +4,7 @@
   <member_message>
   <%= text_area_tag('body', "Enter message to #{@user.first_name} here.", 
     :class => "round",
-    :onclick => "document.message_form.body.value='';",
+    :onFocus => "this.value=''; this.onfocus=null;"
   ) %>
   </member_message>
 </div>
