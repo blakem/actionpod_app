@@ -23,4 +23,13 @@ class UserMailer < ActionMailer::Base
       :from => "#{sender.name} <#{sender.email}>",
     )
   end
+
+  def message_to_blake(message, subject = "Soooper Cool")
+    @message = message
+    mail(
+      :to => 'blakem@15minutecalls.com',
+      :subject => subject,
+      :from => "Blake Mills <blakem@15minutecalls.com>"
+    )
+  end
 end

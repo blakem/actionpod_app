@@ -20,4 +20,12 @@ describe UserMailer do
       UserMailer.deliver_member_message(user1, user2, 'Test Message')
     end
   end
+
+  describe "message_to_blake" do
+    it "shouldn't crash" do
+      UserMailer.stub(:mail => true)
+      UserMailer.deliver_message_to_blake("I like jellybeans")
+      UserMailer.deliver_message_to_blake("I like jellybeans", "Another cool subject")
+    end
+  end
 end

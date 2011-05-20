@@ -122,20 +122,27 @@ describe PoolQueuer do
     it "should queue merge_calls_for_pool on success" do
       DelayedJob.create(@delay_args.merge(:obj_id => @event.id))
       DelayedJob.create(@delay_args.merge(:obj_id => @event.id))
+      pool_runs_at = @now + 5.minutes
       expect {
-        @pq.check_before_calls_go_out(@pool, @now + 5.minutes)
-      }.to change(DelayedJob, :count).by(2)
+        @pq.check_before_calls_go_out(@pool, pool_runs_at)
+      }.to change(DelayedJob, :count).by(3)
       DelayedJob.where(
         :obj_type    => 'PoolMerger',
         :pool_id     => @pool.id,
         :obj_jobtype => 'merge_calls_for_pool',
-        :run_at      => @now + 5.minutes + @pq.time_before_first_merge
+        :run_at      => pool_runs_at + @pq.time_before_first_merge
       ).count.should == 1
       DelayedJob.where(
-        :obj_type    => 'PoolMerger',
+        :obj_type    => 'PoolQueuer',
         :pool_id     => @pool.id,
         :obj_jobtype => 'set_heroku_dynos',
-        :run_at      => @now + 5.minutes - 1.minute,
+        :run_at      => pool_runs_at - 1.minute,
+      ).count.should == 1
+      DelayedJob.where(
+        :obj_type    => 'PoolQueuer',
+        :pool_id     => @pool.id,
+        :obj_jobtype => 'send_logs_to_blake',
+        :run_at      => pool_runs_at + 5.minutes,
       ).count.should == 1
     end
 

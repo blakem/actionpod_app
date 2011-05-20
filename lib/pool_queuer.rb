@@ -60,11 +60,17 @@ class PoolQueuer
         end
       end
       self.delay(
-        :obj_type    => 'PoolMerger',
+        :obj_type    => 'PoolQueuer',
         :obj_jobtype => 'set_heroku_dynos',
         :run_at      => pool_runs_at - 1.minute,
         :pool_id     => pool.id,
       ).set_heroku_dynos(jobs.count)
+      self.delay(
+        :obj_type    => 'PoolQueuer',
+        :obj_jobtype => 'send_logs_to_blake',
+        :run_at      => pool_runs_at + 5.minutes,
+        :pool_id     => pool.id,
+      ).send_logs_to_blake
       queue_merge_calls_for_pool(pool, pool_runs_at, 0, {
         :total => jobs.count,
         :waiting_for_events => jobs.map(&:obj_id).sort,
@@ -87,11 +93,19 @@ class PoolQueuer
     ).queue_merge_calls_for_pool(pool, pool_runs_at, count+1, data)
   end
   
+  def get_heroku_client
+    Heroku::Client.new('blakem30@yahoo.com', 'biv1ukor')
+  end
   def set_heroku_dynos(dynos)
-    heroku = Heroku::Client.new('blakem30@yahoo.com', 'biv1ukor')
+    heroku = get_heroku_client
     heroku.set_dynos('actionpods', dynos)
-  end    
-
+  end
+  def send_logs_to_blake
+    heroku = get_heroku_client
+    logs = heroku.read_logs('actionpods', :num => 500)
+    UserMailer.deliver_message_to_blake(logs)
+  end
+  
   def update_conferences(pool, started_at, data)
     room_names = []
     data[:placed].each_value do |p|

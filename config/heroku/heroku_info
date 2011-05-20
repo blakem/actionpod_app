@@ -2,7 +2,7 @@
 Web URL:        http://actionpods.heroku.com/
 Domain name:    http://fifteenminutecalls.com/
 Git Repo:       git@heroku.com:actionpods.git
-Dynos:          3
+Dynos:          1
 Workers:        3
 Repo size:      40M
 Slug size:      12M
