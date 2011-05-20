@@ -102,7 +102,7 @@ class PoolQueuer
   end
   def send_logs_to_blake
     heroku = get_heroku_client
-    logs = heroku.read_logs('actionpods', 'num=500')
+    logs = heroku.read_logs('actionpods', ['num=500'])
     UserMailer.deliver_message_to_blake(logs)
   end
   
