@@ -189,7 +189,7 @@ describe PagesController do
     end
   end
 
-  describe "GET /u/handle" do
+  describe "GET /member/handle" do
     describe "success" do
       it "should be successful when logged in" do
         login_user
