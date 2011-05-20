@@ -97,12 +97,10 @@ class PoolQueuer
     Heroku::Client.new('blakem30@yahoo.com', 'biv1ukor')
   end
   def set_heroku_dynos(dynos)
-    heroku = get_heroku_client
-    heroku.set_dynos('actionpods', dynos)
+    get_heroku_client.set_dynos('actionpods', dynos)
   end
   def send_logs_to_blake
-    heroku = get_heroku_client
-    logs = heroku.read_logs('actionpods', ['num=500'])
+    logs = get_heroku_client.logs('actionpods')
     UserMailer.deliver_message_to_blake(logs)
   end
   
