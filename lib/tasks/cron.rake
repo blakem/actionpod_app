@@ -2,7 +2,7 @@ require "heroku_backup_task"
 require 'heroku_san/tasks'
 
 desc "This task is called by the Heroku cron add-on"
-task :cron => [:environment, :queueevents, :herokubackupdb, :clean_functional_testing_data]
+task :cron => [:environment, :queueevents, :herokubackupdb, :clean_functional_testing_data, :schedule_emails]
 
 desc "Queue up the scheduled events for the next 24 hours using delayed jobs"
 task :queueevents => :environment do
