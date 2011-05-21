@@ -104,7 +104,8 @@ class PoolQueuer
     get_heroku_client.read_logs('actionpods', ['num=500']) do |chunk|
       logs += chunk
     end
-    UserMailer.deliver_message_to_blake(logs)
+    date = Time.now
+    UserMailer.deliver_message_to_blake(logs, '15mc Logs for: ' + date.strftime("%l:%M%p on %a %b #{date.day.ordinalize}"))
   end
   
   def update_conferences(pool, started_at, data)
