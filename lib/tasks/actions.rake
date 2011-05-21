@@ -27,10 +27,10 @@ task :call_phones, [:event1_id, :event2_id, :event3_id, :event4_id, :event5_id] 
         event1 = Event.find_by_name_and_user_id('With Home', user1.id)
         event2 = Event.find_by_name_and_user_id('With Cell', user2.id)
         if event1.nil?
-          event1 = Event.create(:name => 'With Home', :user_id => user1.id, :pool_id => Pool.find_by_name('Default Pool'))
+          event1 = Event.create(:name => 'With Home', :user_id => user1.id, :pool_id => Pool.find_by_name('Testing Pool'))
         end
         if event2.nil?
-          event2 = Event.create(:name => 'With Cell', :user_id => user2.id, :pool_id => Pool.find_by_name('Default Pool'))
+          event2 = Event.create(:name => 'With Cell', :user_id => user2.id, :pool_id => Pool.find_by_name('Testing Pool'))
         end
         events = [event1, event2]
       end
