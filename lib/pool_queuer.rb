@@ -100,7 +100,10 @@ class PoolQueuer
     get_heroku_client.set_dynos('actionpods', dynos)
   end
   def send_logs_to_blake
-    logs = get_heroku_client.logs('actionpods')
+    logs = ''
+    get_heroku_client.read_logs('actionpods', ['num=500']) do |chunk|
+      logs += chunk
+    end
     UserMailer.deliver_message_to_blake(logs)
   end
   
