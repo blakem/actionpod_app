@@ -135,7 +135,7 @@ describe PoolMerger do
         )
         data = @pm.initialize_data({})
         data[:on_hold] = {
-          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 7,
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 1,
         }
         data[:total] = 2
         data = @pm.merge_calls_for_pool(@pool, @pool_runs_at, data)
@@ -143,7 +143,7 @@ describe PoolMerger do
           :total       => 2,
           :next_room   => 1,
           :on_hold     => {
-            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 8,
+            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 2,
           },
           :placed      => {},
           :apologized  => {},
@@ -153,7 +153,7 @@ describe PoolMerger do
           :total       => 2,
           :next_room   => 1,
           :on_hold     => {
-            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 9,
+            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 3,
           },
           :apologized  => {
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 1,
@@ -165,7 +165,7 @@ describe PoolMerger do
           :total       => 2,
           :next_room   => 1,
           :on_hold     => {
-            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 10,
+            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 4,
           },
           :apologized  => {
             "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 1,
@@ -195,7 +195,7 @@ describe PoolMerger do
         @tc.should_not_receive(:send_sms)
         data = @pm.initialize_data({})
         data[:on_hold] = {
-          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 7,
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 1,
         }
         data[:total] = 2
         data = @pm.merge_calls_for_pool(@pool, @pool_runs_at, data)
@@ -203,7 +203,7 @@ describe PoolMerger do
           :total       => 2,
           :next_room   => 1,
           :on_hold     => {
-            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 8,
+            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 2,
           },
           :placed      => {},
           :apologized  => {},
@@ -213,7 +213,7 @@ describe PoolMerger do
           :total       => 2,
           :next_room   => 1,
           :on_hold     => {
-            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 9,
+            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 3,
           },
           :placed      => {},
           :apologized  => {
