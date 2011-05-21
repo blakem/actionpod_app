@@ -6,13 +6,15 @@ class UserMailer < ActionMailer::Base
   
   default :from => "15 Minute Calls <support@15minutecalls.com>"
   
-  def conference_email(user, participants)
+  def conference_email(user, participants, subject = 'default', to = 'default')
     @current_user = user
     @participants = [user] + participants.select{ |p| p.id != user.id }
     date = Time.now
     @date = date.strftime("%A, %B #{date.day.ordinalize}")
     @mailer = true
-    mail(:to => @current_user.email, :subject => "[15mc] Conference Notes for #{@date}")
+    subject = "[15mc] Conference Notes for #{@date}" if subject == 'default'
+    to = @current_user.email if to == 'default'
+    mail(:to => to, :subject => subject)
   end
   
   def member_message(user, sender, message)

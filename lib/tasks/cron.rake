@@ -26,3 +26,21 @@ task :clean_functional_testing_data => :environment do
   user = User.find_by_email('blakem@blakem.com')
   user.conferences.select { |c| c.status == 'in_progress' }.map { |c| c.status = 'completed'; c.save } if user
 end
+
+desc "Schedules Emails to Members"
+task :schedule_emails => :environment do
+  user1 = User.find_by_email('blakem@15minutecalls.com')
+  user2 = User.find_by_email('tommy2hats@gmail.com')
+  user3 = User.find_by_email('damian@damiansol.com')
+  user4 = User.find_by_email('touchbrian@gmail.com')
+  date = Time.now.in_time_zone('Pacific Time (US & Canada)').beginning_of_day + 8.hours
+  date = date + 1.day if date < Time.now
+  if [1,2,3,4,5].include?(date.wday)
+    date_string = date.strftime("%A, %B #{date.day.ordinalize}")  
+    UserMailer.delay(:run_at => date - 5.minutes).deliver_conference_email(
+      user1, 
+      [user1, user2, user3, user4], 
+      "Team Focus Lists for #{date_string}"
+    )
+  end
+end
