@@ -37,10 +37,11 @@ task :schedule_emails => :environment do
   date = date + 1.day if date < Time.now
   if [1,2,3,4,5].include?(date.wday)
     date_string = date.strftime("%A, %B #{date.day.ordinalize}")  
-    UserMailer.delay(:run_at => date - 5.minutes).deliver_conference_email(
+    UserMailer.delay(:run_at => date - 5.minutes, :obj_jobtype => 'deliver_conference_email').deliver_conference_email(
       user1, 
       [user1, user2, user3, user4], 
-      "Team Focus Lists for #{date_string}"
+      "Team Focus Lists for #{date_string}",
+      'deltachallenge-team-focus@googlegroups.com'
     )
   end
 end
