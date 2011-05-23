@@ -45,5 +45,5 @@ task :schedule_emails => :environment do
     )
   end
   date = date.beginning_of_day + 11.hours
-  MemberTracker.delay(:run_at => date, :obj_jobtype => 'contact_stranded_users').contact_stranded_members
+  MemberTracker.new.delay(:run_at => date, :obj_jobtype => 'contact_stranded_users').contact_stranded_members
 end
