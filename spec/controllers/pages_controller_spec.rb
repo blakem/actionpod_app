@@ -361,6 +361,33 @@ describe PagesController do
     end
   end
 
+  describe "GET /pages/next_steps_email" do
+    describe "when not logged in" do
+      it "should redirect to the root path" do
+        controller.user_signed_in?.should be_false
+        get :next_steps_email
+        response.should redirect_to(new_user_session_path)
+      end
+    end
+
+    describe "when user logged in" do
+      it "should redirect to the root path" do
+        login_user
+        get :next_steps_email
+        flash[:alert].should =~ /You don't have access to that page/i
+        response.should redirect_to(root_path)
+      end
+    end
+
+    describe "when admin logged in" do
+      it "should be a success" do
+        login_admin
+        get :next_steps_email
+        response.should be_success
+      end
+    end
+  end
+
   describe "GET /pages/calls" do
     describe "when not logged in" do
       it "should redirect to the root path" do

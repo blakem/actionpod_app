@@ -34,4 +34,13 @@ class UserMailer < ActionMailer::Base
       :from => "Blake Mills <blakem@15minutecalls.com>"
     )
   end
+  
+  def member_next_steps(user)
+    return unless user.email =~ /blake/
+    mail(
+      :to => user.email,
+      :subject => '[15mc] Your next steps to become more accountable in your life',
+      :from => "Blake Mills <blakem@15minutecalls.com>"
+    )
+  end
 end

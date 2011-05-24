@@ -247,6 +247,12 @@ class PagesController < ApplicationController
     render :inline => message = UserMailer.conference_email(current_user, conference.users).body.raw_source.html_safe, :layout => true
   end
 
+  def next_steps_email
+    return unless check_for_admin_user
+    set_profile_values
+    render :inline => message = UserMailer.member_next_steps(current_user).body.raw_source.html_safe, :layout => true
+  end
+
   def confirmation_email
     return unless check_for_admin_user
     set_profile_values

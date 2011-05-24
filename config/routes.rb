@@ -15,6 +15,7 @@ ActionpodApp::Application.routes.draw do
       !request.path.starts_with?("/admin_data")     
   }
 
+  match "/u/:handle", :to => redirect("/member/%{handle}")
 
   #match ':controller(/:action(/:id(.:format)))'
   

@@ -28,4 +28,12 @@ describe UserMailer do
       UserMailer.deliver_message_to_blake("I like jellybeans", "Another cool subject")
     end
   end
+
+  describe "member_next_steps" do
+    it "shouldn't crash" do
+      user = Factory(:user)
+      UserMailer.stub(:mail => true)
+      UserMailer.member_next_steps(user)
+    end
+  end
 end
