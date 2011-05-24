@@ -13,7 +13,7 @@ describe PoolMerger do
   end
   
   it "should have a max_wait_time_to_answer" do
-    @pm.max_wait_time_to_answer.should == 35.seconds
+    @pm.max_wait_time_to_answer.should == 60.seconds
   end
 
   describe "merge_calls_for_pool" do
@@ -472,10 +472,12 @@ describe PoolMerger do
           "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 1,          
           "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2" => 1,          
         }
-        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1", "15mcPool#{@pool.id}Room1", @timelimit_insec,
-         1, [1, 2])
-        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2", "15mcPool#{@pool.id}Room1", @timelimit_insec, 
-         2, [1, 2])
+        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1", "15mcPool#{@pool.id}Room1",
+          be_within(3).of(@timelimit_insec),
+          1, [1, 2])
+        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2", "15mcPool#{@pool.id}Room1",
+          be_within(3).of(@timelimit_insec),
+          2, [1, 2])
         @pm.merge_calls_for_pool(@pool, @pool_runs_at, data).should == @data.merge({
           :next_room   => 2,
           :on_hold     => {},
@@ -498,11 +500,14 @@ describe PoolMerger do
       it "should form a new conference" do
         new_participants = participant_list(3)
         @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
-        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1", "15mcPool#{@pool.id}Room1", @timelimit_insec, 
+        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1", "15mcPool#{@pool.id}Room1",
+          be_within(3).of(@timelimit_insec),
           1, [1, 2, 3])
-        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2", "15mcPool#{@pool.id}Room1", @timelimit_insec, 
+        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2", "15mcPool#{@pool.id}Room1",
+          be_within(3).of(@timelimit_insec),
           2, [1, 2, 3])
-        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX3", "15mcPool#{@pool.id}Room1", @timelimit_insec, 
+        @tc.should_receive(:place_participant_in_conference).with("CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX3", "15mcPool#{@pool.id}Room1",
+          be_within(3).of(@timelimit_insec),
           3, [1, 2, 3])
         @pm.merge_calls_for_pool(@pool, @pool_runs_at, {}).should == @data.merge({
           :next_room   => 2,

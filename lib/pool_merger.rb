@@ -29,7 +29,7 @@ class PoolMerger
     data
   end
 
-  def max_wait_time_to_answer() 35 end
+  def max_wait_time_to_answer() 60 end
   def rolling_window_size()     12 end
 
   def update_meta_data_for_timeslot(participants, pool, data)
