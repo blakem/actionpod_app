@@ -21,16 +21,13 @@ class MemberTracker
     user3 = User.find_by_email('damian@damiansol.com')
     user4 = User.find_by_email('touchbrian@gmail.com')
     puts "Users: #{user1.name} #{user2.name} #{user3.name} #{user4.name}"
-    puts "Date.wday: #{date.wday}"
     date_string = date.strftime("%A, %B #{date.day.ordinalize}")
     puts "Before Sending: #{date_string}"
     UserMailer.deliver_conference_email(
       user1, 
       [user1, user2, user3, user4], 
       "Team Focus Lists for #{date_string}",
-      'blakem30@yahoo.com'
-#      'deltachallenge-team-focus@googlegroups.com'
+      'deltachallenge-team-focus@googlegroups.com'
     )
-    puts "After Sending"
   end
 end
