@@ -4,17 +4,22 @@ class UserMailer < ActionMailer::Base
   include PagesHelper
   helper :pages
   
-  default :from => "15 Minute Calls <support@15minutecalls.com>"
+  default :from => "Blake Mills <blakem@15minutecalls.com>"
   
-  def conference_email(user, participants, subject = 'default', to = 'default')
+  def conference_email(user, participants, subject = nil, to = nil, from = nil)
     @current_user = user
     @participants = [user] + participants.select{ |p| p.id != user.id }
     date = Time.now
     @date = date.strftime("%A, %B #{date.day.ordinalize}")
     @mailer = true
-    subject = "[15mc] Conference Notes for #{@date}" if subject == 'default'
-    to = @current_user.email if to == 'default'
-    mail(:to => to, :subject => subject)
+    subject ||= "[15mc] Conference Notes for #{@date}"
+    to ||= @current_user.email
+    from ||= "15 Minute Calls <support@15minutecalls.com>"
+    mail(
+      :to => to, 
+      :from => from,
+      :subject => subject,
+    )
   end
   
   def member_message(user, sender, message)
@@ -31,7 +36,6 @@ class UserMailer < ActionMailer::Base
     mail(
       :to => 'blakem@15minutecalls.com',
       :subject => subject,
-      :from => "Blake Mills <blakem@15minutecalls.com>"
     )
   end
   
@@ -41,7 +45,6 @@ class UserMailer < ActionMailer::Base
     mail(
       :to => current_user.email,
       :subject => '[15mc] Your next step: Sign up for a quick call.',
-      :from => "Blake Mills <blakem@15minutecalls.com>"
     )
   end
 end

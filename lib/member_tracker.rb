@@ -24,10 +24,11 @@ class MemberTracker
     date_string = date.strftime("%A, %B #{date.day.ordinalize}")
     puts "Before Sending: #{date_string}"
     UserMailer.deliver_conference_email(
-      user1, 
+      user1,
       [user1, user2, user3, user4], 
       "Team Focus Lists for #{date_string}",
-      'deltachallenge-team-focus@googlegroups.com'
+      'deltachallenge-team-focus@googlegroups.com',
+      'Blake Mills <blakem30@yahoo.com>',
     )
   end
 end
