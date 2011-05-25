@@ -44,6 +44,6 @@ task :schedule_emails => :environment do
       'deltachallenge-team-focus@googlegroups.com'
     )
   end
-  date = date.beginning_of_day + 11.hours
+  date = date.beginning_of_day + 10.hours + 30.minutes
   MemberTracker.new.delay(:run_at => date, :obj_jobtype => 'contact_stranded_users').contact_stranded_members
 end

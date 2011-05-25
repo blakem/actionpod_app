@@ -35,10 +35,11 @@ class UserMailer < ActionMailer::Base
     )
   end
   
-  def member_next_steps(user)
-    return unless user.email =~ /blake/
+  def member_next_steps(current_user)
+    @user = current_user
+    @timeslots = build_timeslots(current_user)
     mail(
-      :to => user.email,
+      :to => current_user.email,
       :subject => '[15mc] Your next steps to become more accountable in your life',
       :from => "Blake Mills <blakem@15minutecalls.com>"
     )

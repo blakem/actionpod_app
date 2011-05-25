@@ -7,10 +7,10 @@ describe MemberTracker do
 
   describe "contact_stranded_members" do
     it "should email members that have not signed up for an event after 48 hours" do
-      user1 = Factory(:user, :answered_count => 0) # not old enough
-      user2 = Factory(:user, :answered_count => 0)
-      user3 = Factory(:user, :placed_count   => 1) # has received a call
-      user4 = Factory(:user, :answered_count => 0) # has a scheduled event 
+      user1 = Factory(:user, :placed_count => 0) # not old enough
+      user2 = Factory(:user, :placed_count => 0)
+      user3 = Factory(:user, :placed_count => 1) # has received a call
+      user4 = Factory(:user, :placed_count => 0) # has a scheduled event 
       ActiveRecord::Base.record_timestamps = false
       [user2, user3, user4].each do |user|
         user.created_at = user.updated_at = Time.now - 50.hours

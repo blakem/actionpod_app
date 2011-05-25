@@ -33,7 +33,7 @@ describe UserMailer do
     it "shouldn't crash" do
       user = Factory(:user)
       UserMailer.stub(:mail => true)
-      UserMailer.member_next_steps(user)
+      UserMailer.member_next_steps(user).deliver
     end
   end
 end

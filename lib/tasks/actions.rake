@@ -89,3 +89,18 @@ task :send_confirmation_email, [:email] => :environment do |t, args|
     puts "Couldn't find user"
   end
 end
+
+desc "Send out the next_steps instructions email"
+task :send_next_steps_email, [:email] => :environment do |t, args|
+  email = args[:email] || 'blakem@15minutecalls.com'
+  user = User.find_by_email(email)
+  if user
+    type = 'next_steps'
+    member_mail = MemberMail.find_by_user_id_and_email_type(user.id, type)
+    member_mail.destroy if member_mail
+    MemberTracker.new.send_email_once(user, type)
+    puts "Sent email to: #{user.email}"
+  else
+    puts "Couldn't find user"
+  end
+end

@@ -4,7 +4,38 @@
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
   </head>
   <body>
-Thanks for signing up for 15 Minute calls.  Your next step is to pick a few times during the week that you're
-available for a short accountability call.
+<p>
+  Thanks for signing up for 15 Minute Calls, <%= @user.first_name %>.
+</p>
+<p>
+  I'm sending you this email because you signed up for the service, but haven't tried it out just yet.
+</p>
+<p>
+  You're just one step away from bringing more accountability into your life.  All you have to do is choose a time
+  during the week when you're available for a quick group call with two other members.
+</p>
+<p>
+  We currently have <%= @timeslots.count %> groups up and running.  Simply pick the one that works best for you. After
+  clicking the 'Join this group' link, you can choose which days during the week you want your call.
+</p>
+<p>
+    <% @timeslots.each do |ts| %>
+       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= ts[:string] %> |
+       <b><%= link_to 'Join this group', :only_path => false, :controller => :pages, :action => :join, :time => ts[:time] %></b>
+       <br/>
+    <% end %>
+</p>
+<p>
+  Don't worry if your goals aren't crystal clear, or if you feel unprepared for the call.  Think of it as a way to
+  connect with two other creative people for a simple chat about your various projects.  It's really that easy. ;-)
+</p>
+<p>
+  Come on back and give it a shot. <a href="http://www.15minutecalls.com">15minutecalls.com</a>
+</p>
+
+<p>
+-Blake<br/>
+blakem@15minutecalls.com<br/>
+</p>
   </body>
 </html>
