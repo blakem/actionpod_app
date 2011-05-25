@@ -40,7 +40,7 @@ class UserMailer < ActionMailer::Base
     @timeslots = build_timeslots(current_user)
     mail(
       :to => current_user.email,
-      :subject => '[15mc] Your next steps to become more accountable in your life',
+      :subject => '[15mc] Your next step: Sign up for a quick call.',
       :from => "Blake Mills <blakem@15minutecalls.com>"
     )
   end
