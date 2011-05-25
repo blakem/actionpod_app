@@ -33,16 +33,20 @@ task :schedule_emails => :environment do
   user2 = User.find_by_email('tommy2hats@gmail.com')
   user3 = User.find_by_email('damian@damiansol.com')
   user4 = User.find_by_email('touchbrian@gmail.com')
+  puts "Users: #{user1.name} #{user2.name} #{user3.name} #{user4.name}"
   date = Time.now.in_time_zone('Pacific Time (US & Canada)').beginning_of_day + 8.hours
+  puts "Date.wday: #{date.wday}"
   date = date + 1.day if date < Time.now
   if [1,2,3,4,5].include?(date.wday)
-    date_string = date.strftime("%A, %B #{date.day.ordinalize}")  
+    date_string = date.strftime("%A, %B #{date.day.ordinalize}")
+    puts "Before Sending: #{date_string}"
     UserMailer.delay(:run_at => date - 5.minutes, :obj_jobtype => 'deliver_conference_email').deliver_conference_email(
       user1, 
       [user1, user2, user3, user4], 
       "Team Focus Lists for #{date_string}",
       'deltachallenge-team-focus@googlegroups.com'
     )
+    puts "After Sending"
   end
   date = date.beginning_of_day + 10.hours + 30.minutes
   MemberTracker.new.delay(:run_at => date, :obj_jobtype => 'contact_stranded_users').contact_stranded_members
