@@ -107,6 +107,17 @@ describe PagesController do
     end
   end
 
+  describe "GET /pages/manage_groups" do
+    describe "success" do
+      it "should be successful when logged in" do
+        login_user
+  	    controller.user_signed_in?.should be_true
+        get :manage_groups
+        response.should be_success
+      end
+    end
+  end
+
   describe "GET /pages/conference" do
 
     describe "success" do

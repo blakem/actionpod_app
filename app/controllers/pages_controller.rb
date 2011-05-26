@@ -258,6 +258,12 @@ class PagesController < ApplicationController
     set_profile_values
     render :inline => Devise::Mailer.confirmation_instructions(current_user).body.raw_source.html_safe, :layout => true
   end
+  
+  def manage_groups
+    breadcrumbs.add 'Manage Groups'
+    @pools = current_user.memberships
+    set_profile_values
+  end
 
   private
       def check_for_admin_user

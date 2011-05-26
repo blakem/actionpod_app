@@ -1,0 +1,11 @@
+<% if @pools.any? %>
+<p>
+    You currently belong to <%= pluralize(@pools.count, "group") %>:<br/>
+    <% @pools.each do |pool| %>
+      - <%= pool.name %>
+    <% end %>
+</p>
+<% else %>
+  <p>You do not belong to any groups.</p>
+<% end %>
+
