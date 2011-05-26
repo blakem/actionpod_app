@@ -26,6 +26,7 @@ class PagesController < ApplicationController
     end
     @timeslots = build_timeslots
     set_profile_values
+    @view_options[:link_user_name] = true
     breadcrumbs.add current_user.name
   end
   
@@ -50,7 +51,6 @@ class PagesController < ApplicationController
         end
       end
       @view_options = {
-        :hide_view_profile => @user == current_user,
         :show_users_preferences => @user != current_user,
         :show_member_message => @user != current_user,
       }

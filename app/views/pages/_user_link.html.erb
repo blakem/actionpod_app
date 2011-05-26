@@ -2,7 +2,7 @@
   <%= gravatar_for @user %>
   <% if @mailer %>
     <%= link_to @user.name, "http://www.15minutecalls.com/member/" + @user.handle %>
-  <% elsif @conference %>
+  <% elsif @conference or @view_options[:link_user_name] %>
     <%= link_to @user.name, @user.profile_path %>
   <% else %>
     <%= @user.name %>

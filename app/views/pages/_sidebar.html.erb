@@ -26,9 +26,6 @@
   <% end %>
   <br/>
 <% end %>
-<% unless @view_options[:hide_view_profile] %>
-  <%= link_to "View Your Member Profile", current_user.profile_path %><br/>
-<% end %>
 <% unless @view_options[:hide_edit_profile] %>
   <%= link_to('Edit Your Member Information', edit_user_registration_path) %><br/>
 <% end %>
