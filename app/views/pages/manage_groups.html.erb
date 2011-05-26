@@ -2,7 +2,7 @@
 <p>
     You currently belong to <%= pluralize(@pools.count, "group") %>:<br/>
     <% @pools.each do |pool| %>
-      - <%= pool.name %>
+      - <%= pool.name %><br/>
     <% end %>
 </p>
 <% else %>
