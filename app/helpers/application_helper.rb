@@ -54,7 +54,7 @@ module ApplicationHelper
 
     def build_timeslots(current_user = current_user)
       slots = []
-      build_scheduled_events(current_user).each do |hash|
+      build_scheduled_events(current_user).sort{ |a,b| a[:minute_of_day] <=> b[:minute_of_day]}.each do |hash|
         slot = hash[:occurrence].strftime('%l:%M%p').downcase.strip
         slots.push(slot) unless slots.include?(slot)
       end
@@ -78,6 +78,7 @@ module ApplicationHelper
           hash[key][:count] += 1
           hash[key][:pool_id] = event.pool.id
           hash[key][:occurrence] = occurrence
+          hash[key][:minute_of_day] = event.minute_of_day
         end
       end
       hash.each_value.sort { |a,b| 

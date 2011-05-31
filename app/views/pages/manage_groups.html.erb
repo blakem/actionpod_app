@@ -2,7 +2,13 @@
 <p>
     You currently belong to <%= pluralize(@pools.count, "group") %>:<br/>
     <% @pools.each do |pool| %>
-      - <%= pool.name %><br/>
+      - <%= pool.name %>
+      <% if pool.user_id == current_user.id %>
+        <%= link_to "Edit", edit_pool_path(pool) %> |
+        <%= link_to "Show", pool_path(pool) %> |
+        <%= link_to 'Delete', pool_path(pool), :confirm => 'Are you sure you want to delete this Group?', :method => :delete %>
+      <% end %>
+      <br/>
     <% end %>
 </p>
 <% else %>
