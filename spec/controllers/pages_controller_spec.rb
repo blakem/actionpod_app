@@ -111,6 +111,7 @@ describe PagesController do
     describe "success" do
       it "should be successful when logged in" do
         login_user
+        Pool.default_pool.should_not be_nil
   	    controller.user_signed_in?.should be_true
         get :manage_groups
         response.should be_success

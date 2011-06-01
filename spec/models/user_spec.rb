@@ -88,8 +88,8 @@ describe User do
   it "can have zero or more pools" do
     user = Factory(:user)
     user.pools.count.should == 0
-    pool1 = Factory(:pool, :user_id => user.id)
-    pool2 = Factory(:pool, :user_id => user.id)
+    pool1 = Factory(:pool, :admin_id => user.id)
+    pool2 = Factory(:pool, :admin_id => user.id)
     pool3 = Factory(:pool)
     user.pools.should include(pool1, pool2)
     user.pools.should_not include(pool3)

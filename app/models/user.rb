@@ -53,7 +53,7 @@ class User < ActiveRecord::Base
                   :phonetic_name
 
   has_many :events
-  has_many :pools
+  has_many :pools, :foreign_key => 'admin_id'
   has_many :phones, :dependent => :destroy
   has_many :plans, :dependent => :destroy
   has_many :preferences, :dependent => :destroy
