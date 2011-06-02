@@ -1,0 +1,15 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Name:</b>
+  <%= @pool.name %>
+</p>
+
+<p>
+  <b>Timelimit:</b>
+  <%= @pool.timelimit %>
+</p>
+
+
+<%= link_to 'Edit', edit_pool_path(@pool) %> |
+<%= link_to 'Back', pools_path %>
