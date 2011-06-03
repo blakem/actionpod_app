@@ -25,7 +25,7 @@ class Pool < ActiveRecord::Base
   end
 
   def self.default_pool
-    self.where(:name => 'Default Pool').sort{ |a,b| a.id <=> b.id }.first  
+    self.where(:name => 'Default Group').sort{ |a,b| a.id <=> b.id }.first  
   end
   
 end

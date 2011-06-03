@@ -187,9 +187,9 @@ describe PagesController do
         response.body.should_not =~ /#{user3.name}/
       end
 
-      it "shows the name of the pool if it isn't the default pool" do
+      it "shows the name of the pool if it isn't the default group" do
         login_admin
-        pool = Factory(:pool, :name => 'Not The Default Pool')
+        pool = Factory(:pool, :name => 'Not The Default Group')
         user = Factory(:user)
         event = Factory(:event, :user_id => user.id, :pool_id => pool.id)
         event.time = '4:34pm'

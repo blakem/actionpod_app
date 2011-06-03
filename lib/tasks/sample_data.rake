@@ -25,7 +25,7 @@ def make_users
   admin.save!
   Phone.create!(:user_id => admin.id, :string => '415 314 1222', :primary => true)
   Phone.create!(:user_id => admin.id, :string => '415 111 2222')
-  pool = Pool.create!(:name => 'Default Pool', :user_id => admin.id)
+  pool = Pool.create!(:name => 'Default Group', :admin_id => admin.id)
   event = Event.create!(:name => "Test Event 1", :user_id => admin.id, :pool_id => pool.id)
 
   5.times do |n|

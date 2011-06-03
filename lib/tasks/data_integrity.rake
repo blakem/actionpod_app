@@ -9,11 +9,11 @@ task :data_integrity => :environment do
   puts "ok - InviteCodes: #{InviteCode.count}"
   puts
 
-  # must have a default pool
-  if Pool.find_by_name('Default Pool')
-    puts "  ok - Default Pool"
+  # must have a default group
+  if Pool.find_by_name('Default Group')
+    puts "  ok - Default Group"
   else
-    puts "ERROR - No Default Pool!"
+    puts "ERROR - No Default Group!"
   end
   puts
   

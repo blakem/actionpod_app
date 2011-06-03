@@ -19,7 +19,7 @@ describe EventsController do
     before(:each) do
       User.all.each { |u| u.destroy }
       login_user
-      @pool ||= Factory(:pool, :name => 'Default Pool')
+      @pool ||= Factory(:pool, :name => 'Default Group')
       @event1 ||= Factory(:event, :user_id => @current_user.id, :pool_id => @pool.id)
       @event2 ||= Factory(:event, :user_id => @current_user.id, :pool_id => @pool.id)
       @event_other ||= Factory(:event, :pool_id => @pool.id)
@@ -87,7 +87,7 @@ describe EventsController do
     describe "POST create" do
       describe "with valid params" do
         it "assigns a newly created event as @event" do
-          pool = Pool.find_by_name('Default Pool')
+          pool = Pool.find_by_name('Default Group')
           pool.should be_a_kind_of(Pool)
           mock_event(:save => true, :pool => pool)
           mock_event.should_receive(:alter_schedule).with(
@@ -112,7 +112,7 @@ describe EventsController do
   
       describe "with invalid params" do
         it "assigns a newly created but unsaved event as @event" do
-          pool = Pool.find_by_name('Default Pool')
+          pool = Pool.find_by_name('Default Group')
           pool.should be_a_kind_of(Pool)
           event = Factory(:event)
           Event.stub(:new).with({
