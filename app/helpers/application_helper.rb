@@ -78,7 +78,7 @@ module ApplicationHelper
           hash[key][:count] += 1
           hash[key][:pool_id] = event.pool.id
           hash[key][:occurrence] = occurrence
-          hash[key][:minute_of_day] = event.minute_of_day
+          hash[key][:minute_of_day] = occurrence.min + (60 * occurrence.hour)
         end
       end
       hash.each_value.sort { |a,b| 
