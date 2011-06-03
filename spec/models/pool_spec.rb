@@ -29,4 +29,15 @@ describe Pool do
     pool.after_call_window(now - 13.minutes).should == true
   end
   
+  it "can have zero or more users" do
+    pool = Factory(:pool)
+    pool.users.should be_empty
+    user1 = Factory(:user)
+    user2 = Factory(:user)
+    user3 = Factory(:user)
+    pool.users = [user1, user2]
+    pool.users.should include(user1, user2)
+    pool.users.should_not include(user3)
+  end
+  
 end

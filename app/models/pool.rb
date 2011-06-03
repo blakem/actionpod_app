@@ -13,7 +13,8 @@
 
 class Pool < ActiveRecord::Base
   belongs_to :user, :foreign_key => 'admin_id'
-
+  has_and_belongs_to_many :users
+  
   after_initialize :init
 
   def init

@@ -53,12 +53,13 @@ class User < ActiveRecord::Base
                   :phonetic_name
 
   has_many :events
-  has_many :pools, :foreign_key => 'admin_id'
+  has_many :admin_pools, :class_name => 'Pool', :foreign_key => 'admin_id'
   has_many :phones, :dependent => :destroy
   has_many :plans, :dependent => :destroy
   has_many :preferences, :dependent => :destroy
   has_many :preferenced_members, :through => :preferences, :source => :other_user
   has_and_belongs_to_many :conferences, :order => 'id DESC'
+  has_and_belongs_to_many :pools, :order => 'id DESC'
   accepts_nested_attributes_for :phones, :allow_destroy => true
 
   validates_each :invite_code, :on => :create do |record, attr, value|

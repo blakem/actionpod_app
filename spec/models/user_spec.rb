@@ -85,14 +85,25 @@ describe User do
     user.memberships.should include(pool1, pool2)    
   end
 
-  it "can have zero or more pools" do
+  it "can belong to zero or many pools" do
     user = Factory(:user)
     user.pools.count.should == 0
+    pool1 = Factory(:pool)
+    pool2 = Factory(:pool)
+    pool3 = Factory(:pool)
+    user.pools = [pool1, pool2]
+    user.pools.should include(pool1, pool2)
+    user.pools.should_not include(pool3)
+  end
+
+  it "can be the admin for zero or many pools" do
+    user = Factory(:user)
+    user.admin_pools.count.should == 0
     pool1 = Factory(:pool, :admin_id => user.id)
     pool2 = Factory(:pool, :admin_id => user.id)
     pool3 = Factory(:pool)
-    user.pools.should include(pool1, pool2)
-    user.pools.should_not include(pool3)
+    user.admin_pools.should include(pool1, pool2)
+    user.admin_pools.should_not include(pool3)
   end
   
   it "should have a time_zone that defaults to 'Pacific Time (US & Canada)'" do

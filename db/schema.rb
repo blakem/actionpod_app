@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110603044230) do
+ActiveRecord::Schema.define(:version => 20110603223712) do
 
   create_table "calls", :force => true do |t|
     t.string   "Sid"
@@ -118,6 +118,11 @@ ActiveRecord::Schema.define(:version => 20110603044230) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "timelimit",  :null => false
+  end
+
+  create_table "pools_users", :id => false, :force => true do |t|
+    t.integer "pool_id"
+    t.integer "user_id"
   end
 
   create_table "preferences", :force => true do |t|
