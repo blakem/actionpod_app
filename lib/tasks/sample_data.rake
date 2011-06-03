@@ -3,7 +3,8 @@ require 'faker'
 namespace :db do
   desc "Fill database with sample data"
   task :populate => :environment do
-    if Rails.env.development?
+    if Rails.env.development? or Rails.env.test?
+      ActionMailer::Base.delivery_method = :test
       Rake::Task['db:reset'].invoke
       make_users
     else
