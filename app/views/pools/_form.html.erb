@@ -12,14 +12,14 @@
   <% end %>
 
   <div class="field">
-    <%= f.label :name %><br />
-    <%= f.text_field :name %>
+    <%= f.label :name, "Name:", :class => "round" %><br />
+    <%= f.text_field :name, :class => "round" %>
   </div>
   <div class="field">
-    <%= f.label :timelimit %><br />
-    <%= f.text_field :timelimit %>
+    <%= f.label :timelimit, "Time Limit:", :class => "round" %><br />
+    <%= f.text_field :timelimit, :class => "round" %>
   </div>
   <div class="actions">
-    <%= f.submit %>
+    <%= f.submit "Update Group" %>
   </div>
 <% end %>

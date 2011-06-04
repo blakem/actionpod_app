@@ -13,6 +13,22 @@ describe Pool do
     pool.errors[:name].should include("can't be blank")
   end
 
+  it "requires an integer timelimit" do
+    pool = Factory(:pool)
+    pool.timelimit = 'foo'
+    pool.valid?
+    pool.errors[:timelimit].should include("is not a number")
+    pool.timelimit = ''
+    pool.valid?
+    pool.errors[:timelimit].should include("is not a number")
+    pool.timelimit = 1
+    pool.valid?
+    pool.errors[:timelimit].should include("must be greater than 1")
+    pool.timelimit = 31
+    pool.valid?
+    pool.errors[:timelimit].should include("must be less than or equal to 30")
+  end
+
   it "belongs to a user" do
     user = Factory(:user)
     pool = Factory(:pool, :admin_id => user.id)

@@ -52,14 +52,14 @@ describe Call do
     call.cost.should == 0.15
     call.Direction = 'outbound-api'
     call.cost.should == 0.30
-    pool = Factory(:pool, :timelimit => 48) # 0.5 per hour for heroku dynos
+    pool = Factory(:pool, :timelimit => 24) # 0.5 per hour for heroku dynos
     event = Factory(:event, :pool_id => pool.id)
     call.event_id = event.id
     event.send_sms_reminder = false
     event.save
-    call.cost.should == 0.34
+    call.cost.should == 0.32
     event.send_sms_reminder = true
     event.save
-    call.cost.should == 0.36
+    call.cost.should == 0.34
   end
 end

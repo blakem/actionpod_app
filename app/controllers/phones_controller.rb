@@ -82,7 +82,7 @@ class PhonesController < ApplicationController
   private
     def set_breadcrumb
       set_profile_values
-      breadcrumbs.add 'Manage Multiple Phones'
+      breadcrumbs.add 'Manage Phones'
     end
 
 end

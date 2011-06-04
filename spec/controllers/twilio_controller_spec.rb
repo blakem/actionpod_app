@@ -97,7 +97,7 @@ describe TwilioController do
       tc.should_receive(:send_error_to_blake).with('Fallback: 543211')
       TwilioCaller.should_receive(:new).and_return(tc)
       user = Factory(:user)
-      pool = Factory(:pool, :timelimit => 33)
+      pool = Factory(:pool, :timelimit => 23)
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
       call = Call.create(:Sid => '543211', :event_id => event.id)
       post :greeting_fallback, :CallSid => '543211'
@@ -105,7 +105,7 @@ describe TwilioController do
       hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => 'Waiting for the other participants')
-      response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
+      response.should have_selector('response>dial', :timelimit => (23 * 60).to_s)
       response.should have_selector('response>dial>conference', :content => "15mcHoldEvent#{event.id}User#{user.id}Pool#{pool.id}")
       response.should have_selector('response>say', :content => 'Time is up. Goodbye.')
       call.reload
@@ -131,31 +131,31 @@ describe TwilioController do
 
     it "should match up with the event being called" do
       user = Factory(:user)
-      pool = Factory(:pool, :timelimit => 33)
+      pool = Factory(:pool, :timelimit => 23)
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
       call = Call.create(:Sid => '12345', :event_id => event.id, :status => 'foo')
-      post :callback, :CallSid => call.Sid, :CallDuration => 33, :AnsweredBy => 'human'
+      post :callback, :CallSid => call.Sid, :CallDuration => 23, :AnsweredBy => 'human'
       hash = (Hash.from_xml response.body).with_indifferent_access
       hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
       call.reload
       call.status.should == 'foo-callback:match-completed'
       call.AnsweredBy.should == 'human'
-      call.Duration.should == 33
+      call.Duration.should == 23
     end
 
     it "should update the missed count" do
       user = Factory(:user, :made_in_a_row => 3, :missed_in_a_row => 2)
-      pool = Factory(:pool, :timelimit => 33)
+      pool = Factory(:pool, :timelimit => 23)
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
       call = Call.create(:Sid => '12345', :event_id => event.id, :status => 'outgoing-greeting:match', :AnsweredBy => 'human')
-      post :callback, :CallSid => call.Sid, :CallDuration => 33
+      post :callback, :CallSid => call.Sid, :CallDuration => 23
       hash = (Hash.from_xml response.body).with_indifferent_access
       hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
       call.reload
       call.status.should == 'outgoing-greeting:match-callback:match-completed'
-      call.Duration.should == 33
+      call.Duration.should == 23
       call.AnsweredBy.should == 'human'
       user.reload
       user.made_in_a_row.should == 0
@@ -164,16 +164,16 @@ describe TwilioController do
 
     it "should update the made count for ifmachine direct callers" do
       user = Factory(:user, :made_in_a_row => 3, :missed_in_a_row => 2)
-      pool = Factory(:pool, :timelimit => 33)
+      pool = Factory(:pool, :timelimit => 23)
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
       call = Call.create(:Sid => '12345', :event_id => event.id, :status => 'outgoing-direct:match-placing:15mcPool1Room1-placed:15mcPool1Room1')
-      post :callback, :CallSid => call.Sid, :CallDuration => 33
+      post :callback, :CallSid => call.Sid, :CallDuration => 23
       hash = (Hash.from_xml response.body).with_indifferent_access
       hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
       call.reload
       call.status.should == 'outgoing-direct:match-placing:15mcPool1Room1-placed:15mcPool1Room1-callback:match-completed'
-      call.Duration.should == 33
+      call.Duration.should == 23
       user.reload
       user.made_in_a_row.should == 3
       user.missed_in_a_row.should == 2
@@ -184,16 +184,16 @@ describe TwilioController do
       tc.should_receive(:send_error_to_blake).with('OutgoingBug: 12345')
       TwilioCaller.should_receive(:new).and_return(tc)
       user = Factory(:user, :made_in_a_row => 3, :missed_in_a_row => 2)
-      pool = Factory(:pool, :timelimit => 33)
+      pool = Factory(:pool, :timelimit => 23)
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
       call = Call.create(:Sid => '12345', :event_id => event.id, :status => 'outgoing')
-      post :callback, :CallSid => call.Sid, :CallDuration => 33
+      post :callback, :CallSid => call.Sid, :CallDuration => 23
       hash = (Hash.from_xml response.body).with_indifferent_access
       hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
       call.reload
       call.status.should == 'outgoing-callback:match-completed'
-      call.Duration.should == 33
+      call.Duration.should == 23
       user.reload
       user.made_in_a_row.should == 3
       user.missed_in_a_row.should == 2
@@ -214,7 +214,7 @@ describe TwilioController do
 
     it "should match up with the event being called" do
       user = Factory(:user, :answered_count => 3, :made_in_a_row => 3, :missed_in_a_row => 2)
-      pool = Factory(:pool, :timelimit => 33)
+      pool = Factory(:pool, :timelimit => 23)
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
       call = Call.create(:Sid => '12345', :event_id => event.id)
       post :go_directly_to_conference, :CallSid => '12345', :AnsweredBy => 'human'
@@ -223,7 +223,7 @@ describe TwilioController do
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => 'Welcome to your Morning Call.')
       response.should have_selector('response>say', :content => 'Waiting for the other participants')
-      response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
+      response.should have_selector('response>dial', :timelimit => (23 * 60).to_s)
       response.should have_selector('response>dial>conference', :content => "15mcHoldEvent#{event.id}User#{user.id}Pool#{pool.id}")
       response.should have_selector('response>say', :content => 'Time is up. Goodbye.')
       call.reload
@@ -250,7 +250,7 @@ describe TwilioController do
 
     it "should put on hold on CallSid" do
       user = Factory(:user)
-      pool = Factory(:pool, :timelimit => 33)
+      pool = Factory(:pool, :timelimit => 23)
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
       call = Call.create(:Sid => '54321', :event_id => event.id)
       post :put_on_hold, :CallSid => '54321'
@@ -258,7 +258,7 @@ describe TwilioController do
       hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => 'Waiting for the other participants')
-      response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
+      response.should have_selector('response>dial', :timelimit => (23 * 60).to_s)
       response.should have_selector('response>dial>conference', :content => "15mcHoldEvent#{event.id}User#{user.id}Pool#{pool.id}")
       response.should have_selector('response>say', :content => 'Time is up. Goodbye.')
       call.reload
@@ -271,7 +271,7 @@ describe TwilioController do
 
     it "should put on hold on PhoneNumberSid" do
       user = Factory(:user)
-      pool = Factory(:pool, :timelimit => 33)
+      pool = Factory(:pool, :timelimit => 23)
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
       Call.create(:Sid => '54321', :PhoneNumberSid => 'PN123', :event_id => event.id)
       post :put_on_hold, :PhoneNumberSid => 'PN123'
@@ -279,7 +279,7 @@ describe TwilioController do
       hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => 'Waiting for the other participants')
-      response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
+      response.should have_selector('response>dial', :timelimit => (23 * 60).to_s)
       response.should have_selector('response>dial>conference', :content => "15mcHoldEvent#{event.id}User#{user.id}Pool#{pool.id}")
       response.should have_selector('response>say', :content => 'Time is up. Goodbye.')
     end
@@ -288,7 +288,7 @@ describe TwilioController do
       user = Factory(:user)
       phone1 = Factory(:phone, :user_id => user.id, :primary => true)
       phone2 = Factory(:phone, :user_id => user.id, :primary => false)
-      pool = Factory(:pool, :timelimit => 33)
+      pool = Factory(:pool, :timelimit => 23)
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
       event.days = [0,1,2,3,4,5,6]
       event.save
@@ -297,7 +297,7 @@ describe TwilioController do
       hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => 'Waiting for the other participants')
-      response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
+      response.should have_selector('response>dial', :timelimit => (23 * 60).to_s)
       response.should have_selector('response>dial>conference', :content => "15mcHoldEvent#{event.id}User#{user.id}Pool#{pool.id}")
       response.should have_selector('response>say', :content => 'Time is up. Goodbye.')
     end
@@ -306,7 +306,7 @@ describe TwilioController do
       user = Factory(:user)
       phone1 = Factory(:phone, :user_id => user.id, :primary => true)
       phone2 = Factory(:phone, :user_id => user.id, :primary => false)
-      pool = Factory(:pool, :timelimit => 33)
+      pool = Factory(:pool, :timelimit => 23)
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
       event.days = [0,1,2,3,4,5,6]
       event.save
@@ -315,7 +315,7 @@ describe TwilioController do
       hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => 'Waiting for the other participants')
-      response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
+      response.should have_selector('response>dial', :timelimit => (23 * 60).to_s)
       response.should have_selector('response>dial>conference', :content => "15mcHoldEvent#{event.id}User#{user.id}Pool#{pool.id}")
       response.should have_selector('response>say', :content => 'Time is up. Goodbye.')
     end
@@ -324,7 +324,7 @@ describe TwilioController do
       user = Factory(:user)
       phone1 = Factory(:phone, :user_id => user.id, :primary => true)
       phone2 = Factory(:phone, :user_id => user.id, :primary => false)
-      pool = Factory(:pool, :timelimit => 33)
+      pool = Factory(:pool, :timelimit => 23)
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
       event.days = [0,1,2,3,4,5,6]
       event.save
@@ -333,7 +333,7 @@ describe TwilioController do
       hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => 'Waiting for the other participants')
-      response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
+      response.should have_selector('response>dial', :timelimit => (23 * 60).to_s)
       response.should have_selector('response>dial>conference', :content => "15mcHoldEvent#{event.id}User#{user.id}Pool#{pool.id}")
       response.should have_selector('response>say', :content => 'Time is up. Goodbye.')
     end
@@ -342,7 +342,7 @@ describe TwilioController do
       user = Factory(:user)
       phone1 = Factory(:phone, :user_id => user.id, :primary => true)
       phone2 = Factory(:phone, :user_id => user.id, :primary => false)
-      pool = Factory(:pool, :timelimit => 33)
+      pool = Factory(:pool, :timelimit => 23)
       event = Factory(:event, :user_id => user.id, :name => 'Morning Call', :pool_id => pool.id)
       event.days = [0,1,2,3,4,5,6]
       event.save
@@ -351,7 +351,7 @@ describe TwilioController do
       hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
       response.should have_selector('response>say', :content => 'Waiting for the other participants')
-      response.should have_selector('response>dial', :timelimit => (33 * 60).to_s)
+      response.should have_selector('response>dial', :timelimit => (23 * 60).to_s)
       response.should have_selector('response>dial>conference', :content => "15mcHoldEvent#{event.id}User#{user.id}Pool#{pool.id}")
       response.should have_selector('response>say', :content => 'Time is up. Goodbye.')
     end
