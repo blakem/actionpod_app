@@ -27,6 +27,7 @@ class PoolsController < ApplicationController
   def create
     @pool = Pool.new(params[:pool].merge({:admin_id => current_user.id}))
     if @pool.save
+      current_user.pools << @pool
       redirect_to(@pool, :notice => 'Group was successfully created.')
     else
       render :action => "new"

@@ -86,10 +86,18 @@ describe PoolsController do
         end
 
         it "assigns a newly created pool as @pool" do
+          pools = @current_user.pools
+          pools.should_not be_empty
           post :create, :pool => @attr
-          assigns(:pool).should be_a(Pool)
-          assigns(:pool).should be_persisted
-          assigns(:pool).admin_id.should == @current_user.id
+          pool = assigns(:pool)
+          pool.should be_a(Pool)
+          pool.should be_persisted
+          pool.admin_id.should == @current_user.id
+          @current_user.reload
+          @current_user.pools.should include(pool)
+          pools.each do |p|
+            @current_user.pools.should include(p)
+          end
         end
 
         it "redirects to the created pool" do

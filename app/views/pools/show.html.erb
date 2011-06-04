@@ -6,10 +6,11 @@
 </p>
 
 <p>
-  <b>Timelimit:</b>
-  <%= @pool.timelimit %>
+  <b>Timelimit:</b> (in minutes)
+  <%= @pool.timelimit %> minutes
 </p>
 
-
-<%= link_to 'Edit', edit_pool_path(@pool) %> |
-<%= link_to 'Back', pools_path %>
+<% if @pool.admin_id == current_user.id %>
+  <%= link_to 'Edit', edit_pool_path(@pool) %> |
+<% end %>
+<%= link_to 'Back', :controller => :pages, :action => :manage_groups %>
