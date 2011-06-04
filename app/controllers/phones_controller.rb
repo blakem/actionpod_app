@@ -82,7 +82,6 @@ class PhonesController < ApplicationController
   private
     def set_breadcrumb
       set_profile_values
-      @view_options[:hide_manage_multiple_phones] = true
       breadcrumbs.add 'Manage Multiple Phones'
     end
 

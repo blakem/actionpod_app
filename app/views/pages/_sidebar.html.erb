@@ -43,9 +43,6 @@
     <%= link_to "Who's in My Call #{call_groups}?", :controller => :pages, :action => :call_groups %><br/>
   <% end %>
 <% end %>
-<% unless @view_options[:hide_manage_multiple_phones] %>
-  <%= link_to "Manage Multiple Phones", phones_path %><br/>
-<% end %>
 </p>
 <% if @nextcalls.any? %>
   <p><strong><%= @your %> next <%= @nextcalls.count == 1 ? 'call' : "#{@nextcalls.count} calls" %>:</strong><br/>
