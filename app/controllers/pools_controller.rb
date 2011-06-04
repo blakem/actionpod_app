@@ -19,7 +19,7 @@ class PoolsController < ApplicationController
 
   # GET /pools/1/edit
   def edit
-    @pool = pool_from_params
+    @pool = admin_pool_from_params
     redirect_to(root_path, :alert => "You don't have permissions to view that group.") unless @pool
   end
 
@@ -35,7 +35,7 @@ class PoolsController < ApplicationController
 
   # PUT /pools/1
   def update
-    @pool = pool_from_params
+    @pool = admin_pool_from_params
     if @pool
       if @pool.update_attributes(params[:pool])
         redirect_to(@pool, :notice => 'Group was successfully updated.')
@@ -49,7 +49,7 @@ class PoolsController < ApplicationController
 
   # DELETE /pools/1
   def destroy
-    @pool = pool_from_params
+    @pool = admin_pool_from_params
     if @pool
       @pool.destroy
       redirect_to(pools_url)
@@ -61,5 +61,9 @@ class PoolsController < ApplicationController
   private
     def pool_from_params
       @current_user.pools.select{ |p| p.id == params[:id].to_i }.first
+    end
+
+    def admin_pool_from_params
+      Pool.where(:id => params[:id], :admin_id => current_user.id)[0]
     end
 end

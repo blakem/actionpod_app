@@ -17,7 +17,7 @@ describe PoolsController do
       @attr = {
         :admin_id => @other_user.id
       }
-      @pool1 = Pool.create! @attr
+      @pool1 = Pool.create! @attr.merge({:admin_id => @current_user.id})
       @pool2 = Pool.create! @attr
       @pool_other = Pool.create! @attr
       @current_user.pools = [@pool1, @pool2]
@@ -61,6 +61,11 @@ describe PoolsController do
         assigns(:pool).should eq(@pool1)
       end
       
+      it "redirects if you try to show a pool you aren't admin of" do
+        get :edit, :id => @pool2.id
+        response.should redirect_to(root_path)
+      end
+
       it "redirects if you try to show a pool you don't belong to" do
         get :edit, :id => @pool_other.id
         response.should redirect_to(root_path)
@@ -127,6 +132,11 @@ describe PoolsController do
           response.should redirect_to(@pool1)
         end
         
+        it "redirects if you aren't the admin" do
+          get :update, :id => @pool2.id
+          response.should redirect_to(root_path)
+        end
+
         it "redirects if you try to show someone else's event" do
           get :update, :id => @pool_other.id
           response.should redirect_to(root_path)
@@ -161,8 +171,15 @@ describe PoolsController do
         response.should redirect_to(pools_url)
       end
 
-      it "Doesn't allow you to delete someone elses events" do
+      it "Doesn't allow you to delete someone elses pools" do
         other_pool_id = @pool_other.id
+        delete :destroy, :id => other_pool_id
+        Pool.find_by_id(other_pool_id).should_not be_nil
+        response.should redirect_to(root_path)
+      end
+      
+      it "Doesn't allow you to delete a pool that you aren't admin of" do
+        other_pool_id = @pool2.id
         delete :destroy, :id => other_pool_id
         Pool.find_by_id(other_pool_id).should_not be_nil
         response.should redirect_to(root_path)
