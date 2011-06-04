@@ -15,7 +15,6 @@ end
 
 def make_users
   invite_code = InviteCode.create!(:name => 'xyzzy')
-
   admin = User.create!(
     :invite_code => invite_code.name,
     :name => "Blake Mills",
@@ -28,6 +27,7 @@ def make_users
   Phone.create!(:user_id => admin.id, :string => '415 111 2222')
   pool = Pool.create!(:name => 'Default Group', :admin_id => admin.id)
   event = Event.create!(:name => "Test Event 1", :user_id => admin.id, :pool_id => pool.id)
+  admin.add_to_default_pool
 
   5.times do |n|
     name = Faker::Name.name

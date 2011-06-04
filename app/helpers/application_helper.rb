@@ -89,7 +89,7 @@ module ApplicationHelper
     def build_call_groups(viewer, user = nil)
       call_groups = {}
       my_calls = {}
-      pools = viewer.memberships
+      pools = viewer.pools
       Event.all.each do |event|
         next unless pools.include?(event.pool)
         occurrence = event.next_occurrence

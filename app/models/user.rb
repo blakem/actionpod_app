@@ -73,6 +73,7 @@ class User < ActiveRecord::Base
 
   after_initialize :init
   after_update     :update_events
+  after_create     :add_to_default_pool
   
   def init
     write_attribute(:time_zone, default_time_zone) unless read_attribute(:time_zone)
@@ -84,7 +85,8 @@ class User < ActiveRecord::Base
     end
     if attribute_present?("name") && !attribute_present?("phonetic_name")
       self.phonetic_name = self.name
-    end  end
+    end
+  end
 
   def update_events
     if self.time_zone_changed?
@@ -99,13 +101,14 @@ class User < ActiveRecord::Base
     end
   end
   
+  def add_to_default_pool
+    pool = Pool.default_pool
+    self.pools = [pool] if pool
+  end
+  
   def soft_delete
     self.deleted_at = Time.current
     self.save
-  end
-
-  def memberships
-    self.admin ? Pool.all : [Pool.default_pool]
   end
 
   def prefers?(other_user)

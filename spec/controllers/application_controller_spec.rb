@@ -7,6 +7,7 @@ describe ApplicationController do
     @user1 = Factory(:user, :time_zone => 'Pacific Time (US & Canada)')      
     @user2 = Factory(:user, :time_zone => 'Pacific Time (US & Canada)')
     @user3 = Factory(:user, :time_zone => 'Mountain Time (US & Canada)')
+    @pool1.users = User.all
     @event21 = Factory(:event, :user_id => @user2.id, :pool_id => @pool1.id)
     @event31 = Factory(:event, :user_id => @user3.id, :pool_id => @pool1.id)
     @event21.time = '8:00am'
@@ -107,6 +108,8 @@ describe ApplicationController do
 
     it "returns a list all call_groups and all pools when not passed a second argument for an admin user" do
       @user2.toggle!(:admin)
+      @user2.pools = Pool.all
+      @user2.save
       @ac.send(:build_call_groups, @user2).should == [{
         :time=>"8:00am",
         :pool=>1,
@@ -151,6 +154,8 @@ describe ApplicationController do
 
     it "shows all pools and all calls for admin users" do
       @user2.toggle!(:admin)
+      @user2.pools = Pool.all
+      @user2.save
       @ac.send(:build_call_groups, @user2, @user2).should == [{
         :time=>"8:00am", 
         :pool=>1,

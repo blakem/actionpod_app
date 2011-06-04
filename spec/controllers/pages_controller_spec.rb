@@ -172,6 +172,9 @@ describe PagesController do
         user1 = Factory(:user)
         user2 = Factory(:user)
         user3 = Factory(:user)
+        pool = Pool.default_pool
+        pool.users = User.all
+        pool.save
         event1 = Factory(:event, :user_id => user1.id)
         event2 = Factory(:event, :user_id => user2.id)
         event3 = Factory(:event, :user_id => user3.id)
@@ -191,6 +194,8 @@ describe PagesController do
         login_admin
         pool = Factory(:pool, :name => 'Not The Default Group')
         user = Factory(:user)
+        pool.users = [@current_user]
+        pool.save
         event = Factory(:event, :user_id => user.id, :pool_id => pool.id)
         event.time = '4:34pm'
         event.save

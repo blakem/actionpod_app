@@ -261,7 +261,7 @@ class PagesController < ApplicationController
   
   def manage_groups
     breadcrumbs.add 'Manage Groups'
-    @pools = current_user.memberships
+    @pools = current_user.pools
     set_profile_values
   end
 
