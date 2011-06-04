@@ -27,8 +27,11 @@ class Pool < ActiveRecord::Base
     Time.now.utc > time + self.timelimit.minutes
   end
 
+  def self.available_timelimits
+    [5,10,15,20,30]
+  end
+
   def self.default_pool
     self.where(:name => 'Default Group').sort_by(&:id).first  
-  end
-  
+  end  
 end

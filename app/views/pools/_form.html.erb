@@ -6,8 +6,8 @@
     <%= f.text_field :name, :class => "round" %>
   </div>
   <div class="field">
-    <%= f.label :timelimit, "Time Limit:", :class => "round" %><br />
-    <%= f.text_field :timelimit, :class => "round" %>
+    <%= f.label :timelimit, "Time Limit:", :class => "round" %>
+    <%= f.select(:timelimit, Pool.available_timelimits.map{ |t| ["#{t} minutes", t.to_s] }) %>
   </div>
   <div class="actions">
     <%= f.submit @submit_text %>
