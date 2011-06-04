@@ -15,7 +15,8 @@ describe PoolsController do
       login_user
       @other_user = Factory(:user)
       @attr = {
-        :admin_id => @other_user.id
+        :admin_id => @other_user.id,
+        :name => 'Some Random Testing Pool'
       }
       @pool1 = Pool.create! @attr.merge({:admin_id => @current_user.id})
       @pool2 = Pool.create! @attr

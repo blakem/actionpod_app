@@ -6,6 +6,13 @@ describe Pool do
     pool.name.should == 'Some Name'
   end
 
+  it "requires a name" do
+    pool = Factory(:pool)
+    pool.name = ''
+    pool.valid?
+    pool.errors[:name].should include("can't be blank")
+  end
+
   it "belongs to a user" do
     user = Factory(:user)
     pool = Factory(:pool, :admin_id => user.id)
