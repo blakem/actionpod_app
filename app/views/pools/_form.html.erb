@@ -1,15 +1,5 @@
 <%= form_for(@pool) do |f| %>
-  <% if @pool.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@pool.errors.count, "error") %> prohibited this pool from being saved:</h2>
-
-      <ul>
-      <% @pool.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
-      <% end %>
-      </ul>
-    </div>
-  <% end %>
+<%= pretty_object_error_messages(@pool) %>
 
   <div class="field">
     <%= f.label :name, "Name:", :class => "round" %><br />
@@ -20,6 +10,6 @@
     <%= f.text_field :timelimit, :class => "round" %>
   </div>
   <div class="actions">
-    <%= f.submit "Update Group" %>
+    <%= f.submit @submit_text %>
   </div>
 <% end %>

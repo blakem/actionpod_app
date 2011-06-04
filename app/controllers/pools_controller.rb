@@ -15,11 +15,13 @@ class PoolsController < ApplicationController
   # GET /pools/new
   def new
     @pool = Pool.new
+    @submit_text = 'Create Group'
   end
 
   # GET /pools/1/edit
   def edit
     @pool = admin_pool_from_params
+    @submit_text = 'Update Group'
     redirect_to(root_path, :alert => "You don't have permissions to view that group.") unless @pool
   end
 
