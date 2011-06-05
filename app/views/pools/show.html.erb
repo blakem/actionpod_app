@@ -8,7 +8,15 @@
   <%= @pool.timelimit %> minutes
 </p>
 
+<p>
+  <b>Members:</b><br>
+  <% @pool.users.sort_by(&:name).each do |user| %>
+    <%= gravatar_for user, :size => 30 %> <%= link_to user.name, user.profile_path %><br/>
+  <% end %>
+</p>
+
 <% if @pool.admin_id == current_user.id %>
   <%= link_to 'Edit', edit_pool_path(@pool) %> |
 <% end %>
+
 <%= link_to 'Back', :controller => :pages, :action => :manage_groups %>
