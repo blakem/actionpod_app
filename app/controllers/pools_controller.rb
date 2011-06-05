@@ -9,7 +9,11 @@ class PoolsController < ApplicationController
   # GET /pools/1
   def show
     @pool = pool_from_params
-    redirect_to(root_path, :alert => "You don't have permissions to view that group.") unless @pool
+    if @pool
+      @users = @pool.users.paginate(:page => params[:page], :per_page => 10)
+    else
+      redirect_to(root_path, :alert => "You don't have permissions to view that group.")
+    end
   end
 
   # GET /pools/new

@@ -10,9 +10,10 @@
 
 <p>
   <b>Members:</b><br>
-  <% @pool.users.sort_by(&:name).each do |user| %>
+  <% @users.each do |user| %>
     <%= gravatar_for user, :size => 30 %> <%= link_to user.name, user.profile_path %><br/>
   <% end %>
+  <%= will_paginate @users %>
 </p>
 
 <% if @pool.admin_id == current_user.id %>
