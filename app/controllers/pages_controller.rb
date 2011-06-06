@@ -264,6 +264,21 @@ class PagesController < ApplicationController
     @pools = current_user.pools
     set_profile_values
   end
+  
+  def remove_from_group
+    user = User.find_by_id(params[:member_id])
+    pool = Pool.find_by_id(params[:group_id])
+    if user && pool && (current_user.id == user.id or current_user.id == pool.admin_id)
+      if user.id == pool.admin_id
+        redirect_to(edit_pool_path(pool), :alert => "You cannot remove yourself from this group.")
+      else
+        pool.users.delete(user)
+        redirect_to(edit_pool_path(pool), :notice => "#{user.name} was removed from the group.")
+      end
+    else
+      redirect_to(root_path, :alert => "You don't have access to that page")
+    end
+  end
 
   private
       def check_for_admin_user

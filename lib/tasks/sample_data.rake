@@ -29,6 +29,13 @@ def make_users
   event = Event.create!(:name => "Test Event 1", :user_id => admin.id, :pool_id => pool.id)
   admin.add_to_default_pool
 
+  User.create!(
+    :invite_code => invite_code.name,
+    :name => "Blake David Mills",
+    :email => 'blakem@blakem.com',
+    :password => 'foobar',
+  )
+  
   5.times do |n|
     name = Faker::Name.name
     email = "example-#{n+2}@example.com"

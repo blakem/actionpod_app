@@ -2,5 +2,17 @@
 
 <%= render 'form' %>
 
+<p>
+  <b>Members:</b><br>
+  <% @pool.users.each do |user| %>
+    <a href="<%= user.profile_path %>"><%= gravatar_for user, :size => 30 %></a> <%= link_to user.name, user.profile_path %>
+    <% unless user.id == @pool.admin_id %>
+      | <%= link_to "Remove from group", 
+            :controller => :pages, :action => :remove_from_group, :member_id => user.id, :group_id => @pool.id %>
+    <% end %>
+    <br/>
+  <% end %>
+</p>
+
 <%= link_to 'Show', @pool %> |
 <%= link_to 'Back', :controller => :pages, :action => :manage_groups %>

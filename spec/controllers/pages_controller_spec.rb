@@ -118,6 +118,65 @@ describe PagesController do
       end
     end
   end
+  
+  describe "GET /pages/remove_from_group" do
+    before(:each) do
+      login_user
+      @other_user = Factory(:user)
+      @pool = Factory(:pool, :admin_id => @current_user.id)
+      @other_user.pools = [@pool]      
+    end
+
+    describe "success" do
+      it "should remove a user from a group you are admin of" do
+        get :remove_from_group, :member_id => @other_user.id, :group_id => @pool.id
+        flash[:notice].should =~ /#{@other_user.name} was removed from the group/
+        response.should redirect_to(edit_pool_path(@pool))
+        @other_user.reload
+        @other_user.pools.should be_empty
+      end
+
+      it "should remove yourself from a group you are not admin of" do
+        @user2 = Factory(:user)
+        @pool2 = Factory(:pool, :admin_id => @user2.id)
+        @current_user.pools << @pool2
+        get :remove_from_group, :member_id => @current_user.id, :group_id => @pool2.id
+        flash[:notice].should =~ /#{@current_user.name} was removed from the group/
+        response.should redirect_to(edit_pool_path(@pool2))
+        @current_user.reload
+        @current_user.pools.should_not include(@pool2)
+      end
+    end
+    
+    describe "failure" do
+      it "should redirect to root on bad group id" do
+        get :remove_from_group, :member_id => @other_user.id, :group_id => @pool.id + 1
+        flash[:alert].should =~ /You don't have access to that page/
+        response.should redirect_to(root_path)
+      end
+
+      it "should redirect to root on bad member id" do
+        get :remove_from_group, :member_id => @other_user.id + 1, :group_id => @pool.id
+        flash[:alert].should =~ /You don't have access to that page/
+        response.should redirect_to(root_path)
+      end
+
+      it "should redirect if you try to delete the admin of a group" do
+        get :remove_from_group, :member_id => @pool.admin_id, :group_id => @pool.id
+        flash[:alert].should =~ /You cannot remove yourself from this group./
+        response.should redirect_to(edit_pool_path(@pool))
+      end      
+
+      it "should redirect if you try to delete someone else from a group you aren't admin of" do
+        @user2 = Factory(:user)
+        @pool2 = Factory(:pool, :admin_id => @user2.id)
+        @other_user.pools << @pool2
+        get :remove_from_group, :member_id => @other_user, :group_id => @pool2.id
+        flash[:alert].should =~ /You don't have access to that page/
+        response.should redirect_to(root_path)
+      end      
+    end
+  end
 
   describe "GET /pages/conference" do
 
