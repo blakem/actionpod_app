@@ -173,14 +173,23 @@ describe PoolsController do
     end
 
     describe "DELETE destroy" do
+      it "Doesn't allow you to delete a pools that has members" do
+        pool_id = @pool1.id
+        delete :destroy, :id => pool_id
+        Pool.find_by_id(pool_id).should_not be_nil
+        response.should redirect_to(:controller => :pages, :action => :manage_groups)
+      end
+
       it "destroys the requested pool" do
+        @pool1.users = []
         expect {
           delete :destroy, :id => @pool1.id.to_s
         }.to change(Pool, :count).by(-1)
-        response.should redirect_to(pools_url)
+        response.should redirect_to(:controller => :pages, :action => :manage_groups)
       end
 
       it "Doesn't allow you to delete someone elses pools" do
+        @pool_other.users = []
         other_pool_id = @pool_other.id
         delete :destroy, :id => other_pool_id
         Pool.find_by_id(other_pool_id).should_not be_nil
@@ -188,6 +197,7 @@ describe PoolsController do
       end
       
       it "Doesn't allow you to delete a pool that you aren't admin of" do
+        @pool2.users = []
         other_pool_id = @pool2.id
         delete :destroy, :id => other_pool_id
         Pool.find_by_id(other_pool_id).should_not be_nil

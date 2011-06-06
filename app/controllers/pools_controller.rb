@@ -58,8 +58,12 @@ class PoolsController < ApplicationController
   def destroy
     @pool = admin_pool_from_params
     if @pool
-      @pool.destroy
-      redirect_to(pools_url)
+      if @pool.users.any?
+        redirect_to('/pages/manage_groups', :alert => "You can't delete a group that has members.")
+      else
+        @pool.destroy
+        redirect_to(:controller => :pages, :action => :manage_groups)
+      end
     else
       redirect_to(root_path, :alert => "You don't have permissions to view that group.")
     end

@@ -22,7 +22,7 @@
       <% end %>
     </td>
     <td>
-      <% if pool.admin_id == current_user.id %>
+      <% if pool.admin_id == current_user.id && pool.users.empty? %>
         <%= link_to 'Delete', pool, :confirm => 'Are you sure you want to delete this Group?', :method => :delete %>
       <% else %>
         &nbsp;
