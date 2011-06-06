@@ -173,14 +173,25 @@ describe PoolsController do
     end
 
     describe "DELETE destroy" do
-      it "Doesn't allow you to delete a pools that has members" do
+      it "Doesn't allow you to delete a pool that has members" do
+        second_user = Factory(:user)
+        second_user.pools = [@pool1]
         pool_id = @pool1.id
         delete :destroy, :id => pool_id
         Pool.find_by_id(pool_id).should_not be_nil
         response.should redirect_to(:controller => :pages, :action => :manage_groups)
       end
 
-      it "destroys the requested pool" do
+      it "destroys the requested pool if it only has one member (you) and you're the admin" do
+        @pool_empty = Pool.create! @attr.merge({:admin_id => @current_user.id})
+        @pool_empty.users = []
+        expect {
+          delete :destroy, :id => @pool_empty.id
+        }.to change(Pool, :count).by(-1)
+        response.should redirect_to(:controller => :pages, :action => :manage_groups)
+      end
+
+      it "destroys the requested pool if it has no members" do
         @pool1.users = []
         expect {
           delete :destroy, :id => @pool1.id.to_s
