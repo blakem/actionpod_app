@@ -27,8 +27,10 @@ class Pool < ActiveRecord::Base
     Time.now.utc > time + self.timelimit.minutes
   end
 
-  def self.available_timelimits
-    [5,10,15,20,30]
+  def available_timelimits
+    list = [5, 10, 15, 20, 30]
+    list << self.timelimit unless list.include?(timelimit)
+    list.sort
   end
 
   def self.default_pool

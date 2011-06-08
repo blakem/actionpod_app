@@ -7,7 +7,7 @@
   </div>
   <div class="field">
     <%= f.label :timelimit, "Time Limit:", :class => "round" %>
-    <%= f.select(:timelimit, Pool.available_timelimits.map{ |t| ["#{t} minutes", t.to_s] }) %>
+    <%= f.select(:timelimit, @pool.available_timelimits.map{ |t| ["#{t} minutes", t.to_s] }) %>
   </div>
   
 <% if @show_member_count %>
