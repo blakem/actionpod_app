@@ -55,6 +55,8 @@ newuser textarea { width: 415px; height: 50px; padding:5px; }
 plan textarea { width: 445px; height: 350px; padding:5px; }
 intro textarea { width: 445px; height: 150px; padding:5px; }
 member_message textarea { width: 445px; height: 80px; padding:5px; }
+invite textarea { width: 445px; height: 80px; padding:5px; }
+personal_message textarea { width: 445px; height: 80px; padding:5px; }
 
 /* Devise Menu */
 devise {

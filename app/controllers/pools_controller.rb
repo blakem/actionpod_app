@@ -1,5 +1,6 @@
 class PoolsController < ApplicationController
   before_filter :authenticate_user!
+  before_filter :set_breadcrumb
   
   # GET /pools
   def index
@@ -26,6 +27,7 @@ class PoolsController < ApplicationController
   def edit
     @pool = admin_pool_from_params
     @submit_text = 'Update Group'
+    @show_member_count = true
     redirect_to(root_path, :alert => "You don't have permissions to view that group.") unless @pool
   end
 
@@ -76,5 +78,10 @@ class PoolsController < ApplicationController
 
     def admin_pool_from_params
       Pool.where(:id => params[:id], :admin_id => current_user.id)[0]
+    end
+
+    def set_breadcrumb
+      set_profile_values
+      breadcrumbs.add 'Manage Groups'
     end
 end

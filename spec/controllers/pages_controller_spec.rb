@@ -178,6 +178,62 @@ describe PagesController do
     end
   end
 
+  describe "GET /pages/invite_members" do
+    before(:each) do
+      login_user
+      @other_user = Factory(:user)
+      @other_user2 = Factory(:user)
+      @pool = Factory(:pool, :admin_id => @current_user.id)
+      @other_pool = Factory(:pool, :admin_id => @other_user.id)
+    end
+
+    describe "success" do
+      it "should add a user to the group you invite them to" do
+        get :invite_members, :group_id => @pool.id, :emails => "#{@other_user.email}"
+        response.should redirect_to(edit_pool_path(@pool))
+        flash[:notice].should =~ /Invites have been sent./
+        @other_user.reload
+        @other_user.pools.should include(@pool)
+      end
+
+      it "should add users to the group you invite them to" do
+        get :invite_members, :group_id => @pool.id, :emails => "#{@other_user.email}, #{@other_user2.email}"
+        response.should redirect_to(edit_pool_path(@pool))
+        flash[:notice].should =~ /Invites have been sent./
+        @other_user.reload
+        @other_user.pools.should include(@pool)
+        @other_user2.reload
+        @other_user2.pools.should include(@pool)
+      end
+
+      it "should add users to the group you invite them to" do
+        get :invite_members, :group_id => @pool.id, :emails => "#{@other_user.email},#{@other_user2.email.upcase}"
+        response.should redirect_to(edit_pool_path(@pool))
+        flash[:notice].should =~ /Invites have been sent./
+        @other_user.reload
+        @other_user.pools.should include(@pool)
+        @other_user2.reload
+        @other_user2.pools.should include(@pool)
+      end
+    end
+    
+    describe "failure" do
+      it "can't invite to someone else's group" do
+        get :invite_members, :group_id => @other_pool.id, :emails => "#{@other_user2.email}"
+        response.should redirect_to(root_path)
+        flash[:alert].should =~ /You don't have access to that page/
+        @other_user2.reload
+        @other_user2.pools.should_not include(@other_pool)
+      end
+
+      it "can't invite to a nonexistant group" do
+        get :invite_members, :group_id => @other_pool.id + 10, :emails => "#{@other_user2.email}"
+        response.should redirect_to(root_path)
+        flash[:alert].should =~ /You don't have access to that page/
+      end
+    end
+  end
+
   describe "GET /pages/conference" do
 
     describe "success" do

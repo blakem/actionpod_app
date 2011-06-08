@@ -2,15 +2,20 @@
 
 <%= render 'form' %>
 
-<p>
-  <b>Members:</b><br>
-  <% @pool.users.each do |user| %>
-    <a href="<%= user.profile_path %>"><%= gravatar_for user, :size => 30 %></a> <%= link_to user.name, user.profile_path %>
-    <% unless user.id == @pool.admin_id %>
-      | <%= link_to "Remove from group", 
-            :controller => :pages, :action => :remove_from_group, :member_id => user.id, :group_id => @pool.id %>
-    <% end %>
-    <br/>
+<hr>
+
+<h1>Invite other people to join this group:</h1>
+  <%= form_tag(:controller => :pages, :action => :invite_members) do %>
+  Enter email addresses separated by commas:<br />
+  <invite>
+  <%= text_area_tag "emails", "", :class => "round" %><br/>
+  </invite>
+  Personalized message: (we will provide basic information in the invite)<br />
+  <personal_message>
+  <%= text_area_tag "message", "", :class => "round" %><br/>
+  </personal_message>
+  <%= hidden_field_tag "group_id", @pool.id %>
+  <%= submit_tag 'Send Invite' %>
   <% end %>
 </p>
 

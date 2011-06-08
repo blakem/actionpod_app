@@ -9,6 +9,12 @@
     <%= f.label :timelimit, "Time Limit:", :class => "round" %>
     <%= f.select(:timelimit, Pool.available_timelimits.map{ |t| ["#{t} minutes", t.to_s] }) %>
   </div>
+  
+<% if @show_member_count %>
+  <div class="field">
+    <b>Total Members:</b> <%= @pool.users.count %>
+  </div>
+<% end %>
   <div class="actions">
     <%= f.submit @submit_text %>
   </div>

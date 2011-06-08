@@ -279,6 +279,16 @@ class PagesController < ApplicationController
       redirect_to(root_path, :alert => "You don't have access to that page")
     end
   end
+  
+  def invite_members
+    pool = Pool.find_by_id(params[:group_id])
+    if pool and pool.admin_id == current_user.id
+      handle_invites(pool, params[:emails], params[:message])
+      redirect_to(edit_pool_path(pool), :notice => "Invites have been sent.")
+    else
+      redirect_to(root_path, :alert => "You don't have access to that page")
+    end
+  end
 
   private
       def check_for_admin_user
@@ -287,6 +297,15 @@ class PagesController < ApplicationController
         else
           redirect_to(root_path, :alert => "You don't have access to that page")
           return false
+        end
+      end
+      
+      def handle_invites(pool, emails, message)
+        emails.split(/,\s*/).each do |email|
+          user = User.find(:first, :conditions=>['LOWER(email) = ?', email.downcase])
+          if user
+            user.pools << pool
+          end
         end
       end
 end
