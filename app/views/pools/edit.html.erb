@@ -19,6 +19,7 @@
   <% end %>
 </p>
 
+<p>
  <b>Current Members:</b><br>
  <% @pool.users.each do |user| %>
    <a href="<%= user.profile_path %>"><%= gravatar_for user, :size => 30 %></a> <%= link_to user.name, user.profile_path %>
@@ -28,6 +29,7 @@
    <% end %>
    <br/>
  <% end %>
+</p>
 
 <%= link_to 'Show', @pool %> |
 <%= link_to 'Back', :controller => :pages, :action => :manage_groups %>
