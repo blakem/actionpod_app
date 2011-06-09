@@ -46,7 +46,7 @@ describe "Pools" do
         fill_in "Name",       :with => 'Testing Testing Group'
         fill_in "Time Limit", :with => '20'
         click_button
-        response.should render_template('pools/show')
+        response.should render_template('pools/invite')
         response.should have_selector('div.flash.notice', :content => "Group was successfully created")
       }.should change(Pool, :count).by(1)
     end
