@@ -31,6 +31,18 @@ class UserMailer < ActionMailer::Base
     )
   end
 
+  def member_invite(user, sender, message, pool)
+    @personal_message = message
+    @pool = pool
+    @user = user
+    @sender = sender
+    mail(
+      :to => user.email,
+      :subject => "#{sender.name} has invited to to the group: #{sender.name}",
+      :from => "#{sender.name} <#{sender.email}>",
+    )
+  end
+
   def message_to_blake(message, subject = "Soooper Cool")
     @message = message
     mail(

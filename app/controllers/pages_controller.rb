@@ -291,7 +291,7 @@ class PagesController < ApplicationController
   def invite_members
     pool = Pool.find_by_id(params[:group_id])
     if pool and pool.admin_id == current_user.id
-      handle_invites(pool, params[:emails], params[:message])
+      handle_invites(current_user, pool, params[:emails], params[:message])
       redirect_to(edit_pool_path(pool), :notice => "Invites have been sent.")
     else
       redirect_to(root_path, :alert => "You don't have access to that page")
@@ -308,12 +308,24 @@ class PagesController < ApplicationController
         end
       end
       
-      def handle_invites(pool, emails, message)
+      def handle_invites(sender, pool, emails, message)
         emails.split(/,\s*/).each do |email|
           user = User.find(:first, :conditions=>['LOWER(email) = ?', email.downcase])
           if user
             user.pools << pool
+            mail = UserMailer.member_invite(user, current_user, message, pool)
+            foo = mail.deliver
+            MemberInvite.create(
+              :sender_id => sender.id,
+              :to_id => user.id,
+              :pool_id => pool.id,
+              :body => foo.body.raw_source,
+            )
           end
         end
+      end
+      
+      def create_invite_code
+        'abc'
       end
 end
