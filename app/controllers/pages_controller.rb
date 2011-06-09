@@ -101,6 +101,7 @@ class PagesController < ApplicationController
         :hide_tip_hr => @end_time > Time.now,
         :hide_view_current_conference => @conference == current_user.conferences.first,
         :show_users_preferences => @conference.users.count > 1 || @conference.users.first != current_user,
+        :show_member_message => true,
       })
     else
       redirect_to(root_path, :alert => "There is no conference with that id")
@@ -188,14 +189,21 @@ class PagesController < ApplicationController
   def send_member_message
     user = User.find_by_id(params[:member_id])
     body = params[:body]
+    return_path = root_path
+    if user && params[:conference_id] && Conference.find_by_id(params[:conference_id])
+      return_path = {:controller => :pages, :action => :conference, :id => params[:conference_id]}
+    elsif user
+      return_path = user.profile_path
+    end
+    
     if user && !body.blank?
       UserMailer.deliver_member_message(user, current_user, body)
       MemberMessage.create(:sender_id => current_user.id, :to_id => user.id, :body => body)
-      redirect_to(user.profile_path, :notice => "Thank you.  Your message has been sent to #{user.name}.")
+      redirect_to(return_path, :notice => "Thank you.  Your message has been sent to #{user.name}.")
     elsif !user
-      redirect_to(root_path, :alert => "Sorry, we couldn't find that member.")
+      redirect_to(return_path, :alert => "Sorry, we couldn't find that member.")
     else
-      redirect_to(user.profile_path, :alert => "Please enter a message to send.")
+      redirect_to(return_path, :alert => "Please enter a message to send.")
     end
   end
 

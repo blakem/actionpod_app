@@ -9,6 +9,9 @@
   </member_message>
 </div>
   <%= hidden_field_tag 'member_id', @user.id %>
+  <% if @conference %>
+    <%= hidden_field_tag 'conference_id', @conference.id %>
+  <% end %>
 <div class="actions">
   <%= submit_tag "Send quick message to #{@user.first_name}" %>
 </div>

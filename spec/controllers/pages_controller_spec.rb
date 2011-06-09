@@ -619,6 +619,28 @@ describe PagesController do
         response.should redirect_to(user.profile_path)
       end
 
+      it "should redirect to the conference page if a conference id is given" do
+        user = Factory(:user)
+        conference = Conference.create!
+        get :send_member_message, :member_id => user.id, :body => 'blah', :conference_id => conference.id
+        flash[:notice].should =~ /Thank you.  Your message has been sent to #{user.name}./i
+        response.should redirect_to(:controller => :pages, :action => :conference, :id => conference.id)
+      end
+
+      it "should redirect to the user path if conference_id is invalid" do
+        user = Factory(:user)
+        conference = Conference.create!
+        get :send_member_message, :member_id => user.id, :body => 'blah', :conference_id => conference.id + 1
+        response.should redirect_to(user.profile_path)
+      end
+
+      it "should redirect to the root path if both conference_id and user_id are invalid" do
+        user = Factory(:user)
+        conference = Conference.create!
+        get :send_member_message, :member_id => user.id + 1, :body => 'blah', :conference_id => conference.id + 1
+        response.should redirect_to(root_path)
+      end
+
       it "should send an email with the body to the member_id" do
         user = Factory(:user)
         UserMailer.should_receive(:deliver_member_message).with(user, @current_user, 'Test Message')

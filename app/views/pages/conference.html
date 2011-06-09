@@ -7,6 +7,9 @@
   <%= render 'user_information' %>
   <%= render 'user_about' %>
   <%= render 'user_plan' %>
+  <% unless @current_user.id == @user.id %>
+    <%= render 'user_member_message' %>
+  <% end %>
   <% unless i == @users.count - 1 %>
     <hr class="long" />
   <% end %>
