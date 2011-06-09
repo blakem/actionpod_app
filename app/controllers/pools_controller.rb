@@ -11,6 +11,7 @@ class PoolsController < ApplicationController
   def show
     @pool = pool_from_params
     if @pool
+      breadcrumbs.add @pool.name
       @users = @pool.users.paginate(:page => params[:page], :per_page => 10)
     else
       redirect_to(root_path, :alert => "You don't have permissions to view that group.")
@@ -26,9 +27,25 @@ class PoolsController < ApplicationController
   # GET /pools/1/edit
   def edit
     @pool = admin_pool_from_params
-    @submit_text = 'Update Group'
-    @show_member_count = true
-    redirect_to(root_path, :alert => "You don't have permissions to view that group.") unless @pool
+    if @pool
+      breadcrumbs.add @pool.name
+      breadcrumbs.add 'Edit'
+      @submit_text = 'Update Group'
+      @show_member_count = true
+    else
+      redirect_to(root_path, :alert => "You don't have permissions to view that group.")
+    end
+  end
+
+  # GET /pools/1/invite
+  def invite
+    @pool = admin_pool_from_params
+    if @pool
+      breadcrumbs.add @pool.name
+      breadcrumbs.add 'Invite Members'
+    else
+      redirect_to(root_path, :alert => "You don't have permissions to view that group.")
+    end
   end
 
   # POST /pools
@@ -36,7 +53,7 @@ class PoolsController < ApplicationController
     @pool = Pool.new(params[:pool].merge({:admin_id => current_user.id}))
     if @pool.save
       current_user.pools << @pool
-      redirect_to(@pool, :notice => 'Group was successfully created.')
+      redirect_to(invite_pool_path(@pool), :notice => 'Group was successfully created. Now invite some people.')
     else
       render :action => "new"
     end

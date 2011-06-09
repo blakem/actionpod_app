@@ -19,6 +19,10 @@ describe PoolsController do
       get("/groups/1/edit").should route_to("pools#edit", :id => "1")
     end
 
+    it "routes to #edit" do
+      get("/groups/1/invite").should route_to("pools#invite", :id => "1")
+    end
+
     it "routes to #create" do
       post("/groups").should route_to("pools#create")
     end

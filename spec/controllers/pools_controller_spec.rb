@@ -78,6 +78,28 @@ describe PoolsController do
       end
     end
 
+    describe "GET invite" do
+      it "assigns the requested pool as @pool" do
+        get :invite, :id => @pool1.id.to_s
+        assigns(:pool).should eq(@pool1)
+      end
+      
+      it "redirects if you try to show a pool you aren't admin of" do
+        get :invite, :id => @pool2.id
+        response.should redirect_to(root_path)
+      end
+
+      it "redirects if you try to show a pool you don't belong to" do
+        get :invite, :id => @pool_other.id
+        response.should redirect_to(root_path)
+      end
+
+      it "redirects if you try to send an arbitrary id" do
+        get :invite, :id => 77345
+        response.should redirect_to(root_path)
+      end
+    end
+
     describe "POST create" do
       describe "with valid params" do
         it "creates a new Pool" do
@@ -103,7 +125,7 @@ describe PoolsController do
 
         it "redirects to the created pool" do
           post :create, :pool => @attr
-          response.should redirect_to(Pool.last)
+          response.should redirect_to(invite_pool_path(Pool.last))
         end
       end
 

@@ -18,6 +18,7 @@
 
 <% if @pool.admin_id == current_user.id %>
   <%= link_to 'Edit', edit_pool_path(@pool) %> |
+  <%= link_to 'Invite Members', invite_pool_path(@pool) %> |
 <% end %>
 
 <%= link_to 'Back', :controller => :pages, :action => :manage_groups %>

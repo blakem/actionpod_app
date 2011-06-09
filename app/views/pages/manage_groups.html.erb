@@ -6,6 +6,7 @@
         | <%= link_to "Show", pool %>
       <% if pool.admin_id == current_user.id %>
         | <%= link_to "Edit", edit_pool_path(pool) %>
+        | <%= link_to "Invite Members", invite_pool_path(pool) %>
         <% if pool.users.count <= 1 %>
           | <%= link_to 'Delete', pool, :confirm => 'Are you sure you want to delete this Group?', :method => :delete %>
         <% end %>

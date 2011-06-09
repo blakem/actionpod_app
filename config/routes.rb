@@ -4,7 +4,11 @@ ActionpodApp::Application.routes.draw do
   devise_for :users, :controllers => { :registrations => 'registrations' }, :path => 'members'
   resources :events
   resources :phones
-  resources :pools, :path => 'groups'
+  resources :pools, :path => 'groups' do
+    member do
+      get :invite
+    end
+  end
 
   post  'pages/plan'  => 'pages#plan_create'
   put   'pages/intro' => 'pages#intro_update'
