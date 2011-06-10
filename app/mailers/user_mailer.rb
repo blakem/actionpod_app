@@ -43,6 +43,17 @@ class UserMailer < ActionMailer::Base
     )
   end
 
+  def nonmember_invite(email, sender, message, pool, token)
+    @personal_message = message
+    @pool = pool
+    @sender = sender
+    mail(
+      :to => email,
+      :subject => "#{sender.name} has invited you to the group: #{pool.name}",
+      :from => "#{sender.name} <#{sender.email}>",
+    )
+  end
+
   def message_to_blake(message, subject = "Soooper Cool")
     @message = message
     mail(

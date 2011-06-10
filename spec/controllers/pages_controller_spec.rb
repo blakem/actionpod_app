@@ -245,6 +245,32 @@ describe PagesController do
         @other_user.reload
         @other_user.pools.should == [@pool]
       end
+
+      it "should email and invite to a non-user" do
+        ActionMailer::Base.deliveries = []
+        test_email = 'bobby@example.com'
+        expect {
+          get :invite_members, :group_id => @pool.id, :emails => test_email, :message => 'NewCoolGroup Message'
+        }.to change(MemberInvite, :count).by(1)
+        response.should redirect_to(invite_pool_path(@pool))
+        flash[:notice].should =~ /Invites have been sent./  
+        invites = MemberInvite.where(
+          :sender_id => @current_user.id,
+          :pool_id => @pool.id,
+          :to_id => nil,
+        )
+        invites.count.should == 1
+        invites.first.body.should =~ /NewCoolGroup Message/
+        invites.first.invite_code.length.should == 20
+        ActionMailer::Base.deliveries.count.should == 1
+
+        email = ActionMailer::Base.deliveries.first
+        email.subject.should =~ /#{@current_user.name} has invited you to the group: #{@pool.name}/
+        email.body.should =~ /#{@current_user.name} has invited you to the group: #{@pool.name}/
+        email.body.should =~ /NewCoolGroup Message/
+        email.to.should == [test_email]
+        email.from.should == [@current_user.email]
+      end
     end
     
     describe "failure" do

@@ -316,24 +316,22 @@ class PagesController < ApplicationController
       def handle_invites(sender, pool, emails, message)
         emails.split(/,\s*/).each do |email|
           user = User.find(:first, :conditions=>['LOWER(email) = ?', email.downcase])
-          if user
-            unless user.pools.include?(pool)
-              user.pools << pool
-              token = MemberInvite.generate_token
-              mail = UserMailer.member_invite(user, current_user, message, pool, token)
-              body = mail.body.raw_source
-              mail.deliver
-            else
-              body = ''
-            end
-            MemberInvite.create(
-              :sender_id => sender.id,
-              :to_id => user.id,
-              :pool_id => pool.id,
-              :body => body,
-              :invite_code => token,
-            )
+          token = MemberInvite.generate_token
+          if user && !user.pools.include?(pool)
+            user.pools << pool
+            mail = UserMailer.member_invite(user, current_user, message, pool, token)
+            mail.deliver
+          elsif !user
+            mail = UserMailer.nonmember_invite(email, current_user, message, pool, token)
+            mail.deliver            
           end
+          MemberInvite.create(
+            :sender_id => sender.id,
+            :to_id => user ? user.id : nil,
+            :pool_id => pool.id,
+            :body => mail ? mail.body.raw_source : '',
+            :invite_code => token,
+          )
         end
       end
       
