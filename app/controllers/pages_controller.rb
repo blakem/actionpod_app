@@ -278,10 +278,10 @@ class PagesController < ApplicationController
     pool = Pool.find_by_id(params[:group_id])
     if user && pool && (current_user.id == user.id or current_user.id == pool.admin_id)
       if user.id == pool.admin_id
-        redirect_to(edit_pool_path(pool), :alert => "You cannot remove yourself from this group.")
+        redirect_to(invite_pool_path(pool), :alert => "You cannot remove yourself from this group.")
       else
         pool.users.delete(user)
-        redirect_to(edit_pool_path(pool), :notice => "#{user.name} was removed from the group.")
+        redirect_to(invite_pool_path(pool), :notice => "#{user.name} was removed from the group.")
       end
     else
       redirect_to(root_path, :alert => "You don't have access to that page")
@@ -292,7 +292,7 @@ class PagesController < ApplicationController
     pool = Pool.find_by_id(params[:group_id])
     if pool and pool.admin_id == current_user.id
       handle_invites(current_user, pool, params[:emails], params[:message])
-      redirect_to(edit_pool_path(pool), :notice => "Invites have been sent.")
+      redirect_to(invite_pool_path(pool), :notice => "Invites have been sent.")
     else
       redirect_to(root_path, :alert => "You don't have access to that page")
     end

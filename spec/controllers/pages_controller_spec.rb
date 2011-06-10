@@ -131,7 +131,7 @@ describe PagesController do
       it "should remove a user from a group you are admin of" do
         get :remove_from_group, :member_id => @other_user.id, :group_id => @pool.id
         flash[:notice].should =~ /#{@other_user.name} was removed from the group/
-        response.should redirect_to(edit_pool_path(@pool))
+        response.should redirect_to(invite_pool_path(@pool))
         @other_user.reload
         @other_user.pools.should be_empty
       end
@@ -142,7 +142,7 @@ describe PagesController do
         @current_user.pools << @pool2
         get :remove_from_group, :member_id => @current_user.id, :group_id => @pool2.id
         flash[:notice].should =~ /#{@current_user.name} was removed from the group/
-        response.should redirect_to(edit_pool_path(@pool2))
+        response.should redirect_to(invite_pool_path(@pool2))
         @current_user.reload
         @current_user.pools.should_not include(@pool2)
       end
@@ -164,7 +164,7 @@ describe PagesController do
       it "should redirect if you try to delete the admin of a group" do
         get :remove_from_group, :member_id => @pool.admin_id, :group_id => @pool.id
         flash[:alert].should =~ /You cannot remove yourself from this group./
-        response.should redirect_to(edit_pool_path(@pool))
+        response.should redirect_to(invite_pool_path(@pool))
       end      
 
       it "should redirect if you try to delete someone else from a group you aren't admin of" do
@@ -193,7 +193,7 @@ describe PagesController do
         expect {
           get :invite_members, :group_id => @pool.id, :emails => "#{@other_user.email}", :message => 'Foo'
         }.to change(MemberInvite, :count).by(1)
-        response.should redirect_to(edit_pool_path(@pool))
+        response.should redirect_to(invite_pool_path(@pool))
         flash[:notice].should =~ /Invites have been sent./
         @other_user.reload
         @other_user.pools.should include(@pool)
@@ -216,7 +216,7 @@ describe PagesController do
 
       it "should add users to the group you invite them to" do
         get :invite_members, :group_id => @pool.id, :emails => "#{@other_user.email}, #{@other_user2.email}"
-        response.should redirect_to(edit_pool_path(@pool))
+        response.should redirect_to(invite_pool_path(@pool))
         flash[:notice].should =~ /Invites have been sent./
         @other_user.reload
         @other_user.pools.should include(@pool)
@@ -226,7 +226,7 @@ describe PagesController do
 
       it "should add users to the group you invite them to" do
         get :invite_members, :group_id => @pool.id, :emails => "#{@other_user.email},#{@other_user2.email.upcase}"
-        response.should redirect_to(edit_pool_path(@pool))
+        response.should redirect_to(invite_pool_path(@pool))
         flash[:notice].should =~ /Invites have been sent./
         @other_user.reload
         @other_user.pools.should include(@pool)
