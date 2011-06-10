@@ -189,13 +189,7 @@ describe PagesController do
 
     describe "success" do
       it "should add a user to the group you invite them to" do
-        # body = mock('Body')
-        # body.should_receive(:raw_source)
-        # mail = mock('Mail')
-        # mail.should_receive(:body).and_return(body)
-        # deliver = mock('Deliver')
-        # deliver.should_receive(:deliver).and_return(mail)
-        # UserMailer.should_receive(:member_invite).with(@other_user, @current_user, 'Foo', @pool).and_return(deliver)
+        ActionMailer::Base.deliveries = []
         expect {
           get :invite_members, :group_id => @pool.id, :emails => "#{@other_user.email}", :message => 'Foo'
         }.to change(MemberInvite, :count).by(1)
@@ -211,6 +205,13 @@ describe PagesController do
         )
         invites.count.should == 1
         invites.first.body.should =~ /Foo/
+        ActionMailer::Base.deliveries.count.should == 1
+        email = ActionMailer::Base.deliveries.first
+        email.subject.should =~ /#{@current_user.name} has invited you to the group: #{@pool.name}/
+        email.body.should =~ /#{@current_user.name} has added you to the group: #{@pool.name}/
+        email.body.should =~ /Foo/
+        email.to.should == [@other_user.email]
+        email.from.should == [@current_user.email]
       end
 
       it "should add users to the group you invite them to" do

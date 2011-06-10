@@ -38,7 +38,7 @@ class UserMailer < ActionMailer::Base
     @sender = sender
     mail(
       :to => user.email,
-      :subject => "#{sender.name} has invited to to the group: #{sender.name}",
+      :subject => "#{sender.name} has invited you to the group: #{pool.name}",
       :from => "#{sender.name} <#{sender.email}>",
     )
   end
