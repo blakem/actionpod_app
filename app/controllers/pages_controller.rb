@@ -317,14 +317,19 @@ class PagesController < ApplicationController
         emails.split(/,\s*/).each do |email|
           user = User.find(:first, :conditions=>['LOWER(email) = ?', email.downcase])
           if user
-            user.pools << pool
-            mail = UserMailer.member_invite(user, current_user, message, pool)
-            foo = mail.deliver
+            unless user.pools.include?(pool)
+              user.pools << pool 
+              mail = UserMailer.member_invite(user, current_user, message, pool)
+              body = mail.body.raw_source
+              mail.deliver
+            else
+              body = ''
+            end
             MemberInvite.create(
               :sender_id => sender.id,
               :to_id => user.id,
               :pool_id => pool.id,
-              :body => foo.body.raw_source,
+              :body => body
             )
           end
         end

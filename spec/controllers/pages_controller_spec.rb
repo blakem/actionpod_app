@@ -235,6 +235,15 @@ describe PagesController do
         @other_user2.reload
         @other_user2.pools.should include(@pool)
       end
+
+      it "shouldn't add users to the group if they are already members" do
+        @other_user.pools = [@pool]
+        get :invite_members, :group_id => @pool.id, :emails => "#{@other_user.email}"
+        response.should redirect_to(invite_pool_path(@pool))
+        flash[:notice].should =~ /Invites have been sent./
+        @other_user.reload
+        @other_user.pools.should == [@pool]
+      end
     end
     
     describe "failure" do
