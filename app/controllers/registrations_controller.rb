@@ -1,9 +1,11 @@
 class RegistrationsController < Devise::RegistrationsController
 
   def new
-    @invite = MemberInvite.find_by_invite_code(params[:invite_code])
-    if @invite
-      @group = Pool.find_by_id(@invite.pool_id)
+    if params[:invite_code] and !params[:invite_code].blank?
+      @invite = MemberInvite.find_by_invite_code(params[:invite_code])
+      if @invite
+        @group = Pool.find_by_id(@invite.pool_id)
+      end
     end
     super
   end
