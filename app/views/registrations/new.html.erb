@@ -8,8 +8,7 @@
 
 <%= pretty_object_error_messages(resource) %>
 
-<% if @group %>
-  <%= f.hidden_field :invite_code, @invite.invite_code %>
+<% if @group && @invite %>
 <% else %>
   <div class="field">
     <p><%= f.label :invite_code, "Invite Code:", :class => "round" %> 
