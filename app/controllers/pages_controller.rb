@@ -281,7 +281,12 @@ class PagesController < ApplicationController
         redirect_to(invite_pool_path(pool), :alert => "You cannot remove yourself from this group.")
       else
         pool.users.delete(user)
-        redirect_to(invite_pool_path(pool), :notice => "#{user.name} was removed from the group.")
+        Event.where(:user_id => user.id, :pool_id => pool.id).map{ |e| e.destroy }
+        if current_user.id == user.id
+          redirect_to(:controller => :pages, :action => :manage_groups, :notice => "You have been removed from the group.")
+        else
+          redirect_to(invite_pool_path(pool), :notice => "#{user.name} was removed from the group.")
+        end
       end
     else
       redirect_to(root_path, :alert => "You don't have access to that page")

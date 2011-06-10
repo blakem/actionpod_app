@@ -19,7 +19,8 @@
    <a href="<%= user.profile_path %>"><%= gravatar_for user, :size => 30 %></a> <%= link_to user.name, user.profile_path %>
    <% unless user.id == @pool.admin_id %>
      | <%= link_to "Remove from group", 
-           :controller => :pages, :action => :remove_from_group, :member_id => user.id, :group_id => @pool.id %>
+           :controller => :pages, :action => :remove_from_group, :member_id => user.id, :group_id => @pool.id,
+           :confirm => 'Are you sure you want to unsubscribe this member?' %>
    <% end %>
    <br/>
  <% end %>

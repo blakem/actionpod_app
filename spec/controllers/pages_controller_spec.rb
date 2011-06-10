@@ -139,12 +139,14 @@ describe PagesController do
       it "should remove yourself from a group you are not admin of" do
         @user2 = Factory(:user)
         @pool2 = Factory(:pool, :admin_id => @user2.id)
+        @event = Factory(:event, :user_id => @current_user.id, :pool_id => @pool2.id)
+        event_id = @event.id
         @current_user.pools << @pool2
         get :remove_from_group, :member_id => @current_user.id, :group_id => @pool2.id
-        flash[:notice].should =~ /#{@current_user.name} was removed from the group/
-        response.should redirect_to(invite_pool_path(@pool2))
+        response.should redirect_to(:controller => :pages, :action => :manage_groups, :notice => 'You have been removed from the group.')
         @current_user.reload
         @current_user.pools.should_not include(@pool2)
+        Event.find_by_id(event_id).should be_nil
       end
     end
     
