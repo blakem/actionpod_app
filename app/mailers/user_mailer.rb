@@ -47,6 +47,7 @@ class UserMailer < ActionMailer::Base
     @personal_message = message
     @pool = pool
     @sender = sender
+    @token = token
     mail(
       :to => email,
       :subject => "#{sender.name} has invited you to the group: #{pool.name}",

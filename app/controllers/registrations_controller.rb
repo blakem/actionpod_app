@@ -1,5 +1,11 @@
 class RegistrationsController < Devise::RegistrationsController
 
+  def new
+    @invite = MemberInvite.find_by_invite_code(params[:invite_code])
+    @group = Pool.find_by_id(@invite.pool_id) if @invite
+    super
+  end
+
   def destroy
     resource.soft_delete # instead of resource.destroy
     set_flash_message :notice, :destroyed

@@ -7,12 +7,29 @@
     <p>
     <%= @sender.name %> has invited you to the group: <%= @pool.name %>.  
     </p>
+    <p>&nbsp;</p>
 
+    <p>
+    To find out more about 15 minute calls: <a href="http://www.15minutecalls.com">Click here</a>
+    </p>
+    <p>&nbsp;</p>
+  
   <% unless @personal_message.blank? %>
     <p>
-    They included the personal message: <%= @personal_message %>
+    They included the personal message:
+    </p>
+    <p>&nbsp;</p>
+
     <p>
+    <%= @personal_message %>
+    </p>
+    <p>&nbsp;</p>
   <% end %>
 
+    <p>
+    Follow this link to <a href="http://www.15minutecalls.com/members/sign_up?invite_code=<%= @token %>">join the group.</a>
+    </p>
+    <p>&nbsp;</p>
+  
   </body>
 </html>
