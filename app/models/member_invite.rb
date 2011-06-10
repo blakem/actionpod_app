@@ -14,4 +14,13 @@
 #
 
 class MemberInvite < ActiveRecord::Base
+
+  def self.generate_token
+    loop do
+      token = Devise.friendly_token
+      unless MemberInvite.find_by_invite_code(token) or InviteCode.find_by_name(token) or token == User.secret_invite_code
+        break token
+      end
+    end
+  end
 end

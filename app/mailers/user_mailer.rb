@@ -31,7 +31,7 @@ class UserMailer < ActionMailer::Base
     )
   end
 
-  def member_invite(user, sender, message, pool)
+  def member_invite(user, sender, message, pool, token)
     @personal_message = message
     @pool = pool
     @user = user

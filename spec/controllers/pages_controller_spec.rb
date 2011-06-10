@@ -207,6 +207,7 @@ describe PagesController do
         )
         invites.count.should == 1
         invites.first.body.should =~ /Foo/
+        invites.first.invite_code.length.should == 20
         ActionMailer::Base.deliveries.count.should == 1
         email = ActionMailer::Base.deliveries.first
         email.subject.should =~ /#{@current_user.name} has invited you to the group: #{@pool.name}/

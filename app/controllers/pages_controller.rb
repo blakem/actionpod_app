@@ -318,8 +318,9 @@ class PagesController < ApplicationController
           user = User.find(:first, :conditions=>['LOWER(email) = ?', email.downcase])
           if user
             unless user.pools.include?(pool)
-              user.pools << pool 
-              mail = UserMailer.member_invite(user, current_user, message, pool)
+              user.pools << pool
+              token = MemberInvite.generate_token
+              mail = UserMailer.member_invite(user, current_user, message, pool, token)
               body = mail.body.raw_source
               mail.deliver
             else
@@ -329,7 +330,8 @@ class PagesController < ApplicationController
               :sender_id => sender.id,
               :to_id => user.id,
               :pool_id => pool.id,
-              :body => body
+              :body => body,
+              :invite_code => token,
             )
           end
         end
