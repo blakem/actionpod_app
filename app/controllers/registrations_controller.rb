@@ -36,6 +36,12 @@ class RegistrationsController < Devise::RegistrationsController
       set_flash_message :notice, :signed_up
       sign_in_and_redirect(resource_name, resource)
     else
+      unless resource.invite_code.blank?
+        @invite = MemberInvite.find_by_invite_code(resource.invite_code)
+        if @invite
+          @group = Pool.find_by_id(@invite.pool_id)
+        end
+      end
       clean_up_passwords(resource)
       render_with_scope :new
     end
