@@ -64,7 +64,7 @@ class User < ActiveRecord::Base
 
   validates_each :invite_code, :on => :create do |record, attr, value|
       record.errors.add attr, "Please enter correct invite code." unless
-        value && (value == secret_invite_code || InviteCode.find_by_name(value.strip.downcase))
+        value && (value == secret_invite_code || InviteCode.find_by_name(value.strip.downcase) || MemberInvite.find_by_invite_code(value))
   end
 
   validates_format_of :handle, :with => /\A[0-9a-z]+\Z/i, :on => :update, :message => "can only be letters and numbers."
