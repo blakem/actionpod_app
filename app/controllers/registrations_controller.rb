@@ -1,14 +1,16 @@
 class RegistrationsController < Devise::RegistrationsController
 
   def new
+    values = {}
     if params[:invite_code] and !params[:invite_code].blank?
       @invite = MemberInvite.find_by_invite_code(params[:invite_code])
       if @invite
         @group = Pool.find_by_id(@invite.pool_id)
+        values = {:email => @invite.email}
       end
     end
-    super
-    resource.email = @invite.email if @invite
+    resource = build_resource(values)
+    respond_with_navigational(resource){ render_with_scope :new }
   end
 
   def destroy
