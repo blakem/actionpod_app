@@ -8,6 +8,7 @@ class RegistrationsController < Devise::RegistrationsController
       end
     end
     super
+    resource.email = @invite.email if @invite
   end
 
   def destroy
