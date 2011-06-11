@@ -331,6 +331,7 @@ class PagesController < ApplicationController
             :pool_id => pool.id,
             :body => mail ? mail.body.raw_source : '',
             :invite_code => token,
+            :email => email,
           )
         end
       end

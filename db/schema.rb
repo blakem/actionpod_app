@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110609210122) do
+ActiveRecord::Schema.define(:version => 20110611004315) do
 
   create_table "calls", :force => true do |t|
     t.string   "Sid"
@@ -88,6 +88,7 @@ ActiveRecord::Schema.define(:version => 20110609210122) do
     t.text     "body"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "email"
   end
 
   create_table "member_mails", :force => true do |t|

@@ -258,6 +258,7 @@ describe PagesController do
           :sender_id => @current_user.id,
           :pool_id => @pool.id,
           :to_id => nil,
+          :email => test_email,
         )
         invites.count.should == 1
         invites.first.body.should =~ /NewCoolGroup Message/
