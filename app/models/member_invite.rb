@@ -1,5 +1,5 @@
 # == Schema Information
-# Schema version: 20110611004315
+# Schema version: 20110613190007
 #
 # Table name: member_invites
 #
@@ -12,6 +12,7 @@
 #  created_at  :datetime
 #  updated_at  :datetime
 #  email       :string(255)
+#  message     :text
 #
 
 class MemberInvite < ActiveRecord::Base

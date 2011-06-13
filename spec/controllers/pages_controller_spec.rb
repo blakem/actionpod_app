@@ -259,6 +259,7 @@ describe PagesController do
           :pool_id => @pool.id,
           :to_id => nil,
           :email => test_email,
+          :message => 'NewCoolGroup Message'
         )
         invites.count.should == 1
         invites.first.body.should =~ /NewCoolGroup Message/
@@ -455,6 +456,89 @@ describe PagesController do
         login_admin
         get :callcal
         response.should be_success
+      end
+    end
+  end
+
+  describe "GET /pages/member_invite_email" do
+    describe "when not logged in" do
+      it "should redirect to the root path" do
+        controller.user_signed_in?.should be_false
+        get :member_invite_email
+        response.should redirect_to(new_user_session_path)
+      end
+    end
+
+    describe "when user logged in" do
+      it "should redirect to the root path" do
+        login_user
+        get :member_invite_email
+        flash[:alert].should =~ /You don't have access to that page/i
+        response.should redirect_to(root_path)
+      end
+    end
+
+    describe "when admin logged in" do
+      it "should be a success" do
+        login_admin
+        user = Factory(:user)
+        pool = Factory(:pool)
+        MemberInvite.create(
+          :sender_id => @current_user.id,
+          :to_id => user.id,
+          :pool_id => pool.id,
+          :invite_code => 'abcdef',
+          :body => "Foo",
+          :email => user.email,
+          :message => 'Blah',
+        )
+        get :member_invite_email
+        response.should be_success
+        response.body.should =~ /#{pool.name}/
+        response.body.should =~ /#{user.name}/
+        response.body.should =~ /Blah/
+        response.body.should =~ /#{@current_user.name}/
+      end
+    end
+  end
+
+  describe "GET /pages/nonmember_invite_email" do
+    describe "when not logged in" do
+      it "should redirect to the root path" do
+        controller.user_signed_in?.should be_false
+        get :nonmember_invite_email
+        response.should redirect_to(new_user_session_path)
+      end
+    end
+
+    describe "when user logged in" do
+      it "should redirect to the root path" do
+        login_user
+        get :nonmember_invite_email
+        flash[:alert].should =~ /You don't have access to that page/i
+        response.should redirect_to(root_path)
+      end
+    end
+
+    describe "when admin logged in" do
+      it "should be a success" do
+        login_admin
+        pool = Factory(:pool)
+        email = 'xyzzyabc@example.com'
+        MemberInvite.create(
+          :sender_id => @current_user.id,
+          :to_id => nil,
+          :pool_id => pool.id,
+          :invite_code => 'abcdef',
+          :body => "Foo",
+          :email => email,
+          :message => 'Blah',
+        )
+        get :nonmember_invite_email
+        response.should be_success
+        response.body.should =~ /#{pool.name}/
+        response.body.should =~ /Blah/
+        response.body.should =~ /#{@current_user.name}/
       end
     end
   end

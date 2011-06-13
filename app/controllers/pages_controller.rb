@@ -266,6 +266,46 @@ class PagesController < ApplicationController
     set_profile_values
     render :inline => Devise::Mailer.confirmation_instructions(current_user).body.raw_source.html_safe, :layout => true
   end
+
+  def nonmember_invite_email
+    return unless check_for_admin_user
+    set_profile_values
+    invite = MemberInvite.all.sort_by(&:id).select{ |i| !i.to_id }.last
+    render :inline => message = UserMailer.nonmember_invite(
+      invite.email,
+      User.find_by_id(invite.sender_id),
+      invite.message,
+      Pool.find_by_id(invite.pool_id),
+      invite.invite_code,
+    ).body.raw_source.html_safe, :layout => true
+  end
+
+  def member_invite_email
+    return unless check_for_admin_user
+    set_profile_values
+    invite = MemberInvite.all.sort_by(&:id).select{ |i| i.to_id }.last
+    user = User.find_by_id(invite.to_id)
+    render :inline => message = UserMailer.member_invite(
+      user,
+      User.find_by_id(invite.sender_id),
+      invite.message,
+      Pool.find_by_id(invite.pool_id),
+      invite.invite_code,
+    ).body.raw_source.html_safe, :layout => true
+  end
+
+  def nonmember_invite_email
+    return unless check_for_admin_user
+    set_profile_values
+    invite = MemberInvite.last
+    render :inline => message = UserMailer.nonmember_invite(
+      invite.email,
+      User.find_by_id(invite.sender_id),
+      invite.message,
+      Pool.find_by_id(invite.pool_id),
+      invite.invite_code,
+    ).body.raw_source.html_safe, :layout => true
+  end
   
   def manage_groups
     breadcrumbs.add 'Manage Groups'
@@ -330,13 +370,10 @@ class PagesController < ApplicationController
             :to_id => user ? user.id : nil,
             :pool_id => pool.id,
             :body => mail ? mail.body.raw_source : '',
+            :message => message,
             :invite_code => token,
             :email => email,
           )
         end
-      end
-      
-      def create_invite_code
-        'abc'
       end
 end
