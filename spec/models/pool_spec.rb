@@ -63,4 +63,17 @@ describe Pool do
     pool.users.should_not include(user3)
   end
   
+  it "deletes invites when the pool is deleted" do
+    pool = Factory(:pool)
+    user = Factory(:user)
+    invite_id = MemberInvite.create!(
+      :sender_id => user.id,
+      :pool_id => pool.id,
+      :invite_code => 'abcdef'
+    ).id
+    expect {
+      pool.destroy
+    }.to change(MemberInvite, :count).by(-1)
+    MemberInvite.find_by_id(invite_id).should be_nil
+  end
 end

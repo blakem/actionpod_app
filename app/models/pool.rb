@@ -18,6 +18,7 @@ class Pool < ActiveRecord::Base
   validates_numericality_of :timelimit, :greater_than => 1, :less_than_or_equal_to => 30
   
   after_initialize :init
+  before_destroy :destroy_invites
 
   def init
     self.timelimit ||= 15
@@ -33,7 +34,12 @@ class Pool < ActiveRecord::Base
     list.sort
   end
 
+  def destroy_invites
+    MemberInvite.where(:pool_id => self.id).each { |i| i.destroy }    
+  end
+
   def self.default_pool
     self.where(:name => 'Default Group').sort_by(&:id).first  
   end  
+  
 end
