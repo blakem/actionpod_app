@@ -185,6 +185,7 @@ describe PagesController do
       login_user
       @other_user = Factory(:user)
       @other_user2 = Factory(:user)
+      @other_user3 = Factory(:user)
       @pool = Factory(:pool, :admin_id => @current_user.id)
       @other_pool = Factory(:pool, :admin_id => @other_user.id)
     end
@@ -228,13 +229,15 @@ describe PagesController do
       end
 
       it "should add users to the group you invite them to" do
-        get :invite_members, :group_id => @pool.id, :emails => "#{@other_user.email},#{@other_user2.email.upcase}"
+        get :invite_members, :group_id => @pool.id, :emails => "#{@other_user.email},#{@other_user2.email.upcase}   \n   #{@other_user3.email}   "
         response.should redirect_to(invite_pool_path(@pool))
         flash[:notice].should =~ /Invites have been sent./
         @other_user.reload
         @other_user.pools.should include(@pool)
         @other_user2.reload
         @other_user2.pools.should include(@pool)
+        @other_user3.reload
+        @other_user3.pools.should include(@pool)
       end
 
       it "shouldn't add users to the group if they are already members" do

@@ -354,7 +354,8 @@ class PagesController < ApplicationController
       end
       
       def handle_invites(sender, pool, emails, message)
-        emails.split(/,\s*/).each do |email|
+        emails.split(/\s*[,\n]\s*/).each do |email|
+          email = email.strip
           user = User.find(:first, :conditions=>['LOWER(email) = ?', email.downcase])
           token = MemberInvite.generate_token
           if user && !user.pools.include?(pool)
