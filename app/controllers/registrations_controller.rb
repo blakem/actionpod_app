@@ -37,6 +37,11 @@ class RegistrationsController < Devise::RegistrationsController
 
     if resource.save
       TwilioCaller.new.send_error_to_blake("New User: #{resource.id}:#{resource.name} - #{resource.invite_code}") if Rails.env.production?
+      invite = MemberInvite.find_by_invite_code(resource.invite_code)
+      if invite
+        group = Pool.find_by_id(invite.pool_id)
+        group.add_member(resource) if group
+      end
       set_flash_message :notice, :signed_up
       sign_in_and_redirect(resource_name, resource)
     else

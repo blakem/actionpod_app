@@ -38,6 +38,10 @@ class Pool < ActiveRecord::Base
   def destroy_invites
     MemberInvite.where(:pool_id => self.id).each { |i| i.destroy }    
   end
+  
+  def add_member(user)
+    user.pools << self unless user.pools.include?(self)
+  end
 
   def self.default_pool
     self.where(:name => 'Default Group').sort_by(&:id).first  

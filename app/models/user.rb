@@ -103,7 +103,7 @@ class User < ActiveRecord::Base
   
   def add_to_default_pool
     pool = Pool.default_pool
-    self.pools = [pool] if pool
+    self.pools << pool if pool
   end
   
   def soft_delete

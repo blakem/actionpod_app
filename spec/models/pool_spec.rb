@@ -76,4 +76,21 @@ describe Pool do
     }.to change(MemberInvite, :count).by(-1)
     MemberInvite.find_by_id(invite_id).should be_nil
   end
+  
+  describe "add_member" do
+    it "adds itself to a users pools" do
+      pool = Factory(:pool)
+      pool2 = Factory(:pool)
+      user = Factory(:user)
+      pool.add_member(user)
+      user.pools.should include(pool)
+      user.pools.should_not include(pool2)
+      pool2.add_member(user)
+      user.pools.should include(pool)
+      user.pools.should include(pool2)
+      user.pools.count.should == 3
+      pool2.add_member(user)
+      user.pools.count.should == 3
+    end
+  end
 end
