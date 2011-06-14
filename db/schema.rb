@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110613190007) do
+ActiveRecord::Schema.define(:version => 20110613233304) do
 
   create_table "calls", :force => true do |t|
     t.string   "Sid"
@@ -126,10 +126,11 @@ ActiveRecord::Schema.define(:version => 20110613190007) do
 
   create_table "pools", :force => true do |t|
     t.string   "name"
-    t.integer  "admin_id",   :null => false
+    t.integer  "admin_id",             :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "timelimit",  :null => false
+    t.integer  "timelimit",            :null => false
+    t.boolean  "hide_optional_fields"
   end
 
   create_table "pools_users", :id => false, :force => true do |t|

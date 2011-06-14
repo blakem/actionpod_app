@@ -38,25 +38,29 @@
   <%= pf.hidden_field :primary, :value => true %>
 <% end %>
 </div>
-<div class="field">
-  <p><%= f.label :title, "Title:", :class => "round" %> (optional)
-  <%= f.text_field :title, :class => "round" %><br />
-  <i>(Software Developer, Graphic Designer, Author, etc...)</i>
-  </p>
-</div>
-<div class="field">
-  <p><%= f.label :location, "Location:", :class => "round" %> (optional) 
-  <%= f.text_field :location, :class => "round", :autocomplete => "off" %><br />
-  <i>(San Francisco, Seattle, etc.)</i>
-  </p>
-</div>
-<div class="field">
-  <newuser>
-  <p><%= f.label :about, "A brief introduction:", :class => "round" %> (optional)<br/>
-  <i>(What projects are you working on?  What are you focusing on?)</i><br/>
-  <%= f.text_area :about, :size => "6x60", :class => "round" %></p>
-  </newuser>
-</div>
+
+<% unless @group && @group.hide_optional_fields %>
+  <div class="field">
+    <p><%= f.label :title, "Title:", :class => "round" %> (optional)
+    <%= f.text_field :title, :class => "round" %><br />
+    <i>(Software Developer, Graphic Designer, Author, etc...)</i>
+    </p>
+  </div>
+  <div class="field">
+    <p><%= f.label :location, "Location:", :class => "round" %> (optional) 
+    <%= f.text_field :location, :class => "round", :autocomplete => "off" %><br />
+    <i>(San Francisco, Seattle, etc.)</i>
+    </p>
+  </div>
+  <div class="field">
+    <newuser>
+    <p><%= f.label :about, "A brief introduction:", :class => "round" %> (optional)<br/>
+    <i>(What projects are you working on?  What are you focusing on?)</i><br/>
+    <%= f.text_area :about, :size => "6x60", :class => "round" %></p>
+    </newuser>
+  </div>
+<% end %>
+
 <div class="field">
   <p><%= f.label :time_zone, "Time Zone:", :class => "round" %>
   <%= f.collection_select :time_zone, ActiveSupport::TimeZone.us_zones, :name, :to_s %><br/>

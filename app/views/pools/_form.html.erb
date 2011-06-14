@@ -9,7 +9,11 @@
     <%= f.label :timelimit, "Time Limit:", :class => "round" %>
     <%= f.select(:timelimit, @pool.available_timelimits.map{ |t| ["#{t} minutes", t.to_s] }) %>
   </div>
-  
+	<div class="field">
+	  <%= f.label :hide_optional_fields, "Hide Optional Fields:", :class => "round" %>
+	  <%= f.check_box :hide_optional_fields %><br>
+	  <i>This hides the three optional fields (title, location, and intro) on the signup form</i>
+	</div>
 <% if @show_member_count %>
   <div class="field">
     <b>Total Members:</b> <%= @pool.users.count %>

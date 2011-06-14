@@ -1,14 +1,15 @@
 # == Schema Information
-# Schema version: 20110601000355
+# Schema version: 20110613233304
 #
 # Table name: pools
 #
-#  id         :integer         not null, primary key
-#  name       :string(255)
-#  admin_id   :integer         not null
-#  created_at :datetime
-#  updated_at :datetime
-#  timelimit  :integer         not null
+#  id                   :integer         not null, primary key
+#  name                 :string(255)
+#  admin_id             :integer         not null
+#  created_at           :datetime
+#  updated_at           :datetime
+#  timelimit            :integer         not null
+#  hide_optional_fields :boolean
 #
 
 class Pool < ActiveRecord::Base

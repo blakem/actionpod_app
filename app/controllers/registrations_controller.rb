@@ -6,7 +6,8 @@ class RegistrationsController < Devise::RegistrationsController
       @invite = MemberInvite.find_by_invite_code(params[:invite_code])
       if @invite
         @group = Pool.find_by_id(@invite.pool_id)
-        values = {:email => @invite.email}
+        values[:email] = @invite.email
+        values[:hide_optional_fields] = @group.hide_optional_fields
       end
     end
     resource = build_resource(values)
