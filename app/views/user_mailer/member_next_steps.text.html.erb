@@ -19,13 +19,13 @@
 &nbsp;
 <p>
   We currently have <%= @timeslots.count %> groups up and running.  Simply pick the one that works best for you. After<br/>
-  clicking the 'Join this group' link, you can choose which days during the week you want your call.
+  clicking the 'Join this call' link, you can choose which days during the week you want your call.
 </p>
 &nbsp;
 <p>
     <% @timeslots.each do |ts| %>
        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= ts[:string] %> |
-       <b><%= link_to 'Join this group', :only_path => false, :controller => :pages, :action => :join, :time => ts[:time] %></b>
+       <b><%= link_to 'Join this call', :only_path => false, :controller => :pages, :action => :join, :time => ts[:time] %></b>
        <br/>
     <% end %>
 </p>
