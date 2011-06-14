@@ -40,7 +40,12 @@ class RegistrationsController < Devise::RegistrationsController
       invite = MemberInvite.find_by_invite_code(resource.invite_code)
       if invite
         group = Pool.find_by_id(invite.pool_id)
+        resource.pools = []
         group.add_member(resource) if group
+        if invite.email == resource.email
+          resource.confirmed_at = Time.now
+          resource.save
+        end
       end
       set_flash_message :notice, :signed_up
       sign_in_and_redirect(resource_name, resource)

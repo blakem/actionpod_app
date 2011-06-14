@@ -294,19 +294,6 @@ class PagesController < ApplicationController
     ).body.raw_source.html_safe, :layout => true
   end
 
-  def nonmember_invite_email
-    return unless check_for_admin_user
-    set_profile_values
-    invite = MemberInvite.last
-    render :inline => message = UserMailer.nonmember_invite(
-      invite.email,
-      User.find_by_id(invite.sender_id),
-      invite.message,
-      Pool.find_by_id(invite.pool_id),
-      invite.invite_code,
-    ).body.raw_source.html_safe, :layout => true
-  end
-  
   def manage_groups
     breadcrumbs.add 'Manage Groups'
     @pools = current_user.pools
