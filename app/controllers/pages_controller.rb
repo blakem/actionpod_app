@@ -170,9 +170,14 @@ class PagesController < ApplicationController
   end
 
   def time_slot
-    set_profile_values
-    @call_group = build_call_groups(current_user).select{ |cg| cg[:time] == params[:time] }[0]
-    redirect_to(root_path, :alert => "There is no call at that time.") unless @call_group
+    pool = Pool.find_by_id(params[:group_id])
+    if pool and current_user.pools.include?(pool)
+      set_profile_values
+      @call_group = pool.timeslots(current_user).select{ |cg| cg[:time] == params[:time] }.first
+      redirect_to(root_path, :alert => "There is no call at that time.") unless @call_group
+    else
+      redirect_to(root_path, :alert => "You are not a member of that group")
+    end
   end
   
   def place_test_call

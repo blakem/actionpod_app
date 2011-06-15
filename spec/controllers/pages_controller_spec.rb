@@ -357,40 +357,24 @@ describe PagesController do
   end
 
   describe "GET /pages/time_slot" do
-
     describe "success" do
-      it "redirect without a proper time" do
-        login_user
-  	    controller.user_signed_in?.should be_true
-        get :time_slot, :time => 'lll'
-        flash[:alert].should =~ /There is no call at that time/i
-        response.should redirect_to(root_path)
-      end
-
-      it "should redirect when not logged in" do
-  	    controller.user_signed_in?.should be_false
-        get :time_slot, :time => '8:00am'
-        response.should redirect_to(new_user_session_path)
-      end
-      
       it "shows the names of the users in the time_slot" do
         login_user
         user1 = Factory(:user)
         user2 = Factory(:user)
         user3 = Factory(:user)
-        pool = Pool.default_pool
+        pool = Factory(:pool)
         pool.users = User.all
-        pool.save
-        event1 = Factory(:event, :user_id => user1.id)
-        event2 = Factory(:event, :user_id => user2.id)
-        event3 = Factory(:event, :user_id => user3.id)
+        event1 = Factory(:event, :user_id => user1.id, :pool_id => pool.id)
+        event2 = Factory(:event, :user_id => user2.id, :pool_id => pool.id)
+        event3 = Factory(:event, :user_id => user3.id, :pool_id => pool.id)
         event1.time = '10:00pm'
         event2.time = '10:00pm'
         event3.time = '11:00pm'
         event1.save
         event2.save
         event3.save
-        get :time_slot, :time => '10:00pm'
+        get :time_slot, :time => '10:00pm', :group_id => pool.id
         response.body.should     =~ /#{user1.name}/
         response.body.should     =~ /#{user2.name}/
         response.body.should_not =~ /#{user3.name}/
@@ -401,13 +385,45 @@ describe PagesController do
         pool = Factory(:pool, :name => 'Not The Default Group')
         user = Factory(:user)
         pool.users = [@current_user]
-        pool.save
         event = Factory(:event, :user_id => user.id, :pool_id => pool.id)
         event.time = '4:34pm'
         event.save
-        pool.should_not == Pool.default_pool
-        get :time_slot, :time => '4:34pm'
+        get :time_slot, :time => '4:34pm', :group_id => pool.id
         response.body.should =~ /#{pool.name}/
+      end
+    end
+
+    describe "failure" do
+      it "redirect without a proper time" do
+        login_user
+        pool = Factory(:pool)
+        @current_user.pools = [pool]
+  	    controller.user_signed_in?.should be_true
+        get :time_slot, :time => 'lll', :group_id => pool.id
+        flash[:alert].should =~ /There is no call at that time/i
+        response.should redirect_to(root_path)
+      end
+
+      it "should redirect when not logged in" do
+        pool = Factory(:pool)
+  	    controller.user_signed_in?.should be_false
+        get :time_slot, :time => '8:00am', :group_id => pool.id
+        response.should redirect_to(new_user_session_path)
+      end
+
+      it "should redirect if given a bad pool_id" do
+        login_user
+        pool = Factory(:pool)
+        get :time_slot, :time => '7:00am', :group_id => pool.id + 1
+        response.should redirect_to(root_path)
+      end
+
+      it "should redirect if you aren't in the pool" do
+        login_user
+        pool = Factory(:pool)
+        @current_user.pools = []
+        get :time_slot, :time => '7:00am', :group_id => pool.id
+        response.should redirect_to(root_path)
       end
     end
   end

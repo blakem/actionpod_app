@@ -4,7 +4,7 @@
     <% @events.each do |event| %>
 	  <i><%= event.name_with_pool %></i> : <%= event.schedule_str %> | 
       <%= link_to "Edit", edit_event_path(event) %> |
-      <%= link_to "Show", :controller => :pages, :action => :time_slot, :time => event.time %> |
+      <%= link_to "Show", :controller => :pages, :action => :time_slot, :time => event.time, :group_id => event.pool_id %> |
       <%= link_to 'Delete', event_path(event), :confirm => 'Are you sure you want to delete this call?', :method => :delete %><br/>
     <% end %>
 </p>
