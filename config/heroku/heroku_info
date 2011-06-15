@@ -7,6 +7,10 @@ Workers:        1
 Repo size:      17M
 Slug size:      12M
 Stack:          bamboo-mri-1.9.2
+Dyno usage:     Cron - -13015.59 dyno-hours
+                Rake - -248959.86 dyno-hours
+                Web - -25406.66 dyno-hours
+                Worker - -14409.01 dyno-hours
 Data size:      2M
 Next cron:      2011-06-16 00:30 PDT (scheduled)
 Last cron:      2011-06-15 00:30 PDT (finished)
