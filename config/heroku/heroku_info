@@ -4,8 +4,8 @@ Domain name:    http://15minutecall.com/
 Git Repo:       git@heroku.com:actionpods.git
 Dynos:          1
 Workers:        1
-Repo size:      17M
-Slug size:      12M
+Repo size:      18M
+Slug size:      13M
 Stack:          bamboo-mri-1.9.2
 Dyno usage:     Cron - -13015.59 dyno-hours
                 Rake - -248959.86 dyno-hours

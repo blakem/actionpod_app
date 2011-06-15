@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '~> 3.0.6'
+gem 'rails', "!= 3.0.8"
 gem 'sqlite3'
 gem 'devise'
 gem 'rails_admin', :git => 'git://github.com/sferik/rails_admin.git'
@@ -19,6 +19,7 @@ gem 'jquery-rails', '~> 1.0.3'
 gem 'recurly', '~> 0.3.0'
 gem 'tripwire_notifier'
 gem 'breadcrumbs'
+gem 'rake', '0.8.7'
 
 group :test, :development do
   gem 'taps'
