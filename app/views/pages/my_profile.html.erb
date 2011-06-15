@@ -3,7 +3,7 @@
 <% if @groups.any? %>
   <% if @groups.count == 1 %>
     <% @group = @groups.first %>
-    <% @timeslots = @group.timeslots(current_user)%>
+    <% @timeslots = @group.timeslots(current_user, true)%>
     <%= render 'other_timeslots'%>
   <% else %>
     <% @groups.each do |group| %>

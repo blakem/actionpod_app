@@ -182,6 +182,20 @@ describe Pool do
         :days => [1,2,3,4,5],
         :event_ids => [event1.id, event3.id],
       }]
+      
+      # honor the skip_mine flag
+      pool3 = Factory(:pool)
+      event4 = Factory(:event, :user_id => user1.id, :pool_id => pool3.id)
+      event4.time = '7:04am'
+      event4.save
+      
+      pool.timeslots(user1, true).should == [{
+        :time =>  "7:04am",
+        :string =>  "7:04am on selected Weekdays",
+        :minute => 7*60 + 4,
+        :days => [1,4,5],
+        :event_ids => [event2.id],
+      }]
 
       # don't choke on events with no days
       event3.days = []
@@ -200,7 +214,7 @@ describe Pool do
         :event_ids => [event1.id],
       }]
 
-      # don't look ate events that aren't in our pool      
+      # don't look at events that aren't in our pool      
       pool2 = Factory(:pool)
       event1.pool_id = pool2.id
       event1.save

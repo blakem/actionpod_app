@@ -47,7 +47,7 @@ class Pool < ActiveRecord::Base
     self.where(:name => 'Default Group').sort_by(&:id).first  
   end
   
-  def timeslots(user)
+  def timeslots(user, skip_mine = false)
     timeslots = {}
     Event.where(:pool_id => self.id).each do |event|
       occurrence = event.next_occurrence
@@ -68,6 +68,11 @@ class Pool < ActiveRecord::Base
          :days => days,
          :event_ids => event_ids
       }
+    end
+    if skip_mine
+      user.events.select{|e| e.pool_id == self.id}.each do |event|
+        timeslots.delete(event.time.downcase.strip)
+      end
     end
     timeslots.values.sort{ |a,b| a[:minute] <=> b[:minute] }
   end
