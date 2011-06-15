@@ -93,4 +93,124 @@ describe Pool do
       user.pools.count.should == 3
     end
   end
+  
+  describe "timeslots" do
+    it "knows its own timeslots" do
+      pool = Factory(:pool)
+      user1 = Factory(:user, :time_zone => 'Pacific Time (US & Canada)')
+      user2 = Factory(:user, :time_zone => 'Mountain Time (US & Canada)')
+      user1.pools = [pool]
+      user2.pools = [pool]
+
+      pool.timeslots(user1).should == []
+
+      event1 = Factory(:event, :user_id => user1.id, :pool_id => pool.id)
+      event1.time = '8:04am'
+      event1.days = [2,3,4]
+      event1.save
+      
+      pool.timeslots(user1).should == [{
+        :time =>  "8:04am",
+        :string =>  "8:04am on selected Weekdays",
+        :minute => 8*60 + 4,
+        :days => [2,3,4],
+        :event_ids => [event1.id],
+      }]
+
+      event2 = Factory(:event, :user_id => user2.id, :pool_id => pool.id)
+      event2.time = '8:04am'
+      event2.days = [1,4,5]
+      event2.save
+
+      pool.timeslots(user1).should == [{
+        :time =>  "7:04am",
+        :string =>  "7:04am on selected Weekdays",
+        :minute => 7*60 + 4,
+        :days => [1,4,5],
+        :event_ids => [event2.id],
+      }, {
+        :time =>  "8:04am",
+        :string =>  "8:04am on selected Weekdays",
+        :minute => 8*60 + 4,
+        :days => [2,3,4],
+        :event_ids => [event1.id],
+      }]
+
+      pool.timeslots(user2).should == [{
+        :time =>  "8:04am",
+        :string =>  "8:04am on selected Weekdays",
+        :minute => 8*60 + 4,
+        :days => [1,4,5],
+        :event_ids => [event2.id],
+      }, {
+        :time =>  "9:04am",
+        :string =>  "9:04am on selected Weekdays",
+        :minute => 9*60 + 4,
+        :days => [2,3,4],
+        :event_ids => [event1.id],
+      }]
+
+      event3 = Factory(:event, :user_id => user2.id, :pool_id => pool.id)
+      event3.time = '9:04am'
+      event3.days = [1,4,5]
+      event3.save
+
+      pool.timeslots(user1).should == [{
+        :time =>  "7:04am",
+        :string =>  "7:04am on selected Weekdays",
+        :minute => 7*60 + 4,
+        :days => [1,4,5],
+        :event_ids => [event2.id],
+      }, {
+        :time =>  "8:04am",
+        :string =>  "8:04am on selected Weekdays",
+        :minute => 8*60 + 4,
+        :days => [1,2,3,4,5],
+        :event_ids => [event1.id, event3.id],
+      }]
+
+      pool.timeslots(user2).should == [{
+        :time =>  "8:04am",
+        :string =>  "8:04am on selected Weekdays",
+        :minute => 8*60 + 4,
+        :days => [1,4,5],
+        :event_ids => [event2.id],
+      }, {
+        :time =>  "9:04am",
+        :string =>  "9:04am on selected Weekdays",
+        :minute => 9*60 + 4,
+        :days => [1,2,3,4,5],
+        :event_ids => [event1.id, event3.id],
+      }]
+
+      # don't choke on events with no days
+      event3.days = []
+      event3.save
+      pool.timeslots(user2).should == [{
+        :time =>  "8:04am",
+        :string =>  "8:04am on selected Weekdays",
+        :minute => 8*60 + 4,
+        :days => [1,4,5],
+        :event_ids => [event2.id],
+      }, {
+        :time =>  "9:04am",
+        :string =>  "9:04am on selected Weekdays",
+        :minute => 9*60 + 4,
+        :days => [2,3,4],
+        :event_ids => [event1.id],
+      }]
+
+      # don't look ate events that aren't in our pool      
+      pool2 = Factory(:pool)
+      event1.pool_id = pool2.id
+      event1.save
+      pool.timeslots(user2).should == [{
+        :time =>  "8:04am",
+        :string =>  "8:04am on selected Weekdays",
+        :minute => 8*60 + 4,
+        :days => [1,4,5],
+        :event_ids => [event2.id],
+      }]
+    end
+  end
 end

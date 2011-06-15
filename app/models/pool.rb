@@ -45,6 +45,31 @@ class Pool < ActiveRecord::Base
 
   def self.default_pool
     self.where(:name => 'Default Group').sort_by(&:id).first  
-  end  
+  end
+  
+  def timeslots(user)
+    timeslots = {}
+    Event.where(:pool_id => self.id).each do |event|
+      occurrence = event.next_occurrence
+      next unless occurrence
+      occurrence = occurrence.in_time_zone(user.time_zone)
+      time = occurrence.strftime('%l:%M%p').downcase.strip
+      days = event.days
+      event_ids = [event.id]
+      if timeslots[time]
+        days = (days + timeslots[time][:days]).uniq.sort
+        event_ids = (timeslots[time][:event_ids] + event_ids).sort
+      end
+      
+      timeslots[time] = {
+         :time => time,
+         :string => "#{time} on selected Weekdays",
+         :minute => occurrence.hour * 60 + occurrence.min,
+         :days => days,
+         :event_ids => event_ids
+      }
+    end
+    timeslots.values.sort{ |a,b| a[:minute] <=> b[:minute] }
+  end
   
 end
