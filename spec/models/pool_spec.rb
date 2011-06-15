@@ -115,6 +115,7 @@ describe Pool do
         :minute => 8*60 + 4,
         :days => [2,3,4],
         :event_ids => [event1.id],
+        :pool_id => pool.id,
       }]
 
       event2 = Factory(:event, :user_id => user2.id, :pool_id => pool.id)
@@ -128,12 +129,14 @@ describe Pool do
         :minute => 7*60 + 4,
         :days => [1,4,5],
         :event_ids => [event2.id],
+        :pool_id => pool.id,
       }, {
         :time =>  "8:04am",
         :string =>  "8:04am on selected Weekdays",
         :minute => 8*60 + 4,
         :days => [2,3,4],
         :event_ids => [event1.id],
+        :pool_id => pool.id,
       }]
 
       pool.timeslots(user2).should == [{
@@ -142,12 +145,14 @@ describe Pool do
         :minute => 8*60 + 4,
         :days => [1,4,5],
         :event_ids => [event2.id],
+        :pool_id => pool.id,
       }, {
         :time =>  "9:04am",
         :string =>  "9:04am on selected Weekdays",
         :minute => 9*60 + 4,
         :days => [2,3,4],
         :event_ids => [event1.id],
+        :pool_id => pool.id,
       }]
 
       event3 = Factory(:event, :user_id => user2.id, :pool_id => pool.id)
@@ -161,12 +166,14 @@ describe Pool do
         :minute => 7*60 + 4,
         :days => [1,4,5],
         :event_ids => [event2.id],
+        :pool_id => pool.id,
       }, {
         :time =>  "8:04am",
         :string =>  "8:04am on selected Weekdays",
         :minute => 8*60 + 4,
         :days => [1,2,3,4,5],
         :event_ids => [event1.id, event3.id],
+        :pool_id => pool.id,
       }]
 
       pool.timeslots(user2).should == [{
@@ -175,12 +182,14 @@ describe Pool do
         :minute => 8*60 + 4,
         :days => [1,4,5],
         :event_ids => [event2.id],
+        :pool_id => pool.id,
       }, {
         :time =>  "9:04am",
         :string =>  "9:04am on selected Weekdays",
         :minute => 9*60 + 4,
         :days => [1,2,3,4,5],
         :event_ids => [event1.id, event3.id],
+        :pool_id => pool.id,
       }]
       
       # honor the skip_mine flag
@@ -195,6 +204,7 @@ describe Pool do
         :minute => 7*60 + 4,
         :days => [1,4,5],
         :event_ids => [event2.id],
+        :pool_id => pool.id,
       }]
 
       # don't choke on events with no days
@@ -206,12 +216,14 @@ describe Pool do
         :minute => 8*60 + 4,
         :days => [1,4,5],
         :event_ids => [event2.id],
+        :pool_id => pool.id,
       }, {
         :time =>  "9:04am",
         :string =>  "9:04am on selected Weekdays",
         :minute => 9*60 + 4,
         :days => [2,3,4],
         :event_ids => [event1.id],
+        :pool_id => pool.id,
       }]
 
       # don't look at events that aren't in our pool      
@@ -224,6 +236,7 @@ describe Pool do
         :minute => 8*60 + 4,
         :days => [1,4,5],
         :event_ids => [event2.id],
+        :pool_id => pool.id,
       }]
     end
   end

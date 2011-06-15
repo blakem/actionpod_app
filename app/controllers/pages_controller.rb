@@ -143,10 +143,15 @@ class PagesController < ApplicationController
   end
 
   def join
-    event = Event.create(:user_id => current_user.id, :pool_id => Pool.default_pool.id, :time => params[:time])
-    run_at_date = event.next_occurrence.strftime("%A at %l:%M%p").sub(/AM/,'am').sub(/PM/,'pm')
-    redirect_to('/pages/call_groups', :notice => "Great! We'll call you on #{run_at_date}, " + 
-                                                 "along with these other people. ;-)")
+    pool = Pool.find_by_id(params[:group_id])
+    if pool and current_user.pools.include?(pool)
+      event = Event.create(:user_id => current_user.id, :pool_id => pool.id, :time => params[:time])
+      run_at_date = event.next_occurrence.strftime("%A at %l:%M%p").sub(/AM/,'am').sub(/PM/,'pm')
+      redirect_to('/pages/call_groups', :notice => "Great! We'll call you on #{run_at_date}, " + 
+                                                   "along with these other people. ;-)")
+    else
+      redirect_to(root_path, :alert => "You are not a member of that group")
+    end
   end
 
   def help

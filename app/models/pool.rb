@@ -66,7 +66,8 @@ class Pool < ActiveRecord::Base
          :string => "#{time} on selected Weekdays",
          :minute => occurrence.hour * 60 + occurrence.min,
          :days => days,
-         :event_ids => event_ids
+         :event_ids => event_ids,
+         :pool_id => self.id,
       }
     end
     if skip_mine

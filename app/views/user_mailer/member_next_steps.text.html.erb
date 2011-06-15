@@ -25,7 +25,12 @@
 <p>
     <% @timeslots.each do |ts| %>
        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= ts[:string] %> |
-       <b><%= link_to 'Join this call', :only_path => false, :controller => :pages, :action => :join, :time => ts[:time] %></b>
+       <b><%= link_to 'Join this call', :only_path => false, 
+         :controller => :pages, 
+         :action => :join, 
+         :time => ts[:time],
+         :group_id => Pool.default_pool.id,
+      %></b>
        <br/>
     <% end %>
 </p>

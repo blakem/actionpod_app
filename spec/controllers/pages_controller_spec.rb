@@ -180,6 +180,36 @@ describe PagesController do
     end
   end
 
+  describe "GET /pages/join" do
+    describe "success" do
+      before(:each) do
+        login_user
+        @pool = Factory(:pool)
+        @current_user.pools = [@pool]
+      end
+
+      it "should create an event" do
+        get :join, :time => '7:00am', :group_id => @pool.id
+        event = Event.where(
+          :user_id => @current_user.id,
+          :pool_id => @pool.id,
+        )[0]
+        event.time.should == '7:00am'
+      end
+
+      it "should redirect if given a bad pool_id" do
+        get :join, :time => '7:00am', :group_id => @pool.id + 1
+        response.should redirect_to(root_path)
+      end
+
+      it "should redirect if you aren't in the pool" do
+        @current_user.pools = []
+        get :join, :time => '7:00am', :group_id => @pool.id
+        response.should redirect_to(root_path)
+      end
+    end
+  end
+
   describe "GET /pages/invite_members" do
     before(:each) do
       login_user

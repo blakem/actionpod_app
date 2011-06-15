@@ -2,8 +2,8 @@
 <p>
     <% @timeslots.each do |ts| %>
        <%= ts[:string] %> |
-       <%= link_to "Show Participants", :controller => :pages, :action => :time_slot, :time => ts[:time] %> |
-       <b><%= link_to 'Join this call', :controller => :pages, :action => :join, :time => ts[:time] %></b>
+       <%= link_to "Show Participants", :controller => :pages, :action => :time_slot, :time => ts[:time], :group_id => ts[:pool_id] %> |
+       <b><%= link_to 'Join this call', :controller => :pages, :action => :join, :time => ts[:time], :group_id => ts[:pool_id] %></b>
        <br/>
     <% end %>
 </p>
