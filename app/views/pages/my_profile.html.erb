@@ -1,6 +1,18 @@
 <%= render 'user_link' %>
 <%= render 'existing_events'%>
-<%= render 'other_timeslots'%>
-<%= render 'create_new_timeslot'%>
+<% if @groups.any? %>
+  <% if @groups.count == 1 %>
+    <% @group = @groups.first %>
+    <% @timeslots = @group.timeslots(current_user)%>
+    <%= render 'other_timeslots'%>
+  <% else %>
+    <% @groups.each do |group| %>
+      <% @group = group %>
+      <%= render 'group_other_timeslots'%>      
+    <% end %>
+  <% end %>
+<% else %>
+  You need to join a group
+<% end %>
 <%= render 'show_conferences'%>
 <%= render 'random_tip' %>

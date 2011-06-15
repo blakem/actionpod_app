@@ -1,6 +1,5 @@
 <% if @timeslots.any? %>
 <p>
-    <b>Join an existing time slot:</b><br/>
     <% @timeslots.each do |ts| %>
        <%= ts[:string] %> |
        <%= link_to "Show Participants", :controller => :pages, :action => :time_slot, :time => ts[:time] %> |
@@ -8,4 +7,7 @@
        <br/>
     <% end %>
 </p>
+<% else %>
+No current calls scheduled.<br/>
 <% end %>
+<%= render 'create_new_timeslot'%>

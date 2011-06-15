@@ -1,6 +1,6 @@
 <% if @events.any? %>
 <p>
-    <b>Your existing time slots:</b><br/>
+    <b>Your existing calls:</b><br/>
     <% @events.each do |event| %>
 	  <i><%= event.name_with_pool %></i> : <%= event.schedule_str %> | 
       <%= link_to "Edit", edit_event_path(event) %> |
@@ -9,5 +9,5 @@
     <% end %>
 </p>
 <% else %>
-  <p>Below is a list of existing time-slots that other members have scheduled.  Simply <b>click the 'Join'</b> button to add yourself to the call. ;-)</p>
+  <p>Below is a list of calls that other members have scheduled.  Simply <b>click the 'Join'</b> button to add yourself to the call. ;-)</p>
 <% end %>

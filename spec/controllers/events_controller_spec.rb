@@ -59,11 +59,23 @@ describe EventsController do
   
     describe "GET new" do
       it "assigns a new event as @event" do
-        login_user
         event = Factory(:event)
+        pool = Factory(:pool)
+        @current_user.pools = [pool]
         Event.stub(:new) { event }
-        get :new
+        get :new, :group_id => pool.id
         assigns(:event).should be(event)
+      end
+
+      it "redirects if you don't give it a group_id" do
+        get :new
+        response.should redirect_to(root_path)
+      end
+
+      it "redirects if you give it a group_id you don't belong to" do
+        pool = Factory(:pool)
+        get :new, :group_id => pool.id
+        response.should redirect_to(root_path)
       end
     end
   
@@ -87,9 +99,9 @@ describe EventsController do
     describe "POST create" do
       describe "with valid params" do
         it "assigns a newly created event as @event" do
-          pool = Pool.find_by_name('Default Group')
-          pool.should be_a_kind_of(Pool)
-          mock_event(:save => true, :pool => pool)
+          pool = Factory(:pool)
+          @current_user.pools = [pool]
+          mock_event(:save => true)
           mock_event.should_receive(:alter_schedule).with(
             :start_date => Time.now.in_time_zone(controller.current_user.time_zone).beginning_of_day
           )
@@ -99,7 +111,7 @@ describe EventsController do
             'pool_id' => pool.id,
             'days'    => []
           }) { mock_event }
-          post :create, :event => {'these' => 'params'}
+          post :create, :event => {'these' => 'params', 'pool_id' => pool.id}
           assigns(:event).should be(mock_event)
         end
   
@@ -112,8 +124,8 @@ describe EventsController do
   
       describe "with invalid params" do
         it "assigns a newly created but unsaved event as @event" do
-          pool = Pool.find_by_name('Default Group')
-          pool.should be_a_kind_of(Pool)
+          pool = Factory(:pool)
+          @current_user.pools = [pool]
           event = Factory(:event)
           Event.stub(:new).with({
             'skip_dates' => 'foo', 
@@ -121,7 +133,7 @@ describe EventsController do
             'pool_id' => pool.id,
             'days' => []
           }) { event }
-          post :create, :event => {:skip_dates => 'foo'}
+          post :create, :event => {:skip_dates => 'foo', :pool_id => pool.id}
           assigns(:event).should be(event)
         end
       end

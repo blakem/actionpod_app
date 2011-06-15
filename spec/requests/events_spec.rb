@@ -36,7 +36,7 @@ describe "Events" do
 
         # create event
         lambda do
-          click_link 'Create a new time slot'
+          click_link 'Create a new call for this group'
           response.should render_template('events/new')
           click_button
           response.should render_template('events/new')

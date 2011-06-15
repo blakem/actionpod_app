@@ -1,0 +1,3 @@
+<strong><%= @group.name %>:</strong><br/>
+<% @timeslots = @group.timeslots(current_user) %>
+<%= render 'other_timeslots'%>
