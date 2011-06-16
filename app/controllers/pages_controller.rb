@@ -24,7 +24,7 @@ class PagesController < ApplicationController
         c.users.select{ |u| user_ids.include?(u.id) }.any?
       }.paginate(:page => params[:page], :per_page => 5)
     end
-    @groups = current_user.pools
+    @groups = current_user.pools.sort_by(&:id)
     set_profile_values
     @view_options[:link_user_name] = true
     breadcrumbs.add current_user.name
