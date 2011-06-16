@@ -23,6 +23,7 @@ class Pool < ActiveRecord::Base
 
   def init
     self.timelimit ||= 15
+    write_attribute(:public_group, false) unless read_attribute(:public_group)
   end
   
   def after_call_window(time)

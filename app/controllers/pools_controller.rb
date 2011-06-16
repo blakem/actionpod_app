@@ -22,6 +22,7 @@ class PoolsController < ApplicationController
   def new
     @pool = Pool.new
     @pool.hide_optional_fields = true
+    @pool.public_group = true
     @submit_text = 'Create Group'
   end
 

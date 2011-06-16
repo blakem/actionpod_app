@@ -6,8 +6,13 @@
     <%= f.text_field :name, :class => "round" %>
   </div>
   <div class="field">
-    <%= f.label :timelimit, "Time Limit:", :class => "round" %>
+    <%= f.label :timelimit, "Call Time Limit:", :class => "round" %>
     <%= f.select(:timelimit, @pool.available_timelimits.map{ |t| ["#{t} minutes", t.to_s] }) %>
+  </div>
+  <div class="field">
+    <%= f.label :public_group, "Public Group:", :class => "round" %>
+	  <%= f.check_box :public_group %><br>
+	  <i>Check to allow any member to join this group.</i>
   </div>
 	<div class="field">
 	  <%= f.label :hide_optional_fields, "Hide Optional Fields:", :class => "round" %>

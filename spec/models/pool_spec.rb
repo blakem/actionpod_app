@@ -35,13 +35,15 @@ describe Pool do
     pool.user.should == user
   end
 
-  it "has a default timelimit of 15" do
+  it "has a default values" do
     user = Factory(:user)
     pool1 = Pool.create(:admin_id => user.id)
     pool1.timelimit.should == 15
+    pool1.public_group.should == false
 
-    pool2 = Pool.create(:admin_id => user.id, :timelimit => 30)
+    pool2 = Pool.create(:admin_id => user.id, :timelimit => 30, :public_group => true)
     pool2.timelimit.should == 30
+    pool2.public_group.should == true
   end
   
   it "computes whether we are currently in the call window" do
