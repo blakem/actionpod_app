@@ -38,7 +38,7 @@ class UserMailer < ActionMailer::Base
     @sender = sender
     mail(
       :to => user.email,
-      :subject => "#{sender.name} has invited you to the group: #{pool.name}",
+      :subject => "#{sender.name} has add you to the: #{pool.name_plus_group}",
       :from => "#{sender.name} <#{sender.email}>",
     )
   end
@@ -50,7 +50,7 @@ class UserMailer < ActionMailer::Base
     @token = token
     mail(
       :to => email,
-      :subject => "#{sender.name} has invited you to the group: #{pool.name}",
+      :subject => "#{sender.name} has invited you to join the #{pool.name_plus_group}",
       :from => "#{sender.name} <#{sender.email}>",
     )
   end

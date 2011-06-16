@@ -5,29 +5,41 @@
   </head>
   <body>
     <p>
-    <%= @sender.name %> has invited you to the group: <%= @pool.name %>.  
+    This is an invitation from <%= @sender.name %> for you to join the group '<%= @pool.name %>'.  <%= @sender.first_name %>
+    has created this group using <%= link_to "15 Minute Calls", 'http://www.15minutecalls.com' %>.  Simply pick a few times 
+    during the week that you're available. We'll call you when the time arrives, and connect you with two other members.  It's
+    simple and fun. ;-)
     </p>
     <p>&nbsp;</p>
 
-    <p>
-    To find out more about 15 minute calls: <a href="http://www.15minutecalls.com">Click here</a>
-    </p>
-    <p>&nbsp;</p>
+    <% unless @pool.description.blank? %>
+      <p>
+       The <%= @pool.name_plus_group %> is described as:<br/>
+       <%= simple_format(h(@pool.description.strip)).gsub(/<(br \/|p)>(\s+)/) { "<#{$1}>#{'&nbsp;' * $2.length}" } %>
+      </p>
+      <p>&nbsp;</p>
+    <% end %>
   
-  <% unless @personal_message.blank? %>
+    <% unless @personal_message.blank? %>
+      <p>
+       <%= @sender.first_name %> included the personal message:<br/>
+       <%= simple_format(h(@personal_message.strip)).gsub(/<(br \/|p)>(\s+)/) { "<#{$1}>#{'&nbsp;' * $2.length}" } %>
+      </p>
+      <p>&nbsp;</p>
+    <% end %>
+
     <p>
-    They included the personal message:
+    Follow this link to <a href="http://www.15minutecalls.com/members/sign_up?invite_code=<%= @token %>">join the <%= @pool.name_plus_group %>.</a>
     </p>
     <p>&nbsp;</p>
 
     <p>
-    <%= @personal_message %>
+    Thanks, and enjoy. ;-) 
     </p>
     <p>&nbsp;</p>
-  <% end %>
 
     <p>
-    Follow this link to <a href="http://www.15minutecalls.com/members/sign_up?invite_code=<%= @token %>">join the group.</a>
+    -Blake 
     </p>
     <p>&nbsp;</p>
   
