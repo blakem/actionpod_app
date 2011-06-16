@@ -19,7 +19,7 @@ describe EventsController do
     before(:each) do
       User.all.each { |u| u.destroy }
       login_user
-      @pool ||= Factory(:pool, :name => 'Default Group')
+      @pool ||= Pool.default_pool
       @event1 ||= Factory(:event, :user_id => @current_user.id, :pool_id => @pool.id)
       @event2 ||= Factory(:event, :user_id => @current_user.id, :pool_id => @pool.id)
       @event_other ||= Factory(:event, :pool_id => @pool.id)

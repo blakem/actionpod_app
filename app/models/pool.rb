@@ -44,7 +44,7 @@ class Pool < ActiveRecord::Base
   end
 
   def self.default_pool
-    self.where(:name => 'Default Group').sort_by(&:id).first  
+    self.where(:name => 'General Accountability Group').sort_by(&:id).first  
   end
   
   def timeslots(user, skip_mine = false)

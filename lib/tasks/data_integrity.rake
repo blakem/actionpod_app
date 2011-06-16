@@ -10,7 +10,7 @@ task :data_integrity => :environment do
   puts
 
   # must have a default group
-  if Pool.find_by_name('Default Group')
+  if Pool.find_by_name('General Accountability Group')
     puts "  ok - Default Group"
   else
     puts "ERROR - No Default Group!"

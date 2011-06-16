@@ -137,4 +137,4 @@ end
 
 FakeWeb.allow_net_connect = false
 InviteCode.create(:name => 'xyzzy') unless InviteCode.first
-Pool.create(:name => 'Default Group', :user_id => Factory(:user, :email => 'default@example.com').id) unless Pool.default_pool
+Pool.create(:name => 'General Accountability Group', :user_id => Factory(:user, :email => 'default@example.com').id) unless Pool.default_pool

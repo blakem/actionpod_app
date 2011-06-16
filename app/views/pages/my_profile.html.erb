@@ -1,15 +1,9 @@
 <%= render 'user_link' %>
 <%= render 'existing_events'%>
 <% if @groups.any? %>
-  <% if @groups.count == 1 %>
-    <% @group = @groups.first %>
-    <% @timeslots = @group.timeslots(current_user, true)%>
-    <%= render 'other_timeslots'%>
-  <% else %>
-    <% @groups.each do |group| %>
-      <% @group = group %>
-      <%= render 'group_other_timeslots'%>      
-    <% end %>
+  <% @groups.each do |group| %>
+    <% @group = group %>
+    <%= render 'group_other_timeslots'%>      
   <% end %>
 <% else %>
   You need to join a group
