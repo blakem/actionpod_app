@@ -1,1 +1,1 @@
-<b><%= link_to "Create a new call for this group.", new_event_path(:group_id => @group.id) %></b><br/>
+<b><%= link_to "Create a new call for the " + @group.name_plus_group, new_event_path(:group_id => @group.id) %></b><br/>

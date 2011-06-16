@@ -67,6 +67,32 @@ describe Pool do
     pool.users.should_not include(user3)
   end
   
+  it "has name_plus_group" do
+    pool = Factory(:pool, :name => 'Foo')
+    pool.name_plus_group.should == 'Foo group'
+
+    pool = Factory(:pool, :name => 'Foo Group')
+    pool.name_plus_group.should == 'Foo Group'
+
+    pool = Factory(:pool, :name => 'Foo group')
+    pool.name_plus_group.should == 'Foo group'
+
+    pool = Factory(:pool, :name => 'Foo GROUp')
+    pool.name_plus_group.should == 'Foo GROUp'
+
+    pool = Factory(:pool, :name => 'Foogroup')
+    pool.name_plus_group.should == 'Foogroup group'
+
+    pool = Factory(:pool, :name => 'Foogroup yo')
+    pool.name_plus_group.should == 'Foogroup yo group'
+
+    pool = Factory(:pool, :name => '    Foo GROUp     ')
+    pool.name_plus_group.should == 'Foo GROUp'
+
+    pool = Factory(:pool, :name => '   Foo   ')
+    pool.name_plus_group.should == 'Foo group'
+  end
+  
   it "deletes invites when the pool is deleted" do
     pool = Factory(:pool)
     user = Factory(:user)

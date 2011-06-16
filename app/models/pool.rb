@@ -52,6 +52,12 @@ class Pool < ActiveRecord::Base
     self.where(:name => 'General Accountability Group').sort_by(&:id).first  
   end
   
+  def name_plus_group
+    string = self.name.strip
+    string += ' group' unless string =~ / group$/i
+    string
+  end
+  
   def timeslots(user, skip_mine = false)
     timeslots = {}
     Event.where(:pool_id => self.id).each do |event|
