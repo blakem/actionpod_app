@@ -25,7 +25,7 @@ describe "Pools" do
         click_link 'Create a new group'
         response.should render_template('pools/new')
         fill_in "Name",       :with => ''
-        fill_in "Time Limit", :with => 'abc'
+        fill_in "Call Time Limit", :with => 'abc'
         click_button
         response.should render_template('pools/new')
         response.should have_selector('div.flash.alert', :content => "Name can't be blank")
@@ -44,7 +44,7 @@ describe "Pools" do
         click_link 'Create a new group'
         response.should render_template('pools/new')
         fill_in "Name",       :with => 'Testing Testing Group'
-        fill_in "Time Limit", :with => '20'
+        fill_in "Call Time Limit", :with => '20'
         click_button
         response.should render_template('pools/invite')
         response.should have_selector('div.flash.notice', :content => "Group was successfully created")

@@ -14,6 +14,11 @@
 </p>
 
 <p>
+  <b>Allow others to send invites:</b>
+  <%= @pool.allow_others_to_invite ? 'Yes' : 'No' %>
+</p>
+
+<p>
   <b>Members:</b><br>
   <% @users.each do |user| %>
     <%= gravatar_for user, :size => 30 %> <%= link_to user.name, user.profile_path %><br/>

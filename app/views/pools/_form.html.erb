@@ -14,6 +14,11 @@
 	  <%= f.check_box :public_group %><br>
 	  <i>Check to allow any member to join this group.</i>
   </div>
+  <div class="field">
+    <%= f.label :allow_others_to_invite, "Allow other members to send invites:", :class => "round" %>
+	  <%= f.check_box :allow_others_to_invite %><br>
+	  <i>Check to allow other members to invite people to join this group.</i>
+  </div>
 	<div class="field">
 	  <%= f.label :hide_optional_fields, "Hide Optional Fields:", :class => "round" %>
 	  <%= f.check_box :hide_optional_fields %><br>

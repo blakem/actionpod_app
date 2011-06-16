@@ -1,15 +1,17 @@
 # == Schema Information
-# Schema version: 20110613233304
+# Schema version: 20110616064815
 #
 # Table name: pools
 #
-#  id                   :integer         not null, primary key
-#  name                 :string(255)
-#  admin_id             :integer         not null
-#  created_at           :datetime
-#  updated_at           :datetime
-#  timelimit            :integer         not null
-#  hide_optional_fields :boolean
+#  id                     :integer         not null, primary key
+#  name                   :string(255)
+#  admin_id               :integer         not null
+#  created_at             :datetime
+#  updated_at             :datetime
+#  timelimit              :integer         not null
+#  hide_optional_fields   :boolean
+#  public_group           :boolean
+#  allow_others_to_invite :boolean
 #
 
 class Pool < ActiveRecord::Base
@@ -24,6 +26,7 @@ class Pool < ActiveRecord::Base
   def init
     self.timelimit ||= 15
     write_attribute(:public_group, false) unless read_attribute(:public_group)
+    write_attribute(:allow_others_to_invite, false) unless read_attribute(:allow_others_to_invite)
   end
   
   def after_call_window(time)
