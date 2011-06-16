@@ -1,6 +1,9 @@
 <p>
   <b>Name:</b>
-  <%= @pool.name %>
+  <%= @pool.name %><br/>
+  <% unless @pool.description.blank? %>
+    <%= simple_format(h(@pool.description.strip)).gsub(/<(br \/|p)>(\s+)/) { "<#{$1}>#{'&nbsp;' * $2.length}" } %>
+  <% end %>
 </p>
 
 <p>

@@ -2,9 +2,15 @@
 <%= pretty_object_error_messages(@pool) %>
 
   <div class="field">
-    <%= f.label :name, "Name:", :class => "round" %><br />
+    <%= f.label :name, "Name:", :class => "round" %>
     <%= f.text_field :name, :class => "round" %>
   </div>
+  <description>
+  <div class="field">
+    <%= f.label :description, "Description:", :class => "round" %><br />
+    <%= f.text_area :description, :class => "round" %>
+  </div>
+  </description>
   <div class="field">
     <%= f.label :timelimit, "Call Time Limit:", :class => "round" %>
     <%= f.select(:timelimit, @pool.available_timelimits.map{ |t| ["#{t} minutes", t.to_s] }) %>

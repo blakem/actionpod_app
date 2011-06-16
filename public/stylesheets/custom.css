@@ -57,6 +57,7 @@ intro textarea { width: 445px; height: 150px; padding:5px; }
 member_message textarea { width: 445px; height: 80px; padding:5px; }
 invite textarea { width: 445px; height: 80px; padding:5px; }
 personal_message textarea { width: 445px; height: 80px; padding:5px; }
+description textarea { width: 445px; height: 80px; padding:5px; }
 
 /* Devise Menu */
 devise {

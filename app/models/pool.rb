@@ -1,5 +1,5 @@
 # == Schema Information
-# Schema version: 20110616064815
+# Schema version: 20110616070531
 #
 # Table name: pools
 #
@@ -12,6 +12,7 @@
 #  hide_optional_fields   :boolean
 #  public_group           :boolean
 #  allow_others_to_invite :boolean
+#  description            :text
 #
 
 class Pool < ActiveRecord::Base
