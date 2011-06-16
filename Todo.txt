@@ -3,11 +3,13 @@
     Survey for users to tell them if this is a good tool for them.
 
   BackEnd:
+    Allow users to join public groups
+    Allow users to send invites for invite_groups
+    Put a user in some hold status if they have missed lots of calls in a row (Saumitra)
     Set up Recurly
     Send email to accountability buddies if their friend misses 3 calls in a row.
     Say something to ifmachine=true users rather than just hang-up on them.
     Add Tip about email other users
-    Put a user in some hold status if they have missed lots of calls in a row (Saumitra)
 
   Bugs:
     Incoming callers that were previously placed have new call_sid and are treated as new callers.

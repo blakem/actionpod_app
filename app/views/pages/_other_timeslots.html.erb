@@ -6,8 +6,8 @@
        <b><%= link_to 'Join this call', :controller => :pages, :action => :join, :time => ts[:time], :group_id => ts[:pool_id] %></b>
        <br/>
     <% end %>
-</p>
-<% else %>
+<% elsif current_user.events.select{ |e| e.pool_id == @group.id }.empty? %>
 No current calls scheduled.<br/>
 <% end %>
 <%= render 'create_new_timeslot'%>
+</p>
