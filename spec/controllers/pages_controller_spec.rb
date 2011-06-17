@@ -195,9 +195,30 @@ describe PagesController do
           :pool_id => @pool.id,
         )[0]
         event.time.should == '7:00am'
+        event.days.should == [1,2,3,4,5]
         expect {
           get :join, :time => '7:00am', :group_id => @pool.id          
         }.should_not change(Event, :count)
+      end
+
+      it "should set the days appropriately" do
+        get :join, :time => '7:00am', :group_id => @pool.id, :days => '5,2,3'
+        event = Event.where(
+          :user_id => @current_user.id,
+          :pool_id => @pool.id,
+        )[0]
+        event.time.should == '7:00am'
+        event.days.should == [2,3,5]
+      end
+
+      it "should set the days appropriately" do
+        get :join, :time => '7:00am', :group_id => @pool.id, :days => ''
+        event = Event.where(
+          :user_id => @current_user.id,
+          :pool_id => @pool.id,
+        )[0]
+        event.time.should == '7:00am'
+        event.days.should == [1,2,3,4,5]
       end
 
       it "should redirect if given a bad pool_id" do

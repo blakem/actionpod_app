@@ -3,7 +3,11 @@
     <% @timeslots.each do |ts| %>
        <%= ts[:string] %> |
        <%= link_to "Show Participants", :controller => :pages, :action => :time_slot, :time => ts[:time], :group_id => ts[:pool_id] %> |
-       <b><%= link_to 'Join this call', :controller => :pages, :action => :join, :time => ts[:time], :group_id => ts[:pool_id] %></b>
+       <b><%= link_to 'Join this call', :controller => :pages, :action => :join, 
+         :time => ts[:time], 
+         :group_id => ts[:pool_id],
+         :days => ts[:days].count == 1 ? ts[:days].join(',') : '',
+        %></b>
        <br/>
     <% end %>
 <% elsif current_user.events.select{ |e| e.pool_id == @group.id }.empty? %>

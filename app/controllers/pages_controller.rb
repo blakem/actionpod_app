@@ -148,6 +148,10 @@ class PagesController < ApplicationController
       event = current_user.events.where(:pool_id => pool.id).select{|e| e.time == params[:time]}.first
       unless event
         event = Event.create(:user_id => current_user.id, :pool_id => pool.id, :time => params[:time])
+        if !params[:days].blank?
+          event.days = params[:days].split(/,/).map{|s| s.to_i}.sort
+          event.save
+        end
       end
       run_at_date = event.next_occurrence.strftime("%A at %l:%M%p").sub(/AM/,'am').sub(/PM/,'pm')
       redirect_to('/pages/call_groups', :notice => "Great! We'll call you on #{run_at_date}, " + 

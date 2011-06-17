@@ -6,11 +6,11 @@ Workers:        0
 Repo size:      33M
 Slug size:      13M
 Stack:          bamboo-mri-1.9.2
-Dyno usage:     Cron - -10145.96 dyno-hours
-                Rake - -85821.77 dyno-hours
-                Web - 377.41 dyno-hours
+Dyno usage:     Cron - -10140.52 dyno-hours
+                Rake - -85821.70 dyno-hours
+                Web - 382.85 dyno-hours
 Data size:      1M
-Next cron:      2011-06-16 21:13 PDT (scheduled)
-Last cron:      2011-06-15 21:13 PDT (finished)
+Next cron:      2011-06-17 21:13 PDT (scheduled)
+Last cron:      2011-06-16 21:13 PDT (finished)
 Addons:         Cron Daily Cron, Custom Domains, Custom Error Pages, Expanded Logging, PG Backups Basic, Basic Release Management, Sendgrid Free, Shared Database 5MB
 Owner:          blakem30@yahoo.com
