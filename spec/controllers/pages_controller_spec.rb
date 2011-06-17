@@ -195,6 +195,9 @@ describe PagesController do
           :pool_id => @pool.id,
         )[0]
         event.time.should == '7:00am'
+        expect {
+          get :join, :time => '7:00am', :group_id => @pool.id          
+        }.should_not change(Event, :count)
       end
 
       it "should redirect if given a bad pool_id" do
@@ -241,7 +244,7 @@ describe PagesController do
         invites.first.invite_code.length.should == 20
         ActionMailer::Base.deliveries.count.should == 1
         email = ActionMailer::Base.deliveries.first
-        email.subject.should =~ /#{@current_user.name} has invited you to the group: #{@pool.name}/
+        email.subject.should =~ /#{@current_user.name} has added you to the: #{@pool.name_plus_group}/
         email.body.should =~ /#{@current_user.name} has added you to the group: #{@pool.name}/
         email.body.should =~ /Foo/
         email.to.should == [@other_user.email]
@@ -300,8 +303,8 @@ describe PagesController do
         ActionMailer::Base.deliveries.count.should == 1
 
         email = ActionMailer::Base.deliveries.first
-        email.subject.should =~ /#{@current_user.name} has invited you to the group: #{@pool.name}/
-        email.body.should =~ /#{@current_user.name} has invited you to the group: #{@pool.name}/
+        email.subject.should =~ /#{@current_user.name} has invited you to join the #{@pool.name_plus_group}/
+        email.body.should =~ /This is an invitation from #{@current_user.name} for you to join the group '#{@pool.name}'/
         email.body.should =~ /NewCoolGroup Message/
         email.to.should == [test_email]
         email.from.should == [@current_user.email]
