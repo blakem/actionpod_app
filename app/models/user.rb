@@ -229,8 +229,8 @@ class User < ActiveRecord::Base
   
   def timeslots
     self.pools.map{ |p| p.timeslots(self) }.flatten.sort{ |a,b|
-      first = a[:minute] <=> b[:minute]
-      first != 0 ? first : a[:pool_id] <=> b[:pool_id]
+      first = a[:pool_id] <=> b[:pool_id]
+      first != 0 ? first : a[:minute] <=> b[:minute]
     }
   end
 
