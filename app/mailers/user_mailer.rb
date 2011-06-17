@@ -65,7 +65,8 @@ class UserMailer < ActionMailer::Base
   
   def member_next_steps(current_user)
     @user = current_user
-    @timeslots = build_timeslots(current_user)
+    pool = @user.pools.first
+    @timeslots = pool.timeslots(@user)
     mail(
       :to => current_user.email,
       :subject => '[15mc] Your next step: Sign up for a quick call.',

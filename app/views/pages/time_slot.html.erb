@@ -1,12 +1,12 @@
-<h3>Participants in the <%= @call_group[:time] %> 
-	<% if @call_group[:pool] != Pool.default_pool.id %>
-	  (<%= Pool.find_by_id(@call_group[:pool_id]).name %>)
+<h3>Participants in the <%= @timeslot[:time] %> 
+	<% if @timeslot[:pool] != Pool.default_pool.id %>
+	  (<%= Pool.find_by_id(@timeslot[:pool_id]).name %>)
 	<% end %>
 	group:</h3>
 <p>Note: Only three of you will be on any one call....</p>
 <p>
 <% hide_join = false %>
-<% @call_group[:event_ids].each do |event_id| %>
+<% @timeslot[:event_ids].each do |event_id| %>
 <% event = Event.find_by_id(event_id) %>
 <% user = event.user %>
   <% hide_join = true if user == current_user %>
@@ -25,7 +25,11 @@
 </p>
 <% unless hide_join %>
   <p>
-  <b><%= link_to 'Join this call', :controller => :pages, :action => :join, :time => @call_group[:time] %></b>
+  <b><%= link_to 'Join this call', :controller => :pages, :action => :join,
+     :time => @timeslot[:time],
+     :group_id => @timeslot[:pool_id],
+     :days => @timeslot[:days].join(',')
+   %></b>
   </p>
 <% end %>
 

@@ -375,4 +375,38 @@ describe User do
       user.remote_profile_path.should == 'http://www.15minutecalls.com/member/' + user.handle
     end
   end
+  
+  describe "timeslots" do
+    it "should build timeslots from its groups" do
+      user = Factory(:user)
+      pool1 = Factory(:pool)
+      pool2 = Factory(:pool)
+      user.pools = [pool1, pool2]
+      event1 = Factory(:event, :user_id => user.id, :time => '7:00am', :pool_id => pool1.id)
+      event2 = Factory(:event, :user_id => user.id, :time => '7:00am', :pool_id => pool2.id)
+      event3 = Factory(:event, :user_id => user.id, :time => '8:00am', :pool_id => pool2.id)
+      user.timeslots.should == [{
+        :time      => "7:00am",
+        :string    => "7:00am on selected Weekdays",
+        :minute    => 420,
+        :days      => [1, 2, 3, 4, 5],
+        :event_ids => [event1.id],
+        :pool_id   => pool1.id,
+      }, {
+        :time      => "7:00am",
+        :string    => "7:00am on selected Weekdays",
+        :minute    => 420,
+        :days      => [1, 2, 3, 4, 5],
+        :event_ids => [event2.id],
+        :pool_id   => pool2.id,
+      }, {
+        :time      => "8:00am",
+        :string    => "8:00am on selected Weekdays",
+        :minute    => 480,
+        :days      => [1, 2, 3, 4, 5],
+        :event_ids => [event3.id],
+        :pool_id   => pool2.id,
+      }]
+    end
+  end
 end

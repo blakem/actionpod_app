@@ -52,18 +52,6 @@ module ApplicationHelper
       calls[0..4]
     end
 
-    def build_timeslots(current_user = current_user)
-      slots = []
-      build_scheduled_events(current_user).sort{ |a,b| a[:minute_of_day] <=> b[:minute_of_day]}.each do |hash|
-        slot = hash[:occurrence].strftime('%l:%M%p').downcase.strip
-        slots.push(slot) unless slots.include?(slot)
-      end
-      current_user.events.each do |event|
-        slots.delete(event.time.downcase.strip)
-      end
-      slots.map{ |s| {:time => s, :string => "#{s} on selected Weekdays"} }
-    end
-  
     def build_scheduled_events(current_user = current_user)
       hash = {}
       start_time = Time.now.beginning_of_week + 6.days
@@ -84,37 +72,5 @@ module ApplicationHelper
       hash.each_value.sort { |a,b| 
         first = a[:occurrence] <=> b[:occurrence]; 
         first != 0 ? first : a[:pool_id] <=> b[:pool_id] }
-    end
-  
-    def build_call_groups(viewer, user = nil)
-      call_groups = {}
-      my_calls = {}
-      pools = viewer.pools
-      Event.all.each do |event|
-        next unless pools.include?(event.pool)
-        occurrence = event.next_occurrence
-        next unless occurrence
-        occurrence = occurrence.in_time_zone(viewer.time_zone)
-        time = occurrence.strftime('%l:%M%p').downcase.strip
-        key = event.pool_id.to_s + ':' + time
-        call_groups[key] ||= {
-          :time => time,
-          :pool => event.pool_id,
-          :events => [],
-          :minute => occurrence.hour * 60 + occurrence.min,
-        }
-        call_groups[key][:events].push [event.id, event.user_id]
-        my_calls[key] = true if user and event.user_id == user.id
-      end
-      call_groups = call_groups.select{ |k,v| my_calls[k]} if user && !viewer.admin?     
-      call_groups.
-        sort{ |a,b| 
-          first = a[1][:minute] <=> b[1][:minute]
-          first != 0 ? first : a[1][:pool] <=> b[1][:pool] 
-        }.map{ |cg| {
-          :time => cg[1][:time],
-          :pool => cg[1][:pool],
-          :events => cg[1][:events].sort { |a,b| b[1] <=> a[1] } 
-        } }
     end
 end

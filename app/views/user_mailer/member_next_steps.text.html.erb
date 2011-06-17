@@ -29,7 +29,8 @@
          :controller => :pages, 
          :action => :join, 
          :time => ts[:time],
-         :group_id => Pool.default_pool.id,
+         :group_id => ts[:pool_id],
+         :days => ts[:days].join(','),
       %></b>
        <br/>
     <% end %>

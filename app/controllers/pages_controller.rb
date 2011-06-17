@@ -169,9 +169,9 @@ class PagesController < ApplicationController
   def call_groups
     set_profile_values
     @view_options = {:hide_call_groups => true}    
-    @call_groups = build_call_groups(current_user, current_user)
+    @timeslots = current_user.timeslots
     @my = current_user.admin? ? 'All' : 'My'
-    @groups = @call_groups.length > 1 ? 'Groups' : 'Group'
+    @groups = @timeslots.length > 1 ? 'Groups' : 'Group'
     @groups = 'Groups' if current_user.admin?
     breadcrumbs.add "Who's in My Call " + @groups
   end
@@ -180,8 +180,8 @@ class PagesController < ApplicationController
     pool = Pool.find_by_id(params[:group_id])
     if pool and current_user.pools.include?(pool)
       set_profile_values
-      @call_group = pool.timeslots(current_user).select{ |cg| cg[:time] == params[:time] }.first
-      redirect_to(root_path, :alert => "There is no call at that time.") unless @call_group
+      @timeslot = pool.timeslots(current_user).select{ |cg| cg[:time] == params[:time] }.first
+      redirect_to(root_path, :alert => "There is no call at that time.") unless @timeslot
     else
       redirect_to(root_path, :alert => "You are not a member of that group")
     end

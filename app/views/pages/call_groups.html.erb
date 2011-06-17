@@ -1,15 +1,15 @@
-<% if @call_groups.any? %>
+<% if @timeslots.any? %>
   <h3><%= @my %> Call <%= @groups %>:</h3>
   <p>Note: Only three of you will be on any one call....</p>
-  <% @call_groups.each do |cg| %>
+  <% @timeslots.each do |ts| %>
     <p><b>
-	<% if cg[:pool] != Pool.default_pool.id %>
-	<i><%= Pool.find_by_id(cg[:pool]).name %>: </i>
+	<% if ts[:pool_id] != Pool.default_pool.id %>
+	  <i><%= Pool.find_by_id(ts[:pool_id]).name %>: </i>
 	<% end %>
-    <%= cg[:time] %> Call
+    <%= ts[:time] %> Call
     </b><br>
-    <% cg[:events].each do |event_list| %>
-    <% event = Event.find_by_id(event_list[0]) %>
+    <% ts[:event_ids].each do |event_id| %>
+    <% event = Event.find_by_id(event_id) %>
     <% user = event.user %>
       <%= gravatar_for user, :size => 30 %> <%= link_to user.name, user.profile_path %> - <%= user.title %>
       <% if event.user == current_user %>

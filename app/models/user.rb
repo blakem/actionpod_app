@@ -227,6 +227,13 @@ class User < ActiveRecord::Base
     'http://www.15minutecalls.com' + profile_path
   end
   
+  def timeslots
+    self.pools.map{ |p| p.timeslots(self) }.flatten.sort{ |a,b|
+      first = a[:minute] <=> b[:minute]
+      first != 0 ? first : a[:pool_id] <=> b[:pool_id]
+    }
+  end
+
   def self.human_attribute_name(attribute_key_name, options = {})
     return "Primary Phone" if attribute_key_name.to_s == 'phones.string'
     return "Primary Phone" if attribute_key_name.to_s == 'phones.number'
