@@ -72,9 +72,25 @@ class Pool < ActiveRecord::Base
         event_ids = (timeslots[time][:event_ids] + event_ids).sort
       end
       
+      if days.count == 1
+        hash =  {
+          0 => 'Sundays',
+          1 => 'Mondays',
+          2 => 'Tuesdays',
+          3 => 'Wednesdays',
+          4 => 'Thursdays',
+          5 => 'Fridays',
+          6 => 'Saturdays'
+        }
+        day_of_week = hash[days.first]
+        string = "#{time} on #{day_of_week}"
+      else
+        string = "#{time} on selected Weekdays"
+      end
+      
       timeslots[time] = {
          :time => time,
-         :string => "#{time} on selected Weekdays",
+         :string => string,
          :minute => occurrence.hour * 60 + occurrence.min,
          :days => days,
          :event_ids => event_ids,

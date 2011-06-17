@@ -136,9 +136,20 @@ describe Pool do
 
       event1 = Factory(:event, :user_id => user1.id, :pool_id => pool.id)
       event1.time = '8:04am'
-      event1.days = [2,3,4]
+      event1.days = [3]
       event1.save
       
+      pool.timeslots(user1).should == [{
+        :time =>  "8:04am",
+        :string =>  "8:04am on Wednesdays",
+        :minute => 8*60 + 4,
+        :days => [3],
+        :event_ids => [event1.id],
+        :pool_id => pool.id,
+      }]
+
+      event1.days = [2,3,4]
+      event1.save      
       pool.timeslots(user1).should == [{
         :time =>  "8:04am",
         :string =>  "8:04am on selected Weekdays",
