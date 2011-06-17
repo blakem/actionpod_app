@@ -318,7 +318,12 @@ class PoolMerger
   end
 
   def placed?(participant, data)
-    data[:placed][participant['call_sid']] ? true : false
+    find_placed_data_for_participant(participant, data).any?
+  end
+  
+  def find_placed_data_for_participant(participant, data)
+    event_id = participant_event_id(participant)
+    data[:placed].values.select{ |p| p[:event_id] == event_id }
   end
 
   def incoming?(participant)
@@ -422,7 +427,7 @@ class PoolMerger
 
   def pick_room_for_single_participant(participant, data)
     if placed?(participant, data)
-      last_room_name = data[:placed][participant[:call_sid]][:room_name]
+      last_room_name = find_placed_data_for_participant(participant, data).first[:room_name]
       if conference_has_other_callers(last_room_name, participant, data)
         last_room_name
       else

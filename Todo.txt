@@ -1,24 +1,19 @@
 15 Minute Calls Features and Todo list:
   FrontEnd:
+    Put Chattr.im on site
+    Allow users to join public groups
+    Allow users to send invites for invite_groups
     Survey for users to tell them if this is a good tool for them.
 
   BackEnd:
-    Make invite email look prettier
-    Next Steps email need to handle multiple groups
-    Allow users to join public groups
-    Allow users to send invites for invite_groups
     Put a user in some hold status if they have missed lots of calls in a row (Saumitra)
     5th man should split group to into a group of 3 and a group of 2
-    Don't send new conference email to users already in group on incoming
-
     Set up Recurly
     Send email to accountability buddies if their friend misses 3 calls in a row.
     Say something to ifmachine=true users rather than just hang-up on them.
-    Add Tip about email other users
+    Add Tip about emailing other users from conference page
 
   Bugs:
-    Incoming callers that were previously placed have new call_sid and are treated as new callers.
-    SENDGRID_DOMAIN         => froom.com
     
   Community:
     Ask Garret about Tweet (@15mincalls)

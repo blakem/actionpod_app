@@ -635,7 +635,7 @@ describe PoolMerger do
           "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX3" => 1,
         }
         data[:placed] = {
-          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX3" => {
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7OOO3" => {
             :room_name => "15mcPool34Room1",          
             :event_id => 3,
           },
@@ -651,7 +651,7 @@ describe PoolMerger do
           },
           :apologized  => {},
           :placed      => {
-            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX3" => {
+            "CA9fa67e8696b60ee1ca1e75ec81ef85e7OOO3" => {
               :room_name => "15mcPool34Room1",
               :event_id => 3,
             },
@@ -678,19 +678,19 @@ describe PoolMerger do
           "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX3" => 2,
         }
         data[:placed] = {
-          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX3" => {
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7OOO3" => {
             :room_name => "15mcPool#{@pool.id}Room1",
             :event_id => 3,
           },
-          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX4" => {
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7OOO4" => {
             :room_name => "15mcPool#{@pool.id}Room1",
             :event_id => 4,
           },
-          "CAThisGuyCalledBackFromADifferentPhoneXXX4" => {
+          "CAThisGuyCalledBackFromADifferentPhoneOOO4" => {
             :room_name => "15mcPool#{@pool.id}Room1",
             :event_id => 4,
           },
-          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX5" => {
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7OOO5" => {
             :room_name => "15mcPool#{@pool.id}Room1",
             :event_id => 5,
           },
@@ -718,15 +718,19 @@ describe PoolMerger do
               :room_name => "15mcPool#{@pool.id}Room1",
               :event_id => 3,
             },
-            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX4" => {
+            "CA9fa67e8696b60ee1ca1e75ec81ef85e7OOO3" => {
+              :room_name => "15mcPool#{@pool.id}Room1",
+              :event_id => 3,
+            },
+            "CA9fa67e8696b60ee1ca1e75ec81ef85e7OOO4" => {
               :room_name => "15mcPool#{@pool.id}Room1",
               :event_id => 4,
             },
-            "CAThisGuyCalledBackFromADifferentPhoneXXX4" => {
+            "CAThisGuyCalledBackFromADifferentPhoneOOO4" => {
               :room_name => "15mcPool#{@pool.id}Room1",
               :event_id => 4,
             },
-            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX5" => {
+            "CA9fa67e8696b60ee1ca1e75ec81ef85e7OOO5" => {
               :room_name => "15mcPool#{@pool.id}Room1",
               :event_id => 5,
             },
