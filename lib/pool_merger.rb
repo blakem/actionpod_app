@@ -414,9 +414,6 @@ class PoolMerger
     if (event and conference)
       user = event.user
       unless conference.users.include?(user)
-        conference.users.each do |other_participant|
-          send_conference_email_to_user(other_participant, [user])
-        end
         conference.users << user 
         send_conference_email_to_user(user, conference.users)
       end
