@@ -12,6 +12,20 @@
 </p>
 
 <p>
+  <b>Calls are available:</b>
+  Every
+  <% if @pool.available_time_mode == '15' %>
+    Fifteen Minutes
+  <% elsif @pool.available_time_mode == '20' %>
+    Twenty Minutes
+  <% elsif @pool.available_time_mode == '30' %>
+    Thirty Minutes
+  <% else %>
+    Hour
+  <% end %>
+</p>
+
+<p>
   <b>Public Group:</b>
   <%= @pool.public_group ? 'Yes' : 'No' %>
 </p>

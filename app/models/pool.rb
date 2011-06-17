@@ -1,5 +1,5 @@
 # == Schema Information
-# Schema version: 20110616070531
+# Schema version: 20110617224719
 #
 # Table name: pools
 #
@@ -13,6 +13,7 @@
 #  public_group           :boolean
 #  allow_others_to_invite :boolean
 #  description            :text
+#  available_time_mode    :string(255)
 #
 
 class Pool < ActiveRecord::Base
@@ -56,6 +57,27 @@ class Pool < ActiveRecord::Base
     string = self.name.strip
     string += ' group' unless string =~ / group$/i
     string
+  end
+
+  def available_times
+    if available_time_mode == '30'
+      (["12:30am"] + (1..11).to_a.map { |h| ["#{h}:00am", "#{h}:30am"]} + ["12:00pm", "12:30pm"] + 
+      (1..11).to_a.map { |h| ["#{h}:00pm", "#{h}:30pm"] } + ["12:00am"]).flatten
+    elsif available_time_mode == '15'
+      (["12:15am", "12:30am", "12:45am"] + 
+       (1..11).to_a.map { |h| ["#{h}:00am", "#{h}:15am", "#{h}:30am", "#{h}:45am"]} + 
+       ["12:00pm", "12:15pm", "12:30pm", "12:45pm"] + 
+       (1..11).to_a.map { |h| ["#{h}:00pm", "#{h}:15pm", "#{h}:30pm", "#{h}:45pm"] } + 
+       ["12:00am"]).flatten
+    elsif available_time_mode == '20'
+      (["12:20am", "12:40am"] + 
+       (1..11).to_a.map { |h| ["#{h}:00am", "#{h}:20am", "#{h}:40am"]} + 
+       ["12:00pm", "12:20pm", "12:40pm"] + 
+       (1..11).to_a.map { |h| ["#{h}:00pm", "#{h}:20pm", "#{h}:40pm"] } + 
+       ["12:00am"]).flatten
+    else
+      (1..11).to_a.map { |h| "#{h}:00am"} + ["12:00pm"] + (1..11).to_a.map { |h| "#{h}:00pm" } + ["12:00am"]
+    end
   end
   
   def timeslots(user, skip_mine = false)

@@ -16,6 +16,15 @@
     <%= f.select(:timelimit, @pool.available_timelimits.map{ |t| ["#{t} minutes", t.to_s] }) %>
   </div>
   <div class="field">
+    <%= f.label :available_time_mode, "Calls are available:", :class => "round" %>
+    <%= f.select(:available_time_mode, [
+      ["Every hour", "60"],
+      ["Every half-hour", "30"],
+      ["Every fifteen minutes", "15"],
+      ["Every twenty minutes", "20"],
+    ]) %>
+  </div>
+  <div class="field">
     <%= f.label :public_group, "Public Group:", :class => "round" %>
 	  <%= f.check_box :public_group %><br>
 	  <i>Check to allow any member to join this group.</i>

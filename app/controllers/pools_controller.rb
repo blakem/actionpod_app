@@ -24,6 +24,7 @@ class PoolsController < ApplicationController
     @pool.hide_optional_fields = true
     @pool.allow_others_to_invite = true
     @pool.public_group = true
+    @pool.available_time_mode = '60'
     @submit_text = 'Create Group'
   end
 

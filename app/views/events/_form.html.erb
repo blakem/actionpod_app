@@ -10,7 +10,7 @@ $(function() {
 <%= pretty_object_error_messages(@event) %>
   <p></p>
   <p><%= f.label :time, "Time we should call you:", :class => "round" %>
-  <%= f.collection_select :time, Event.available_hours, :to_s, :to_s %></p>
+  <%= f.collection_select :time, @event.pool.available_times, :to_s, :to_s %></p>
 
   <p><label>Days of the week we should call you:</label><br/>
       <%= check_box_tag 'on_sun', 0, @event.on_day(0) %> Sunday <br/>

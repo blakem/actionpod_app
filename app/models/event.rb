@@ -198,10 +198,6 @@ class Event < ActiveRecord::Base
     return true
   end
   
-  def self.available_hours
-    (1..11).to_a.map { |h| "#{h}:00am"} + ["12:00pm"] + (1..11).to_a.map { |h| "#{h}:00pm" } + ["12:00am"]
-  end
-  
   private
     def schedule_validations
       sched_hash = schedule_actual.to_hash

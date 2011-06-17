@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110616070531) do
+ActiveRecord::Schema.define(:version => 20110617224719) do
 
   create_table "calls", :force => true do |t|
     t.string   "Sid"
@@ -134,6 +134,7 @@ ActiveRecord::Schema.define(:version => 20110616070531) do
     t.boolean  "public_group"
     t.boolean  "allow_others_to_invite"
     t.text     "description"
+    t.string   "available_time_mode"
   end
 
   create_table "pools_users", :id => false, :force => true do |t|
