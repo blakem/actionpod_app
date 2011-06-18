@@ -501,7 +501,10 @@ class PoolMerger
 
   def conferences_from_placed(data)
     conferences = {}
+    event_ids = []
     data[:placed].each_value do |v|
+      next if event_ids.include?(v[:event_id])
+      event_ids.push(v[:event_id])
       conferences[v[:room_name]] ||= {}
       conferences[v[:room_name]][:members] ||= 0
       conferences[v[:room_name]][:members] += 1
