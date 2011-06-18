@@ -411,18 +411,42 @@ class PoolMerger
 
   def add_single_participant_to_conference(participant, pool, pool_runs_at, data)
     room_name = pick_room_for_single_participant(participant, data)
-    participant_event_id = participant_event_id(participant)
-    event_ids = event_ids_for_conference_room(room_name, data)
-    place_into_conference(participant, room_name, pool.timelimit, pool_runs_at, data, event_ids)
-    conference = Conference.where(:room_name => room_name, :status => 'in_progress', :pool_id => pool.id, :started_at => pool_runs_at)[0]
-    event = Event.find_by_id(participant_event_id)
-    if (event and conference)
-      user = event.user
-      unless conference.users.include?(user)
-        conference.users << user 
-        send_conference_email_to_user(user, conference.users)
+    if room_name
+      participant_event_id = participant_event_id(participant)
+      event_ids = event_ids_for_conference_room(room_name, data)
+      place_into_conference(participant, room_name, pool.timelimit, pool_runs_at, data, event_ids)
+      conference = Conference.where(:room_name => room_name, :status => 'in_progress', :pool_id => pool.id, :started_at => pool_runs_at)[0]
+      event = Event.find_by_id(participant_event_id)
+      if (event and conference)
+        user = event.user
+        unless conference.users.include?(user)
+          conference.users << user 
+          send_conference_email_to_user(user, conference.users)
+        end
       end
+    else
+      other_participant = pluck_out_participant(data)
+      create_new_group([other_participant, participant], pool, pool_runs_at, data)
     end
+  end
+  
+  def pluck_out_participant(data)
+    room_name = largest_conference_room(data)
+    participant = participants_in_room(room_name, data).sort{|a,b| a[:event_id] <=> b[:event_id]}.last
+    event = Event.find_by_id(participant[:event_id])
+    {
+      :call_sid => participant[:sid],
+      :conference_friendly_name => "15mcHoldEvent#{event.id}User#{event.user_id}Pool#{event.pool_id}"
+    }.with_indifferent_access
+  end
+
+  def participants_in_room(room_name, data)
+    participants = []
+    data[:placed].each_pair do |sid, v|
+      next unless v[:room_name] == room_name
+      participants.push(v.merge({:sid => sid}))
+    end
+    participants
   end
 
   def pick_room_for_single_participant(participant, data)
@@ -431,10 +455,18 @@ class PoolMerger
       if conference_has_other_callers(last_room_name, participant, data)
         last_room_name
       else
-        smallest_conference_room(data)
+        available_small_conference(data)
       end        
     else
+      available_small_conference(data)
+    end
+  end
+  
+  def available_small_conference(data)
+    if smallest_conference_room_size(data) < 4
       smallest_conference_room(data)
+    else
+      nil
     end
   end
   
@@ -456,14 +488,26 @@ class PoolMerger
   end
     
   def smallest_conference_room(data)
+    conferences_from_placed(data).first[0]
+  end    
+
+  def largest_conference_room(data)
+    conferences_from_placed(data).last[0]
+  end    
+
+  def smallest_conference_room_size(data)
+    conferences_from_placed(data).first[1][:members]
+  end
+
+  def conferences_from_placed(data)
     conferences = {}
     data[:placed].each_value do |v|
       conferences[v[:room_name]] ||= {}
       conferences[v[:room_name]][:members] ||= 0
       conferences[v[:room_name]][:members] += 1
     end
-    conferences.sort { |a,b| a[1][:members] <=> b[1][:members]}.first[0]
-  end    
+    conferences.sort{ |a,b| a[1][:members] <=> b[1][:members] }
+  end
 
   def event_ids_for_conference_room(room_name, data)
     data[:placed].select{ |k,v| v[:room_name] == room_name }.values.map{ |p| p[:event_id] }.uniq

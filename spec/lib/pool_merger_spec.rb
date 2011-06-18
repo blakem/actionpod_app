@@ -325,6 +325,113 @@ describe PoolMerger do
         user.reload
         user.placed_count.should == 2
       end
+
+      it "should form a group of three and a group of two if the smallest conference is four" do
+        events = create_events(5)
+        new_participants = participant_list(5, events)
+        
+        data = @pm.initialize_data({})
+        @tc.should_receive(:place_participant_in_conference).with(
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1", "15mcPool#{@pool.id}Room1", 
+          be_within(3).of(@timelimit_insec), 
+          events[0].id, [events[0].id, events[1].id, events[2].id]
+        )
+        @tc.should_receive(:place_participant_in_conference).with(
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2", "15mcPool#{@pool.id}Room1", 
+          be_within(3).of(@timelimit_insec), 
+          events[1].id, [events[0].id, events[1].id, events[2].id]
+        )
+        @tc.should_receive(:place_participant_in_conference).with(
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX3", "15mcPool#{@pool.id}Room1", 
+          be_within(3).of(@timelimit_insec), 
+          events[2].id, [events[0].id, events[1].id, events[2].id]
+        )
+        @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(
+          [new_participants[0], new_participants[1], new_participants[2]]
+        )
+        data = @pm.merge_calls_for_pool(@pool, @pool_runs_at, data)
+        data[:placed].should == {
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => {
+            :room_name => "15mcPool#{@pool.id}Room1", 
+            :event_id  => events[0].id,
+          }, 
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2" => {
+            :room_name => "15mcPool#{@pool.id}Room1", 
+            :event_id  => events[1].id,
+          }, 
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX3" => {
+            :room_name => "15mcPool#{@pool.id}Room1", 
+            :event_id  => events[2].id,
+          }, 
+        }
+
+        @tc.should_receive(:place_participant_in_conference).with(
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX4", "15mcPool#{@pool.id}Room1", 
+          be_within(3).of(@timelimit_insec), 
+          events[3].id, [events[0].id, events[1].id, events[2].id]
+        )
+        @tc.should_receive(:participants_on_hold_for_pool).twice.with(@pool).and_return(
+          [new_participants[3]]
+        )
+        data = @pm.merge_calls_for_pool(@pool, @pool_runs_at, data)
+        data = @pm.merge_calls_for_pool(@pool, @pool_runs_at, data)
+        data[:placed].should == {
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => {
+            :room_name => "15mcPool#{@pool.id}Room1", 
+            :event_id  => events[0].id,
+          }, 
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2" => {
+            :room_name => "15mcPool#{@pool.id}Room1", 
+            :event_id  => events[1].id,
+          }, 
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX3" => {
+            :room_name => "15mcPool#{@pool.id}Room1", 
+            :event_id  => events[2].id,
+          }, 
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX4" => {
+            :room_name => "15mcPool#{@pool.id}Room1",
+            :event_id  => events[3].id,
+          }, 
+        }
+
+        @tc.should_receive(:place_participant_in_conference).with(
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX4", "15mcPool#{@pool.id}Room2", 
+          be_within(3).of(@timelimit_insec), 
+          events[3].id, [events[3].id, events[4].id]
+        )
+        @tc.should_receive(:place_participant_in_conference).with(
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX5", "15mcPool#{@pool.id}Room2", 
+          be_within(3).of(@timelimit_insec), 
+          events[4].id, [events[3].id, events[4].id]
+        )
+        @tc.should_receive(:participants_on_hold_for_pool).twice.with(@pool).and_return(
+          [new_participants[4]]
+        )
+        data = @pm.merge_calls_for_pool(@pool, @pool_runs_at, data)
+        data = @pm.merge_calls_for_pool(@pool, @pool_runs_at, data)
+        data[:placed].should == {
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => {
+            :room_name => "15mcPool#{@pool.id}Room1", 
+            :event_id  => events[0].id,
+          }, 
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX2" => {
+            :room_name => "15mcPool#{@pool.id}Room1", 
+            :event_id  => events[1].id,
+          }, 
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX3" => {
+            :room_name => "15mcPool#{@pool.id}Room1", 
+            :event_id  => events[2].id,
+          }, 
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX4" => {
+            :room_name => "15mcPool#{@pool.id}Room2", 
+            :event_id  => events[3].id,
+          }, 
+          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX5" => {
+            :room_name => "15mcPool#{@pool.id}Room2", 
+            :event_id  => events[4].id,
+          }
+        }
+      end
     end
     
     describe "two participants" do
