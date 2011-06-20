@@ -5,7 +5,7 @@
   <strong><%= @group.name_plus_group %></strong>: by <%= admin.name %><br/>
   Members: <%= @group.users.count %><br/>
   <% unless @group.description.blank? %>
-    <%= @group.description %><br/>
+    <%= simple_format(h(@group.description.strip)).gsub(/<(br \/|p)>(\s+)/) { "<#{$1}>#{'&nbsp;' * $2.length}" } %><br/>
   <% end %>
   <% @timeslots = @group.timeslots(current_user, true) %>
   <%= render 'other_timeslots'%>
