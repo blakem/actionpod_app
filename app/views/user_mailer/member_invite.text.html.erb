@@ -31,7 +31,21 @@
     <% end %>
 
     <p>
-    Your next step is to <%= link_to "choose which times you're available for the call.", 'http://www.15minutecalls.com' %>
+    <% @timeslots = @pool.timeslots(@user) %>
+    <% if @timeslots.any? %>
+        <strong>To accept this invitation, choose a call time below:</strong><br/>
+        <% @timeslots.each do |ts| %>
+           <%= ts[:string] %> |
+           <b><%= link_to 'Join this call', :controller => :pages, :action => :join, :only_path => false,
+             :time => ts[:time], 
+             :group_id => ts[:pool_id],
+             :days => ts[:days].count == 1 ? ts[:days].join(',') : '',
+            %></b>
+           <br/>
+        <% end %>
+    <% else %>
+      Your next step is to <%= link_to "choose which times you're available for the call.", 'http://www.15minutecalls.com' %>
+    <% end %>
     </p>
     <p>&nbsp;</p>
 
