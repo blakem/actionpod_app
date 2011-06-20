@@ -1,5 +1,7 @@
 <% if @timeslots.any? %>
-<p>
+  <% unless @view_options[:hide_create_new_timeslot] %>
+    <p>
+  <% end %>
     <% @timeslots.each do |ts| %>
        <%= ts[:string] %> |
        <%= link_to "Show Participants", :controller => :pages, :action => :time_slot, :time => ts[:time], :group_id => ts[:pool_id] %> |
@@ -13,5 +15,9 @@
 <% elsif current_user.events.select{ |e| e.pool_id == @group.id }.empty? %>
 No current calls scheduled.<br/>
 <% end %>
-<%= render 'create_new_timeslot'%>
-</p>
+<% unless @view_options[:hide_create_new_timeslot] %>
+  <%= render 'create_new_timeslot'%>
+<% end %>
+<% unless @view_options[:hide_create_new_timeslot] %>
+  </p>
+<% end %>

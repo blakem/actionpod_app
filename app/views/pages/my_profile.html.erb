@@ -5,8 +5,7 @@
     <% @group = group %>
     <%= render 'group_other_timeslots'%>      
   <% end %>
-<% else %>
-  You need to join a group
 <% end %>
+<p><strong><%= link_to "View Public Groups", :controller => :pages, :action => :public_groups %></strong></p>
 <%= render 'show_conferences'%>
 <%= render 'random_tip' %>

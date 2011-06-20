@@ -1,0 +1,13 @@
+<% @groups.each do |group| %>
+  <% @group = group %>
+  <% admin = User.find_by_id(@group.admin_id) %>
+  <p>
+  <strong><%= @group.name_plus_group %></strong>: by <%= admin.name %><br/>
+  Members: <%= @group.users.count %><br/>
+  <% unless @group.description.blank? %>
+    <%= @group.description %><br/>
+  <% end %>
+  <% @timeslots = @group.timeslots(current_user, true) %>
+  <%= render 'other_timeslots'%>
+  </p>
+<% end %>

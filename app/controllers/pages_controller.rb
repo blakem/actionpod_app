@@ -144,7 +144,8 @@ class PagesController < ApplicationController
 
   def join
     pool = Pool.find_by_id(params[:group_id])
-    if pool and current_user.pools.include?(pool)
+    if pool and (current_user.pools.include?(pool) or pool.public_group)
+      current_user.pools << pool unless current_user.pools.include?(pool)
       event = current_user.events.where(:pool_id => pool.id).select{|e| e.time == params[:time]}.first
       unless event
         event = Event.create(:user_id => current_user.id, :pool_id => pool.id, :time => params[:time])
@@ -174,6 +175,14 @@ class PagesController < ApplicationController
     @groups = @timeslots.length > 1 ? 'Groups' : 'Group'
     @groups = 'Groups' if current_user.admin?
     breadcrumbs.add "Who's in My Call " + @groups
+  end
+
+  def public_groups
+    set_profile_values
+    @view_options[:hide_public_groups] = true
+    @view_options[:hide_create_new_timeslot] = true
+    @groups = Pool.where(:public_group => true)
+    breadcrumbs.add "Public Groups"
   end
 
   def time_slot

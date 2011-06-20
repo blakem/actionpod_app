@@ -107,6 +107,22 @@ describe PagesController do
     end
   end
 
+  describe "GET /pages/public_groups" do
+
+    describe "success" do
+      it "should show public groups" do
+        login_user
+        pool1 = Factory(:pool, :name => 'MyPublicGroup', :public_group => true)
+        pool2 = Factory(:pool, :name => 'MyPrivateGroup', :public_group => false)
+  	    controller.user_signed_in?.should be_true
+        get :public_groups
+        response.should be_success
+        response.body.should =~ /MyPublicGroup/
+        response.body.should_not =~ /MyPrivateGroup/
+      end
+    end
+  end
+
   describe "GET /pages/manage_groups" do
     describe "success" do
       it "should be successful when logged in" do
@@ -184,7 +200,8 @@ describe PagesController do
     describe "success" do
       before(:each) do
         login_user
-        @pool = Factory(:pool)
+        @pool = Factory(:pool, :public_group => false)
+        @public_pool = Factory(:pool, :public_group => true)
         @current_user.pools = [@pool]
       end
 
@@ -222,11 +239,24 @@ describe PagesController do
       end
 
       it "should redirect if given a bad pool_id" do
-        get :join, :time => '7:00am', :group_id => @pool.id + 1
+        get :join, :time => '7:00am', :group_id => @pool.id + 10
         response.should redirect_to(root_path)
       end
 
-      it "should redirect if you aren't in the pool" do
+      it "should work if the pool is public, even if you aren't a member yet" do
+        @current_user.pools = [@pool]
+        get :join, :time => '7:00am', :group_id => @public_pool.id
+        event = Event.where(
+          :user_id => @current_user.id,
+          :pool_id => @public_pool.id,
+        )[0]
+        event.time.should == '7:00am'
+        @current_user.reload
+        @current_user.pools.should include(@public_pool)
+        @current_user.pools.should include(@pool)
+      end
+
+      it "should redirect if the pool is not public" do
         @current_user.pools = []
         get :join, :time => '7:00am', :group_id => @pool.id
         response.should redirect_to(root_path)
