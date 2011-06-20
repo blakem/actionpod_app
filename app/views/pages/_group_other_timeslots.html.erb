@@ -1,3 +1,7 @@
-<strong><%= @group.name_plus_group %>:</strong><br/>
+<strong><%= @group.name_plus_group %>:</strong>
+<% if @group.admin_id == current_user.id %>
+(<%= link_to "Edit group", edit_pool_path(@group) %>)
+<% end %>
+<br/>
 <% @timeslots = @group.timeslots(current_user, true) %>
 <%= render 'other_timeslots'%>
