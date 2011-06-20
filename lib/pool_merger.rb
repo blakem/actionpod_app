@@ -378,7 +378,8 @@ class PoolMerger
     take_off_hold(participant, data)
     data[:placed][participant['call_sid']] = {
       :room_name => room_name,
-      :event_id  => participant_event_id(participant)
+      :event_id  => participant_event_id(participant),
+      :time => Time.now,
     }
   end
 
@@ -432,7 +433,7 @@ class PoolMerger
   
   def pluck_out_participant(data)
     room_name = largest_conference_room(data)
-    participant = participants_in_room(room_name, data).sort{|a,b| a[:event_id] <=> b[:event_id]}.last
+    participant = participants_in_room(room_name, data).sort{ |a,b| a[:time] <=> b[:time] }.last
     event = Event.find_by_id(participant[:event_id])
     {
       :call_sid => participant[:sid],
