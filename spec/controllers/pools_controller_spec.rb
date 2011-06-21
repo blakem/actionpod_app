@@ -16,7 +16,8 @@ describe PoolsController do
       @other_user = Factory(:user)
       @attr = {
         :admin_id => @other_user.id,
-        :name => 'Some Random Testing Pool'
+        :name => 'Some Random Testing Pool',
+        :public_group => false,
       }
       @pool1 = Pool.create! @attr.merge({:admin_id => @current_user.id})
       @pool2 = Pool.create! @attr
@@ -80,6 +81,13 @@ describe PoolsController do
 
     describe "GET invite" do
       it "assigns the requested pool as @pool" do
+        get :invite, :id => @pool1.id.to_s
+        assigns(:pool).should eq(@pool1)
+      end
+
+      it "assigns the requested pool as @pool if pool is public" do
+        @pool1.public_group = true
+        @pool1.save
         get :invite, :id => @pool1.id.to_s
         assigns(:pool).should eq(@pool1)
       end

@@ -150,6 +150,61 @@ describe Pool do
     end
   end
   
+  describe "can_invite?" do
+    it "handles invites properly" do
+      user1 = Factory(:user)
+      user2 = Factory(:user)
+      public_group = Factory(:pool, :public_group => true )
+      private_group = Factory(:pool, :public_group => false)
+      admin_public_group = Factory(:pool, :public_group => true, :admin_id => user1.id)
+      admin_private_group = Factory(:pool, :public_group => false, :admin_id => user1.id)
+      public_group.users = [user1, user2]
+      private_group.users = [user1, user2]
+      admin_public_group.users = [user1, user2]
+      admin_private_group.users = [user1, user2]
+
+      public_group.can_invite?(user1).should be_true
+      private_group.can_invite?(user1).should be_false
+      admin_public_group.can_invite?(user1).should be_true
+      admin_private_group.can_invite?(user1).should be_true
+
+      public_group.can_invite?(user2).should be_true
+      private_group.can_invite?(user2).should be_false
+      admin_public_group.can_invite?(user2).should be_true
+      admin_private_group.can_invite?(user2).should be_false
+
+      private_group.allow_others_to_invite = true
+      public_group.allow_others_to_invite = true
+      admin_private_group.allow_others_to_invite = true
+      admin_public_group.allow_others_to_invite = true
+
+      public_group.can_invite?(user1).should be_true
+      private_group.can_invite?(user1).should be_true
+      admin_public_group.can_invite?(user1).should be_true
+      admin_private_group.can_invite?(user1).should be_true
+
+      public_group.can_invite?(user2).should be_true
+      private_group.can_invite?(user2).should be_true
+      admin_public_group.can_invite?(user2).should be_true
+      admin_private_group.can_invite?(user2).should be_true
+
+      public_group.users = []
+      private_group.users = []
+      admin_public_group.users = []
+      admin_private_group.users = []
+
+      public_group.can_invite?(user1).should be_false
+      private_group.can_invite?(user1).should be_false
+      admin_public_group.can_invite?(user1).should be_true
+      admin_private_group.can_invite?(user1).should be_true
+
+      public_group.can_invite?(user2).should be_false
+      private_group.can_invite?(user2).should be_false
+      admin_public_group.can_invite?(user2).should be_false
+      admin_private_group.can_invite?(user2).should be_false
+    end
+  end
+  
   describe "timeslots" do
     it "knows its own timeslots" do
       pool = Factory(:pool)

@@ -43,7 +43,7 @@ class PoolsController < ApplicationController
 
   # GET /pools/1/invite
   def invite
-    @pool = admin_pool_from_params
+    @pool = invite_pool_from_params
     if @pool
       breadcrumbs.add @pool.name
       breadcrumbs.add 'Invite Members'
@@ -99,6 +99,15 @@ class PoolsController < ApplicationController
 
     def admin_pool_from_params
       Pool.where(:id => params[:id], :admin_id => current_user.id)[0]
+    end
+    
+    def invite_pool_from_params
+      pool = Pool.find_by_id(params[:id])
+      if pool and pool.can_invite?(current_user)
+        pool
+      else 
+        nil
+      end
     end
 
     def set_breadcrumb

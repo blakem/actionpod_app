@@ -127,4 +127,11 @@ class Pool < ActiveRecord::Base
     timeslots.values.sort{ |a,b| a[:minute] <=> b[:minute] }
   end
   
+  def can_invite?(user)
+    return true if self.admin_id == user.id
+    return false unless user.pools.include?(self)
+    return true if self.public_group
+    return true if self.allow_others_to_invite
+  end
+  
 end

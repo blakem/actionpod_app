@@ -352,7 +352,7 @@ class PagesController < ApplicationController
   
   def invite_members
     pool = Pool.find_by_id(params[:group_id])
-    if pool and pool.admin_id == current_user.id
+    if pool && pool.can_invite?(current_user)
       handle_invites(current_user, pool, params[:emails], params[:message])
       redirect_to(invite_pool_path(pool), :notice => "Invites have been sent.")
     else
