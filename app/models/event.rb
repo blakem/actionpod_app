@@ -74,7 +74,7 @@ class Event < ActiveRecord::Base
     sched = self.schedule
     next_occurrence = sched.next_occurrence(from)
     return next_occurrence if next_occurrence
-    sched.occurrences_between(Time.now, Time.now + (sched.exdates.count + 7).days).first
+    sched.occurrences_between(Time.now, Time.now + (sched.exdates.count + 21).days).first
   end
   
   def minute_of_hour
