@@ -256,6 +256,15 @@ describe PagesController do
         @current_user.pools.should include(@pool)
       end
 
+      it "should alow you to simply join a public group" do
+        @current_user.pools = [@pool]
+        get :join, :group_id => @public_pool.id
+        @current_user.reload
+        @current_user.pools.should include(@public_pool)
+        @current_user.pools.should include(@pool)
+        response.should redirect_to(root_path)
+      end
+
       it "should redirect if the pool is not public" do
         @current_user.pools = []
         get :join, :time => '7:00am', :group_id => @pool.id
