@@ -2,7 +2,7 @@ en:
   errors:
     messages:
       not_found: "not found"
-      already_confirmed: "was already confirmed"
+      already_confirmed: "was already confirmed. Click on the Members link to log in."
       not_locked: "was not locked"
 
   devise:

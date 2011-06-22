@@ -43,7 +43,7 @@ class RegistrationsController < Devise::RegistrationsController
         resource.pools = []
         group.add_member(resource) if group
         if invite.email == resource.email
-          resource.confirmed_at = Time.now
+          resource.confirm!
           resource.save
         end
       end

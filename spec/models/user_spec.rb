@@ -22,6 +22,21 @@ describe User do
     Phone.find_by_id(phone2_id).should be_nil    
   end
 
+  it "can confirm" do
+    user = Factory(:user)
+    user.confirmed_at = nil
+    user.confirmation_token = 'foo'
+    user.save
+    user.confirmed_at.should be_nil
+    user.confirmation_token.should_not be_nil
+
+    user.confirm!
+
+    user.reload
+    user.confirmed_at.should_not be_nil
+    user.confirmation_token.should be_nil
+  end
+
   it "has many plans and a current_plan" do
     user = Factory(:user)
     plan1 = Factory(:plan, :user_id => user.id)
