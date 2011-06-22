@@ -1,13 +1,11 @@
 15 Minute Calls Features and Todo list:
   FrontEnd:
-    Put Chattr.im on site
-    Allow users to join public groups
-    Allow users to send invites for invite_groups
     Survey for users to tell them if this is a good tool for them.
 
   BackEnd:
+    Give group option to not send todo conference email
+    Give group option to pick_three randomly
     Put a user in some hold status if they have missed lots of calls in a row (Saumitra)
-    5th man should split group to into a group of 3 and a group of 2
     Set up Recurly
     Send email to accountability buddies if their friend misses 3 calls in a row.
     Say something to ifmachine=true users rather than just hang-up on them.
@@ -28,7 +26,6 @@
 
   Other:
     Watch Haml Screencast
-    Add Feedback Form
 
 
   
