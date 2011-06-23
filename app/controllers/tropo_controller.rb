@@ -3,12 +3,11 @@ class TropoController < ApplicationController
   respond_to :json
 
   def greeting
+    event = find_event_from_params(params)
     t = Tropo::Generator.new
     t.say "Welcome to your call!" 
     render :inline => t.response
 
-    # 
-    # event = find_event_from_params(params)
     # unless event
     #   update_call_status_from_params(params, 'greeting:nomatch')
     #   self.say_sorry
@@ -186,8 +185,8 @@ class TropoController < ApplicationController
     end
 
     def find_event_from_params(params)
-      call = match_call_from_params(params)
-      return Event.find_by_id(call.event_id) if call
+#      call = match_call_from_params(params)
+#      return Event.find_by_id(call.event_id) if call
       user = match_user_from_params(params)
       return nil unless user
       return pick_users_closest_event(user)
@@ -206,6 +205,7 @@ class TropoController < ApplicationController
     end
     
     def match_user_from_params(params)
+      puts params.inspect
       key = params[:Direction] == 'inbound' ? :From : :To
       return nil if params[key].blank?
       phone = Phone.find_by_number(params[key])
