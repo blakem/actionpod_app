@@ -1,5 +1,5 @@
 # == Schema Information
-# Schema version: 20110617224719
+# Schema version: 20110623060900
 #
 # Table name: pools
 #
@@ -14,6 +14,7 @@
 #  allow_others_to_invite :boolean
 #  description            :text
 #  available_time_mode    :string(255)
+#  send_conference_email  :boolean
 #
 
 class Pool < ActiveRecord::Base

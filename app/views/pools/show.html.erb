@@ -36,7 +36,17 @@
 </p>
 
 <p>
-  <b>Members:</b><br>
+  <b>Send conference email:</b>
+  <%= @pool.send_conference_email ? 'Yes' : 'No' %>
+</p>
+
+<p>
+  <b>Hide Optional Fields:</b>
+  <%= @pool.hide_optional_fields ? 'Yes' : 'No' %>
+</p>
+
+<p>
+  <b>Members:</b> <%= @users.count %> total<br>
   <% @users.each do |user| %>
     <%= gravatar_for user, :size => 30 %> <%= link_to user.name, user.profile_path %><br/>
   <% end %>

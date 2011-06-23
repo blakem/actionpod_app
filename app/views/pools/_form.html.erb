@@ -34,6 +34,11 @@
 	  <%= f.check_box :allow_others_to_invite %><br>
 	  <i>Check to allow other members to invite people to join this group.</i>
   </div>
+  <div class="field">
+    <%= f.label :send_conference_email, "Send conference email:", :class => "round" %>
+	  <%= f.check_box :send_conference_email %><br>
+	  <i>Check to send out a conference email introducing everyone on the call.</i>
+  </div>
 	<div class="field">
 	  <%= f.label :hide_optional_fields, "Hide Optional Fields:", :class => "round" %>
 	  <%= f.check_box :hide_optional_fields %><br>

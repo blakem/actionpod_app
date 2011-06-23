@@ -401,12 +401,12 @@ class PoolMerger
 
   def send_email_for_new_conference(conference)
     conference.users.each do |user|
-      send_conference_email_to_user(user, conference.users)
+      send_conference_email_to_user(user, conference.users, conference.pool)
     end
   end
 
-  def send_conference_email_to_user(user, participants)
-    return unless Rails.env.production?
+  def send_conference_email_to_user(user, participants, pool)
+    return unless Rails.env.production? && pool.send_conference_email
     UserMailer.deliver_conference_email(user, participants)
   end
 
@@ -422,7 +422,7 @@ class PoolMerger
         user = event.user
         unless conference.users.include?(user)
           conference.users << user 
-          send_conference_email_to_user(user, conference.users)
+          send_conference_email_to_user(user, conference.users, conference.pool)
         end
       end
     else
