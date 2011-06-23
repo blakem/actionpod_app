@@ -3,7 +3,6 @@
     Survey for users to tell them if this is a good tool for them.
 
   BackEnd:
-    Give group option to not send todo conference email
     Give group option to pick_three randomly
     Put a user in some hold status if they have missed lots of calls in a row (Saumitra)
     Set up Recurly
