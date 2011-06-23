@@ -3,6 +3,7 @@ class TropoController < ApplicationController
   respond_to :json
 
   def greeting
+    puts params.inspect
     event = find_event_from_params(params)
     t = Tropo::Generator.new
     unless event
