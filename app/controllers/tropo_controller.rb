@@ -1,4 +1,4 @@
-class TwilioController < ApplicationController
+class TropoController < ApplicationController
 
   respond_to :json
 
