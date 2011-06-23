@@ -20,6 +20,7 @@ gem 'recurly', '~> 0.3.0'
 gem 'tripwire_notifier'
 gem 'breadcrumbs'
 gem 'rake', '0.8.7'
+gem 'tropo-webapi-ruby'
 
 group :test, :development do
   gem 'taps'
