@@ -253,8 +253,8 @@ class TropoController < ApplicationController
     def match_user_from_params(params)
       # key = params[:Direction] == 'inbound' ? :From : :To
       key = 'from'
-      return nil if !params[key] or params[key]['name'].blank?
-      phone = Phone.find_by_number(params[key]['name'])
+      return nil if !params['session'] or ! params['session'][key] or params['session'][key]['name'].blank?
+      phone = Phone.find_by_number(params['session'][key]['name'])
       phone ? phone.user : nil
     end
     
