@@ -117,7 +117,18 @@ class TropoController < ApplicationController
     else
       update_call_object_status(call, 'onhold')
       update_incoming_count(event.user)
-      tg.say "Welcome to your #{event.name_in_second_person}. Press 1 to join the conference.", :voice => 'dave'
+      tg.say "Hello, welcome to your #{event.name_in_second_person}"
+      tg.say "Waiting for the other participants."
+      conf_name = "15mcHoldEvent#{event.id}User#{event.user.id}Pool#{event.pool.id}Incoming"
+      tg.conference({ :name => conf_name, 
+                      :id   => conf_name, 
+                      :mute => false,
+                      :send_tones => false,
+                      :exit_tone  => '#',
+                    }) do 
+                      on(:event => 'join') { say :value => 'Welcome to the conference' }
+                      on(:event => 'leave') { say :value => 'Someone has left the conference' }
+                    end
       
       # @event_name = event.name_in_second_person
       # @timelimit = event.pool.timelimit
