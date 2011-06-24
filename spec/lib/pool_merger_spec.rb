@@ -1189,11 +1189,15 @@ describe PoolMerger do
   end
   
   describe "pick_three_participants" do
+    before(:each) do
+      @pool = Factory(:pool, :merge_type => 1)
+    end
+
     it "grabs the first three from the list" do
       events = create_events(3)
       participants = participant_list_for_events(events)
 
-      three = @pm.pick_three_participants(participants)
+      three = @pm.pick_three_participants(participants, @pool)
 
       extract_event_names(three).should == [events[0], events[1], events[2]].map(&:name)
       extract_event_names(participants).should == []
@@ -1214,7 +1218,7 @@ describe PoolMerger do
       events.each { |e| e.save; e.user.save }
       participants = participant_list_for_events(events)
 
-      three = @pm.pick_three_participants(participants)
+      three = @pm.pick_three_participants(participants, @pool)
 
       extract_event_names(three).should == [events[1], events[4], events[5]].map(&:name)
       extract_event_names(participants).should == [events[0], events[2], events[3]].map(&:name)
@@ -1237,7 +1241,7 @@ describe PoolMerger do
       events.each { |e| e.save; e.user.save }
       participants = participant_list_for_events(events)
 
-      three = @pm.pick_three_participants(participants)
+      three = @pm.pick_three_participants(participants, @pool)
 
       extract_event_names(three).should == [events[1], events[2], events[4]].map(&:name)
       extract_event_names(participants).should == [events[0], events[3], events[5]].map(&:name)
@@ -1260,7 +1264,7 @@ describe PoolMerger do
       events.each { |e| e.save; e.user.save }
       participants = participant_list_for_events(events)
 
-      three = @pm.pick_three_participants(participants)
+      three = @pm.pick_three_participants(participants, @pool)
 
       extract_event_names(three).should == [events[2], events[3], events[4]].map(&:name)
       extract_event_names(participants).should == [events[0], events[1], events[5]].map(&:name)
@@ -1276,7 +1280,7 @@ describe PoolMerger do
       events[4].user.prefer!(events[2].user)
       participants = participant_list_for_events(events)
 
-      three = @pm.pick_three_participants(participants)
+      three = @pm.pick_three_participants(participants, @pool)
 
       extract_event_names(three).should == [events[0], events[2], events[4]].map(&:name)
       extract_event_names(participants).should == [events[1], events[3], events[5]].map(&:name)
@@ -1292,7 +1296,7 @@ describe PoolMerger do
       events[2].user.avoid!(events[4].user)
       participants = participant_list_for_events(events)
 
-      three = @pm.pick_three_participants(participants)
+      three = @pm.pick_three_participants(participants, @pool)
 
       extract_event_names(three).should == [events[0], events[2], events[3]].map(&:name)
       extract_event_names(participants).should == [events[1], events[4]].map(&:name)
@@ -1302,10 +1306,29 @@ describe PoolMerger do
       events = create_events_with_placed(6)
       participants = participant_list_for_events(events).shuffle
 
-      three = @pm.pick_three_participants(participants)
+      three = @pm.pick_three_participants(participants, @pool)
 
       extract_event_names(three).sort.should == [events[0], events[1], events[2]].map(&:name)
       extract_event_names(participants).sort.should == [events[3], events[4], events[5]].map(&:name)      
+    end
+
+    it "if merge_type is set to random it picks random users with not other information to go by" do
+      @pool.merge_type = 2
+      @pool.save
+
+      events = create_events_with_placed(10)
+      participants = participant_list_for_events(events).shuffle
+      three = @pm.pick_three_participants(participants, @pool)
+      picks1 = extract_event_names(three).sort
+      participants.count.should == 7
+
+      events = create_events_with_placed(10)
+      participants = participant_list_for_events(events).shuffle
+      three = @pm.pick_three_participants(participants, @pool)
+      picks2 = extract_event_names(three).sort
+      participants.count.should == 7
+
+      picks1.should_not == picks2
     end
 
     it "finds a good match in the front of the list" do
@@ -1315,7 +1338,7 @@ describe PoolMerger do
       matched_events[1].user.prefer!(matched_events[2].user)
       matched_events[2].user.prefer!(matched_events[0].user)
       participants = participant_list_for_events(events)
-      three = @pm.pick_three_participants(participants)
+      three = @pm.pick_three_participants(participants, @pool)
       extract_event_names(three).should == matched_events.map(&:name)
     end
 
@@ -1326,7 +1349,7 @@ describe PoolMerger do
       matched_events[1].user.prefer!(matched_events[2].user)
       matched_events[2].user.prefer!(matched_events[0].user)
       participants = participant_list_for_events(events)
-      three = @pm.pick_three_participants(participants)
+      three = @pm.pick_three_participants(participants, @pool)
       extract_event_names(three).should == matched_events.map(&:name)
     end
 
@@ -1337,7 +1360,7 @@ describe PoolMerger do
       matched_events[1].user.prefer!(matched_events[2].user)
       matched_events[2].user.prefer!(matched_events[0].user)
       participants = participant_list_for_events(events)
-      three = @pm.pick_three_participants(participants)
+      three = @pm.pick_three_participants(participants, @pool)
       extract_event_names(three).should == [events[0], events[1], events[2]].map(&:name)
     end
 
@@ -1345,22 +1368,22 @@ describe PoolMerger do
       it "Takes c(6,3)=20 compute_pref_score computations to find the best match in 12" do
         events = create_events_with_placed(6)
         participants = participant_list_for_events(events)
-        @pm.should_receive(:compute_pref_score).exactly(20).times.and_return([1, 2, 3, 4])
-        three = @pm.pick_three_participants(participants)
+        @pm.should_receive(:compute_pref_score).exactly(21).times.and_return([1, 2, 3, 4])
+        three = @pm.pick_three_participants(participants, @pool)
       end
 
       it "Takes c(12,3)=220 compute_pref_score computations to find the best match in 12" do
         events = create_events_with_placed(12)
         participants = participant_list_for_events(events)
-        @pm.should_receive(:compute_pref_score).exactly(220).times.and_return([1, 2, 3, 4])
-        three = @pm.pick_three_participants(participants)
+        @pm.should_receive(:compute_pref_score).exactly(221).times.and_return([1, 2, 3, 4])
+        three = @pm.pick_three_participants(participants, @pool)
       end
 
       it "Takes c(12,3)=220 compute_pref_score computations to find the best match in 15" do
         events = create_events_with_placed(15)
         participants = participant_list_for_events(events)
-        @pm.should_receive(:compute_pref_score).exactly(220).times.and_return([1, 2, 3, 4])
-        three = @pm.pick_three_participants(participants)
+        @pm.should_receive(:compute_pref_score).exactly(221).times.and_return([1, 2, 3, 4])
+        three = @pm.pick_three_participants(participants, @pool)
       end
       # Therfore the numbers look like this
       # Totals: 3 => 1, 6 => 21, 9 => 105, 12 => 325, 15 => 325+220 = 545, 18 => 765, 21 => 985
