@@ -51,9 +51,6 @@ class TropoController < ApplicationController
     update_call_object_status(call, 'completed')
     TwilioCaller.new.send_error_to_blake('OutgoingBug: ' + params[:CallSid]) if bailed_before_greeting
   end
-
-  def say_sorry
-  end
   
   def place_test_call
     @postto = base_url + '/place_test_call_thanks.xml'
@@ -112,20 +109,23 @@ class TropoController < ApplicationController
   def incoming
     event = find_event_from_params(params)
     event_id = event ? event.id : nil
-    call = TwilioCaller.create_call_from_call_hash(params.merge(:Sid => params[:CallSid], :status => 'incoming'), event_id)
+    call = TropoCaller.create_call_from_call_hash(params.merge('status' => 'incoming'), event_id)
+    tg = TropoCaller.tropo_generator
     unless event
       update_call_object_status(call, 'nomatch')
-      self.say_sorry
-      render :action => :say_sorry
+      say_sorry(tg)
     else
       update_call_object_status(call, 'onhold')
       update_incoming_count(event.user)
-      @event_name = event.name_in_second_person
-      @timelimit = event.pool.timelimit
-      @pool = event.pool
-      @user = event.user
-      @event = event
-      @timelimit *= 60
+      tg.say "Welcome to your #{event.name_in_second_person}. Press 1 to join the conference.", :voice => 'dave'
+      
+      # @event_name = event.name_in_second_person
+      # @timelimit = event.pool.timelimit
+      # @pool = event.pool
+      # @user = event.user
+      # @event = event
+      # @timelimit *= 60
+
       log_message("INCOMING for #{event.user.name}")
     end
   end
@@ -287,6 +287,10 @@ class TropoController < ApplicationController
     
     def log_message(message)
       puts message if Rails.env.production?
+    end
+
+    def say_sorry(tg)
+      tg.say "I'm sorry I can't match this number up with a scheduled event. Goodbye."
     end
 
 end
