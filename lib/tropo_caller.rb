@@ -163,6 +163,6 @@ class TropoCaller
   end
   
   def self.tropo_generator
-    Tropo::Generator.new
+    Tropo::Generator.new(:voice => 'dave')
   end
 end
