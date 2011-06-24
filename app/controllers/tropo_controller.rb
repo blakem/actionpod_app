@@ -13,7 +13,6 @@ class TropoController < ApplicationController
       #   update_call_status_from_params(params, 'greeting:match')
       #   @postto = base_url + '/put_on_hold.xml'
       t.say "Welcome to your #{event.name_in_second_person}. Press 1 to join the conference.", :voice => 'dave'
-      t.say "Welcome to your #{event.name_in_second_person}. Press 1 to join the conference.", :voice => 'simon'
       log_message("GREETING for #{event.user.name}")
     end
     render :inline => t.response
