@@ -26,6 +26,7 @@ class PoolsController < ApplicationController
     @pool.public_group = true
     @pool.available_time_mode = '60'
     @pool.send_conference_email = true
+    @pool.merge_type = 1
     @submit_text = 'Create Group'
   end
 

@@ -69,6 +69,7 @@ Factory.define :pool do |pool|
   pool.sequence(:name)  { Factory.next(:pool_name) }
   pool.association :admin_id, :factory => :user
   pool.timelimit  30
+  pool.merge_type 1
 end
 
 # XXX RESTART SPORK XXX #

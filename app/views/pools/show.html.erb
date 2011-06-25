@@ -46,6 +46,11 @@
 </p>
 
 <p>
+  <b>Form small call groups:</b>
+  <%= @pool.merge_type == 1 ? 'Consistently' : 'Randomly' %>
+</p>
+
+<p>
   <b>Members:</b> <%= @users.count %> total<br>
   <% @users.each do |user| %>
     <%= gravatar_for user, :size => 30 %> <%= link_to user.name, user.profile_path %><br/>

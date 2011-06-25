@@ -1,5 +1,5 @@
 # == Schema Information
-# Schema version: 20110623060900
+# Schema version: 20110624231622
 #
 # Table name: pools
 #
@@ -15,6 +15,7 @@
 #  description            :text
 #  available_time_mode    :string(255)
 #  send_conference_email  :boolean
+#  merge_type             :integer
 #
 
 class Pool < ActiveRecord::Base

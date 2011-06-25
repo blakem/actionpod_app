@@ -69,7 +69,7 @@ class PoolMerger
       if participants.count == 4
         handle_four_new_participants(participants, pool, pool_runs_at, data)
       else
-        three_participants = pick_three_participants(participants)
+        three_participants = pick_three_participants(participants, pool)
         handle_three_new_participants(three_participants, pool, pool_runs_at, data)
       end
     end
@@ -197,7 +197,7 @@ class PoolMerger
     }
   end
 
-  def pick_three_participants(participants)
+  def pick_three_participants(participants, pool)
     index = 0
     users = []
     admin = nil
@@ -233,12 +233,12 @@ class PoolMerger
       print_debug_info = true if Rails.env.production?
       puts "Computing highest score for #{users.size}" if print_debug_info
       count = 0
-      highest_score = []
+      highest_score = pick_default_three(users, pool)
       users[0..self.rolling_window_size-1].combination(3).each do |combo|
         new_score = compute_pref_score(combo.map { |a| a[:user] })
         # puts "ExistingScore: " + highest_score.inspect + " - NewScore: " + new_score.inspect
         highest_score = [new_score, combo.map { |a| a[:index] }] if highest_score.empty? or 
-          new_score_is_higher?(new_score, highest_score[0])
+          new_score_is_higher?(new_score, highest_score[0], pool)
           # puts "PickedScore:   " + highest_score.inspect
         count += 1
       end
@@ -252,9 +252,29 @@ class PoolMerger
     end
     return picked.reverse
   end
+
+  def pick_default_three(users_data, pool)
+    if pool.merge_type == 1
+      picks = [0, 1, 2]
+    elsif pool.merge_type == 2
+      picks = pick_three_random_numbers_below(users_data.count)
+    end
+    [
+      compute_pref_score([
+        users_data[picks[0]][:user], 
+        users_data[picks[1]][:user],
+        users_data[picks[2]][:user],
+      ]), picks
+    ]
+  end
   
-  def new_score_is_higher?(new_score, old_score)
+  def pick_three_random_numbers_below(count)
+    (0..count-1).to_a.shuffle[0..2]
+  end
+  
+  def new_score_is_higher?(new_score, old_score, pool)
     return true if new_score[0] > old_score[0]
+    return false if pool.merge_type == 2
     if new_score[0] == old_score[0]
       return true if new_score[1] < old_score[1]
       if new_score[1] == old_score[1]

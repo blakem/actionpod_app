@@ -44,6 +44,12 @@
 	  <%= f.check_box :hide_optional_fields %><br>
 	  <i>This hides the three optional fields (title, location, and intro) on the signup form</i>
 	</div>
+  <div class="field">
+    <%= f.label :merge_type, "Form small call groups:", :class => "round" %>
+    <%= f.select(:merge_type, [
+      ["Consistently", "1"],
+      ["Randomly", "2"],
+    ]) %>
 <% if @show_member_count %>
   <div class="field">
     <b>Total Members:</b> <%= @pool.users.count %>
