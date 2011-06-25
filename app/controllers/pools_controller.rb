@@ -49,6 +49,12 @@ class PoolsController < ApplicationController
     if @pool
       breadcrumbs.add @pool.name
       breadcrumbs.add 'Invite Members'
+      previous_invite = MemberInvite.where(:sender_id => current_user.id, :pool_id => @pool.id).sort_by(&:id).last
+      if previous_invite
+        @default_personal_message = previous_invite.message
+      else
+        @default_personal_message = ''
+      end
     else
       redirect_to(root_path, :alert => "You don't have permissions to view that group.")
     end

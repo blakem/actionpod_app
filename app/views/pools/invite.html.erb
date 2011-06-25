@@ -6,7 +6,7 @@
   </invite>
   Personalized message: (we will provide basic information in the invite)<br />
   <personal_message>
-  <%= text_area_tag "message", "", :class => "round" %><br/>
+  <%= text_area_tag "message", @default_personal_message, :class => "round" %><br/>
   </personal_message>
   <%= hidden_field_tag "group_id", @pool.id %>
   <%= submit_tag 'Send Invite' %>
