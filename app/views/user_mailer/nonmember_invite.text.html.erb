@@ -15,7 +15,7 @@
     <% unless @pool.description.blank? %>
       <p>
        The <%= @pool.name_plus_group %> is described as:<br/>
-       <%= simple_format(h(@pool.description.strip)).gsub(/<(br \/|p)>(\s+)/) { "<#{$1}>#{'&nbsp;' * $2.length}" } %>
+       <%=raw simple_format(h(@pool.description.strip).gsub(/[\r\n]+/, "</p><p>")).gsub(/<(br \/|p)>(\s+)/) { "<#{$1}>#{'&nbsp;' * $2.length}" } %>
       </p>
       <p>&nbsp;</p>
     <% end %>
@@ -23,7 +23,7 @@
     <% unless @personal_message.blank? %>
       <p>
        <%= @sender.first_name %> included the personal message:<br/>
-       <%=raw simple_format(h(@personal_message.strip).gsub(/\n/, "</p><p>")).gsub(/<(br \/|p)>(\s+)/) { "<#{$1}>#{'&nbsp;' * $2.length}" } %>
+       <%=raw simple_format(h(@personal_message.strip).gsub(/[\r\n]+/, "</p><p>")).gsub(/<(br \/|p)>(\s+)/) { "<#{$1}>#{'&nbsp;' * $2.length}" } %>
       </p>
       <p>&nbsp;</p>
     <% end %>
