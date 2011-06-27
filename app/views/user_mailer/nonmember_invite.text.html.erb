@@ -23,7 +23,7 @@
     <% unless @personal_message.blank? %>
       <p>
        <%= @sender.first_name %> included the personal message:<br/>
-       <%= simple_format(h(@personal_message.strip)).gsub(/<(br \/|p)>(\s+)/) { "<#{$1}>#{'&nbsp;' * $2.length}" } %>
+       <%= simple_format(h(@personal_message.strip).gsub(/\n/, "</p><p>")).gsub(/<(br \/|p)>(\s+)/) { "<#{$1}>#{'&nbsp;' * $2.length}" } %>
       </p>
       <p>&nbsp;</p>
     <% end %>
