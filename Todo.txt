@@ -12,7 +12,6 @@
   Bugs:
     
   Community:
-    Ask Garret about Tweet (@15mincalls)
     Email TMC about 15mc
     Facebook Fan Page
     Facebook Like buttons (with friends)
@@ -20,7 +19,6 @@
     
 
   Business:
-    Add expenses to Expenses spreadsheet  
 
   Other:
     Watch Haml Screencast
