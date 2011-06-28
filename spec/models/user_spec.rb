@@ -192,6 +192,12 @@ describe User do
     user.name = ''
     user.first_name.should == 'abc'
     user.email.should == 'abc@123.com'
+    user.name = 'H. Paul Hammann'
+    user.first_name.should == 'Paul'
+    user.name = 'Dr. paul Hammann'
+    user.first_name.should == 'Paul'
+    user.name = 'dr.'
+    user.first_name.should == 'Dr.'
   end
   
   it "has many conferences" do

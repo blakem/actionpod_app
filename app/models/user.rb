@@ -157,7 +157,16 @@ class User < ActiveRecord::Base
   end
   
   def first_name
-    name.blank? ? self.email.sub(/@.*/,'') : name.split[0].titlecase
+    name.blank? ? self.email.sub(/@.*/,'') : parse_first_name
+  end
+
+  def parse_first_name
+    parts = name.split
+    first = parts[0]
+    if first =~ /\./ and parts.length > 1
+      first = parts[1]
+    end
+    first.titlecase
   end
   
   def generate_handle_from_email
