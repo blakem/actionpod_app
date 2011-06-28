@@ -176,7 +176,7 @@ class TropoCaller
       :DateCreated    => call_hash['session']['timestamp'],
       :DateUpdated    => call_hash['session']['timestamp'],
       :To             => call_hash['session']['to'] ? call_hash['session']['to']['name'] : nil,
-      :From           => call_hash['session']['from'] ? ? call_hash['session']['from']['name'] : nil,
+      :From           => call_hash['session']['from'] ? call_hash['session']['from']['name'] : nil,
       :PhoneNumberSid => nil,
       :Uri            => nil,
       :Direction      => nil,
