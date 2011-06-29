@@ -25,6 +25,8 @@ class PoolMerger
       new_participants = sort_participants(new_participants, data)
       handle_placed_participants(placed_participants, pool, pool_runs_at, data)
       handle_new_participants(new_participants, pool, pool_runs_at, data)
+    else
+      participants_on_hold_for_pool.each { |participant| put_on_hold(participant, data) }
     end
     data
   end
