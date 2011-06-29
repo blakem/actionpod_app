@@ -26,11 +26,11 @@ class TropoCaller
     res = Net::HTTP.post_form(URI.parse(api_url), {
       :action => 'create',
       :token => account_token,
+      :mc_action => 'outbound',
+      :event_id => User.blake.events.first.id,
       :number_to_dial => '+14153141222',
-      :message => 'Hello from Tropo',
+      :from_number => '+14151112222',
     })
-    puts res.inspect
-    puts res.body
   end
   
 #   def account_phone

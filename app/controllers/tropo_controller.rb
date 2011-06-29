@@ -2,6 +2,18 @@ class TropoController < ApplicationController
 
   respond_to :json
 
+  def tropo
+    tropo = TropoCaller.tropo_generator
+    tropo.on :event => 'continue', :next => URI.encode("/tropo/greeting")
+    tropo.call( :to=>"tel:" + params['session']['parameters']['number_to_dial'],
+                :from => params['session']['parameters']['from_number'])
+    render :inline => tropo.response
+  end
+
+  def sms
+
+  end
+
   def greeting
     puts params.inspect
     event = find_event_from_params(params)
@@ -17,149 +29,147 @@ class TropoController < ApplicationController
     end
     render :inline => t.response
   end
-  
-  def greeting_fallback
-    TwilioCaller.new.send_error_to_blake('Fallback: ' + params[:CallSid])
-    event = find_event_from_params(params)
-    unless event
-      update_call_status_from_params(params, 'fallback:nomatch')
-      self.say_sorry
-      render :action => :say_sorry
-    else
-      update_call_status_from_params(params, 'fallback:match')
-      self.put_on_hold
-      render :action => :put_on_hold
-    end
-  end
-  
-  def callback
-    call = Call.find_by_Sid(params[:CallSid])
-    call.Duration = params[:CallDuration]
-    call.AnsweredBy = params[:AnsweredBy] if params[:AnsweredBy]
-    call.save
-    bailed_before_greeting = call.status == 'outgoing'
-    event = find_event_from_params(params)
-    unless event
-      update_call_object_status(call, 'callback:nomatch')
-    else
-      update_call_object_status(call, 'callback:match')
-      if call.status =~ /^outgoing/ && (call.status !~ /-onhold/ && call.status !~ /-direct:match-/)
-        update_missed_count(event.user) unless bailed_before_greeting
-      end
-      log_message("CALLBACK for #{event.user.name}")
-    end
-    update_call_object_status(call, 'completed')
-    TwilioCaller.new.send_error_to_blake('OutgoingBug: ' + params[:CallSid]) if bailed_before_greeting
-  end
-  
-  def place_test_call
-    @postto = base_url + '/place_test_call_thanks.xml'
-  end
-  def place_test_call_thanks
-  end
-
-  def apologize_no_other_participants
-    update_call_status_from_params(params, 'apologized')
-    @other_participants = params[:participant_count].to_i - 1
-    @people = @other_participants == 1 ? 'person' : 'people'
-    @event = Event.find_by_id(params[:event])
-    @next_call_time = @event ? @event.user.next_call_time_string : ''
-    @user = @event.user
-    @pool = @event.pool
-    @timelimit = @pool.timelimit * 60
-  end
-
-  def go_directly_to_conference
-    event = find_event_from_params(params)
-    unless event
-      update_call_status_from_params(params, 'direct:nomatch', 'AnsweredBy' => params[:AnsweredBy])
-      self.say_sorry
-      render :action => :say_sorry
-    else
-      update_call_status_from_params(params, 'direct:match', 'AnsweredBy' => params[:AnsweredBy])
-      update_answered_count(event.user)
-      @event_name = event.name_in_second_person
-      @timelimit = event.pool.timelimit
-      @pool = event.pool
-      @user = event.user
-      @event = event
-      @timelimit *= 60
-      log_message("DIRECT for #{event.user.name}")
-    end
-  end
-
-  def put_on_hold
-    event = find_event_from_params(params)
-    unless event
-      update_call_status_from_params(params, 'onhold:nomatch')
-      self.say_sorry
-      render :action => :say_sorry
-    else
-      update_call_status_from_params(params, 'onhold:match')
-      update_answered_count(event.user)
-      @timelimit = event.pool.timelimit
-      @pool = event.pool 
-      @event = event
-      @user = event.user
-      @timelimit *= 60
-      log_message("ONHOLD for #{event.user.name}")
-    end
-  end
-
-  def incoming
-    event = find_event_from_params(params)
-    event_id = event ? event.id : nil
-    call = TropoCaller.create_call_from_call_hash(params.merge('status' => 'incoming'), event_id)
-    tg = TropoCaller.tropo_generator
-    unless event
-      update_call_object_status(call, 'nomatch')
-      say_sorry(tg)
-    else
-      update_call_object_status(call, 'onhold')
-      update_incoming_count(event.user)
-      tg.say "Hello, welcome to your #{event.name_in_second_person}"
-      tg.say "Waiting for the other participants."
-      conf_name = "15mcHoldEvent#{event.id}User#{event.user.id}Pool#{event.pool.id}Incoming"
-      tg.conference({ :name => conf_name, 
-                      :id   => conf_name, 
-                      :mute => false,
-                      :send_tones => false,
-                      :exit_tone  => '#',
-                    }) do 
-                      on(:event => 'join') { say :value => 'Welcome to the conference' }
-                      on(:event => 'leave') { say :value => 'Someone has left the conference' }
-                    end
-      
-      # @event_name = event.name_in_second_person
-      # @timelimit = event.pool.timelimit
-      # @pool = event.pool
-      # @user = event.user
-      # @event = event
-      # @timelimit *= 60
-
-      log_message("INCOMING for #{event.user.name}")
-    end
-    render :inline => tg.response
-  end
-
-  def place_in_conference
-    @names = build_intro_string(params[:events])
-    @timelimit = params[:timelimit] ? params[:timelimit].to_i : 15 * 60
-    @conference = params[:conference] || 'DefaultConference'
-    update_call_status_from_params(params, "placed:#{@conference}")
-    event = Event.find_by_id(params[:event])
-    if event
-      @next_call_time = event.user.next_call_time_string
-      log_message("CONFERENCE for #{event.user.name} - #{@conference}")
-    else
-      @next_call_time = ''
-    end
-  end
-  
-  def sms
-  end
 
   private
+  
+    def greeting_fallback
+      TwilioCaller.new.send_error_to_blake('Fallback: ' + params[:CallSid])
+      event = find_event_from_params(params)
+      unless event
+        update_call_status_from_params(params, 'fallback:nomatch')
+        self.say_sorry
+        render :action => :say_sorry
+      else
+        update_call_status_from_params(params, 'fallback:match')
+        self.put_on_hold
+        render :action => :put_on_hold
+      end
+    end
+  
+    def callback
+      call = Call.find_by_Sid(params[:CallSid])
+      call.Duration = params[:CallDuration]
+      call.AnsweredBy = params[:AnsweredBy] if params[:AnsweredBy]
+      call.save
+      bailed_before_greeting = call.status == 'outgoing'
+      event = find_event_from_params(params)
+      unless event
+        update_call_object_status(call, 'callback:nomatch')
+      else
+        update_call_object_status(call, 'callback:match')
+        if call.status =~ /^outgoing/ && (call.status !~ /-onhold/ && call.status !~ /-direct:match-/)
+          update_missed_count(event.user) unless bailed_before_greeting
+        end
+        log_message("CALLBACK for #{event.user.name}")
+      end
+      update_call_object_status(call, 'completed')
+      TwilioCaller.new.send_error_to_blake('OutgoingBug: ' + params[:CallSid]) if bailed_before_greeting
+    end
+  
+    def place_test_call
+      @postto = base_url + '/place_test_call_thanks.xml'
+    end
+    def place_test_call_thanks
+    end
+
+    def apologize_no_other_participants
+      update_call_status_from_params(params, 'apologized')
+      @other_participants = params[:participant_count].to_i - 1
+      @people = @other_participants == 1 ? 'person' : 'people'
+      @event = Event.find_by_id(params[:event])
+      @next_call_time = @event ? @event.user.next_call_time_string : ''
+      @user = @event.user
+      @pool = @event.pool
+      @timelimit = @pool.timelimit * 60
+    end
+
+    def go_directly_to_conference
+      event = find_event_from_params(params)
+      unless event
+        update_call_status_from_params(params, 'direct:nomatch', 'AnsweredBy' => params[:AnsweredBy])
+        self.say_sorry
+        render :action => :say_sorry
+      else
+        update_call_status_from_params(params, 'direct:match', 'AnsweredBy' => params[:AnsweredBy])
+        update_answered_count(event.user)
+        @event_name = event.name_in_second_person
+        @timelimit = event.pool.timelimit
+        @pool = event.pool
+        @user = event.user
+        @event = event
+        @timelimit *= 60
+        log_message("DIRECT for #{event.user.name}")
+      end
+    end
+
+    def put_on_hold
+      event = find_event_from_params(params)
+      unless event
+        update_call_status_from_params(params, 'onhold:nomatch')
+        self.say_sorry
+        render :action => :say_sorry
+      else
+        update_call_status_from_params(params, 'onhold:match')
+        update_answered_count(event.user)
+        @timelimit = event.pool.timelimit
+        @pool = event.pool 
+        @event = event
+        @user = event.user
+        @timelimit *= 60
+        log_message("ONHOLD for #{event.user.name}")
+      end
+    end
+
+    def incoming
+      event = find_event_from_params(params)
+      event_id = event ? event.id : nil
+      call = TropoCaller.create_call_from_call_hash(params.merge('status' => 'incoming'), event_id)
+      tg = TropoCaller.tropo_generator
+      unless event
+        update_call_object_status(call, 'nomatch')
+        say_sorry(tg)
+      else
+        update_call_object_status(call, 'onhold')
+        update_incoming_count(event.user)
+        tg.say "Hello, welcome to your #{event.name_in_second_person}"
+        tg.say "Waiting for the other participants."
+        conf_name = "15mcHoldEvent#{event.id}User#{event.user.id}Pool#{event.pool.id}Incoming"
+        tg.conference({ :name => conf_name, 
+                        :id   => conf_name, 
+                        :mute => false,
+                        :send_tones => false,
+                        :exit_tone  => '#',
+                      }) do 
+                        on(:event => 'join') { say :value => 'Welcome to the conference' }
+                        on(:event => 'leave') { say :value => 'Someone has left the conference' }
+                      end
+      
+        # @event_name = event.name_in_second_person
+        # @timelimit = event.pool.timelimit
+        # @pool = event.pool
+        # @user = event.user
+        # @event = event
+        # @timelimit *= 60
+
+        log_message("INCOMING for #{event.user.name}")
+      end
+      render :inline => tg.response
+    end
+
+    def place_in_conference
+      @names = build_intro_string(params[:events])
+      @timelimit = params[:timelimit] ? params[:timelimit].to_i : 15 * 60
+      @conference = params[:conference] || 'DefaultConference'
+      update_call_status_from_params(params, "placed:#{@conference}")
+      event = Event.find_by_id(params[:event])
+      if event
+        @next_call_time = event.user.next_call_time_string
+        log_message("CONFERENCE for #{event.user.name} - #{@conference}")
+      else
+        @next_call_time = ''
+      end
+    end
+  
     def base_url 
       "http://www.15minutecalls.com/twilio"
     end
