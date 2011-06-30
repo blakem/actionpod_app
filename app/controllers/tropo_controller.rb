@@ -5,8 +5,11 @@ class TropoController < ApplicationController
   def tropo
     tropo = TropoCaller.tropo_generator
     tropo.on :event => 'continue', :next => URI.encode("/tropo/greeting")
-    tropo.call( :to=>"tel:" + params['session']['parameters']['number_to_dial'],
-                :from => params['session']['parameters']['from_number'])
+    tropo.call(
+      :to => "tel:" + params['session']['parameters']['number_to_dial'],
+      :from => TropoCaller.new.phone_number
+    )
+    session[:event_id] = '21689'
     render :inline => tropo.response
   end
 
@@ -205,11 +208,20 @@ class TropoController < ApplicationController
     end
 
     def find_event_from_params(params)
+      if params['session'] && params['session']['parameters']
+        if params['session']['parameters']['event_id']
+          event = Event.find_by_id(params['session']['parameters']['event_id'])
+        end
+      end
 #      call = match_call_from_params(params)
 #      return Event.find_by_id(call.event_id) if call
-      user = match_user_from_params(params)
-      return nil unless user
-      return pick_users_closest_event(user)
+      if event
+        event
+      else
+        user = match_user_from_params(params)
+        return nil unless user
+        return pick_users_closest_event(user)
+      end
     end
     
     def match_call_from_params(params)
