@@ -27,8 +27,7 @@ class TropoController < ApplicationController
       tg.say "I'm sorry I can't match this number up with a scheduled event. Goodbye."
     else
       #   update_call_status_from_params(params, 'greeting:match')
-      #   @postto = base_url + '/put_on_hold.xml'
-      tg.on :event => 'continue', :next => '/tropo/put_on_hold.json'
+      tg.on :event => 'continue', :next => "/tropo/put_on_hold.json?event_id=#{event.id}"
       tg.on :event => 'incomplete', :next => '/tropo/no_keypress.json'
       tg.ask({ :name    => 'signin', 
                :bargein => true, 
@@ -45,6 +44,15 @@ class TropoController < ApplicationController
   def no_keypress
     tg = TropoCaller.tropo_generator
     tg.say :value => "Sorry, We didn't receive any input. Call this number back to join the conference."
+    render :json => tg
+  end
+  
+  def put_on_hold
+    event = find_event_from_params(params)
+    conf_name = "15mcHoldEvent#{event.id}User#{event.user.id}Pool#{event.pool.id}"
+    tg = TropoCaller.tropo_generator
+    tg.say :value => 'Waiting for the other participants.'
+    tg.say :value => 'http://hosting.tropo.com/69721/www/audio/jazz_planet.mp3'
     render :json => tg
   end
 
@@ -120,7 +128,7 @@ class TropoController < ApplicationController
       end
     end
 
-    def put_on_hold
+    def put_on_hold_old
       event = find_event_from_params(params)
       unless event
         update_call_status_from_params(params, 'onhold:nomatch')

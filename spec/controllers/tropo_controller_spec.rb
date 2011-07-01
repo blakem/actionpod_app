@@ -49,7 +49,7 @@ describe TropoController do
         "tropo" => [{
           "on"  => {"event" => "hangup",     "next" => "/tropo/callback.json"},
         }, {
-          "on"  => {"event" => "continue",   "next" => "/tropo/put_on_hold.json"},
+          "on"  => {"event" => "continue",   "next" => "/tropo/put_on_hold.json?event_id=#{event.id}"},
         }, {
           "on"  => {"event" => "incomplete", "next" => "/tropo/no_keypress.json"},
         }, {
@@ -61,7 +61,7 @@ describe TropoController do
             "voice"   => "dave",
             "choices" => {"value"=>"[1 DIGIT]", "mode" => "dtmf"},
             "say" => [{
-              "value" => "Welcome to your TestEvent2. Press 1 to join the conference.",
+              "value" => "Welcome to your #{event.name_in_second_person}. Press 1 to join the conference.",
               "voice" => "dave"
             }],
           }
@@ -83,6 +83,46 @@ describe TropoController do
           }]
         }]
       }
+    end
+  end
+  
+  describe "put_on_hold" do
+    # it "should put the user into a single person conference room" do
+    #   event = Factory(:event)
+    #   post :put_on_hold, :event_id => event.id
+    #   conf_name = "15mcHoldEvent#{event.id}User#{event.user.id}Pool#{event.pool.id}"
+    #   parse_response(response).should == {
+    #     "tropo" => [{
+    #       "on"  => {"event" => "hangup", "next" => "/tropo/callback.json"},
+    #   }, {
+    #     "conference" => {
+    #       "name"      => conf_name,
+    #       "id"        => conf_name,
+    #       "mute"      => false, 
+    #       "sendTones" => false, 
+    #       "exitTone"  => "#", 
+    #       "on"        => [{
+    #         "event" => "join", 
+    #         "say"   => [{
+    #           "value" => "Waiting for the other participants.", 
+    #           "voice" => "dave",
+    #         }],
+    #       }]
+    #     }
+    #   }]}
+    # end
+    it "should play some hold music" do
+      event = Factory(:event)
+      post :put_on_hold, :event_id => event.id
+      parse_response(response).should == {
+        "tropo" => [{
+          "on"  => {"event" => "hangup", "next" => "/tropo/callback.json"},
+        }, {
+          "say"=> [{"value"=>"Waiting for the other participants.", "voice"=>"dave"}]
+        }, {
+          "say"=> [{"value"=>"http://hosting.tropo.com/69721/www/audio/jazz_planet.mp3", "voice"=>"dave"}]
+        }]
+      }      
     end
   end
 end
