@@ -1,23 +1,95 @@
 require 'spec_helper'
 
 describe TropoController do
-  describe "greeting" do
-    it "should 'say'" do
-      post :greeting
-      puts response.body
-      response.body.should =~ /say/
+
+  describe "tropo" do
+    it "should initiate a call" do
+      post :tropo, :session => tropo_session_data['session']
+      parse_response(response).should == {
+        "tropo" => [{
+          "on" => {"event" => "hangup", "next" => "/tropo/callback.json"},
+        }, {
+          "on" => {"event" => "continue", "next"=> "/tropo/greeting?event_id=13657"},
+        }, {
+          "call" => {"to"=>"+14153141222", "from"=>"+14157660881"}
+        }]
+      }
+    end
+
+    it "Don't crash on empty data" do
+      post :tropo
+      response.should be_success
+      parse_response(response).should == {
+        "tropo" => [{
+          "on" => {"event" => "hangup", "next" => "/tropo/callback.json"}
+        }]
+      }
     end
   end
 
-  describe "incoming" do
-    it "should 'say'" do
-      post :incoming, :session => tropo_session_data['session']
-      puts response.body
-      response.body.should =~ /say/
+  describe "greeting" do
+    it "Should appologize if it can't match an event" do
+      post :greeting
+      parse_response(response).should == {
+        "tropo" => [{
+          "on"  => {"event" => "hangup", "next" => "/tropo/callback.json"}
+          }, {
+          "say" => [{
+            "value" => "I'm sorry I can't match this number up with a scheduled event. Goodbye.",
+            "voice" => "dave",
+          }]
+        }]
+      }
+    end
+
+    it "Should appologize if it can't match an event" do
+      event = Factory(:event)
+      post :greeting, :event_id => event.id
+      parse_response(response).should == {
+        "tropo" => [{
+          "on"  => {"event" => "hangup",     "next" => "/tropo/callback.json"},
+        }, {
+          "on"  => {"event" => "continue",   "next" => "/tropo/put_on_hold.json"},
+        }, {
+          "on"  => {"event" => "incomplete", "next" => "/tropo/no_keypress.json"},
+        }, {
+          "ask" => {
+            "name"    => "signin",
+            "bargein" => true,
+            "timeout" => 8,
+            "required" => "true",
+            "voice"   => "dave",
+            "choices" => {"value"=>"[1 DIGIT]", "mode" => "dtmf"},
+            "say" => [{
+              "value" => "Welcome to your TestEvent2. Press 1 to join the conference.",
+              "voice" => "dave"
+            }],
+          }
+        }]
+      }
+    end
+  end
+
+  describe "no_keypress" do
+    it "Should tell them to call back" do
+      post :no_keypress
+      parse_response(response).should == {
+        "tropo" => [{
+          "on"  => {"event" => "hangup", "next" => "/tropo/callback.json"}
+          }, {
+          "say" => [{
+            "value" => "Sorry, We didn't receive any input. Call this number back to join the conference.",
+            "voice" => "dave",
+          }]
+        }]
+      }
     end
   end
 end
 
+def parse_response(resp)
+  ActiveSupport::JSON.decode(resp.body).with_indifferent_access
+end
 
 def tropo_session_data
   {

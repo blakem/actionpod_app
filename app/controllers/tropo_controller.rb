@@ -5,11 +5,13 @@ class TropoController < ApplicationController
   def tropo
     tg = TropoCaller.tropo_generator
     event = find_event_from_params(params)
-    tg.on :event => 'continue', :next => URI.encode("/tropo/greeting?event_id=#{event.id}")
-    tg.call(
-      :to => event.user.primary_phone.number,
-      :from => TropoCaller.new.phone_number
-    )
+    if event
+      tg.on :event => 'continue', :next => URI.encode("/tropo/greeting?event_id=#{event.id}")
+      tg.call(
+        :to => event.user.primary_phone.number,
+        :from => TropoCaller.new.phone_number
+      )
+    end
     render :json => tg
   end
 
@@ -27,16 +29,23 @@ class TropoController < ApplicationController
       #   update_call_status_from_params(params, 'greeting:match')
       #   @postto = base_url + '/put_on_hold.xml'
       tg.on :event => 'continue', :next => '/tropo/put_on_hold.json'
+      tg.on :event => 'incomplete', :next => '/tropo/no_keypress.json'
       tg.ask({ :name    => 'signin', 
                :bargein => true, 
                :timeout => 8,
-               :require => 'true' }) do
+               :required => 'true' }) do
                  say     :value => "Welcome to your #{event.name_in_second_person}. Press 1 to join the conference."
-                 choices :value => '[1 DIGIT]'
+                 choices :value => '[1 DIGIT]', :mode => 'dtmf'
                end
       log_message("GREETING for #{event.user.name}")
     end
-    render :inline => tg.response
+    render :json => tg
+  end
+
+  def no_keypress
+    tg = TropoCaller.tropo_generator
+    tg.say :value => "Sorry, We didn't receive any input. Call this number back to join the conference."
+    render :json => tg
   end
 
   private
