@@ -26,12 +26,11 @@ class TropoCaller
     'http://api.tropo.com/' + api_version + '/sessions'
   end
   
-  def make_call
+  def start_call_for_event(event)
     res = Net::HTTP.post_form(URI.parse(api_url), {
       :action => 'create',
       :token => account_token,
-      :number_to_dial => '+14153141222',
-      :from_number => '+14151112222',
+      :event_id => event.id,
     })
   end
   

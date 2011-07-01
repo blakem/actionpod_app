@@ -5,11 +5,11 @@ class TropoController < ApplicationController
   def tropo
     tropo = TropoCaller.tropo_generator
     tropo.on :event => 'continue', :next => URI.encode("/tropo/greeting")
+    event = find_event_from_params(params)
     tropo.call(
-      :to => "tel:" + params['session']['parameters']['number_to_dial'],
+      :to => event.user.primary_phone.number,
       :from => TropoCaller.new.phone_number
     )
-    session[:event_id] = '21689'
     render :inline => tropo.response
   end
 
