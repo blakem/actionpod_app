@@ -4,13 +4,13 @@ class TropoController < ApplicationController
 
   def tropo
     tropo = TropoCaller.tropo_generator
-    tropo.on :event => 'continue', :next => URI.encode("/tropo/greeting")
     event = find_event_from_params(params)
+    tropo.on :event => 'continue', :next => URI.encode("/tropo/greeting?event_id=#{event.id}")
     tropo.call(
       :to => event.user.primary_phone.number,
       :from => TropoCaller.new.phone_number
     )
-    render :inline => tropo.response
+    render :json => tropo
   end
 
   def sms
@@ -18,9 +18,8 @@ class TropoController < ApplicationController
   end
 
   def greeting
-    puts params.inspect
     event = find_event_from_params(params)
-    t = Tropo::Generator.new
+    t = TropoCaller.tropo_generator
     unless event
       #   update_call_status_from_params(params, 'greeting:nomatch')
       t.say "I'm sorry I can't match this number up with a scheduled event. Goodbye."
@@ -208,7 +207,9 @@ class TropoController < ApplicationController
     end
 
     def find_event_from_params(params)
-      if params['session'] && params['session']['parameters']
+      if params['event_id']
+        event = Event.find_by_id(params['event_id'])
+      elsif params['session'] && params['session']['parameters']
         if params['session']['parameters']['event_id']
           event = Event.find_by_id(params['session']['parameters']['event_id'])
         end
