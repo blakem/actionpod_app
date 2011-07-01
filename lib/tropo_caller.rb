@@ -186,6 +186,7 @@ class TropoCaller
   end
   
   def self.tropo_generator
-    Tropo::Generator.new(:voice => 'dave')
+    tg = Tropo::Generator.new(:voice => 'dave')
+    tg.on :event => 'hangup', :next => '/tropo/callback.json'
   end
 end

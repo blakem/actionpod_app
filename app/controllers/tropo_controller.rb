@@ -26,7 +26,14 @@ class TropoController < ApplicationController
     else
       #   update_call_status_from_params(params, 'greeting:match')
       #   @postto = base_url + '/put_on_hold.xml'
-      tg.say "Welcome to your #{event.name_in_second_person}. Press 1 to join the conference."
+      tg.on :event => 'continue', :next => '/tropo/put_on_hold.json'
+      tg.ask({ :name    => 'signin', 
+               :bargein => true, 
+               :timeout => 8,
+               :require => 'true' }) do
+                 say     :value => "Welcome to your #{event.name_in_second_person}. Press 1 to join the conference."
+                 choices :value => '[1 DIGIT]'
+               end
       log_message("GREETING for #{event.user.name}")
     end
     render :inline => tg.response
