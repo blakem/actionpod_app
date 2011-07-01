@@ -3,14 +3,14 @@ class TropoController < ApplicationController
   respond_to :json
 
   def tropo
-    tropo = TropoCaller.tropo_generator
+    tg = TropoCaller.tropo_generator
     event = find_event_from_params(params)
-    tropo.on :event => 'continue', :next => URI.encode("/tropo/greeting?event_id=#{event.id}")
-    tropo.call(
+    tg.on :event => 'continue', :next => URI.encode("/tropo/greeting?event_id=#{event.id}")
+    tg.call(
       :to => event.user.primary_phone.number,
       :from => TropoCaller.new.phone_number
     )
-    render :json => tropo
+    render :json => tg
   end
 
   def sms
@@ -19,17 +19,17 @@ class TropoController < ApplicationController
 
   def greeting
     event = find_event_from_params(params)
-    t = TropoCaller.tropo_generator
+    tg = TropoCaller.tropo_generator
     unless event
       #   update_call_status_from_params(params, 'greeting:nomatch')
-      t.say "I'm sorry I can't match this number up with a scheduled event. Goodbye."
+      tg.say "I'm sorry I can't match this number up with a scheduled event. Goodbye."
     else
       #   update_call_status_from_params(params, 'greeting:match')
       #   @postto = base_url + '/put_on_hold.xml'
-      t.say "Welcome to your #{event.name_in_second_person}. Press 1 to join the conference.", :voice => 'dave'
+      tg.say "Welcome to your #{event.name_in_second_person}. Press 1 to join the conference."
       log_message("GREETING for #{event.user.name}")
     end
-    render :inline => t.response
+    render :inline => tg.response
   end
 
   private
