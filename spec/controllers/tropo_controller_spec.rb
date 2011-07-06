@@ -3,27 +3,49 @@ require 'spec_helper'
 describe TropoController do
 
   describe "tropo" do
-    it "should initiate a call" do
-      post :tropo, :session => tropo_session_data['session']
-      parse_response(response).should == {
-        "tropo" => [{
-          "on" => {"event" => "hangup", "next" => "/tropo/callback.json"},
-        }, {
-          "on" => {"event" => "continue", "next"=> "/tropo/greeting?event_id=13657"},
-        }, {
-          "call" => {"to"=>"+14153141222", "from"=>"+14157660881"}
-        }]
-      }
-    end
+    describe "outgoing calls" do
+      it "should initiate a call" do
+        user = Factory(:user)
+        phone = Factory(:phone, :user_id => user.id, :primary => true)
+        event = Factory(:event, :user_id => user.id)
+        post :tropo, :session => tropo_outgoing_session_data(event)['session']
+        parse_response(response).should == {
+          "tropo" => [{
+            "on" => {"event" => "hangup", "next" => "/tropo/callback.json"},
+          }, {
+            "on" => {"event" => "continue", "next"=> "/tropo/greeting?event_id=#{event.id}"},
+          }, {
+            "call" => {"to" => user.primary_phone.number , "from" => "+14157660881"}
+          }]
+        }
+      end
 
-    it "Don't crash on empty data" do
-      post :tropo
-      response.should be_success
-      parse_response(response).should == {
-        "tropo" => [{
-          "on" => {"event" => "hangup", "next" => "/tropo/callback.json"}
-        }]
-      }
+      it "Don't crash on empty data" do
+        post :tropo
+        response.should be_success
+        parse_response(response).should == {
+          "tropo" => [{
+            "on" => {"event" => "hangup", "next" => "/tropo/callback.json"}
+          }]
+        }
+      end
+    end
+    
+    describe "incoming calls" do
+      it "should send them to put_on_hold" do
+        post :tropo, :session => tropo_incoming_session_data['session']
+        parse_response(response).should == {
+          "tropo" => [{
+            "on" => {"event" => "hangup", "next" => "/tropo/callback.json"},
+          }, {
+            "say" => [{
+              "value"=>"Welcome to your 9:20am Call.", "voice"=>"dave"
+            }]
+          }, {
+            "on" => {"event"=>"continue", "next"=>"/tropo/put_on_hold.json?event_id=13657"}
+          }]
+        }
+      end      
     end
   end
 
@@ -131,7 +153,7 @@ def parse_response(resp)
   ActiveSupport::JSON.decode(resp.body).with_indifferent_access
 end
 
-def tropo_session_data
+def tropo_incoming_session_data
   {
     "session" => {
       "id"          => "cde357ff7d80d615ba65c421b4df6323", 
@@ -178,4 +200,21 @@ def tropo_session_data
     }
   }
 end
-  
+
+def tropo_outgoing_session_data(event)
+  { 
+    "session" => {
+      "id"          => "b606a9d838ac912a84ac7d396b72e499", 
+      "accountId"   => "69721", 
+      "timestamp"   => '2011-07-06 18:29:53 UTC', 
+      "userType"    =>"NONE", 
+      "initialText" => nil, 
+      "callId"      => nil, 
+      "parameters"  => {
+        "action"   => "create", 
+        "event_id" => event.id,
+        "format"   => "form"
+      }
+    }
+  }
+end  

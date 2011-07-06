@@ -6,11 +6,16 @@ class TropoController < ApplicationController
     tg = TropoCaller.tropo_generator
     event = find_event_from_params(params)
     if event
-      tg.on :event => 'continue', :next => URI.encode("/tropo/greeting?event_id=#{event.id}")
-      tg.call(
-        :to => event.user.primary_phone.number,
-        :from => TropoCaller.new.phone_number
-      )
+      if params[:session]['callId'] # incoming
+        tg.say :value => "Welcome to your #{event.name_in_second_person}."
+        tg.on :event => 'continue', :next => "/tropo/put_on_hold.json?event_id=#{event.id}"
+      else # outgoing
+        tg.on :event => 'continue', :next => URI.encode("/tropo/greeting?event_id=#{event.id}")
+        tg.call(
+          :to => event.user.primary_phone.number,
+          :from => TropoCaller.new.phone_number
+        )
+      end
     end
     render :json => tg
   end
