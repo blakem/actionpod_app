@@ -6,16 +6,28 @@ class TropoController < ApplicationController
     tg = TropoCaller.tropo_generator
     event = find_event_from_params(params)
     if event
+      call_session = CallSession.create(
+        :event_id => event.id,
+        :user_id => event.user_id,
+        :pool_id => event.pool_id,
+        :session_id => params[:session]['id'],
+      )
       if params[:session]['callId'] # incoming
         tg.say :value => "Welcome to your #{event.name_in_second_person}."
         tg.on :event => 'continue', :next => "/tropo/put_on_hold.json?event_id=#{event.id}"
+        call_session.direction = 'inbound'
+        call_session.call_state = 'inbound'
+        call_session.call_id = params[:session]['callId']
       else # outgoing
         tg.on :event => 'continue', :next => URI.encode("/tropo/greeting?event_id=#{event.id}")
         tg.call(
           :to => event.user.primary_phone.number,
           :from => TropoCaller.new.phone_number
         )
+        call_session.direction = 'outbound'
+        call_session.call_state = 'calling'
       end
+      call_session.save
     end
     render :json => tg
   end
@@ -60,6 +72,12 @@ class TropoController < ApplicationController
     tg.say :value => 'http://hosting.tropo.com/69721/www/audio/jazz_planet.mp3'
     render :json => tg
   end
+  
+  def callback
+    call_session = CallSession.find_by_session_id(params[:result]['sessionId'])
+    call_session.destroy if call_session
+    render :inline => ''
+  end
 
   private
   
@@ -77,7 +95,7 @@ class TropoController < ApplicationController
       end
     end
   
-    def callback
+    def callback_old
       call = Call.find_by_Sid(params[:CallSid])
       call.Duration = params[:CallDuration]
       call.AnsweredBy = params[:AnsweredBy] if params[:AnsweredBy]

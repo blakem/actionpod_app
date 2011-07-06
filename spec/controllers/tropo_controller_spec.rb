@@ -18,6 +18,15 @@ describe TropoController do
             "call" => {"to" => user.primary_phone.number , "from" => "+14157660881"}
           }]
         }
+        call_session = CallSession.where(
+          :user_id => user.id,
+          :event_id => event.id,
+          :pool_id => event.pool_id,
+        ).first
+        call_session.direction.should == 'outbound'
+        call_session.call_id.should be_nil
+        call_session.session_id.should == 'b606a9d838ac912a84ac7d396b72e499'
+        call_session.call_state.should == 'calling'
       end
 
       it "Don't crash on empty data" do
@@ -48,6 +57,15 @@ describe TropoController do
             "on" => {"event"=>"continue", "next"=>"/tropo/put_on_hold.json?event_id=#{event.id}"}
           }]
         }
+        call_session = CallSession.where(
+          :user_id => user.id,
+          :event_id => event.id,
+          :pool_id => event.pool_id,
+        ).first
+        call_session.direction.should == 'inbound'
+        call_session.call_id.should == 'fad6a6decb25ebee3bf508fb1c05813d'
+        call_session.session_id.should == 'cde357ff7d80d615ba65c421b4df6323'
+        call_session.call_state.should == 'inbound'
       end      
     end
   end
@@ -108,6 +126,17 @@ describe TropoController do
           }]
         }]
       }
+    end
+  end
+
+  describe "callback" do
+    it "Should delete the call_session" do
+      call_session = CallSession.create(
+        :session_id => 'afce551e872bfbd222e3eb07ab14c222'
+      )
+      call_session_id = call_session.id
+      post :callback, :result => tropo_callback_session_data['result']
+      CallSession.find_by_id(call_session_id).should be_nil
     end
   end
   
@@ -223,4 +252,18 @@ def tropo_outgoing_session_data(event)
       }
     }
   }
-end  
+end
+
+def tropo_callback_session_data
+  {
+    "result" => {
+      "sessionId" => "afce551e872bfbd222e3eb07ab14c222", 
+      "callId"    => "8d270e56a14e1dc1266f565c28490ac4", 
+      "state"     => "DISCONNECTED", 
+      "sessionDuration" => 4, 
+      "sequence"        => 1, 
+      "complete"        => true, 
+      "error"           => nil,
+    }
+  }
+end

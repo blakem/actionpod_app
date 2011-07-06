@@ -10,7 +10,19 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110624231622) do
+ActiveRecord::Schema.define(:version => 20110706203257) do
+
+  create_table "call_sessions", :force => true do |t|
+    t.string   "session_id"
+    t.string   "call_id"
+    t.integer  "pool_id"
+    t.integer  "user_id"
+    t.integer  "event_id"
+    t.string   "direction"
+    t.string   "call_state"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "calls", :force => true do |t|
     t.string   "Sid"
