@@ -33,16 +33,19 @@ describe TropoController do
     
     describe "incoming calls" do
       it "should send them to put_on_hold" do
-        post :tropo, :session => tropo_incoming_session_data['session']
+        user = Factory(:user)
+        phone = Factory(:phone, :user_id => user.id, :primary => true)
+        event = Factory(:event, :user_id => user.id)
+        post :tropo, :session => tropo_incoming_session_data(event)['session']
         parse_response(response).should == {
           "tropo" => [{
             "on" => {"event" => "hangup", "next" => "/tropo/callback.json"},
           }, {
             "say" => [{
-              "value"=>"Welcome to your 9:20am Call.", "voice"=>"dave"
+              "value"=>"Welcome to your #{event.name_in_second_person}.", "voice"=>"dave"
             }]
           }, {
-            "on" => {"event"=>"continue", "next"=>"/tropo/put_on_hold.json?event_id=13657"}
+            "on" => {"event"=>"continue", "next"=>"/tropo/put_on_hold.json?event_id=#{event.id}"}
           }]
         }
       end      
@@ -153,7 +156,10 @@ def parse_response(resp)
   ActiveSupport::JSON.decode(resp.body).with_indifferent_access
 end
 
-def tropo_incoming_session_data
+def tropo_incoming_session_data(event)
+  from_number = event.user.primary_phone.number
+  from_id = "#{from_number}"
+  from_id.sub!(/\+1/, '')
   {
     "session" => {
       "id"          => "cde357ff7d80d615ba65c421b4df6323", 
@@ -168,8 +174,8 @@ def tropo_incoming_session_data
         "channel" => "VOICE", 
         "network" => "SIP" }, 
       "from" => {
-        "id"      => "4153141222", 
-        "name"    => "+14153141222", 
+        "id"      => from_id, 
+        "name"    => from_number, 
         "channel" => "VOICE", 
         "network" => "SIP"}, 
       "headers" => {
