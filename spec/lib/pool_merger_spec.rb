@@ -618,8 +618,7 @@ describe PoolMerger do
 
       it "with six we should get two new conferences ordered by user_id" do
         events = create_events(6)
-        new_participants = participant_list_for_events(events).reverse # reverse tests the sorting by user_id
-        @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
+        participant_list_for_events(events)
         @tc.should_receive(:place_participant_in_conference).with("session_id_1", "15mcPool#{@pool.id}Room1", 
           be_within(3).of(@timelimit_insec),
           events[0].id, [events[0].id, events[1].id, events[2].id])
@@ -675,7 +674,6 @@ describe PoolMerger do
       
       it "should skip participants that have already been placed" do
         new_participants = participant_list(3)
-        @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
         data = @pm.initialize_data({})
         data[:on_hold] = {
           "session_id_1" => 1,          
@@ -717,8 +715,6 @@ describe PoolMerger do
 
       it "should skip participants that have already been placed and are Incoming when they're on hold for 1" do
         new_participants = participant_list(3)
-        new_participants[2][:conference_friendly_name] = "15mcHoldEvent3User3Pool#{@pool.id}Incoming"
-        @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
         data = @pm.initialize_data({})
         data[:on_hold] = {
           "session_id_1" => 1,          
@@ -760,9 +756,7 @@ describe PoolMerger do
       end
 
       it "should place participants that have already been placed and are Incoming when they're on hold for 2" do
-        new_participants = participant_list(3)
-        new_participants[2][:conference_friendly_name] = "15mcHoldEvent3User3Pool#{@pool.id}Incoming"
-        @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
+        participant_list(3)
         data = @pm.initialize_data({})
         data[:next_room] = 2
         data[:on_hold] = {
@@ -833,9 +827,7 @@ describe PoolMerger do
       end
 
       it "should not duplicate the event_ids when merging in a callback" do
-        new_participants = participant_list(1)
-        new_participants[0][:conference_friendly_name] = "15mcHoldEvent1User1Pool#{@pool.id}Incoming"
-        @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
+        participant_list(1)
         @tc.should_receive(:place_participant_in_conference).with("session_id_1", "15mcPool#{@pool.id}Room1", @timelimit_insec,
           1, [1, 2, 3])
         data = @pm.initialize_data({})
