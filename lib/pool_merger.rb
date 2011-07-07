@@ -393,7 +393,7 @@ class PoolMerger
   end
   
   def take_off_hold(participant, data)
-    data[:on_hold].delete(participant['call_sid'])
+    data[:on_hold].delete(participant.session_id)
   end
       
   def place_into_conference(participant, room_name, timelimit, start_time, data, event_ids = [])
@@ -401,14 +401,14 @@ class PoolMerger
     timelimit_insec = (end_time - Time.now).to_i
     timelimit_insec = timelimit * 60 if timelimit_insec <= 0;
     log_message("TimeLimit:" + timelimit_insec.to_s + " UserID:" + participant_user_id(participant).to_s)
-    @tc.place_participant_in_conference(participant[:call_sid], room_name, timelimit_insec, participant_event_id(participant), event_ids)
+    # @tc.place_participant_in_conference(participant[:call_sid], room_name, timelimit_insec, participant_event_id(participant), event_ids)
     user = User.find_by_id(participant_user_id(participant))
     if user
       user.placed_count += 1
       user.save
     end
     take_off_hold(participant, data)
-    data[:placed][participant['call_sid']] = {
+    data[:placed][participant.session_id] = {
       :room_name => room_name,
       :event_id  => participant_event_id(participant),
       :time => Time.now,

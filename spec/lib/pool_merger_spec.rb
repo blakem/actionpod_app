@@ -185,14 +185,13 @@ describe PoolMerger do
         user = Factory(:user)
         phone = Factory(:phone, :user_id => user.id, :primary => true)
         event = Factory(:event, :user_id => user.id, :pool_id => @pool.id, :send_sms_reminder => false)
-        new_participants = participant_list(1)
-        new_participants[0][:conference_friendly_name] = "15mcHoldEvent#{event.id}User#{user.id}Pool555"
-        @tc.should_receive(:participants_on_hold_for_pool).twice.with(@pool).and_return(new_participants)
-        @tc.should_receive(:apologize_no_other_participants).with('CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1', event.id, 2)
-        @tc.should_not_receive(:send_sms)
+        participant = participant_list(1).first
+        participant.event_id = event.id
+        participant.user_id = user.id
+        participant.save
         data = @pm.initialize_data({})
         data[:on_hold] = {
-          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 1,
+          "session_id_1" => 1,
         }
         data[:total] = 2
         data = @pm.merge_calls_for_pool(@pool, @pool_runs_at, data)
@@ -200,7 +199,7 @@ describe PoolMerger do
           :total       => 2,
           :next_room   => 1,
           :on_hold     => {
-            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 2,
+            "session_id_1" => 2,
           },
           :placed      => {},
           :apologized  => {},
@@ -210,11 +209,11 @@ describe PoolMerger do
           :total       => 2,
           :next_room   => 1,
           :on_hold     => {
-            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 3,
+            "session_id_1" => 3,
           },
           :placed      => {},
           :apologized  => {
-            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 1,
+            "session_id_1" => 1,
           },
         })
         conference = Conference.where(
@@ -231,8 +230,7 @@ describe PoolMerger do
         user = Factory(:user)
         phone = Factory(:phone, :user_id => user.id, :primary => true)
         event = Factory(:event, :user_id => user.id, :pool_id => @pool.id)
-        new_participants = participant_list(1)
-        new_participants[0][:conference_friendly_name] = "15mcHoldEvent#{event.id}User#{user.id}Pool555"
+        participant_list_for_events([event])
         conference = Conference.create(
           :room_name  => "15mcPool#{@pool.id}Room3",
           :pool_id    => @pool.id,
@@ -240,60 +238,59 @@ describe PoolMerger do
           :status     => 'in_progress'
         )
         conference.users = [Factory(:user), Factory(:user)]
-        @tc.should_receive(:participants_on_hold_for_pool).twice.with(@pool).and_return(new_participants)
-        @tc.should_receive(:place_participant_in_conference).twice.with(
-          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1",
-          "15mcPool#{@pool.id}Room3",
-          be_within(3).of(@timelimit_insec),
-          event.id,
-          [32, 33],
-        )
+        # @tc.should_receive(:place_participant_in_conference).twice.with(
+        #   "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1",
+        #   "15mcPool#{@pool.id}Room3",
+        #   be_within(3).of(@timelimit_insec),
+        #   event.id,
+        #   [32, 33],
+        # )
         data = @data.merge({
-          :on_hold => {"CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 1},
+          :on_hold => {"session_id_1" => 1},
           :next_room => 5,
           :apologized  => {},
           :placed      => {
-            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX11" => {
+            "session_id_11" => {
               :room_name => "15mcPool#{@pool.id}Room1",
               :event_id => 11,
             },
-            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX12" => {
+            "session_id_12" => {
               :room_name => "15mcPool#{@pool.id}Room1",
               :event_id => 12,
             },
-            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX13" => {
+            "session_id_13" => {
               :room_name => "15mcPool#{@pool.id}Room1",
               :event_id => 13,
             },
-            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX21" => {
+            "session_id_21" => {
               :room_name => "15mcPool#{@pool.id}Room2",
               :event_id => 21,
             },
-            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX22" => {
+            "session_id_22" => {
               :room_name => "15mcPool#{@pool.id}Room2",
               :event_id => 22,
             },
-            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX23" => {
+            "session_id_23" => {
               :room_name => "15mcPool#{@pool.id}Room2",
               :event_id => 23,
             },
-            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX32" => {
+            "session_id_32" => {
               :room_name => "15mcPool#{@pool.id}Room3",
               :event_id => 32,
             },
-            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX33" => {
+            "session_id_33" => {
               :room_name => "15mcPool#{@pool.id}Room3",
               :event_id => 33,
             },
-            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX41" => {
+            "session_id_41" => {
               :room_name => "15mcPool#{@pool.id}Room4",
               :event_id => 41,
             },
-            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX42" => {
+            "session_id_42" => {
               :room_name => "15mcPool#{@pool.id}Room4",
               :event_id => 42,
             },
-            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX43" => {
+            "session_id_43" => {
               :room_name => "15mcPool#{@pool.id}Room4",
               :event_id => 43,
             },
@@ -302,7 +299,7 @@ describe PoolMerger do
         data2 = Marshal.load(Marshal.dump(data))
         expected = Marshal.load(Marshal.dump(data))
         got = @pm.merge_calls_for_pool(@pool, @pool_runs_at, data)
-        expected[:placed]["CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1"] = {
+        expected[:placed]["session_id_1"] = {
           :room_name => "15mcPool#{@pool.id}Room3",
           :event_id => event.id,          
         }
@@ -1468,12 +1465,18 @@ def participant_list(participant_count, events = [])
   n = 0
   participant_count.times do
     n += 1
-    CallSession.create!(
+    call_session = CallSession.create!(
       :pool_id => @pool.id,
       :session_id => 'session_id_' + n.to_s,
       :call_state => 'on_hold',
       :event_id => n,
     )
+    if events[n-1]
+      call_session.event_id = events[n-1].id
+      call_session.user_id = events[n-1].user_id
+      call_session.pool_id = events[n-1].pool_id
+      call_session.save
+    end
   end
   CallSession.where(:pool_id => @pool.id).sort_by(&:id)
 end
