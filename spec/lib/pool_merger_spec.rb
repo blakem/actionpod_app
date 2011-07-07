@@ -103,16 +103,15 @@ describe PoolMerger do
       end
 
       it "should carry over if there is no existing conference room even if he's old" do
-        new_participants = participant_list(1)
-        @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
+        participant_list(1)
         data = @pm.initialize_data({})
         data[:on_hold] = {
-          "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 1,          
+          "session_id_1" => 1,          
         }
         @pm.merge_calls_for_pool(@pool, @pool_runs_at, data).should == @data.merge({
           :next_room   => 1,
           :on_hold     => {
-            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 2,
+            "session_id_1" => 2,
           },
           :placed      => {},
           :apologized  => {},
