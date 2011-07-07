@@ -581,17 +581,18 @@ describe PoolMerger do
 
     describe "three participants" do
       it "should form a new conference" do
-        new_participants = participant_list(3)
-        @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
+        events = create_events(3)
+        participant_list_for_events(events)
+        event_ids = events.map(&:id)
         @tc.should_receive(:place_participant_in_conference).with("session_id_1", "15mcPool#{@pool.id}Room1",
           be_within(3).of(@timelimit_insec),
-          1, [1, 2, 3])
+          events[0].id, event_ids)
         @tc.should_receive(:place_participant_in_conference).with("session_id_2", "15mcPool#{@pool.id}Room1",
           be_within(3).of(@timelimit_insec),
-          2, [1, 2, 3])
+          events[1].id, event_ids)
         @tc.should_receive(:place_participant_in_conference).with("session_id_3", "15mcPool#{@pool.id}Room1",
           be_within(3).of(@timelimit_insec),
-          3, [1, 2, 3])
+          events[2].id, event_ids)
         got = @pm.merge_calls_for_pool(@pool, @pool_runs_at, {})
         got[:placed].each_value{ |v| v.delete(:time)}
         got.should == @data.merge({
@@ -601,15 +602,15 @@ describe PoolMerger do
           :placed      => {
             "session_id_1" => {
               :room_name => "15mcPool#{@pool.id}Room1",
-              :event_id => 1,
+              :event_id => events[0].id,
             },
             "session_id_2" => {
               :room_name => "15mcPool#{@pool.id}Room1",
-              :event_id => 2,
+              :event_id => events[1].id,
             },            
             "session_id_3" => {
               :room_name => "15mcPool#{@pool.id}Room1",
-              :event_id => 3,
+              :event_id => events[2].id,
             },
           },
         })
