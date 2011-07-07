@@ -852,9 +852,7 @@ describe PoolMerger do
       end
 
       it "should merge callbacks into the same room they were in before" do
-        new_participants = participant_list(1)
-        new_participants[0][:conference_friendly_name] = "15mcHoldEvent1User1Pool#{@pool.id}Incoming"
-        @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
+        participant_list(1)
         @tc.should_receive(:place_participant_in_conference).with("session_id_1", "15mcPool#{@pool.id}Room1", @pool.timelimit * 60, 
           1, [1, 2, 3])
         data = @pm.initialize_data({})
