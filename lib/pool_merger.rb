@@ -310,13 +310,14 @@ class PoolMerger
     put_on_apologized(participant, data)
     put_on_hold(participant, data)
     event = Event.find(participant_event_id(participant))
-    @tc.apologize_no_other_participants(participant[:call_sid], event.id, data[:total])
-    if (event.send_sms_reminder)
-      @tc.send_sms(
-        Event.find(participant_event_id(participant)).user.primary_phone.number,
-        "Sorry about that... I couldn't find anyone else for the call.  That shouldn't happen once we reach critical mass. ;-)",
-      )
-    end
+    # XXX not supported yet
+    #@tc.apologize_no_other_participants(participant[:call_sid], event.id, data[:total])
+    #if (event.send_sms_reminder)
+    #  @tc.send_sms(
+    #    Event.find(participant_event_id(participant)).user.primary_phone.number,
+    #    "Sorry about that... I couldn't find anyone else for the call.  That shouldn't happen once we reach critical mass. ;-)",
+    #  )
+    #end
     conference = Conference.create(
       :pool_id    => pool.id,
       :started_at => pool_runs_at,
@@ -339,11 +340,11 @@ class PoolMerger
   end
 
   def hold_count(participant, data)
-    data[:on_hold][participant['call_sid']] || 0
+    data[:on_hold][participant.session_id] || 0
   end
 
   def apologized_count(participant, data)
-    data[:apologized][participant['call_sid']] || 0
+    data[:apologized][participant.session_id] || 0
   end
 
   def placed?(participant, data)
