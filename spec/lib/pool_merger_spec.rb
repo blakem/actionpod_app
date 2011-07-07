@@ -231,7 +231,7 @@ describe PoolMerger do
         user = Factory(:user)
         phone = Factory(:phone, :user_id => user.id, :primary => true)
         event = Factory(:event, :user_id => user.id, :pool_id => @pool.id)
-        participant_list_for_events([event])
+        participant = participant_list_for_events([event]).first
         conference = Conference.create(
           :room_name  => "15mcPool#{@pool.id}Room3",
           :pool_id    => @pool.id,
@@ -239,13 +239,13 @@ describe PoolMerger do
           :status     => 'in_progress'
         )
         conference.users = [Factory(:user), Factory(:user)]
-        # @tc.should_receive(:place_participant_in_conference).twice.with(
-        #   "session_id_1",
-        #   "15mcPool#{@pool.id}Room3",
-        #   be_within(3).of(@timelimit_insec),
-        #   event.id,
-        #   [32, 33],
-        # )
+        @tc.should_receive(:place_participant_in_conference).twice.with(
+          "session_id_1",
+          "15mcPool#{@pool.id}Room3",
+          be_within(3).of(@timelimit_insec),
+          event.id,
+          [32, 33],
+        )
         data = @data.merge({
           :on_hold => {"session_id_1" => 1},
           :next_room => 5,
@@ -315,6 +315,10 @@ describe PoolMerger do
         user.placed_count.should == 1
 
         # Don't add them to the conference object twice
+        participant.reload
+        participant.call_state.should == 'placed'
+        participant.call_state = 'on_hold'
+        participant.save
         @pm.merge_calls_for_pool(@pool, @pool_runs_at, data2)
         conference.reload
         conference.users.should include(user)
