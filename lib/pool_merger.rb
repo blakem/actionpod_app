@@ -16,9 +16,8 @@ class PoolMerger
        # unite them into a group
 
   def merge_calls_for_pool(pool, pool_runs_at, data)
-    @tc = TwilioCaller.new
     data = initialize_data(data)
-    participants_on_hold_for_pool = @tc.participants_on_hold_for_pool(pool)
+    participants_on_hold_for_pool = find_participants_on_hold(pool)
     update_meta_data_for_timeslot(participants_on_hold_for_pool, pool, data)
     if data[:waiting_for_events].empty? or pool_runs_at < Time.now - self.max_wait_time_to_answer.seconds
       (new_participants, placed_participants) = filter_new_participants_that_have_been_placed(participants_on_hold_for_pool, data)
@@ -29,6 +28,14 @@ class PoolMerger
       participants_on_hold_for_pool.each { |participant| put_on_hold(participant, data) }
     end
     data
+  end
+
+  def find_participants_on_hold(pool)
+    # TwilioCaller.new.participants_on_hold_for_pool(pool)
+    CallSession.where(
+      :pool_id => pool.id,
+      :call_state => 'on_hold',
+    )
   end
 
   def max_wait_time_to_answer() 60 end

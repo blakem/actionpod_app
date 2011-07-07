@@ -18,7 +18,7 @@ describe PoolMerger do
 
   describe "merge_calls_for_pool" do
     it "does nothing with zero new participants" do
-      @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(participant_list(0))
+      participant_list(0)
       @pm.merge_calls_for_pool(@pool, @pool_runs_at, {}).should == @data.merge({
         :next_room   => 1,
         :on_hold     => {},
@@ -28,7 +28,7 @@ describe PoolMerger do
     end
 
     it "initializes the hash even when passed :total" do
-      @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(participant_list(0))
+      participant_list(0)
       @pm.merge_calls_for_pool(@pool, @pool_runs_at, {:total => 3}).should == @data.merge({
         :next_room   => 1,
         :total => 3,
@@ -40,12 +40,11 @@ describe PoolMerger do
     
     describe "zero participants" do
       it "should clear out the on_hold status of anyone who's not currently there" do
-        new_participants = participant_list(0)
+        participant_list(0)
         data = @pm.initialize_data({}).merge({
           :on_hold => { "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 1 },
           :waiting_for_events => [77, 33],
         })
-        @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
         @pm.merge_calls_for_pool(@pool, @pool_runs_at, data).should == @data.merge({
           :waiting_for_events => [77, 33],
           :on_hold     => {},
@@ -53,7 +52,7 @@ describe PoolMerger do
       end
 
       it "should clear out the waiting_for_events info of someone who missed the call" do
-        new_participants = participant_list(0)
+        participant_list(0)
         call1 = Call.create!( # completed => remove me
           :event_id       => 77,
           :status         => 'outgoing-callback:match-completed',
@@ -79,7 +78,6 @@ describe PoolMerger do
         data = @pm.initialize_data({}).merge({
           :waiting_for_events => [77, 76, 33, 44, 66],
         })
-        @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
         @pm.merge_calls_for_pool(@pool, @pool_runs_at, data).should == @data.merge({
           :waiting_for_events => [33, 44, 66],
         })
@@ -88,8 +86,7 @@ describe PoolMerger do
     
     describe "single participant" do      
       it "should carry over if we haven't seen them before" do
-        new_participants = participant_list(1)
-        @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
+        participant_list(1)
         @pm.merge_calls_for_pool(@pool, @pool_runs_at, {
           :total => 1,
           :waiting_for_events => [1],
@@ -1467,23 +1464,17 @@ def one_participant_response
 end
 
 def participant_list(participant_count, events = [])
-  list = []
-  stub_participant = ActiveSupport::JSON.decode(one_participant_response).with_indifferent_access[:participants][0]
-  (1..participant_count).each do |i|
-    participant = stub_participant.dup
-    participant[:call_sid] += "XXX" + i.to_s
-    participant[:conference_sid] += "XXX" + i.to_s
-    event_id = i
-    user_id = i
-    if events.any?
-      event = events[i-1]
-      event_id = event.id
-      user_id = event.user_id
+  CallSession.where(:pool_id => @pool.id).each { |cs| cs.destroy }
+  if participant_count > 0
+    session_id = 300
+    (1..participant_count).each do |n|
+      CallSession.create!(
+        :pool_id => @pool.id,
+        :session_id => (session_id + n).to_s,
+        :call_state => 'on_hold'
+      )
     end
-    participant[:conference_friendly_name] = "15mcHoldEvent#{event_id}User#{user_id}Pool555"
-    list << participant
   end
-  list
 end
 
 def create_events(count, placed = false)
