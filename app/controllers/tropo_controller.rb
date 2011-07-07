@@ -44,6 +44,7 @@ class TropoController < ApplicationController
       tg.say "I'm sorry I can't match this number up with a scheduled event. Goodbye."
     else
       #   update_call_status_from_params(params, 'greeting:match')
+      update_call_session('waiting_for_input')
       tg.on :event => 'continue', :next => "/tropo/put_on_hold.json?event_id=#{event.id}"
       tg.on :event => 'incomplete', :next => '/tropo/no_keypress.json'
       tg.ask({ :name    => 'signin', 
@@ -66,7 +67,7 @@ class TropoController < ApplicationController
   
   def put_on_hold
     event = find_event_from_params(params)
-    conf_name = "15mcHoldEvent#{event.id}User#{event.user.id}Pool#{event.pool.id}"
+    update_call_session('on_hold')
     tg = TropoCaller.tropo_generator
     tg.say :value => 'Waiting for the other participants.'
     tg.say :value => 'http://hosting.tropo.com/69721/www/audio/jazz_planet.mp3'
@@ -80,6 +81,12 @@ class TropoController < ApplicationController
   end
 
   private
+
+    def update_call_session(new_state)
+      call_session = find_call_session_from_params(params)
+      call_session.call_state = new_state
+      call_session.save
+    end
   
     def greeting_fallback
       TwilioCaller.new.send_error_to_blake('Fallback: ' + params[:CallSid])
@@ -118,6 +125,7 @@ class TropoController < ApplicationController
     def place_test_call
       @postto = base_url + '/place_test_call_thanks.xml'
     end
+    
     def place_test_call_thanks
     end
 
@@ -251,6 +259,11 @@ class TropoController < ApplicationController
     def update_call_status_from_params(params, status, args = {})
       call = Call.find_by_Sid(params[:CallSid])
       update_call_object_status(call, status, args)
+    end
+
+    def find_call_session_from_params(params)
+      session_id = params[:result][:sessionId]
+      CallSession.find_by_session_id(session_id)
     end
 
     def find_event_from_params(params)

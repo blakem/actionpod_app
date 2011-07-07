@@ -8,7 +8,7 @@ describe TropoController do
         user = Factory(:user)
         phone = Factory(:phone, :user_id => user.id, :primary => true)
         event = Factory(:event, :user_id => user.id)
-        post :tropo, :session => tropo_outgoing_session_data(event)['session']
+        post :tropo, tropo_outgoing_session_data(event)
         parse_response(response).should == {
           "tropo" => [{
             "on" => {"event" => "hangup", "next" => "/tropo/callback.json"},
@@ -45,7 +45,7 @@ describe TropoController do
         user = Factory(:user)
         phone = Factory(:phone, :user_id => user.id, :primary => true)
         event = Factory(:event, :user_id => user.id)
-        post :tropo, :session => tropo_incoming_session_data(event)['session']
+        post :tropo, tropo_incoming_session_data(event)
         parse_response(response).should == {
           "tropo" => [{
             "on" => {"event" => "hangup", "next" => "/tropo/callback.json"},
@@ -64,7 +64,7 @@ describe TropoController do
         ).first
         call_session.direction.should == 'inbound'
         call_session.call_id.should == 'fad6a6decb25ebee3bf508fb1c05813d'
-        call_session.session_id.should == 'cde357ff7d80d615ba65c421b4df6323'
+        call_session.session_id.should == tropo_session_id
         call_session.call_state.should == 'inbound'
       end      
     end
@@ -85,9 +85,17 @@ describe TropoController do
       }
     end
 
-    it "Should appologize if it can't match an event" do
+    it "Should put the user on hold" do
       event = Factory(:event)
-      post :greeting, :event_id => event.id
+      CallSession.all.each { |cs| cs.destroy }
+      call_session = CallSession.create(
+        :session_id => tropo_session_id,
+        :event_id => event.id,
+        :user_id => event.user_id,
+        :pool_id => event.pool_id,
+        :call_state => 'calling'
+      )
+      post :greeting, tropo_greeting_session_data(event)
       parse_response(response).should == {
         "tropo" => [{
           "on"  => {"event" => "hangup",     "next" => "/tropo/callback.json"},
@@ -110,6 +118,8 @@ describe TropoController do
           }
         }]
       }
+      call_session.reload
+      call_session.call_state.should == 'waiting_for_input'
     end
   end
 
@@ -131,11 +141,12 @@ describe TropoController do
 
   describe "callback" do
     it "Should delete the call_session" do
+      CallSession.all.each { |cs| cs.destroy }
       call_session = CallSession.create(
-        :session_id => 'afce551e872bfbd222e3eb07ab14c222'
+        :session_id => tropo_session_id,
       )
       call_session_id = call_session.id
-      post :callback, :result => tropo_callback_session_data['result']
+      post :callback, tropo_callback_session_data
       CallSession.find_by_id(call_session_id).should be_nil
     end
   end
@@ -167,7 +178,11 @@ describe TropoController do
     # end
     it "should play some hold music" do
       event = Factory(:event)
-      post :put_on_hold, :event_id => event.id
+      CallSession.all.each { |cs| cs.destroy }
+      call_session = CallSession.create(
+        :session_id => tropo_session_id,
+      )
+      post :put_on_hold, tropo_onhold_session_data(event)
       parse_response(response).should == {
         "tropo" => [{
           "on"  => {"event" => "hangup", "next" => "/tropo/callback.json"},
@@ -176,7 +191,9 @@ describe TropoController do
         }, {
           "say"=> [{"value"=>"http://hosting.tropo.com/69721/www/audio/jazz_planet.mp3", "voice"=>"dave"}]
         }]
-      }      
+      }
+      call_session.reload
+      call_session.call_state.should == 'on_hold'
     end
   end
 end
@@ -185,13 +202,17 @@ def parse_response(resp)
   ActiveSupport::JSON.decode(resp.body).with_indifferent_access
 end
 
+def tropo_session_id
+  "b606a9d838ac912a84ac7d396b72e499"
+end
+
 def tropo_incoming_session_data(event)
   from_number = event.user.primary_phone.number
   from_id = "#{from_number}"
   from_id.sub!(/\+1/, '')
   {
     "session" => {
-      "id"          => "cde357ff7d80d615ba65c421b4df6323", 
+      "id"          => tropo_session_id, 
       "accountId"   => "69721", 
       "timestamp"   => '2011-06-23 23:41:29 UTC', 
       "userType"    => "HUMAN", 
@@ -239,7 +260,7 @@ end
 def tropo_outgoing_session_data(event)
   { 
     "session" => {
-      "id"          => "b606a9d838ac912a84ac7d396b72e499", 
+      "id"          => tropo_session_id,
       "accountId"   => "69721", 
       "timestamp"   => '2011-07-06 18:29:53 UTC', 
       "userType"    =>"NONE", 
@@ -257,7 +278,7 @@ end
 def tropo_callback_session_data
   {
     "result" => {
-      "sessionId" => "afce551e872bfbd222e3eb07ab14c222", 
+      "sessionId" => tropo_session_id, 
       "callId"    => "8d270e56a14e1dc1266f565c28490ac4", 
       "state"     => "DISCONNECTED", 
       "sessionDuration" => 4, 
@@ -265,5 +286,35 @@ def tropo_callback_session_data
       "complete"        => true, 
       "error"           => nil,
     }
+  }
+end
+
+def tropo_greeting_session_data(event)
+  {
+    "result" => {
+      "sessionId" => tropo_session_id, 
+      "callId"    => "05d684fae36493f9ecb452c85e90b369", 
+      "state"     => "ANSWERED", 
+      "sessionDuration" => 8, 
+      "sequence"        => 1, 
+      "complete"        => true, 
+      "error"           => nil
+    }, 
+    "event_id" => event.id,
+  }
+end
+
+def tropo_onhold_session_data(event)
+  {
+    "result" => {
+      "sessionId" => tropo_session_id, 
+      "callId"    => "1c835a0c9a100dc78c951200a697ce62", 
+      "state"     => "ANSWERED", 
+      "sessionDuration" => 4, 
+      "sequence"        => 1, 
+      "complete"        => true, 
+      "error"           => nil
+    }, 
+    "event_id" => event.id
   }
 end
