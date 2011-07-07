@@ -48,7 +48,7 @@ class PoolMerger
 
   def remove_stale_on_hold_records(participants, data)
     participants_on_hold = data[:on_hold].keys
-    new_participant_sids = participants.map{ |p| p[:call_sid] }
+    new_participant_sids = participants.map{ |p| p.session_id }
     participants_on_hold.each do |sid|
       data[:on_hold].delete(sid) unless new_participant_sids.include?(sid)
     end
@@ -380,13 +380,15 @@ class PoolMerger
   end
 
   def put_on_hold(participant, data)
-    data[:on_hold][participant['call_sid']] ||= 0
-    data[:on_hold][participant['call_sid']] += 1 
+    session_id = participant.session_id
+    data[:on_hold][session_id] ||= 0
+    data[:on_hold][session_id] += 1 
   end
 
   def put_on_apologized(participant, data)
-    data[:apologized][participant['call_sid']] ||= 0
-    data[:apologized][participant['call_sid']] += 1 
+    session_id = participant.session_id
+    data[:apologized][session_id] ||= 0
+    data[:apologized][session_id] += 1 
   end
   
   def take_off_hold(participant, data)
@@ -547,13 +549,11 @@ class PoolMerger
   end
 
   def participant_event_id(participant)
-    participant[:conference_friendly_name] =~ /Event(\d+)/; 
-    $1.to_i
+    participant.event_id.to_i
   end
 
   def participant_user_id(participant)
-    participant[:conference_friendly_name] =~ /User(\d+)/; 
-    $1.to_i
+    participant.user_id.to_i
   end
 
   def next_room(pool, data)

@@ -95,7 +95,7 @@ describe PoolMerger do
           :waiting_for_events => [],
           :next_room   => 1,
           :on_hold     => {
-            "CA9fa67e8696b60ee1ca1e75ec81ef85e7XXX1" => 1,
+            "session_id_1" => 1,
           },
           :placed      => {},
           :apologized  => {},
@@ -1465,15 +1465,15 @@ end
 
 def participant_list(participant_count, events = [])
   CallSession.where(:pool_id => @pool.id).each { |cs| cs.destroy }
-  if participant_count > 0
-    session_id = 300
-    (1..participant_count).each do |n|
-      CallSession.create!(
-        :pool_id => @pool.id,
-        :session_id => (session_id + n).to_s,
-        :call_state => 'on_hold'
-      )
-    end
+  n = 0
+  participant_count.times do
+    n += 1
+    CallSession.create!(
+      :pool_id => @pool.id,
+      :session_id => 'session_id_' + n.to_s,
+      :call_state => 'on_hold',
+      :event_id => n,
+    )
   end
 end
 
