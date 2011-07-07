@@ -501,7 +501,7 @@ class PoolMerger
   
   def conference_has_other_callers(room_name, participant, data)
     participants = participants_still_on_call(room_name, data)
-    participants.delete(participant[:call_sid])
+    participants.delete(participant.session_id)
     participants.any?
   end
   

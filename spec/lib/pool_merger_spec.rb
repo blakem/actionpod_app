@@ -900,9 +900,7 @@ describe PoolMerger do
       end
 
       it "should merge callbacks into a new room if it's old room is empty" do
-        new_participants = participant_list(1)
-        new_participants[0][:conference_friendly_name] = "15mcHoldEvent1User1Pool#{@pool.id}Incoming"
-        @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
+        participant_list(1)
         @tc.should_receive(:place_participant_in_conference).with("session_id_1", "15mcPool#{@pool.id}Room2", @pool.timelimit * 60, 
           1, [4, 5])
         data = @pm.initialize_data({})
@@ -982,8 +980,7 @@ describe PoolMerger do
         events[1].user.placed_count = 13
         events[0].user.placed_count = 14
         events.each { |e| e.save; e.user.save }
-        new_participants = participant_list(4, events)
-        @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
+        participant_list(4, events)
         @tc.should_receive(:place_participant_in_conference).with("session_id_1", "15mcPool#{@pool.id}Room1", 
           be_within(3).of(@timelimit_insec), 
           events[0].id, [events[2].id, events[0].id])
