@@ -1493,12 +1493,7 @@ def participant_list_for_events(events = [])
 end
 
 def extract_events(participants)
-  list = []
-  participants.each do |participant|
-    participant[:conference_friendly_name] =~ /Event(\d+)/
-    list << Event.find($1.to_i)
-  end
-  list
+  participants.map{ |p| Event.find(p.event_id) }
 end
 
 def extract_event_names(participants)
