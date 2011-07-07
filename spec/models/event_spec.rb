@@ -400,8 +400,8 @@ describe Event do
     before(:each) do
       @pool = Factory(:pool, :timelimit => 10)
       @event = Factory(:event, :pool_id => @pool.id)
-      @tc = mock('TwilioCaller')
-      TwilioCaller.stub(:new).and_return(@tc)  
+      @tc = mock('TropoCaller')
+      TropoCaller.stub(:new).and_return(@tc)  
       @now = Time.now.utc
     end
 

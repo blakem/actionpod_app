@@ -179,7 +179,7 @@ class Event < ActiveRecord::Base
   
   def make_call(start_time)
     unless self.pool.after_call_window(start_time)
-      TwilioCaller.new.start_call_for_event(self)
+      TropoCaller.new.start_call_for_event(self)
       self.user.called_count += 1
       self.user.save
     end
