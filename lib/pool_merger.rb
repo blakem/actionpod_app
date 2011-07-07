@@ -31,7 +31,6 @@ class PoolMerger
   end
 
   def find_participants_on_hold(pool)
-    # TwilioCaller.new.participants_on_hold_for_pool(pool)
     CallSession.where(
       :pool_id => pool.id,
       :call_state => 'on_hold',
@@ -310,14 +309,13 @@ class PoolMerger
     put_on_apologized(participant, data)
     put_on_hold(participant, data)
     event = Event.find(participant_event_id(participant))
-    # XXX not supported yet
-    #@tc.apologize_no_other_participants(participant[:call_sid], event.id, data[:total])
-    #if (event.send_sms_reminder)
-    #  @tc.send_sms(
-    #    Event.find(participant_event_id(participant)).user.primary_phone.number,
-    #    "Sorry about that... I couldn't find anyone else for the call.  That shouldn't happen once we reach critical mass. ;-)",
-    #  )
-    #end
+    TropoCaller.new.apologize_no_other_participants(participant[:call_sid], event.id, data[:total])
+    if (event.send_sms_reminder)
+      TropoCaller.new.send_sms(
+        Event.find(participant_event_id(participant)).user.primary_phone.number,
+        "Sorry about that... I couldn't find anyone else for the call.  That shouldn't happen once we reach critical mass. ;-)",
+      )
+    end
     conference = Conference.create(
       :pool_id    => pool.id,
       :started_at => pool_runs_at,
@@ -394,6 +392,8 @@ class PoolMerger
   
   def take_off_hold(participant, data)
     data[:on_hold].delete(participant.session_id)
+    participant.call_state = 'placed'
+    participant.save
   end
       
   def place_into_conference(participant, room_name, timelimit, start_time, data, event_ids = [])
@@ -401,7 +401,7 @@ class PoolMerger
     timelimit_insec = (end_time - Time.now).to_i
     timelimit_insec = timelimit * 60 if timelimit_insec <= 0;
     log_message("TimeLimit:" + timelimit_insec.to_s + " UserID:" + participant_user_id(participant).to_s)
-    # @tc.place_participant_in_conference(participant[:call_sid], room_name, timelimit_insec, participant_event_id(participant), event_ids)
+    TropoCaller.new.place_participant_in_conference(participant.session_id, room_name, timelimit_insec, participant_event_id(participant), event_ids)
     user = User.find_by_id(participant_user_id(participant))
     if user
       user.placed_count += 1
@@ -466,11 +466,7 @@ class PoolMerger
   def pluck_out_participant(data)
     room_name = largest_conference_room(data)
     participant = participants_in_room(room_name, data).sort{ |a,b| a[:time] <=> b[:time] }.last
-    event = Event.find_by_id(participant[:event_id])
-    {
-      :call_sid => participant[:sid],
-      :conference_friendly_name => "15mcHoldEvent#{event.id}User#{event.user_id}Pool#{event.pool_id}"
-    }.with_indifferent_access
+    CallSession.find_by_event_id(participant[:event_id])
   end
 
   def participants_in_room(room_name, data)
