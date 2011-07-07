@@ -410,9 +410,8 @@ describe PoolMerger do
     describe "two participants" do
 
       it "should carry over if we are still waiting on another participant" do
-        new_participants = participant_list(2)
+        participant_list(2)
         pool_runs_at = Time.now
-        @tc.should_receive(:participants_on_hold_for_pool).twice.with(@pool).and_return(new_participants)
         data = @pm.initialize_data({}).merge({
           :waiting_for_events => [333],
         })
@@ -434,9 +433,8 @@ describe PoolMerger do
       end
 
       it "should merge them after a long time even if we are still waiting on another participant" do
-        new_participants = participant_list(2)
+        participant_list(2)
         pool_runs_at = Time.now
-        @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
         data = @pm.initialize_data({}).merge({
           :on_hold     => {
             "session_id_1" => 1,
@@ -476,10 +474,7 @@ describe PoolMerger do
         event1 = Factory(:event, :user_id => user1.id, :pool_id => @pool.id)
         user2  = Factory(:user)
         event2 = Factory(:event, :user_id => user2.id, :pool_id => @pool.id)
-        new_participants = participant_list(2)
-        new_participants[0][:conference_friendly_name] = "15mcHoldEvent#{event1.id}User#{user1.id}Pool555"
-        new_participants[1][:conference_friendly_name] = "15mcHoldEvent#{event2.id}User#{user1.id}Pool555"
-        @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
+        participant_list(2, [event1, event2])
         data = @pm.initialize_data({})
         data[:on_hold] = {
           "session_id_1" => 1,          
@@ -519,10 +514,7 @@ describe PoolMerger do
         event1 = Factory(:event, :user_id => user1.id, :pool_id => @pool.id)
         user2  = Factory(:user)
         event2 = Factory(:event, :user_id => user2.id, :pool_id => @pool.id)
-        new_participants = participant_list(2)
-        new_participants[0][:conference_friendly_name] = "15mcHoldEvent#{event1.id}User#{user1.id}Pool555"
-        new_participants[1][:conference_friendly_name] = "15mcHoldEvent#{event2.id}User#{user1.id}Pool555"
-        @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
+        participant_list(2, [event1, event2])
         data = @pm.initialize_data({})
         @tc.should_receive(:place_participant_in_conference).with("session_id_1", "15mcPool#{@pool.id}Room1", @timelimit_insec, 
           event1.id, [event1.id, event2.id])
@@ -555,8 +547,7 @@ describe PoolMerger do
       end
       
       it "should join them together if we've seen both of them before" do
-        new_participants = participant_list(2)
-        @tc.should_receive(:participants_on_hold_for_pool).with(@pool).and_return(new_participants)
+        participant_list(2)
         data = @pm.initialize_data({})
         data[:on_hold] = {
           "session_id_1" => 1,          
