@@ -75,6 +75,14 @@ class TropoController < ApplicationController
     render :json => tg
   end
   
+  def place_in_conference
+    event = find_event_from_params(params)
+    call_session = update_call_session('placed')
+    tg = TropoCaller.tropo_generator
+    tg.say :value => 'Welcome.  On the call today we have ' + build_intro_string(call_session.event_ids)
+    render :json => tg
+  end
+  
   def callback
     call_session = CallSession.find_by_session_id(params[:result]['sessionId'])
     call_session.destroy if call_session
@@ -87,6 +95,7 @@ class TropoController < ApplicationController
       call_session = find_call_session_from_params(params)
       call_session.call_state = new_state
       call_session.save
+      call_session
     end
   
     def greeting_fallback
@@ -214,19 +223,19 @@ class TropoController < ApplicationController
       render :inline => tg.response
     end
 
-    def place_in_conference
-      @names = build_intro_string(params[:events])
-      @timelimit = params[:timelimit] ? params[:timelimit].to_i : 15 * 60
-      @conference = params[:conference] || 'DefaultConference'
-      update_call_status_from_params(params, "placed:#{@conference}")
-      event = Event.find_by_id(params[:event])
-      if event
-        @next_call_time = event.user.next_call_time_string
-        log_message("CONFERENCE for #{event.user.name} - #{@conference}")
-      else
-        @next_call_time = ''
-      end
-    end
+    # def place_in_conference
+    #   @names = build_intro_string(params[:events])
+    #   @timelimit = params[:timelimit] ? params[:timelimit].to_i : 15 * 60
+    #   @conference = params[:conference] || 'DefaultConference'
+    #   update_call_status_from_params(params, "placed:#{@conference}")
+    #   event = Event.find_by_id(params[:event])
+    #   if event
+    #     @next_call_time = event.user.next_call_time_string
+    #     log_message("CONFERENCE for #{event.user.name} - #{@conference}")
+    #   else
+    #     @next_call_time = ''
+    #   end
+    # end
   
     def base_url 
       "http://www.15minutecalls.com/twilio"

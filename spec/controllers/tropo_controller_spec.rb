@@ -174,6 +174,28 @@ describe TropoController do
       call_session.call_state.should == 'on_hold'
     end
   end
+
+  describe "place_in_conference" do
+    it "should place participant into a conference" do
+      event = Factory(:event)
+      CallSession.all.each { |cs| cs.destroy }
+      call_session = CallSession.create(
+        :session_id => tropo_session_id,
+        :call_state => 'placing',
+        :event_ids => event.id,
+      )
+      post :place_in_conference, tropo_place_in_conference_data
+      parse_response(response).should == {
+        "tropo" => [{
+          "on"  => {"event" => "hangup", "next" => "/tropo/callback.json"},
+        },  {
+          "say" => [{"value"=>"Welcome.  On the call today we have Blake Mills", "voice"=>"dave"}]
+        }]
+      }
+      call_session.reload
+      call_session.call_state.should == 'placed'
+    end
+  end
 end
 
 def parse_response(resp)
@@ -294,5 +316,19 @@ def tropo_onhold_session_data(event)
       "error"           => nil
     }, 
     "event_id" => event.id
+  }
+end
+
+def tropo_place_in_conference_data
+  {
+    "result" => {
+      "sessionId"       => tropo_session_id, 
+      "callId"          => "25352ccd4aa88652659bef53f08f554d", 
+      "state"           => "ANSWERED", 
+      "sessionDuration" => 30, 
+      "sequence"        => 3, 
+      "complete"        => true, 
+      "error"           => nil,
+    }
   }
 end
