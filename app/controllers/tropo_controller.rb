@@ -80,6 +80,12 @@ class TropoController < ApplicationController
     call_session = update_call_session('placed')
     tg = TropoCaller.tropo_generator
     tg.say :value => 'Welcome.  On the call today we have ' + build_intro_string(call_session.event_ids)
+    tg.conference({
+      :id => call_session.conference_name, 
+      :playTones => true, 
+      :terminator => '#',
+      :name => call_session.conference_name + '_name',
+    })
     render :json => tg
   end
   

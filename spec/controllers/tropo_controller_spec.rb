@@ -183,6 +183,10 @@ describe TropoController do
         :session_id => tropo_session_id,
         :call_state => 'placing',
         :event_ids => event.id,
+        :conference_name => 'FancyGoodConference',
+        :timelimit => 700,
+        :event_id => event.id,
+        :user_id => event.user_id,
       )
       post :place_in_conference, tropo_place_in_conference_data
       parse_response(response).should == {
@@ -190,6 +194,13 @@ describe TropoController do
           "on"  => {"event" => "hangup", "next" => "/tropo/callback.json"},
         },  {
           "say" => [{"value"=>"Welcome.  On the call today we have Blake Mills", "voice"=>"dave"}]
+        }, {
+          "conference" => {
+            "id"         => "FancyGoodConference", 
+            "playTones"  => true, 
+            "terminator" => "#", 
+            "name"       => "FancyGoodConference_name"
+          }
         }]
       }
       call_session.reload
