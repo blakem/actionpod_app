@@ -125,7 +125,7 @@ describe PoolQueuer do
       pool_runs_at = @now + 5.minutes
       expect {
         @pq.check_before_calls_go_out(@pool, pool_runs_at)
-      }.to change(DelayedJob, :count).by(3)
+      }.to change(DelayedJob, :count).by(4)
       DelayedJob.where(
         :obj_type    => 'PoolMerger',
         :pool_id     => @pool.id,
@@ -144,6 +144,12 @@ describe PoolQueuer do
         :obj_jobtype => 'send_logs_to_blake',
         :run_at      => pool_runs_at + 5.minutes,
       ).count.should == 1
+      DelayedJob.where(
+        :obj_type    => 'PoolQueuer',
+        :pool_id     => @pool.id,
+        :obj_jobtype => 'send_one_minute_warning',
+        :run_at      => pool_runs_at + 29.minutes,
+      ).count.should == 1
     end
 
     it "should send total to queue_merge_calls_for_pool" do
@@ -155,6 +161,41 @@ describe PoolQueuer do
         :waiting_for_events => [@event.id, event2.id]
       })
       @pq.check_before_calls_go_out(@pool, @now + 5.minutes)
+    end
+  end
+  
+  describe "send_one_minute_warning" do
+    it "should send a signal to all call sessions in pool" do
+      tc = TropoCaller.new
+      pool = Factory(:pool)
+      TropoCaller.should_receive(:new).and_return(tc)
+      CallSession.create(
+        :session_id => 'session_1_id',
+        :call_state => 'placed',
+        :pool_id => pool.id,
+      )
+      CallSession.create(
+        :session_id => 'session_2_id',
+        :call_state => 'placed',
+        :pool_id => pool.id,
+      )
+      CallSession.create(
+        :session_id => 'WrongPool',
+        :call_state => 'placed',
+        :pool_id => pool.id + 1,
+      )
+      CallSession.create(
+        :session_id => 'WrongCallState',
+        :call_state => 'on_hold',
+        :pool_id => pool.id,
+      )
+      tc.should_receive(:post_to_tropo).with('http://api.tropo.com/1.0/sessions/session_1_id/signals', {
+        :value => "onemin"
+      })
+      tc.should_receive(:post_to_tropo).with('http://api.tropo.com/1.0/sessions/session_2_id/signals', {
+        :value => "onemin"
+      })
+      @pq.send_one_minute_warning(pool.id)
     end
   end
   

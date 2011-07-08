@@ -80,15 +80,29 @@ class TropoController < ApplicationController
     call_session = update_call_session('placed')
     tg = TropoCaller.tropo_generator
     tg.say :value => 'Welcome.  On the call today we have ' + build_intro_string(call_session.event_ids)
-    tg.conference({
-      :id => call_session.conference_name, 
-      :playTones => true, 
-      :terminator => '#',
-      :name => call_session.conference_name + '_name',
-    })
+    tg.conference(conference_params(call_session))
+    tg.on :event => 'onemin', :next => "/tropo/one_minute_warning.json"
     render :json => tg
   end
-  
+
+  def one_minute_warning
+    event = find_event_from_params(params)
+    call_session = update_call_session('lastminute')
+    tg = TropoCaller.tropo_generator
+    tg.say :value => 'One minute remaining.'
+    tg.conference(conference_params(call_session))
+    tg.on :event => 'awesome', :next => "/tropo/awesome_day.json"
+    render :json => tg
+  end
+
+  def awesome_day
+    event = find_event_from_params(params)
+    call_session = update_call_session('complete')
+    tg = TropoCaller.tropo_generator
+    tg.say :value => 'Your time is up. Have an awesome day.'
+    render :json => tg
+  end
+
   def callback
     call_session = CallSession.find_by_session_id(params[:result]['sessionId'])
     call_session.destroy if call_session
@@ -97,6 +111,15 @@ class TropoController < ApplicationController
 
   private
 
+    def conference_params(call_session)
+      {
+        :id => call_session.conference_name, 
+        :playTones => true, 
+        :terminator => '#',
+        :name => call_session.conference_name + '_name',
+      }
+    end
+  
     def update_call_session(new_state)
       call_session = find_call_session_from_params(params)
       call_session.call_state = new_state

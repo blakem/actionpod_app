@@ -201,10 +201,73 @@ describe TropoController do
             "terminator" => "#", 
             "name"       => "FancyGoodConference_name"
           }
+        }, {
+          "on" => {"event"=>"onemin", "next"=>"/tropo/one_minute_warning.json"}
         }]
       }
       call_session.reload
       call_session.call_state.should == 'placed'
+    end
+  end
+
+  describe "one_minute_warning" do
+    it "should give a one minute warning and put them back in the conference" do
+      event = Factory(:event)
+      CallSession.all.each { |cs| cs.destroy }
+      call_session = CallSession.create(
+        :session_id => tropo_session_id,
+        :call_state => 'placed',
+        :event_ids => event.id,
+        :conference_name => 'FancyGoodConference',
+        :timelimit => 700,
+        :event_id => event.id,
+        :user_id => event.user_id,
+      )
+      post :one_minute_warning, tropo_place_in_conference_data # XXX
+      parse_response(response).should == {
+        "tropo" => [{
+          "on"  => {"event" => "hangup", "next" => "/tropo/callback.json"},
+        },  {
+          "say" => [{"value"=>"One minute remaining.", "voice"=>"dave"}]
+        }, {
+          "conference" => {
+            "id"         => "FancyGoodConference", 
+            "playTones"  => true, 
+            "terminator" => "#", 
+            "name"       => "FancyGoodConference_name"
+          }
+        }, {
+          "on" => {"event"=>"awesome", "next"=>"/tropo/awesome_day.json"}
+        }]
+      }
+      call_session.reload
+      call_session.call_state.should == 'lastminute'
+    end
+  end
+
+  describe "awesome_day" do
+    it "should say goodbye and tell them when their next call is" do
+      event = Factory(:event)
+      CallSession.all.each { |cs| cs.destroy }
+      call_session = CallSession.create(
+        :session_id => tropo_session_id,
+        :call_state => 'lastminute',
+        :event_ids => event.id,
+        :conference_name => 'FancyGoodConference',
+        :timelimit => 700,
+        :event_id => event.id,
+        :user_id => event.user_id,
+      )
+      post :awesome_day, tropo_place_in_conference_data # XXX
+      parse_response(response).should == {
+        "tropo" => [{
+          "on"  => {"event" => "hangup", "next" => "/tropo/callback.json"},
+        },  {
+          "say" => [{"value"=> "Your time is up. Have an awesome day.", "voice"=>"dave"}]
+        }]
+      }
+      call_session.reload
+      call_session.call_state.should == 'complete'
     end
   end
 end

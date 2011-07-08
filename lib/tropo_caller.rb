@@ -38,7 +38,11 @@ class TropoCaller
     call_session.event_ids = event_ids.join(',')
     call_session.call_state = 'placing'
     call_session.save
-    post_to_tropo(signal_url(session_id), {:value => 'placed'})
+    send_signal_to_session('placed', session_id)
+  end
+  
+  def send_signal_to_session(signal, session_id)
+    post_to_tropo(signal_url(session_id), {:value => signal})
   end
 
 #   def send_error_to_blake(error)
