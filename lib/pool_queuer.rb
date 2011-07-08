@@ -74,9 +74,15 @@ class PoolQueuer
       self.delay(
         :obj_type    => 'PoolQueuer',
         :obj_jobtype => 'send_one_minute_warning',
-        :run_at      => pool_runs_at + (pool.timelimit - 1).minutes,
+        :run_at      => pool_runs_at + pool.timelimit.minutes,
         :pool_id     => pool.id,
       ).send_one_minute_warning(pool.id)
+      self.delay(
+        :obj_type    => 'PoolQueuer',
+        :obj_jobtype => 'end_calls_for_pool',
+        :run_at      => pool_runs_at + (pool.timelimit + 1).minutes,
+        :pool_id     => pool.id,
+      ).end_calls_for_pool(pool.id)
       queue_merge_calls_for_pool(pool, pool_runs_at, 0, {
         :total => jobs.count,
         :waiting_for_events => jobs.map(&:obj_id).sort,
@@ -91,6 +97,15 @@ class PoolQueuer
       :call_state => 'placed',
     )
     call_sessions.each { |cs| tropo_caller.send_signal_to_session('onemin', cs.session_id) }
+  end
+
+  def end_calls_for_pool(pool_id)
+    tropo_caller = TropoCaller.new
+    call_sessions = CallSession.where(
+      :pool_id => pool_id,
+      :call_state => 'lastminute',
+    )
+    call_sessions.each { |cs| tropo_caller.send_signal_to_session('awesome', cs.session_id) }
   end
   
   def queue_merge_calls_for_pool(pool, pool_runs_at, count, data)
