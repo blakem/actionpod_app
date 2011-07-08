@@ -1,15 +1,4 @@
 class TropoCaller
-  # def account_sid
-  #   'AC2e57bf710b77d765d280786bc07dbacc'
-  # end
-  
-  # if request.post?
-  #      @my_tropo_token = "PLACE YOUR TOKEN HERE"
-  #      @API_URL='http://api.tropo.com/1.0/sessions?action=create&' 
-  #      Net::HTTP.get_print URI.parse(URI.encode(@API_URL+'&token='+@my_tropo_token+'&number_to_dial='+params[:call][:number]+"&message="+params[:call][:message]+'&from_number='+params[:call][:from])) 
-  #      redirect_to root_path
-  # end
-  
   def account_token
     '04387300635ebe4cbc820020e5354055a8c4e24f72e407d1159abc03aa6a2a88896146fb9131e1804bae5736'
   end
@@ -26,13 +15,41 @@ class TropoCaller
     'http://api.tropo.com/' + api_version + '/sessions'
   end
   
+  def signal_url(session_id)
+    api_url + '/' + session_id + '/signals'
+  end
+  
+  def post_to_tropo(url, args)
+    Net::HTTP.post_form(URI.parse(url), args)
+  end
+  
   def start_call_for_event(event)
-    res = Net::HTTP.post_form(URI.parse(api_url), {
+    post_to_tropo(api_url, {
       :action => 'create',
       :token => account_token,
       :event_id => event.id,
     })
   end
+
+  def place_participant_in_conference(session_id, conference_name, timelimit, event_id, event_ids)
+    call_session = CallSession.find_by_session_id(session_id)
+    if call_session
+      call_session.conference_name = conference_name
+      call_session.timelimit = timelimit
+      call_session.event_ids = event_ids.join(',')
+      call_session.call_state = 'placing'
+      call_session.save
+    end
+    post_to_tropo(signal_url(session_id), {:value => 'placed'})
+  end
+  
+  #   def place_participant_in_conference(call_sid, conference, timelimit, event_id, event_ids)
+  #     update_call_status(call_sid, "placing:#{conference}")
+  #     events = event_ids.join(',')
+  #     resp_hash = twilio_request(caller_uri(call_sid), 'POST', {
+  #      'Url' => base_url + "/place_in_conference.xml?conference=#{conference}&timelimit=#{timelimit}&events=#{events}&event=#{event_id}",
+  #     })
+  #   end
   
 #   def account_phone
 #     '+14157669865'

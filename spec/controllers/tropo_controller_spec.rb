@@ -152,30 +152,6 @@ describe TropoController do
   end
   
   describe "put_on_hold" do
-    # it "should put the user into a single person conference room" do
-    #   event = Factory(:event)
-    #   post :put_on_hold, :event_id => event.id
-    #   conf_name = "15mcHoldEvent#{event.id}User#{event.user.id}Pool#{event.pool.id}"
-    #   parse_response(response).should == {
-    #     "tropo" => [{
-    #       "on"  => {"event" => "hangup", "next" => "/tropo/callback.json"},
-    #   }, {
-    #     "conference" => {
-    #       "name"      => conf_name,
-    #       "id"        => conf_name,
-    #       "mute"      => false, 
-    #       "sendTones" => false, 
-    #       "exitTone"  => "#", 
-    #       "on"        => [{
-    #         "event" => "join", 
-    #         "say"   => [{
-    #           "value" => "Waiting for the other participants.", 
-    #           "voice" => "dave",
-    #         }],
-    #       }]
-    #     }
-    #   }]}
-    # end
     it "should play some hold music" do
       event = Factory(:event)
       CallSession.all.each { |cs| cs.destroy }
@@ -187,9 +163,11 @@ describe TropoController do
         "tropo" => [{
           "on"  => {"event" => "hangup", "next" => "/tropo/callback.json"},
         }, {
-          "say"=> [{"value"=>"Waiting for the other participants.", "voice"=>"dave"}]
+          "say" => [{"value"=>"Waiting for the other participants.", "voice"=>"dave"}]
         }, {
-          "say"=> [{"value"=>"http://hosting.tropo.com/69721/www/audio/jazz_planet.mp3", "voice"=>"dave"}]
+          "say" => [{"value"=>"http://hosting.tropo.com/69721/www/audio/jazz_planet.mp3", "voice"=>"dave"}]
+        }, {
+          "on" => {"event"=>"placed", "next"=>"/tropo/place_in_conference.json"}
         }]
       }
       call_session.reload

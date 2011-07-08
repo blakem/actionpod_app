@@ -354,10 +354,6 @@ class PoolMerger
     data[:placed].values.select{ |p| p[:event_id] == event_id }
   end
 
-  def incoming?(participant)
-    participant['conference_friendly_name'] =~ /Incoming/
-  end
-
   def handle_placed_participants(participants, pool, pool_runs_at, data)
     participants.each do |participant|
       if hold_count(participant, data) > 1
