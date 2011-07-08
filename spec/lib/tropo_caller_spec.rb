@@ -26,6 +26,34 @@ describe TropoCaller do
       @tc.start_call_for_event(event)
     end
   end
+  
+  describe "place_participant_in_conference" do
+    it "should update the call_session and put a participant into a conference" do
+      event = Factory(:event)
+      call_session = CallSession.create(
+        :session_id => 'session_1_id',
+        :event_id => event.id,
+        :user_id => event.user_id,
+        :pool_id => event.pool_id,
+        :call_state => 'on_hold',
+      )
+      @tc.should_receive(:post_to_tropo).with('http://api.tropo.com/1.0/sessions/session_1_id/signals', {
+        :value=>"placed"
+      })
+      @tc.place_participant_in_conference(
+        call_session.session_id,
+        "ConferenceName",
+        900,
+        event.id,
+        [6, 7, 8],
+      )
+      call_session.reload
+      call_session.conference_name.should == 'ConferenceName'
+      call_session.timelimit.should == 900
+      call_session.event_ids.should == '6,7,8'
+      call_session.call_state.should == 'placing'
+    end
+  end
 end
 
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110706203257) do
+ActiveRecord::Schema.define(:version => 20110708043443) do
 
   create_table "call_sessions", :force => true do |t|
     t.string   "session_id"
@@ -22,6 +22,9 @@ ActiveRecord::Schema.define(:version => 20110706203257) do
     t.string   "call_state"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "conference_name"
+    t.integer  "timelimit"
+    t.string   "event_ids"
   end
 
   create_table "calls", :force => true do |t|
