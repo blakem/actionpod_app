@@ -223,7 +223,7 @@ describe TropoController do
         :event_id => event.id,
         :user_id => event.user_id,
       )
-      post :one_minute_warning, tropo_place_in_conference_data # XXX
+      post :one_minute_warning, tropo_one_minute_warning_data
       parse_response(response).should == {
         "tropo" => [{
           "on"  => {"event" => "hangup", "next" => "/tropo/callback.json"},
@@ -263,7 +263,7 @@ describe TropoController do
         "tropo" => [{
           "on"  => {"event" => "hangup", "next" => "/tropo/callback.json"},
         },  {
-          "say" => [{"value"=> "Your time is up. Have an awesome day.", "voice"=>"dave"}]
+          "say" => [{"value"=> "Time is up. Your next call is Today at 7:00pm. Have an Awesome day!", "voice"=>"dave"}]
         }]
       }
       call_session.reload
@@ -403,6 +403,25 @@ def tropo_place_in_conference_data
       "sequence"        => 3, 
       "complete"        => true, 
       "error"           => nil,
+    }
+  }
+end
+
+def tropo_one_minute_warning_data
+  {
+    "result" => {
+      "sessionId" => tropo_session_id,
+      "callId"    => "16f84c1252ad8bc94e538217a1d44109",
+      "state"     => "ANSWERED",
+      "sessionDuration" => 56,
+      "sequence"        => 4,
+      "complete"        => true,
+      "error"           => nil,
+      "actions" => {
+        "name" => "15mcPool2Room1_name",
+        "duration" => 28,
+        "disposition" => "EXTERNAL_EVENT"
+      }
     }
   }
 end

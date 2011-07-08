@@ -98,8 +98,10 @@ class TropoController < ApplicationController
   def awesome_day
     event = find_event_from_params(params)
     call_session = update_call_session('complete')
+    next_call_time = event.user.next_call_time_string
+    next_call_time = "Your next call is #{next_call_time}. " unless next_call_time.blank?
     tg = TropoCaller.tropo_generator
-    tg.say :value => 'Your time is up. Have an awesome day.'
+    tg.say :value => "Time is up. #{next_call_time}Have an Awesome day!"
     render :json => tg
   end
 
@@ -301,8 +303,12 @@ class TropoController < ApplicationController
     end
 
     def find_call_session_from_params(params)
-      session_id = params[:result][:sessionId]
-      CallSession.find_by_session_id(session_id)
+      session = nil
+      if params[:result]
+        session_id = params[:result][:sessionId]
+        session = CallSession.find_by_session_id(session_id)
+      end
+      session
     end
 
     def find_event_from_params(params)
@@ -313,6 +319,12 @@ class TropoController < ApplicationController
           event = Event.find_by_id(params['session']['parameters']['event_id'])
         end
       end
+      return event if event
+      session = find_call_session_from_params(params)
+      if session
+        event = Event.find_by_id(session.event_id)
+      end
+      return event if event
 #      call = match_call_from_params(params)
 #      return Event.find_by_id(call.event_id) if call
       if event
