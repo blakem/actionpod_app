@@ -167,6 +167,10 @@ describe TropoController do
         }, {
           "say" => [{"value"=>"http://hosting.tropo.com/69721/www/audio/jazz_planet.mp3", "voice"=>"dave"}]
         }, {
+          "say" => [{"value"=>"http://hosting.tropo.com/69721/www/audio/jazz_planet.mp3", "voice"=>"dave"}]
+        }, {
+          "say" => [{"value"=>"http://hosting.tropo.com/69721/www/audio/jazz_planet.mp3", "voice"=>"dave"}]
+        }, {
           "on" => {"event"=>"placed", "next"=>"/tropo/place_in_conference.json"}
         }]
       }

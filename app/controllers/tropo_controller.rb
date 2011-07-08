@@ -71,6 +71,8 @@ class TropoController < ApplicationController
     tg = TropoCaller.tropo_generator
     tg.say :value => 'Waiting for the other participants.'
     tg.say :value => 'http://hosting.tropo.com/69721/www/audio/jazz_planet.mp3'
+    tg.say :value => 'http://hosting.tropo.com/69721/www/audio/jazz_planet.mp3'
+    tg.say :value => 'http://hosting.tropo.com/69721/www/audio/jazz_planet.mp3'
     tg.on :event => 'placed', :next => "/tropo/place_in_conference.json"
     render :json => tg
   end
