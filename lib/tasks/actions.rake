@@ -53,6 +53,7 @@ task :call_phones, [:event1_id, :event2_id, :event3_id, :event4_id, :event5_id] 
 
     puts "Scheduled call for " + run_time.strftime("%I:%M%p")
   end
+  puts "Done"
 end
 
 desc "Send out a test conference email"
