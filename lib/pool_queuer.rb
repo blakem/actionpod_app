@@ -101,10 +101,7 @@ class PoolQueuer
 
   def end_calls_for_pool(pool_id)
     tropo_caller = TropoCaller.new
-    call_sessions = CallSession.where(
-      :pool_id => pool_id,
-      :call_state => 'lastminute',
-    )
+    call_sessions = CallSession.where(:pool_id => pool_id)
     call_sessions.each { |cs| tropo_caller.send_signal_to_session('awesome', cs.session_id) }
   end
   

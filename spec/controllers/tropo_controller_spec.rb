@@ -13,6 +13,8 @@ describe TropoController do
           "tropo" => [{
             "on" => {"event" => "hangup", "next" => "/tropo/callback.json"},
           }, {
+            "on" => {"event" => "error",  "next" => "/tropo/callback.json"}
+          }, {
             "on" => {"event" => "continue", "next"=> "/tropo/greeting?event_id=#{event.id}"},
           }, {
             "call" => {"to" => user.primary_phone.number , "from" => "+14157660881"}
@@ -35,6 +37,8 @@ describe TropoController do
         parse_response(response).should == {
           "tropo" => [{
             "on" => {"event" => "hangup", "next" => "/tropo/callback.json"}
+          }, {
+            "on" => {"event" => "error",  "next" => "/tropo/callback.json"}
           }]
         }
       end
@@ -49,6 +53,8 @@ describe TropoController do
         parse_response(response).should == {
           "tropo" => [{
             "on" => {"event" => "hangup", "next" => "/tropo/callback.json"},
+          }, {
+            "on" => {"event" => "error",  "next" => "/tropo/callback.json"}
           }, {
             "say" => [{
               "value"=>"Welcome to your #{event.name_in_second_person}.", "voice"=>"dave"
@@ -77,6 +83,8 @@ describe TropoController do
         "tropo" => [{
           "on"  => {"event" => "hangup", "next" => "/tropo/callback.json"}
           }, {
+            "on" => {"event" => "error",  "next" => "/tropo/callback.json"}
+          }, {
           "say" => [{
             "value" => "I'm sorry I can't match this number up with a scheduled event. Goodbye.",
             "voice" => "dave",
@@ -99,6 +107,8 @@ describe TropoController do
       parse_response(response).should == {
         "tropo" => [{
           "on"  => {"event" => "hangup",     "next" => "/tropo/callback.json"},
+        }, {
+          "on" => {"event" => "error",  "next" => "/tropo/callback.json"}
         }, {
           "on"  => {"event" => "continue",   "next" => "/tropo/put_on_hold.json?event_id=#{event.id}"},
         }, {
@@ -130,6 +140,8 @@ describe TropoController do
         "tropo" => [{
           "on"  => {"event" => "hangup", "next" => "/tropo/callback.json"}
           }, {
+            "on" => {"event" => "error",  "next" => "/tropo/callback.json"}
+          }, {
           "say" => [{
             "value" => "Sorry, We didn't receive any input. Call this number back to join the conference.",
             "voice" => "dave",
@@ -158,10 +170,12 @@ describe TropoController do
       call_session = CallSession.create(
         :session_id => tropo_session_id,
       )
-      post :put_on_hold, tropo_onhold_session_data(event)
+      post :put_on_hold, tropo_onhold_success_data
       parse_response(response).should == {
         "tropo" => [{
           "on"  => {"event" => "hangup", "next" => "/tropo/callback.json"},
+        }, {
+          "on" => {"event" => "error",  "next" => "/tropo/callback.json"}
         }, {
           "say" => [{"value"=>"Waiting for the other participants.", "voice"=>"dave"}]
         }, {
@@ -196,6 +210,8 @@ describe TropoController do
       parse_response(response).should == {
         "tropo" => [{
           "on"  => {"event" => "hangup", "next" => "/tropo/callback.json"},
+        }, {
+          "on" => {"event" => "error",  "next" => "/tropo/callback.json"}
         },  {
           "say" => [{"value"=>"Welcome.  On the call today we have Blake Mills", "voice"=>"dave"}]
         }, {
@@ -231,6 +247,8 @@ describe TropoController do
       parse_response(response).should == {
         "tropo" => [{
           "on"  => {"event" => "hangup", "next" => "/tropo/callback.json"},
+        }, {
+          "on" => {"event" => "error",  "next" => "/tropo/callback.json"}
         },  {
           "say" => [{"value"=>"One minute remaining.", "voice"=>"dave"}]
         }, {
@@ -266,8 +284,10 @@ describe TropoController do
       parse_response(response).should == {
         "tropo" => [{
           "on"  => {"event" => "hangup", "next" => "/tropo/callback.json"},
+        }, {
+          "on" => {"event" => "error",  "next" => "/tropo/callback.json"}
         },  {
-          "say" => [{"value"=> "Time is up. Your next call is Today at 7:00pm. Have an Awesome day!", "voice"=>"dave"}]
+          "say" => [{"value"=> "Time is up. Your next call is #{event.user.next_call_time_string}. Have an Awesome day!", "voice"=>"dave"}]
         }]
       }
       call_session.reload
@@ -382,7 +402,7 @@ def tropo_greeting_session_data(event)
   }
 end
 
-def tropo_onhold_session_data(event)
+def tropo_onhold_session_data(event) # XXX not sure where this came from... doesn't seem correct
   {
     "result" => {
       "sessionId" => tropo_session_id, 
@@ -394,6 +414,30 @@ def tropo_onhold_session_data(event)
       "error"           => nil
     }, 
     "event_id" => event.id
+  }
+end
+
+def tropo_onhold_success_data
+  {
+    "result" => {
+      "sessionId"       => tropo_session_id,
+      "callId"          => "1e9013804c661c8858f04ac34b809b2b",
+      "state"           => "ANSWERED",
+      "sessionDuration" => 14,
+      "sequence"        => 2,
+      "complete"        => true,
+      "error"           => nil,
+      "actions"         => {
+        "name"     => "signin",
+        "attempts" => 1,
+        "disposition" => "SUCCESS",
+        "confidence"  => 100,
+        "interpretation" => "1",
+        "utterance"      => "1",
+        "value"          => "1",
+        "xml"            => "<?xml version=\"1.0\"?>\r\n<result grammar=\"0@61edd852.vxmlgrammar\">\r\n <interpretation grammar=\"0@61edd852.vxmlgrammar\" confidence=\"100\">\r\n \r\n <input mode=\"dtmf\">dtmf-1<\/input>\r\n <\/interpretation>\r\n<\/result>\r\n"
+      }
+    }
   }
 end
 

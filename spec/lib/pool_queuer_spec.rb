@@ -226,7 +226,7 @@ describe PoolQueuer do
         :pool_id => pool.id + 1,
       )
       CallSession.create(
-        :session_id => 'WrongCallState',
+        :session_id => 'session_3_id',
         :call_state => 'on_hold',
         :pool_id => pool.id,
       )
@@ -234,6 +234,9 @@ describe PoolQueuer do
         :value => "awesome"
       })
       tc.should_receive(:post_to_tropo).with('http://api.tropo.com/1.0/sessions/session_2_id/signals', {
+        :value => "awesome"
+      })
+      tc.should_receive(:post_to_tropo).with('http://api.tropo.com/1.0/sessions/session_3_id/signals', {
         :value => "awesome"
       })
       @pq.end_calls_for_pool(pool.id)
