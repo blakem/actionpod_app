@@ -10,8 +10,8 @@ git add .
 echo; echo "************ git commit -m \"$comment\""
 git commit -am "$comment"
 
-echo; echo "************ git push origin tropo"
-git push origin tropo
+echo; echo "************ git push origin"
+git push origin
 
 echo; echo "************ rm -f tmp/*.html"
 rm -f tmp/*.html

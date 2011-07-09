@@ -4,15 +4,11 @@ Domain name:    http://15minutecall.com/
 Git Repo:       git@heroku.com:actionpods.git
 Dynos:          1
 Workers:        1
-Repo size:      20M
-Slug size:      13M
+Repo size:      23M
+Slug size:      16M
 Stack:          bamboo-mri-1.9.2
-Dyno usage:     Cron - -13015.47 dyno-hours
-                Rake - -248959.67 dyno-hours
-                Web - -25383.14 dyno-hours
-                Worker - -14409.01 dyno-hours
 Data size:      2M
-Next cron:      2011-06-29 00:30 PDT (scheduled)
-Last cron:      2011-06-28 00:30 PDT (finished)
+Next cron:      2011-07-09 00:30 PDT (scheduled)
+Last cron:      2011-07-08 00:30 PDT (finished)
 Addons:         Cron Daily Cron, Custom Domains, Expanded Logging, New Relic Standard, PG Backups Auto - One Week Retention, Ranger Test, Recurly Test, Basic Release Management, Sendgrid Free, Shared Database 5MB, StillAlive Basic, Tripwire Test
 Owner:          blakem30@yahoo.com
