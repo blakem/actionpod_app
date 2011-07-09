@@ -2,9 +2,9 @@
 Web URL:        http://actionpods.heroku.com/
 Domain name:    http://15minutecall.com/
 Git Repo:       git@heroku.com:actionpods.git
-Dynos:          1
+Dynos:          2
 Workers:        1
-Repo size:      23M
+Repo size:      24M
 Slug size:      16M
 Stack:          bamboo-mri-1.9.2
 Data size:      2M
