@@ -37,11 +37,12 @@ task :call_phones, [:event1_id, :event2_id, :event3_id, :event4_id, :event5_id] 
       end
     end
 
-    DelayedJob.where(:obj_jobtype => 'merge_calls_for_pool', :pool_id => events[0].pool.id).each { |dj| dj.destroy }
-    DelayedJob.where(:obj_jobtype => 'set_heroku_dynos', :pool_id => events[0].pool.id).each { |dj| dj.destroy }
-    DelayedJob.where(:obj_jobtype => 'send_logs_to_blake', :pool_id => events[0].pool.id).each { |dj| dj.destroy }
+    DelayedJob.where(:obj_jobtype => 'merge_calls_for_pool',    :pool_id => events[0].pool.id).each { |dj| dj.destroy }
+    DelayedJob.where(:obj_jobtype => 'set_heroku_dynos',        :pool_id => events[0].pool.id).each { |dj| dj.destroy }
+    DelayedJob.where(:obj_jobtype => 'send_logs_to_blake',      :pool_id => events[0].pool.id).each { |dj| dj.destroy }
     DelayedJob.where(:obj_jobtype => 'send_one_minute_warning', :pool_id => events[0].pool.id).each { |dj| dj.destroy }
-    DelayedJob.where(:obj_jobtype => 'end_calls_for_pool', :pool_id => events[0].pool.id).each { |dj| dj.destroy }
+    DelayedJob.where(:obj_jobtype => 'end_calls_for_pool',      :pool_id => events[0].pool.id).each { |dj| dj.destroy }
+    CallSession.where(                                          :pool_id => events[0].pool.id).each { |cs| cs.destroy }
   
     run_time = Time.now + 1.minute
     run_time = run_time + 1.minute if run_time.min == 0
