@@ -18,26 +18,15 @@ class PoolMerger
   def merge_calls_for_pool(pool, pool_runs_at, data)
     data = initialize_data(data)
     participants_on_hold_for_pool = find_participants_on_hold(pool)
-    log_message("STEP A")
     update_meta_data_for_timeslot(participants_on_hold_for_pool, pool, data)
-    log_message("STEP B")
     if data[:waiting_for_events].empty? or pool_runs_at < Time.now - self.max_wait_time_to_answer.seconds
-      log_message("STEP c")
       (new_participants, placed_participants) = filter_new_participants_that_have_been_placed(participants_on_hold_for_pool, data)
-      log_message("STEP d")
       new_participants = sort_participants(new_participants, data)
-      log_message("STEP e")
       handle_placed_participants(placed_participants, pool, pool_runs_at, data)
-      log_message("STEP f")
       handle_new_participants(new_participants, pool, pool_runs_at, data)
-      log_message("STEP g")
     else
-      log_message("STEP h")
       participants_on_hold_for_pool.each { |participant| put_on_hold(participant, data) }
-      log_message("STEP i")
     end
-    log_message("STEP j")    
-    log_message(data.inspect)
     data
   end
 
@@ -97,9 +86,7 @@ class PoolMerger
     if participants.count == 1
       handle_one_new_participant(participants.shift, pool, pool_runs_at, data)
     else
-      log_message("Handle Two")
       handle_two_new_participants(participants.shift(2), pool, pool_runs_at, data)
-      log_message("Handle Two Done")
     end
   end
 
@@ -425,7 +412,6 @@ class PoolMerger
   end
 
   def create_new_group(list, pool, pool_runs_at, data)
-    log_message("CREATE NEW GROUP")
     room_name = next_room(pool, data)
     event_ids = list.map { |p| participant_event_id(p) }
     conference = Conference.create(
@@ -439,7 +425,6 @@ class PoolMerger
       place_into_conference(participant, room_name, pool.timelimit, pool_runs_at, data, event_ids)
     end
     send_email_for_new_conference(conference)
-    log_message("CREATE NEW GROUP DONE")
   end
 
   def send_email_for_new_conference(conference)
