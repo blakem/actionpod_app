@@ -223,9 +223,8 @@ class TropoController < ApplicationController
     end
     
     def update_call_status_from_params(params, status, args = {})
-      call = Call.find_by_Sid(find_session_id_from_params(params))
+      call = Call.find_by_session_id(find_session_id_from_params(params))
       update_call_object_status(call, status, args)
-      call
     end
     
     def match_call_from_params(params)

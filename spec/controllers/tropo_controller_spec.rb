@@ -182,7 +182,7 @@ describe TropoController do
     end
     
     it "should set the duration of the call" do
-      call = Call.create(:Sid => tropo_session_id, :status => 'foo')
+      call = Call.create(:session_id => tropo_session_id, :status => 'foo')
       post :callback, tropo_callback_session_data
       response.content_type.should =~ /^text\/html/
       call.reload
