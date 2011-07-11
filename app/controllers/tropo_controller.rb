@@ -56,10 +56,10 @@ class TropoController < ApplicationController
     event = find_event_from_params(params)
     tg = TropoCaller.tropo_generator
     unless event
-      #   update_call_status_from_params(params, 'greeting:nomatch')
+      update_call_status_from_params(params, 'greeting:nomatch')
       tg.say "I'm sorry I can't match this number up with a scheduled event. Goodbye."
     else
-      #   update_call_status_from_params(params, 'greeting:match')
+      update_call_status_from_params(params, 'greeting')
       update_call_session('waiting_for_input')
       tg.on :event => 'continue', :next => "/tropo/put_on_hold.json?event_id=#{event.id}"
       tg.on :event => 'incomplete', :next => '/tropo/no_keypress.json'
@@ -160,7 +160,8 @@ class TropoController < ApplicationController
     end
 
     def find_session_id_from_params(params)
-      find_result_key_from_params(:sessionId, params)
+      find_result_key_from_params(:sessionId, params) ||
+        find_session_key_from_params(:id, params)
     end
 
     def find_duration_from_params(params)
@@ -169,6 +170,10 @@ class TropoController < ApplicationController
 
     def find_result_key_from_params(key, params)
       params[:result] ? params[:result][key] : nil
+    end
+
+    def find_session_key_from_params(key, params)
+      params[:session] ? params[:session][key] : nil
     end
 
     def find_event_from_params(params)

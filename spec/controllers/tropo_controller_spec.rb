@@ -97,7 +97,11 @@ describe TropoController do
 
   describe "greeting" do
     it "Should appologize if it can't match an event" do
-      post :greeting
+      call = Call.create(
+        :session_id => tropo_session_id,
+        :status => 'foo',
+      )
+      post :greeting, :session => {:id => tropo_session_id}
       parse_response(response).should == {
         "tropo" => [{
           "on"  => {"event" => "hangup", "next" => "/tropo/callback.json"}
@@ -110,6 +114,8 @@ describe TropoController do
           }]
         }]
       }
+      call.reload
+      call.status.should == 'foo-greeting:nomatch'
     end
 
     it "Should put the user on hold" do
@@ -121,6 +127,10 @@ describe TropoController do
         :user_id => event.user_id,
         :pool_id => event.pool_id,
         :call_state => 'calling'
+      )
+      call = Call.create(
+        :session_id => tropo_session_id,
+        :status => 'foo',
       )
       post :greeting, tropo_greeting_session_data(event)
       parse_response(response).should == {
@@ -149,6 +159,8 @@ describe TropoController do
       }
       call_session.reload
       call_session.call_state.should == 'waiting_for_input'
+      call.reload
+      call.status.should == 'foo-greeting'
     end
   end
 
