@@ -1,5 +1,5 @@
 # == Schema Information
-# Schema version: 20110520010131
+# Schema version: 20110711220438
 #
 # Table name: calls
 #
@@ -19,6 +19,7 @@
 #  status         :string(255)
 #  AnsweredBy     :string(255)
 #  user_id        :integer
+#  session_id     :string(255)
 #
 
 class Call < ActiveRecord::Base

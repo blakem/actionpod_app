@@ -15,6 +15,7 @@ class TropoController < ApplicationController
       call = Call.create(
         :event_id => event.id,
         :user_id => event.user.id,
+        :session_id => params[:session][:id]
       )
       call_id = params[:session]['callId'] 
       if call_id # incoming
@@ -39,6 +40,7 @@ class TropoController < ApplicationController
         call_session.direction = 'outbound'
         call_session.call_state = 'calling'
         call.Direction = 'outbound'
+        call.status = 'outgoing'
       end
       call_session.save
       call.save

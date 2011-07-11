@@ -27,13 +27,15 @@ describe TropoController do
         ).first
         call_session.direction.should == 'outbound'
         call_session.call_id.should be_nil
-        call_session.session_id.should == 'b606a9d838ac912a84ac7d396b72e499'
+        call_session.session_id.should == tropo_session_id
         call_session.call_state.should == 'calling'
         call = Call.where(
           :event_id => event.id,
           :user_id => user.id,
         ).first
         call.Direction.should == 'outbound'
+        call.status.should == 'outgoing'
+        call.session_id.should == tropo_session_id
       end
 
       it "Don't crash on empty data" do
@@ -88,6 +90,7 @@ describe TropoController do
         call.To.should == '+14157660881'
         call.From.should == phone.number
         call.AnsweredBy.should == 'HUMAN'
+        call.session_id.should == tropo_session_id
       end      
     end
   end
