@@ -29,6 +29,11 @@ describe TropoController do
         call_session.call_id.should be_nil
         call_session.session_id.should == 'b606a9d838ac912a84ac7d396b72e499'
         call_session.call_state.should == 'calling'
+        call = Call.where(
+          :event_id => event.id,
+          :user_id => user.id,
+        ).first
+        call.Direction.should == 'outbound'
       end
 
       it "Don't crash on empty data" do
@@ -72,6 +77,17 @@ describe TropoController do
         call_session.call_id.should == 'fad6a6decb25ebee3bf508fb1c05813d'
         call_session.session_id.should == tropo_session_id
         call_session.call_state.should == 'inbound'
+        call = Call.where(
+          :event_id => event.id,
+          :user_id => user.id,
+        ).first
+        call.Direction.should == 'inbound'
+        call.Sid.should == tropo_call_id
+        call.DateCreated.should == '2011-06-23 23:41:29 UTC'
+        call.DateUpdated.should == '2011-06-23 23:41:29 UTC'
+        call.To.should == '+14157660881'
+        call.From.should == phone.number
+        call.AnsweredBy.should == 'HUMAN'
       end      
     end
   end
@@ -345,6 +361,10 @@ def tropo_session_id
   "b606a9d838ac912a84ac7d396b72e499"
 end
 
+def tropo_call_id
+  "fad6a6decb25ebee3bf508fb1c05813d"
+end
+
 def tropo_incoming_session_data(event)
   from_number = event.user.primary_phone.number
   from_id = "#{from_number}"
@@ -356,7 +376,7 @@ def tropo_incoming_session_data(event)
       "timestamp"   => '2011-06-23 23:41:29 UTC', 
       "userType"    => "HUMAN", 
       "initialText" => nil, 
-      "callId"      => "fad6a6decb25ebee3bf508fb1c05813d", 
+      "callId"      => tropo_call_id, 
       "to" => {
         "id"      => "4157660881", 
         "name"    => "+14157660881", 

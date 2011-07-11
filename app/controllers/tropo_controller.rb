@@ -12,12 +12,24 @@ class TropoController < ApplicationController
         :pool_id => event.pool_id,
         :session_id => params[:session]['id'],
       )
-      if params[:session]['callId'] # incoming
+      call = Call.create(
+        :event_id => event.id,
+        :user_id => event.user.id,
+      )
+      call_id = params[:session]['callId'] 
+      if call_id # incoming
         tg.say :value => "Welcome to your #{event.name_in_second_person}."
         tg.on :event => 'continue', :next => "/tropo/put_on_hold.json?event_id=#{event.id}"
         call_session.direction = 'inbound'
         call_session.call_state = 'inbound'
-        call_session.call_id = params[:session]['callId']
+        call_session.call_id = call_id
+        call.Direction = 'inbound'
+        call.Sid = call_id
+        call.DateCreated = params[:session][:timestamp]
+        call.DateUpdated = params[:session][:timestamp]
+        call.To = params[:session][:to][:name]
+        call.From = params[:session][:from][:name]
+        call.AnsweredBy = params[:session][:userType]
       else # outgoing
         tg.on :event => 'continue', :next => URI.encode("/tropo/greeting?event_id=#{event.id}")
         tg.call(
@@ -26,8 +38,10 @@ class TropoController < ApplicationController
         )
         call_session.direction = 'outbound'
         call_session.call_state = 'calling'
+        call.Direction = 'outbound'
       end
       call_session.save
+      call.save
     end
     render :json => tg
   end
