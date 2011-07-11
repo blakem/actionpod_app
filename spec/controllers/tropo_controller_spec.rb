@@ -304,6 +304,37 @@ describe TropoController do
       call_session.call_state.should == 'complete'
     end
   end
+  
+  describe "build_intro_string" do
+    it "builds nice strings" do
+      tc = TropoController.new
+      tc.send(:build_intro_string, '').should == ''
+
+      pool = Factory(:pool)
+      user1 = Factory(:user, :name => 'Bobby', :title => '', :location => '')
+      user2 = Factory(:user, :name => 'Sally', :title => '', :location => '')
+      user3 = Factory(:user, :name => 'Jane', :title => '', :location => '', :phonetic_name => 'Jaaane')
+      event1 = Factory(:event, :user_id => user1.id, :pool_id => pool.id)
+      event2 = Factory(:event, :user_id => user2.id, :pool_id => pool.id)
+      event3 = Factory(:event, :user_id => user3.id, :pool_id => pool.id)
+      tc.send(:build_intro_string, "#{event1.id}").should == 'Bobby'
+      tc.send(:build_intro_string, "#{event1.id},#{event2.id}").should == 'Bobby, and Sally'
+      tc.send(:build_intro_string, "#{event1.id},#{event2.id},#{event3.id}").should == 'Bobby, Sally, and Jaaane'
+      
+      user1.title = 'Software Developer'
+      user1.save
+      tc.send(:build_intro_string, "#{event1.id},#{event2.id}").should == 'Bobby a Software Developer, and Sally'
+
+      user1.location = 'San Francisco'
+      user1.save
+
+      user2.location = 'Seattle'
+      user2.save
+      tc.send(:build_intro_string, "#{event1.id},#{event2.id}").should == 'Bobby a Software Developer from San Francisco, and Sally from Seattle'
+
+      tc.send(:build_intro_string, "0,888,44466,33377,,xyzzy,#{event1.id},#{event2.id}").should == 'Bobby a Software Developer from San Francisco, and Sally from Seattle'
+    end
+  end
 end
 
 def parse_response(resp)

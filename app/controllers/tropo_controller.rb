@@ -99,7 +99,7 @@ class TropoController < ApplicationController
 
   def awesome_day
     event = find_event_from_params(params)
-    call_session = update_call_session('complete')
+    update_call_session('complete')
     next_call_time = event.user.next_call_time_string
     next_call_time = "Your next call is #{next_call_time}. " unless next_call_time.blank?
     tg = TropoCaller.tropo_generator
