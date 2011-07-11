@@ -76,6 +76,7 @@ class TropoController < ApplicationController
   end
 
   def no_keypress
+    update_call_status_from_params(params, 'nokeypress')
     tg = TropoCaller.tropo_generator
     tg.say :value => "Sorry, We didn't receive any input. Call this number back to join the conference."
     render :json => tg

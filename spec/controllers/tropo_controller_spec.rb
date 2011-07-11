@@ -166,7 +166,11 @@ describe TropoController do
 
   describe "no_keypress" do
     it "Should tell them to call back" do
-      post :no_keypress
+      call = Call.create(
+        :session_id => tropo_session_id,
+        :status => 'foo',
+      )
+      post :no_keypress, tropo_no_keypress_data
       parse_response(response).should == {
         "tropo" => [{
           "on"  => {"event" => "hangup", "next" => "/tropo/callback.json"}
@@ -179,6 +183,8 @@ describe TropoController do
           }]
         }]
       }
+      call.reload
+      call.status.should == 'foo-nokeypress'
     end
   end
 
@@ -564,6 +570,25 @@ def tropo_awesome_day_data
         "name"        => "15mcPool2Room1_name",
         "duration"    => 51,
         "disposition" => "EXTERNAL_EVENT",
+      }
+    }
+  }
+end
+
+def tropo_no_keypress_data
+  {
+    "result" => {
+      "sessionId"       => tropo_session_id,
+      "callId"          => "8e07d497569e6bc5d29ffa99e02308a1",
+      "state"           => "ANSWERED",
+      "sessionDuration" => 21,
+      "sequence"        => 2,
+      "complete"        => false,
+      "error"           => nil,
+      "actions" => {
+        "name"        => "signin",
+        "attempts"    => 1,
+        "disposition" => "TIMEOUT",
       }
     }
   }
