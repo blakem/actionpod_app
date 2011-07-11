@@ -726,9 +726,11 @@ describe PoolMerger do
             :event_id => 3,
           },
         }
-        @tc.should_receive(:place_participant_in_conference).with("session_id_1", "15mcPool#{@pool.id}Room1", @timelimit_insec,
+        @tc.should_receive(:place_participant_in_conference).with("session_id_1", "15mcPool#{@pool.id}Room1", 
+          be_within(3).of(@timelimit_insec), 
           1, [1, 2])
-        @tc.should_receive(:place_participant_in_conference).with("session_id_2", "15mcPool#{@pool.id}Room1", @timelimit_insec,
+        @tc.should_receive(:place_participant_in_conference).with("session_id_2", "15mcPool#{@pool.id}Room1", 
+          be_within(3).of(@timelimit_insec), 
           2, [1, 2])
         got = @pm.merge_calls_for_pool(@pool, @pool_runs_at, data)
         got[:placed].each_value{ |v| v.delete(:time)}

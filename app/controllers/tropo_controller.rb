@@ -108,8 +108,11 @@ class TropoController < ApplicationController
   end
 
   def callback
-    call_session = CallSession.find_by_session_id(params[:result]['sessionId'])
+    call_session = find_call_session_from_params(params)
     call_session.destroy if call_session
+    update_call_status_from_params(params, 'callback-completed', 
+      :Duration => find_duration_from_params(params),
+    )
     render :inline => ''
   end
 
@@ -136,12 +139,20 @@ class TropoController < ApplicationController
     end
     
     def find_call_session_from_params(params)
-      session = nil
-      if params[:result]
-        session_id = params[:result][:sessionId]
-        session = CallSession.find_by_session_id(session_id)
-      end
-      session
+      session_id = find_session_id_from_params(params)
+      session_id ? CallSession.find_by_session_id(session_id) : nil
+    end
+
+    def find_session_id_from_params(params)
+      find_result_key_from_params(:sessionId, params)
+    end
+
+    def find_duration_from_params(params)
+      find_result_key_from_params(:sessionDuration, params)
+    end
+
+    def find_result_key_from_params(key, params)
+      params[:result] ? params[:result][key] : nil
     end
 
     def find_event_from_params(params)
@@ -187,17 +198,19 @@ class TropoController < ApplicationController
     #   user.save
     # end
     # 
-    # def update_call_object_status(call, status, args = {})
-    #   return unless call
-    #   call.status = call.status.nil? ? status : call.status + "-#{status}"
-    #   call.update_attributes(args) unless args.empty?      
-    #   call.save
-    # end
-    # 
-    # def update_call_status_from_params(params, status, args = {})
-    #   call = Call.find_by_Sid(params[:CallSid])
-    #   update_call_object_status(call, status, args)
-    # end
+
+    def update_call_object_status(call, status, args = {})
+      return unless call
+      call.status = call.status.nil? ? status : call.status + "-#{status}"
+      call.update_attributes(args) unless args.empty?      
+      call.save
+    end
+    
+    def update_call_status_from_params(params, status, args = {})
+      call = Call.find_by_Sid(find_session_id_from_params(params))
+      update_call_object_status(call, status, args)
+      call
+    end
     
     def match_call_from_params(params)
       unless params[:CallSid].blank?

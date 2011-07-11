@@ -161,6 +161,16 @@ describe TropoController do
       post :callback, tropo_callback_session_data
       CallSession.find_by_id(call_session_id).should be_nil
     end
+    
+    it "should set the duration of the call" do
+      call = Call.create(:Sid => tropo_session_id, :status => 'foo')
+      post :callback, tropo_callback_session_data
+      response.content_type.should =~ /^text\/html/
+      call.reload
+      call.status.should == 'foo-callback-completed'
+      call.Duration.should == 4
+    end
+    
   end
   
   describe "put_on_hold" do
