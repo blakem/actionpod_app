@@ -20,7 +20,7 @@ class TropoController < ApplicationController
       call_id = params[:session]['callId'] 
       if call_id # incoming
         tg.say :value => "Welcome to your #{event.name_in_second_person}."
-        tg.on :event => 'continue', :next => "/tropo/put_on_hold.json?event_id=#{event.id}"
+        tg.on :event => 'continue', :next => "/tropo/put_on_hold.json"
         call_session.direction = 'inbound'
         call_session.call_state = 'inbound'
         call_session.call_id = call_id
@@ -33,7 +33,7 @@ class TropoController < ApplicationController
         call.AnsweredBy = params[:session][:userType]
         call.status = 'inbound'
       else # outgoing
-        tg.on :event => 'continue', :next => URI.encode("/tropo/greeting?event_id=#{event.id}")
+        tg.on :event => 'continue', :next => URI.encode("/tropo/greeting.json")
         tg.call(
           :to => event.user.primary_phone.number,
           :from => TropoCaller.new.phone_number
@@ -62,7 +62,7 @@ class TropoController < ApplicationController
     else
       update_call_status('greeting')
       update_call_session('waiting_for_input')
-      tg.on :event => 'continue', :next => "/tropo/put_on_hold.json?event_id=#{event.id}"
+      tg.on :event => 'continue', :next => "/tropo/put_on_hold.json"
       tg.on :event => 'incomplete', :next => '/tropo/no_keypress.json'
       tg.ask({ :name    => 'signin', 
                :bargein => true, 

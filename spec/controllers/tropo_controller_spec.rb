@@ -15,7 +15,7 @@ describe TropoController do
           }, {
             "on" => {"event" => "error",  "next" => "/tropo/callback.json"}
           }, {
-            "on" => {"event" => "continue", "next"=> "/tropo/greeting?event_id=#{event.id}"},
+            "on" => {"event" => "continue", "next"=> "/tropo/greeting.json"},
           }, {
             "call" => {"to" => user.primary_phone.number , "from" => "+14157660881"}
           }]
@@ -67,7 +67,7 @@ describe TropoController do
               "value"=>"Welcome to your #{event.name_in_second_person}.", "voice"=>"dave"
             }]
           }, {
-            "on" => {"event"=>"continue", "next"=>"/tropo/put_on_hold.json?event_id=#{event.id}"}
+            "on" => {"event"=>"continue", "next"=>"/tropo/put_on_hold.json"}
           }]
         }
         call_session = CallSession.where(
@@ -140,7 +140,7 @@ describe TropoController do
         }, {
           "on" => {"event" => "error",  "next" => "/tropo/callback.json"}
         }, {
-          "on"  => {"event" => "continue",   "next" => "/tropo/put_on_hold.json?event_id=#{event.id}"},
+          "on"  => {"event" => "continue",   "next" => "/tropo/put_on_hold.json"},
         }, {
           "on"  => {"event" => "incomplete", "next" => "/tropo/no_keypress.json"},
         }, {
