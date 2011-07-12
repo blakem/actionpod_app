@@ -22,7 +22,7 @@
     Handle HTTP errors on tropo REST API
     Send SMS through tropo?
     placed count/called count/ etc
-    call status tracking
+    DONE - call status tracking
     use_ifmachine
     place test call
     inbound sms
