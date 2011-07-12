@@ -17,8 +17,7 @@ class TropoController < ApplicationController
         :user_id => event.user.id,
         :session_id => params[:session][:id]
       )
-      call_id = params[:session]['callId'] 
-      if call_id # incoming
+      if call_id = find_call_id # incoming
         tg.say :value => "Welcome to your #{event.name_in_second_person}."
         tg.on :event => 'continue', :next => "/tropo/put_on_hold.json"
         call_session.direction = 'inbound'
@@ -32,16 +31,23 @@ class TropoController < ApplicationController
         call.From = params[:session][:from][:name]
         call.AnsweredBy = params[:session][:userType]
         call.status = 'inbound'
+        log_message("INCOMING for #{event.user.name}")
       else # outgoing
         tg.on :event => 'continue', :next => URI.encode("/tropo/greeting.json")
+        number_to = event.user.primary_phone.number
+        number_from = TropoCaller.new.phone_number 
         tg.call(
-          :to => event.user.primary_phone.number,
-          :from => TropoCaller.new.phone_number
+          :to => number_to,
+          :from => number_from,
         )
         call_session.direction = 'outbound'
         call_session.call_state = 'calling'
         call.Direction = 'outbound'
         call.status = 'outgoing'
+        call.To = number_to
+        call.From = number_from
+        call.DateCreated = Time.now
+        call.DateUpdated = Time.now
       end
       call_session.save
       call.save
@@ -54,25 +60,20 @@ class TropoController < ApplicationController
   end
 
   def greeting
-    event = find_event
+    event, call_session, call = process_request('greeting', 'waiting_for_input')
+    call.Sid = find_call_id
+    call.save
     tg = TropoCaller.tropo_generator
-    unless event
-      update_call_status('greeting:nomatch')
-      tg.say "I'm sorry I can't match this number up with a scheduled event. Goodbye."
-    else
-      update_call_status('greeting')
-      update_call_session('waiting_for_input')
-      tg.on :event => 'continue', :next => "/tropo/put_on_hold.json"
-      tg.on :event => 'incomplete', :next => '/tropo/no_keypress.json'
-      tg.ask({ :name    => 'signin', 
-               :bargein => true, 
-               :timeout => 8,
-               :required => 'true' }) do
-                 say     :value => "Welcome to your #{event.name_in_second_person}. Press 1 to join the conference."
-                 choices :value => '[1 DIGIT]', :mode => 'dtmf'
-               end
-      log_message("GREETING for #{event.user.name}")
-    end
+    tg.on :event => 'continue', :next => "/tropo/put_on_hold.json"
+    tg.on :event => 'incomplete', :next => '/tropo/no_keypress.json'
+    tg.ask({ :name    => 'signin', 
+             :bargein => true, 
+             :timeout => 8,
+             :required => 'true' }) do
+               say     :value => "Welcome to your #{event.name_in_second_person}. Press 1 to join the conference."
+               choices :value => '[1 DIGIT]', :mode => 'dtmf'
+             end
+    log_message("GREETING for #{event.user.name}")
     render :json => tg
   end
 
@@ -181,7 +182,12 @@ class TropoController < ApplicationController
       find_result_key(:sessionId) ||
         find_session_key(:id)
     end
-
+    
+    def find_call_id
+      find_result_key(:callId) ||
+        find_session_key(:callId)
+    end
+      
     def find_duration
       find_result_key(:sessionDuration)
     end

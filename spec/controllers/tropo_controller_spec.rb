@@ -36,6 +36,10 @@ describe TropoController do
         call.Direction.should == 'outbound'
         call.status.should == 'outgoing'
         call.session_id.should == tropo_session_id
+        call.From.should == '+14157660881'
+        call.To.should == phone.number
+        call.DateCreated.should =~ /^201\d-/
+        call.DateUpdated.should =~ /^201\d-/
       end
 
       it "Don't crash on empty data" do
@@ -180,28 +184,7 @@ describe TropoController do
   end
 
   describe "greeting" do
-    it "Should appologize if it can't match an event" do
-      call = Call.create(
-        :session_id => tropo_session_id,
-        :status => 'foo',
-      )
-      post :greeting, :session => {:id => tropo_session_id}
-      parse_response(response).should == {
-        "tropo" => [{
-          "on"  => {"event" => "hangup", "next" => "/tropo/callback.json"}
-          }, {
-            "on" => {"event" => "error",  "next" => "/tropo/callback.json"}
-          }, {
-          "say" => [{
-            "value" => "I'm sorry I can't match this number up with a scheduled event. Goodbye.",
-            "voice" => "dave",
-          }]
-        }]
-      }
-      call.reload
-      call.status.should == 'foo-greeting:nomatch'
-    end
-
+ 
     it "Should put the user on hold" do
       event = Factory(:event)
       CallSession.all.each { |cs| cs.destroy }
@@ -245,6 +228,7 @@ describe TropoController do
       call_session.call_state.should == 'waiting_for_input'
       call.reload
       call.status.should == 'foo-greeting'
+      call.Sid.should == '05d684fae36493f9ecb452c85e90b369'
     end
   end
 
