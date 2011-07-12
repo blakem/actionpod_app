@@ -93,6 +93,89 @@ describe TropoController do
         call.session_id.should == tropo_session_id
         call.status.should == 'inbound'
       end      
+
+      it "should match up with the event being called" do
+        CallSession.all.each {|cs| cs.destroy}
+        user = Factory(:user)
+        phone = Factory(:phone, :user_id => user.id, :primary => true)
+
+        now = Time.now.in_time_zone(user.time_zone)
+        event1 = Factory(:event, :user_id => user.id, :name => 'Second Morning Call', :pool_id => Factory(:pool).id)
+        event1.days = [0,1,2,3,4,5,6]
+        event1.time = (now - 2.minutes).strftime("%I:%M%p")
+        event1.save
+
+        event2 = Factory(:event, :user_id => user.id, :name => 'Bit After Morning Call', :pool_id => Factory(:pool).id)
+        event2.days = [0,1,2,3,4,5,6]
+        event2.time = (now + 5.minutes).strftime("%I:%M%p")
+        event2.save
+
+        event3 = Factory(:event, :user_id => user.id, :name => 'First Morning Call', :pool_id => Factory(:pool).id)
+        event3.days = [0,1,2,3,4,5,6]
+        event3.time = (now - 3.minutes).strftime("%I:%M%p")
+        event3.save
+
+        event4 = Factory(:event, :user_id => user.id, :name => 'Fourth Morning Call', :pool_id => Factory(:pool).id)
+        event4.days = [0,1,2,3,4,5,6]
+        event4.time = (now + 14.minutes).strftime("%I:%M%p")
+        event4.save
+
+        event5 = Factory(:event, :user_id => user.id, :name => 'Bit Before Morning Call', :pool_id => Factory(:pool).id)
+        event5.days = [0,1,2,3,4,5,6]
+        event5.time = (now - 1.minutes).strftime("%I:%M%p")
+        event5.save
+
+        event6 = Factory(:event, :user_id => user.id, :name => 'No Days Scheduled', :pool_id => Factory(:pool).id)
+        event6.days = []
+        event6.save
+
+        post :tropo, tropo_incoming_session_data(event1)
+        parse_response(response).should == {
+          "tropo" => [
+            { "on"  => {"event"  => "hangup", "next" => "/tropo/callback.json"}},
+            { "on"  => {"event"  => "error",  "next" => "/tropo/callback.json"}},
+            { "say" => [{"value" => "Welcome to your Bit After Morning Call.", "voice"=>"dave"}]},
+            { "on"  => {"event"  => "continue", "next" => "/tropo/put_on_hold.json"}}
+          ]
+        }
+        # response.should have_selector('response>say', :content => 'Hello, welcome to your Bit After Morning Call.')
+
+        CallSession.all.each {|cs| cs.destroy}
+        event2.time = (now + 13.minutes).strftime("%I:%M%p")
+        event2.save
+        post :tropo, tropo_incoming_session_data(event1)
+        parse_response(response).should == {
+          "tropo" => [
+            { "on"  => {"event"  => "hangup", "next" => "/tropo/callback.json"}},
+            { "on"  => {"event"  => "error",  "next" => "/tropo/callback.json"}},
+            { "say" => [{"value" => "Welcome to your Bit Before Morning Call.", "voice"=>"dave"}]},
+            { "on"  => {"event"  => "continue", "next" => "/tropo/put_on_hold.json"}}
+          ]
+        }
+        # response.should have_selector('response>say', :content => 'Hello, welcome to your Bit Before Morning Call.')
+      end
+
+      it "should match up with a previous (i.e. one that's schedule every week on yesterday) call if he's not schedule for one today" do
+        user = Factory(:user)
+        phone = Factory(:phone, :user_id => user.id, :primary => true)
+
+        now = Time.now.in_time_zone(user.time_zone)
+        event1 = Factory(:event, :user_id => user.id, :name => 'Yesterdays Call', :pool_id => Factory(:pool).id)
+        event1.days = [ (now.strftime("%w").to_i + 8) % 7 ] 
+        event1.time = '8am'
+        event1.save
+
+        post :tropo, tropo_incoming_session_data(event1)
+        parse_response(response).should == {
+          "tropo" => [
+            { "on"  => {"event"  => "hangup", "next" => "/tropo/callback.json"}},
+            { "on"  => {"event"  => "error",  "next" => "/tropo/callback.json"}},
+            { "say" => [{"value" => "Welcome to your Yesterdays Call.", "voice"=>"dave"}]},
+            { "on"  => {"event"  => "continue", "next" => "/tropo/put_on_hold.json"}}
+          ]
+        }
+      end
+
     end
   end
 

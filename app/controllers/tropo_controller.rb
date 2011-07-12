@@ -210,11 +210,7 @@ class TropoController < ApplicationController
         return event if event
       end
 
-#      call = match_call
-#      return Event.find_by_id(call.event_id) if call
-
-      user = match_user
-      user ? pick_users_closest_event(user) : nil
+      pick_users_closest_event
     end
 
     # def update_answered_count(user)
@@ -248,26 +244,14 @@ class TropoController < ApplicationController
       update_call_object_status(call, status, args)
     end
     
-    def match_call
-      unless params[:CallSid].blank?
-        call = Call.find_by_Sid(params[:CallSid])
-        return call if call
+    def pick_users_closest_event
+      from = find_session_key(:from)
+      if from && !from[:name].blank?
+        phone = Phone.find_by_number(from[:name])
       end
-      unless params[:PhoneNumberSid].blank?
-        call = Call.where(:PhoneNumberSid => params[:PhoneNumberSid]).sort { |a,b| a.id <=> b.id }.last
-        return call if call
-      end
-      return nil
-    end
+      return nil unless phone
 
-    def match_user
-      key = 'from'
-      return nil if !params['session'] or ! params['session'][key] or params['session'][key]['name'].blank?
-      phone = Phone.find_by_number(params['session'][key]['name'])
-      phone ? phone.user : nil
-    end
-    
-    def pick_users_closest_event(user)
+      user = phone.user
       user_time = Time.now.in_time_zone(user.time_zone)
       beg_of_day = user_time.beginning_of_day
       events = user.events.select { |e| e.next_occurrence(beg_of_day) }
