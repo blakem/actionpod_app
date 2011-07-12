@@ -84,7 +84,7 @@ class TropoController < ApplicationController
   end
   
   def put_on_hold
-    process_request('on_hold')
+    process_request('onhold')
     tg = TropoCaller.tropo_generator
     tg.on :event => 'continue', :next => "/tropo/put_on_hold.json"
     tg.on :event => 'placed', :next => "/tropo/place_in_conference.json"

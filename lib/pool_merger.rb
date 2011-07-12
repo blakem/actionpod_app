@@ -33,7 +33,7 @@ class PoolMerger
   def find_participants_on_hold(pool)
     CallSession.where(
       :pool_id => pool.id,
-      :call_state => 'on_hold',
+      :call_state => 'onhold',
     )
   end
 

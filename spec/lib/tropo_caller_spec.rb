@@ -35,7 +35,7 @@ describe TropoCaller do
         :event_id => event.id,
         :user_id => event.user_id,
         :pool_id => event.pool_id,
-        :call_state => 'on_hold',
+        :call_state => 'onhold',
       )
       @tc.should_receive(:post_to_tropo).with('http://api.tropo.com/1.0/sessions/session_1_id/signals', {
         :value=>"placed"

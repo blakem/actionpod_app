@@ -1446,7 +1446,7 @@ def participant_list(participant_count, events = [])
     call_session = CallSession.create!(
       :pool_id => @pool.id,
       :session_id => 'session_id_' + n.to_s,
-      :call_state => 'on_hold',
+      :call_state => 'onhold',
       :event_id => n,
     )
     if events[n-1]

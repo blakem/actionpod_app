@@ -319,9 +319,9 @@ describe TropoController do
         }]
       }
       call_session.reload
-      call_session.call_state.should == 'on_hold'
+      call_session.call_state.should == 'onhold'
       call.reload
-      call.status.should == 'foo-on_hold'
+      call.status.should == 'foo-onhold'
     end
   end
 
