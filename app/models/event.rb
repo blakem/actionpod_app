@@ -155,7 +155,9 @@ class Event < ActiveRecord::Base
   end
 
   def name_in_second_person
-    name.sub(/#{user.first_name}'s\s+/, '')
+    event_name = name.sub(/#{user.first_name}'s\s+/, '')
+    event_name += ' call' unless event_name =~ /call$/i
+    event_name
   end
   
   def sms_reminder_text
@@ -163,7 +165,6 @@ class Event < ActiveRecord::Base
     if self.name == self.default_name
       "Your #{event_name} is about to begin. Expect a call in 10 minutes."
     else
-      event_name += ' Call' unless event_name =~ /call$/i
       "Your #{event_name} will begin at #{self.time}. Expect a call in 10 minutes."
     end  
   end

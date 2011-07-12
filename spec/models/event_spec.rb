@@ -72,7 +72,7 @@ describe Event do
   it "has a name_in_second_person" do
     user = Factory(:user, :name => 'Bob Jones')
     event = Factory(:event, :user_id => user.id, :name => 'My 8am Event for Bob')
-    event.name_in_second_person.should == 'My 8am Event for Bob'
+    event.name_in_second_person.should == 'My 8am Event for Bob call'
     event.name = "Bob's 8:00am Call"
     event.name_in_second_person.should == "8:00am Call"    
   end
@@ -89,7 +89,7 @@ describe Event do
         "Your Morning Accountability Call will begin at 8:00am. Expect a call in 10 minutes."
         event.name = "Something Cool"
         event.sms_reminder_text.should ==
-          "Your Something Cool Call will begin at 8:00am. Expect a call in 10 minutes."
+          "Your Something Cool call will begin at 8:00am. Expect a call in 10 minutes."
     end
   end
 
