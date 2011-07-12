@@ -19,13 +19,14 @@
 
   Tropo:
     Appologize when no other callers
+    place test call
+    placed count/called count/ etc
+    inbound sms
+    use_ifmachine
+
     Handle HTTP errors on tropo REST API
     Send SMS through tropo?
-    placed count/called count/ etc
     DONE - call status tracking
-    use_ifmachine
-    place test call
-    inbound sms
 
   Business:
 
