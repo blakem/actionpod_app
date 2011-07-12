@@ -77,16 +77,14 @@ class TropoController < ApplicationController
   end
 
   def no_keypress
-    update_call_status_from_params(params, 'nokeypress')
+    process_request('nokeypress')
     tg = TropoCaller.tropo_generator
     tg.say :value => "Sorry, We didn't receive any input. Call this number back to join the conference."
     render :json => tg
   end
   
   def put_on_hold
-    event = find_event_from_params(params)
-    update_call_session('on_hold')
-    update_call_status_from_params(params, 'onhold')
+    process_request('on_hold')
     tg = TropoCaller.tropo_generator
     tg.on :event => 'continue', :next => "/tropo/put_on_hold.json"
     tg.on :event => 'placed', :next => "/tropo/place_in_conference.json"
@@ -96,8 +94,8 @@ class TropoController < ApplicationController
   end
   
   def place_in_conference
-    event = find_event_from_params(params)
-    call_session = update_call_session('placed')
+    event, call_session = process_request
+    update_call_session('placed')
     update_call_status_from_params(params, "placed:#{call_session.conference_name}")
     tg = TropoCaller.tropo_generator
     tg.say :value => 'Welcome.  On the call today we have ' + build_intro_string(call_session.event_ids)
@@ -107,9 +105,7 @@ class TropoController < ApplicationController
   end
 
   def one_minute_warning
-    event = find_event_from_params(params)
-    call_session = update_call_session('lastminute')
-    update_call_status_from_params(params, 'lastminute')
+    event, call_session = process_request('lastminute')
     tg = TropoCaller.tropo_generator
     tg.say :value => 'One minute remaining.'
     tg.conference(conference_params(call_session))
@@ -118,9 +114,7 @@ class TropoController < ApplicationController
   end
 
   def awesome_day
-    event = find_event_from_params(params)
-    update_call_session('complete')
-    update_call_status_from_params(params, 'awesome')
+    event, call_session, call = process_request('awesome', 'complete')
     next_call_time = event.user.next_call_time_string
     next_call_time = "Your next call is #{next_call_time}. " unless next_call_time.blank?
     tg = TropoCaller.tropo_generator
@@ -129,15 +123,30 @@ class TropoController < ApplicationController
   end
 
   def callback
-    call_session = find_call_session_from_params(params)
+    event, call_session, call = process_request('callback')
     call_session.destroy if call_session
-    update_call_status_from_params(params, 'callback-completed', 
-      :Duration => find_duration_from_params(params),
-    )
     render :inline => ''
   end
 
   private
+    def process_request(call_status = nil, call_session_status = nil)
+      call_session_status ||= call_status
+
+      event = find_event_from_params(params)
+      call_session = find_call_session_from_params(params)
+      call = find_call_from_params(params)
+      
+      if call_session
+        update_call_session(call_session_status) if call_session_status
+      end
+      if call
+        update_call_status_from_params(params, call_status) if call_status
+        call.Duration = find_duration_from_params(params)
+        call.save
+      end
+
+      [event, call_session, call]
+    end
 
     def conference_params(call_session)
       {
@@ -148,8 +157,8 @@ class TropoController < ApplicationController
       }
     end
   
-    def update_call_session(new_state)
-      call_session = find_call_session_from_params(params)
+    def update_call_session(new_state, call_session = nil)
+      call_session ||= find_call_session_from_params(params)
       call_session.call_state = new_state
       call_session.save
       call_session
@@ -162,6 +171,10 @@ class TropoController < ApplicationController
     def find_call_session_from_params(params)
       session_id = find_session_id_from_params(params)
       session_id ? CallSession.find_by_session_id(session_id) : nil
+    end
+
+    def find_call_from_params(params)
+      Call.find_by_session_id(find_session_id_from_params(params))
     end
 
     def find_session_id_from_params(params)
@@ -229,7 +242,7 @@ class TropoController < ApplicationController
     end
     
     def update_call_status_from_params(params, status, args = {})
-      call = Call.find_by_session_id(find_session_id_from_params(params))
+      call = find_call_from_params(params)
       update_call_object_status(call, status, args)
     end
     

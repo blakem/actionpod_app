@@ -205,7 +205,7 @@ describe TropoController do
       post :callback, tropo_callback_session_data
       response.content_type.should =~ /^text\/html/
       call.reload
-      call.status.should == 'foo-callback-completed'
+      call.status.should == 'foo-callback'
       call.Duration.should == 4
     end
     
@@ -238,7 +238,7 @@ describe TropoController do
       call_session.reload
       call_session.call_state.should == 'on_hold'
       call.reload
-      call.status.should == 'foo-onhold'
+      call.status.should == 'foo-on_hold'
     end
   end
 
