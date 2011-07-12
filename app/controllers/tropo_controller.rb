@@ -194,25 +194,27 @@ class TropoController < ApplicationController
       params[:session] ? params[:session][key] : nil
     end
 
+    def find_parameters_key(key)
+      parameters = find_session_key(:parameters)
+      parameters ? parameters[key] : nil
+    end
+
     def find_event
-      if params['event_id']
-        event = Event.find_by_id(params['event_id'])
-      elsif params['session'] && params['session']['parameters']
-        if params['session']['parameters']['event_id']
-          event = Event.find_by_id(params['session']['parameters']['event_id'])
-        end
+      if event_id = find_parameters_key(:event_id)
+        event = Event.find_by_id(event_id)
+        return event if event
       end
-      return event if event
-      session = find_call_session
-      if session
+
+      if session = find_call_session
         event = Event.find_by_id(session.event_id)
+        return event if event
       end
-      return event if event
+
 #      call = match_call
 #      return Event.find_by_id(call.event_id) if call
+
       user = match_user
-      return nil unless user
-      return pick_users_closest_event(user)
+      user ? pick_users_closest_event(user) : nil
     end
 
     # def update_answered_count(user)
@@ -259,7 +261,6 @@ class TropoController < ApplicationController
     end
 
     def match_user
-      # key = params[:Direction] == 'inbound' ? :From : :To
       key = 'from'
       return nil if !params['session'] or ! params['session'][key] or params['session'][key]['name'].blank?
       phone = Phone.find_by_number(params['session'][key]['name'])
