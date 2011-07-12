@@ -22,7 +22,7 @@
 	  <td>
 	  <% if call.Direction == 'inbound' %>
   	    In: <%= call.From ? call.From.sub(/\+1(\d{3})(\d{3})/, '(\1) \2-') : 'Nil' %>
-      <% elsif call.Direction == 'outbound-api' %>
+      <% elsif call.Direction == 'outbound' %>
   	    <%= call.To ? call.To.sub(/\+1(\d{3})(\d{3})/, '(\1) \2-') : 'Nil' %>
       <% else %>
 	    <%= call.From ? call.From.sub(/\+1(\d{3})(\d{3})/, '(\1) \2-') : 'Nil' %> --> <%= call.To ? call.To.sub(/\+1(\d{3})(\d{3})/, '(\1) \2-') : 'Nil' %>
