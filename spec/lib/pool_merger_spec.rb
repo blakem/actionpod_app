@@ -317,7 +317,7 @@ describe PoolMerger do
         # Don't add them to the conference object twice
         participant.reload
         participant.call_state.should == 'placed'
-        participant.call_state = 'on_hold'
+        participant.call_state = 'onhold'
         participant.save
         @pm.merge_calls_for_pool(@pool, @pool_runs_at, data2)
         conference.reload
@@ -354,7 +354,7 @@ describe PoolMerger do
         data = @pm.merge_calls_for_pool(@pool, @pool_runs_at, data)
 
         # Fourth comes in and gets merged into a group of four
-        new_participants[2].call_state = 'on_hold'
+        new_participants[2].call_state = 'onhold'
         new_participants[2].save
         @tc.should_receive(:place_participant_in_conference).with(
           "session_id_3", "15mcPool#{@pool.id}Room1", 
@@ -365,7 +365,7 @@ describe PoolMerger do
         data = @pm.merge_calls_for_pool(@pool, @pool_runs_at, data)
 
         # Fifth comes in and plucks one out to form two groups: one of 2 and one of 3
-        new_participants[4].call_state = 'on_hold'
+        new_participants[4].call_state = 'onhold'
         new_participants[4].save
         @tc.should_receive(:place_participant_in_conference).with(
           "session_id_3", "15mcPool#{@pool.id}Room2", 
