@@ -218,26 +218,27 @@ describe TropoController do
       call_session = CallSession.create(
         :session_id => tropo_session_id,
       )
+      call = Call.create(:session_id => tropo_session_id, :status => 'foo')
       post :put_on_hold, tropo_onhold_success_data
       parse_response(response).should == {
         "tropo" => [{
-          "on"  => {"event" => "hangup", "next" => "/tropo/callback.json"},
+          "on" => {"event" => "hangup",   "next" => "/tropo/callback.json"},
         }, {
-          "on" => {"event" => "error",  "next" => "/tropo/callback.json"}
+          "on" => {"event" => "error",    "next" => "/tropo/callback.json"}
+        }, {
+          "on" => {"event" => "continue", "next" => "/tropo/put_on_hold.json"}
+        }, {
+          "on" => {"event" => "placed",   "next" => "/tropo/place_in_conference.json"}
         }, {
           "say" => [{"value"=>"Waiting for the other participants.", "voice"=>"dave"}]
         }, {
           "say" => [{"value"=>"http://hosting.tropo.com/69721/www/audio/jazz_planet.mp3", "voice"=>"dave"}]
-        }, {
-          "say" => [{"value"=>"http://hosting.tropo.com/69721/www/audio/jazz_planet.mp3", "voice"=>"dave"}]
-        }, {
-          "say" => [{"value"=>"http://hosting.tropo.com/69721/www/audio/jazz_planet.mp3", "voice"=>"dave"}]
-        }, {
-          "on" => {"event"=>"placed", "next"=>"/tropo/place_in_conference.json"}
         }]
       }
       call_session.reload
       call_session.call_state.should == 'on_hold'
+      call.reload
+      call.status.should == 'foo-onhold'
     end
   end
 
@@ -254,6 +255,7 @@ describe TropoController do
         :event_id => event.id,
         :user_id => event.user_id,
       )
+      call = Call.create(:session_id => tropo_session_id, :status => 'foo')
       post :place_in_conference, tropo_place_in_conference_data
       parse_response(response).should == {
         "tropo" => [{
@@ -275,6 +277,8 @@ describe TropoController do
       }
       call_session.reload
       call_session.call_state.should == 'placed'
+      call.reload
+      call.status.should == "foo-placed:#{call_session.conference_name}"
     end
   end
 
@@ -291,6 +295,7 @@ describe TropoController do
         :event_id => event.id,
         :user_id => event.user_id,
       )
+      call = Call.create(:session_id => tropo_session_id, :status => 'foo')
       post :one_minute_warning, tropo_one_minute_warning_data
       parse_response(response).should == {
         "tropo" => [{
@@ -312,6 +317,8 @@ describe TropoController do
       }
       call_session.reload
       call_session.call_state.should == 'lastminute'
+      call.reload
+      call.status.should == 'foo-lastminute'
     end
   end
 
@@ -328,6 +335,7 @@ describe TropoController do
         :event_id => event.id,
         :user_id => event.user_id,
       )
+      call = Call.create(:session_id => tropo_session_id, :status => 'foo')
       post :awesome_day, tropo_awesome_day_data
       parse_response(response).should == {
         "tropo" => [{
@@ -340,6 +348,8 @@ describe TropoController do
       }
       call_session.reload
       call_session.call_state.should == 'complete'
+      call.reload
+      call.status.should == 'foo-awesome'
     end
   end
   

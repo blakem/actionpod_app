@@ -10,7 +10,7 @@ class TropoController < ApplicationController
         :event_id => event.id,
         :user_id => event.user_id,
         :pool_id => event.pool_id,
-        :session_id => params[:session]['id'],
+        :session_id => params[:session][:id],
       )
       call = Call.create(
         :event_id => event.id,
@@ -86,18 +86,19 @@ class TropoController < ApplicationController
   def put_on_hold
     event = find_event_from_params(params)
     update_call_session('on_hold')
+    update_call_status_from_params(params, 'onhold')
     tg = TropoCaller.tropo_generator
+    tg.on :event => 'continue', :next => "/tropo/put_on_hold.json"
+    tg.on :event => 'placed', :next => "/tropo/place_in_conference.json"
     tg.say :value => 'Waiting for the other participants.'
     tg.say :value => 'http://hosting.tropo.com/69721/www/audio/jazz_planet.mp3'
-    tg.say :value => 'http://hosting.tropo.com/69721/www/audio/jazz_planet.mp3'
-    tg.say :value => 'http://hosting.tropo.com/69721/www/audio/jazz_planet.mp3'
-    tg.on :event => 'placed', :next => "/tropo/place_in_conference.json"
     render :json => tg
   end
   
   def place_in_conference
     event = find_event_from_params(params)
     call_session = update_call_session('placed')
+    update_call_status_from_params(params, "placed:#{call_session.conference_name}")
     tg = TropoCaller.tropo_generator
     tg.say :value => 'Welcome.  On the call today we have ' + build_intro_string(call_session.event_ids)
     tg.conference(conference_params(call_session))
@@ -108,6 +109,7 @@ class TropoController < ApplicationController
   def one_minute_warning
     event = find_event_from_params(params)
     call_session = update_call_session('lastminute')
+    update_call_status_from_params(params, 'lastminute')
     tg = TropoCaller.tropo_generator
     tg.say :value => 'One minute remaining.'
     tg.conference(conference_params(call_session))
@@ -118,6 +120,7 @@ class TropoController < ApplicationController
   def awesome_day
     event = find_event_from_params(params)
     update_call_session('complete')
+    update_call_status_from_params(params, 'awesome')
     next_call_time = event.user.next_call_time_string
     next_call_time = "Your next call is #{next_call_time}. " unless next_call_time.blank?
     tg = TropoCaller.tropo_generator
@@ -194,13 +197,9 @@ class TropoController < ApplicationController
       return event if event
 #      call = match_call_from_params(params)
 #      return Event.find_by_id(call.event_id) if call
-      if event
-        event
-      else
-        user = match_user_from_params(params)
-        return nil unless user
-        return pick_users_closest_event(user)
-      end
+      user = match_user_from_params(params)
+      return nil unless user
+      return pick_users_closest_event(user)
     end
 
     # def update_answered_count(user)
