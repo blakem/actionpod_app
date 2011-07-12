@@ -4,7 +4,7 @@ class TropoController < ApplicationController
 
   def tropo
     tg = TropoCaller.tropo_generator
-    event = find_event_from_params(params)
+    event = find_event
     if event
       call_session = CallSession.create(
         :event_id => event.id,
@@ -54,13 +54,13 @@ class TropoController < ApplicationController
   end
 
   def greeting
-    event = find_event_from_params(params)
+    event = find_event
     tg = TropoCaller.tropo_generator
     unless event
-      update_call_status_from_params(params, 'greeting:nomatch')
+      update_call_status('greeting:nomatch')
       tg.say "I'm sorry I can't match this number up with a scheduled event. Goodbye."
     else
-      update_call_status_from_params(params, 'greeting')
+      update_call_status('greeting')
       update_call_session('waiting_for_input')
       tg.on :event => 'continue', :next => "/tropo/put_on_hold.json?event_id=#{event.id}"
       tg.on :event => 'incomplete', :next => '/tropo/no_keypress.json'
@@ -96,7 +96,7 @@ class TropoController < ApplicationController
   def place_in_conference
     event, call_session = process_request
     update_call_session('placed')
-    update_call_status_from_params(params, "placed:#{call_session.conference_name}")
+    update_call_status("placed:#{call_session.conference_name}")
     tg = TropoCaller.tropo_generator
     tg.say :value => 'Welcome.  On the call today we have ' + build_intro_string(call_session.event_ids)
     tg.conference(conference_params(call_session))
@@ -132,16 +132,16 @@ class TropoController < ApplicationController
     def process_request(call_status = nil, call_session_status = nil)
       call_session_status ||= call_status
 
-      event = find_event_from_params(params)
-      call_session = find_call_session_from_params(params)
-      call = find_call_from_params(params)
+      event = find_event
+      call_session = find_call_session
+      call = find_call
       
       if call_session
         update_call_session(call_session_status) if call_session_status
       end
       if call
-        update_call_status_from_params(params, call_status) if call_status
-        call.Duration = find_duration_from_params(params)
+        update_call_status(call_status) if call_status
+        call.Duration = find_duration
         call.save
       end
 
@@ -158,7 +158,7 @@ class TropoController < ApplicationController
     end
   
     def update_call_session(new_state, call_session = nil)
-      call_session ||= find_call_session_from_params(params)
+      call_session ||= find_call_session
       call_session.call_state = new_state
       call_session.save
       call_session
@@ -168,33 +168,33 @@ class TropoController < ApplicationController
       tg.say "I'm sorry I can't match this number up with a scheduled event. Goodbye."
     end
     
-    def find_call_session_from_params(params)
-      session_id = find_session_id_from_params(params)
+    def find_call_session
+      session_id = find_session_id
       session_id ? CallSession.find_by_session_id(session_id) : nil
     end
 
-    def find_call_from_params(params)
-      Call.find_by_session_id(find_session_id_from_params(params))
+    def find_call
+      Call.find_by_session_id(find_session_id)
     end
 
-    def find_session_id_from_params(params)
-      find_result_key_from_params(:sessionId, params) ||
-        find_session_key_from_params(:id, params)
+    def find_session_id
+      find_result_key(:sessionId) ||
+        find_session_key(:id)
     end
 
-    def find_duration_from_params(params)
-      find_result_key_from_params(:sessionDuration, params)
+    def find_duration
+      find_result_key(:sessionDuration)
     end
 
-    def find_result_key_from_params(key, params)
+    def find_result_key(key)
       params[:result] ? params[:result][key] : nil
     end
 
-    def find_session_key_from_params(key, params)
+    def find_session_key(key)
       params[:session] ? params[:session][key] : nil
     end
 
-    def find_event_from_params(params)
+    def find_event
       if params['event_id']
         event = Event.find_by_id(params['event_id'])
       elsif params['session'] && params['session']['parameters']
@@ -203,14 +203,14 @@ class TropoController < ApplicationController
         end
       end
       return event if event
-      session = find_call_session_from_params(params)
+      session = find_call_session
       if session
         event = Event.find_by_id(session.event_id)
       end
       return event if event
-#      call = match_call_from_params(params)
+#      call = match_call
 #      return Event.find_by_id(call.event_id) if call
-      user = match_user_from_params(params)
+      user = match_user
       return nil unless user
       return pick_users_closest_event(user)
     end
@@ -241,12 +241,12 @@ class TropoController < ApplicationController
       call.save
     end
     
-    def update_call_status_from_params(params, status, args = {})
-      call = find_call_from_params(params)
+    def update_call_status(status, args = {})
+      call = find_call
       update_call_object_status(call, status, args)
     end
     
-    def match_call_from_params(params)
+    def match_call
       unless params[:CallSid].blank?
         call = Call.find_by_Sid(params[:CallSid])
         return call if call
@@ -258,7 +258,7 @@ class TropoController < ApplicationController
       return nil
     end
 
-    def match_user_from_params(params)
+    def match_user
       # key = params[:Direction] == 'inbound' ? :From : :To
       key = 'from'
       return nil if !params['session'] or ! params['session'][key] or params['session'][key]['name'].blank?
