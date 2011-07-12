@@ -91,6 +91,7 @@ describe TropoController do
         call.From.should == phone.number
         call.AnsweredBy.should == 'HUMAN'
         call.session_id.should == tropo_session_id
+        call.status.should == 'inbound'
       end      
     end
   end

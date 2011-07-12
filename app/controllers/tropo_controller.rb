@@ -31,6 +31,7 @@ class TropoController < ApplicationController
         call.To = params[:session][:to][:name]
         call.From = params[:session][:from][:name]
         call.AnsweredBy = params[:session][:userType]
+        call.status = 'inbound'
       else # outgoing
         tg.on :event => 'continue', :next => URI.encode("/tropo/greeting?event_id=#{event.id}")
         tg.call(
