@@ -10,6 +10,7 @@
     Add Tip about emailing other users from conference page
 
   Bugs:
+    Don't double email logs to me
     
   Community:
     Email TMC about 15mc
