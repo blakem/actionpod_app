@@ -27,36 +27,14 @@ class Call < ActiveRecord::Base
   def status_category
     if status == 'outgoing'
       'Out InProgress'
-    elsif status == 'outgoing-greeting:match-callback:match'
-      'Got CallBack'
-    elsif status == 'outgoing-greeting:match'
-      'Got Greeting'
-    elsif status == 'outgoing-greeting:match-callback:match-completed'
+    elsif status == 'outgoing-greeting-callback'
       'NoAnswer'
-    elsif status =~ /^outgoing-greeting:match-onhold:match-placing:\w+-placed:\w+-callback:match-completed$/
-      'Success'
-    elsif status =~ /^incoming-onhold-placing:\w+-placed:\w+-callback:match-completed$/
-      'InSuccess'
-    elsif status =~ /^outgoing-direct:match-placing:\w+-placed:\w+-callback:match-completed$/
-      'DirSuccess'
-    elsif status =~ /fallback/
-      'FallbackError'
-    elsif status =~ /^outgoing-greeting:match-onhold:match-(apologizing-apologized-)?callback:match-completed$/
-      'OutOnlyOne'
-    elsif status == 'incoming-onhold-apologizing-apologized-callback:match-completed'
-      'InOnlyOne'
-    elsif status == 'outgoing-direct:match-apologizing-apologized-callback:match-completed'
-      'DirOnlyOne'
-    elsif status == 'outgoing-callback:match-completed'
-      if event_id
-        event = Event.find_by_id(event_id)
-        if event && event.user.use_ifmachine
-          return 'DirNoAnswer'
-        elsif event && !event.user.use_ifmachine
-          return 'PossibleError'
-        end
-      end
-      '????'
+    elsif status == 'outgoing-greeting-nokeypress-callback'
+      'NoAnswer'
+    elsif status =~ /^outgoing-greeting-onhold-apologized/
+      'Apology'
+    elsif status =~ /^outgoing-greeting-onhold-placed/
+      'Placed'
     else
       '???'
     end
