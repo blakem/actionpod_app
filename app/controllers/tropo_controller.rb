@@ -139,7 +139,7 @@ class TropoController < ApplicationController
     event, call_session = process_request('apologized', 'onhold')
     tg = TropoCaller.tropo_generator
     tg.on :event => 'continue', :next => "/tropo/put_on_hold.json"
-    count = call_session.participant_count
+    count = call_session.participant_count - 1
     people = count == 1 ? 'person' : 'people'
     next_call_time = event ? event.user.next_call_time_string : ''
     tg.say :value => "I'm sorry. I called #{count} other #{people} but they didn't answer."

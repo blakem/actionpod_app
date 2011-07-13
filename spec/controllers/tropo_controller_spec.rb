@@ -497,7 +497,7 @@ describe TropoController do
         :participant_count => 3,
       )
       call = Call.create(:session_id => tropo_session_id, :status => 'foo')
-      post :apologize_no_other_participants, tropo_awesome_day_data
+      post :apologize_no_other_participants, tropo_apologize_data
       parse_response(response).should == {
         "tropo" => [{
             "on"  => {"event" => "hangup", "next" => "/tropo/callback.json"},
@@ -506,7 +506,7 @@ describe TropoController do
           }, {
             "on" => {"event" => "continue",  "next" => "/tropo/put_on_hold.json"}
           }, {
-            "say" => [{"value" => "I'm sorry. I called 3 other people but they didn't answer.", 
+            "say" => [{"value" => "I'm sorry. I called 2 other people but they didn't answer.", 
                        "voice"=>"dave"}]
           }, {
             "say" => [{"value"=> "You may stay on the line, for one of them to call in. Or wait for your next call, #{event.user.next_call_time_string}.",
@@ -771,3 +771,18 @@ def tropo_no_keypress_data
     }
   }
 end
+
+def tropo_apologize_data
+  {
+    "result" => {
+      "sessionId"       => tropo_session_id,
+      "callId"          => "426f5bc1c7b2d5e18fdbcbec8316fc28",
+      "state"           => "ANSWERED",
+      "sessionDuration" => 57,
+      "sequence"        => 3,
+      "complete"        => true,
+      "error"           => nil,
+    }
+  }
+end
+
