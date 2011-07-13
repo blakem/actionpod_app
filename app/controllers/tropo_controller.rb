@@ -103,6 +103,18 @@ class TropoController < ApplicationController
     render :json => tg
   end
 
+  def test_call_thanks
+    tg = TropoCaller.tropo_generator
+    tg.say :value => "Excellent. Your phone is now set up and ready to go.  Thank you and have an awesome day."
+    render :json => tg
+  end
+
+  def test_call_nokeypress
+    tg = TropoCaller.tropo_generator
+    tg.say :value => "Sorry, We didn't receive any input.  For help, please contact support."
+    render :json => tg
+  end
+
   def no_keypress
     process_request('nokeypress')
     tg = TropoCaller.tropo_generator
