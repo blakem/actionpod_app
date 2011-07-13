@@ -35,6 +35,8 @@ class Call < ActiveRecord::Base
       'Apology'
     elsif status =~ /^outgoing-greeting-onhold-placed/
       'Placed'
+    elsif status == 'inbound-onhold-callback'
+      'Inbound Notplaced'
     else
       '???'
     end

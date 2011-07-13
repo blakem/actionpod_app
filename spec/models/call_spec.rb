@@ -15,6 +15,8 @@ describe Call do
     call.status_category.should == 'Placed'
     call.status = 'foobarbaz'
     call.status_category.should == '???'
+    call.status = 'inbound-onhold-callback'
+    call.status_category.should == 'Inbound Notplaced'
   end
   
   it "can compute it's cost" do
