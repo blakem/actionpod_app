@@ -10,15 +10,12 @@ class TropoController < ApplicationController
         :session_id => params[:session][:id],
       )
       user = User.find_by_id(user_id)
-      tg.on :event => 'continue', :next => "/tropo/test_call_thanks.json"
+      tg.on :event => 'continue', :next => "/tropo/test_call.json"
       tg.on :event => 'incomplete', :next => '/tropo/test_call_nokeypress.json'
-      tg.ask({ :name    => 'signin', 
-               :bargein => true, 
-               :timeout => 8,
-               :required => 'true' }) do
-                 say     :value => "Welcome. Please press 1 on your handset."
-                 choices :value => '[1 DIGIT]', :mode => 'dtmf'
-               end
+      tg.call(
+        :to => user.primary_phone.number,
+        :from => TropoCaller.new.phone_number,
+      )
       log_message("TESTCALL for #{user.name}")
     elsif event = find_event
       call_session = CallSession.create(
@@ -91,6 +88,19 @@ class TropoController < ApplicationController
              end
     log_message("GREETING for #{event.user.name}")
     render :json => tg
+  end
+  
+  def test_call
+    tg = TropoCaller.tropo_generator
+    tg.on :event => 'continue', :next => "/tropo/test_call_thanks.json"
+    tg.on :event => 'incomplete', :next => '/tropo/test_call_nokeypress.json'
+    tg.ask({ :name    => 'signin', 
+             :bargein => true, 
+             :timeout => 8,
+             :required => 'true' }) do
+               say     :value => "Welcome. Please press 1 on your handset."
+               choices :value => '[1 DIGIT]', :mode => 'dtmf'
+             end
   end
 
   def no_keypress
