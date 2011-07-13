@@ -7,7 +7,7 @@
         <li><%= link_to "Manage Phones", phones_path %></li> |
         <li><%= link_to "Manage Groups",  :controller => :pages, :action => :manage_groups %></li>
 	    <% else %>
-  	    <li><%= link_to "More Information",  :controller => :pages, :action => :help %></li> |
+  	    <li><%= link_to "More Information",  'http://www.15minutecalls.com/pages/help' %></li> |
 	      <li><%= link_to "Home", root_path %></li> |
       <% end %>
       <%= render 'devise/menu/registration_items' %> |
