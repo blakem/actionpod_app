@@ -126,7 +126,7 @@ describe PoolMerger do
         participant.event_id = event.id
         participant.user_id = user.id
         participant.save
-        @tc.should_receive(:apologize_no_other_participants).with(participant.session_id, event.id, 2)
+        @tc.should_receive(:apologize_no_other_participants).with(participant.session_id, 2)
         @tc.should_receive(:send_sms).with(phone.number,
           "Sorry about that... I couldn't find anyone else for the call.  That shouldn't happen once we reach critical mass. ;-)"
         )
@@ -189,7 +189,7 @@ describe PoolMerger do
         participant.event_id = event.id
         participant.user_id = user.id
         participant.save
-        @tc.should_receive(:apologize_no_other_participants).with(participant.session_id, event.id, 2)
+        @tc.should_receive(:apologize_no_other_participants).with(participant.session_id, 2)
         data = @pm.initialize_data({})
         data[:on_hold] = {
           "session_id_1" => 1,

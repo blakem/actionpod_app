@@ -309,7 +309,7 @@ class PoolMerger
     put_on_apologized(participant, data)
     put_on_hold(participant, data)
     event = Event.find(participant_event_id(participant))
-    TropoCaller.new.apologize_no_other_participants(participant.session_id, event.id, data[:total])
+    TropoCaller.new.apologize_no_other_participants(participant.session_id, data[:total])
     if (event.send_sms_reminder)
       TropoCaller.new.send_sms(
         Event.find(participant_event_id(participant)).user.primary_phone.number,

@@ -38,7 +38,7 @@ describe TropoCaller do
         :call_state => 'onhold',
       )
       @tc.should_receive(:post_to_tropo).with('http://api.tropo.com/1.0/sessions/session_1_id/signals', {
-        :value=>"placed"
+        :value => "placed"
       })
       @tc.place_participant_in_conference(
         call_session.session_id,
@@ -52,6 +52,35 @@ describe TropoCaller do
       call_session.timelimit.should == 900
       call_session.event_ids.should == '6,7,8'
       call_session.call_state.should == 'placing'
+    end
+  end
+
+  describe "place_participant_in_conference" do
+    it "should update the call and call_session and apologize to the participant" do
+      event = Factory(:event)
+      call = Call.create(
+        :status => 'foo',
+        :Sid => 'xyabc',
+      )
+      call_session = CallSession.create(
+        :session_id => 'session_1_id',
+        :event_id => event.id,
+        :user_id => event.user_id,
+        :pool_id => event.pool_id,
+        :call_state => 'onhold',
+        :call_id => call.Sid,
+      )
+      @tc.should_receive(:post_to_tropo).with('http://api.tropo.com/1.0/sessions/session_1_id/signals', {
+        :value => "apologize"
+      })
+      @tc.apologize_no_other_participants(
+        call_session.session_id,
+        6,
+      )
+      call_session.reload
+      call_session.participant_count.should == 6
+      call.reload
+      call.status.should == 'foo-apologizing'
     end
   end
 end

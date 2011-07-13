@@ -45,25 +45,23 @@ class TropoCaller
     post_to_tropo(signal_url(session_id), {:value => signal})
   end
 
-#   def send_error_to_blake(error)
-#     send_sms('+14153141222', error)
-#   end
+  def apologize_no_other_participants(session_id, participant_count)
+    call_session = CallSession.find_by_session_id(session_id)
+    call_session.participant_count = participant_count
+    call_session.save
+    call = Call.find_by_Sid(call_session.call_id)
+    update_call_status(call.Sid, 'apologizing')
+    send_signal_to_session('apologize', session_id)
+  end
 
-#   def apologize_no_other_participants(call_sid, event_id, participant_count)
-#     update_call_status(call_sid, 'apologizing')
-#     resp_hash = twilio_request(caller_uri(call_sid), 'POST', {
-#      'Url' => base_url + "/apologize_no_other_participants.xml?participant_count=#{participant_count}&event=#{event_id}",
-#     })
-#   end
-# 
-#   def update_call_status(sid, status)
-#     call = Call.find_by_Sid(sid)
-#     if call
-#       call.status = call.status.nil? ? status : call.status + "-#{status}"
-#       call.save
-#     end
-#   end
-#   
+  def update_call_status(sid, status)
+    call = Call.find_by_Sid(sid)
+    if call
+      call.status = call.status.nil? ? status : call.status + "-#{status}"
+      call.save
+    end
+  end
+
 #   def send_sms(phone_number, text)
 #     resp_hash = twilio_request(sms_uri, 'POST', {
 #       :From => account_phone,
@@ -71,7 +69,10 @@ class TropoCaller
 #       :Body => text,
 #     })
 #   end
-#   
+#   def send_error_to_blake(error)
+#     send_sms('+14153141222', error)
+#   end
+
   def self.create_call_from_call_hash(call_hash, event_id)
     user_id = nil
     event = Event.find_by_id(event_id)

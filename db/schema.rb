@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110711220438) do
+ActiveRecord::Schema.define(:version => 20110713010146) do
 
   create_table "call_sessions", :force => true do |t|
     t.string   "session_id"
@@ -25,6 +25,7 @@ ActiveRecord::Schema.define(:version => 20110711220438) do
     t.string   "conference_name"
     t.integer  "timelimit"
     t.string   "event_ids"
+    t.integer  "participant_count"
   end
 
   create_table "calls", :force => true do |t|

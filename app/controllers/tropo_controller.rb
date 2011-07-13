@@ -91,6 +91,7 @@ class TropoController < ApplicationController
     tg = TropoCaller.tropo_generator
     tg.on :event => 'continue', :next => "/tropo/put_on_hold.json"
     tg.on :event => 'placed', :next => "/tropo/place_in_conference.json"
+    tg.on :event => 'apologize', :next => "/tropo/apologize_no_other_participants.json"
     tg.say :value => 'Waiting for the other participants.'
     tg.say :value => 'http://hosting.tropo.com/69721/www/audio/jazz_planet.mp3'
     render :json => tg
@@ -133,6 +134,18 @@ class TropoController < ApplicationController
     end
     render :inline => ''
   end
+  
+  def apologize_no_other_participants
+    event, call_session = process_request('apologized', 'onhold')
+    tg = TropoCaller.tropo_generator
+    tg.on :event => 'continue', :next => "/tropo/put_on_hold.json"
+    count = call_session.participant_count
+    people = count == 1 ? 'person' : 'people'
+    next_call_time = event ? event.user.next_call_time_string : ''
+    tg.say :value => "I'm sorry. I called #{count} other #{people} but they didn't answer."
+    tg.say :value => "You may stay on the line, for one of them to call in. Or wait for your next call, #{next_call_time}."
+    render :json => tg
+  end  
 
   private
     def process_request(call_status = nil, call_session_status = nil)

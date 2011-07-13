@@ -356,6 +356,8 @@ describe TropoController do
         }, {
           "on" => {"event" => "placed",   "next" => "/tropo/place_in_conference.json"}
         }, {
+          "on" => {"event" => "apologize", "next" => "/tropo/apologize_no_other_participants.json"}
+        }, {
           "say" => [{"value"=>"Waiting for the other participants.", "voice"=>"dave"}]
         }, {
           "say" => [{"value"=>"http://hosting.tropo.com/69721/www/audio/jazz_planet.mp3", "voice"=>"dave"}]
@@ -480,6 +482,41 @@ describe TropoController do
       call_session.call_state.should == 'complete'
       call.reload
       call.status.should == 'foo-awesome'
+    end
+  end
+
+  describe "apologize_no_other_participants" do
+    it "should apologize" do
+      event = Factory(:event)
+      CallSession.all.each { |cs| cs.destroy }
+      call_session = CallSession.create(
+        :session_id => tropo_session_id,
+        :call_state => 'onhold',
+        :event_id => event.id,
+        :user_id => event.user_id,
+        :participant_count => 3,
+      )
+      call = Call.create(:session_id => tropo_session_id, :status => 'foo')
+      post :apologize_no_other_participants, tropo_awesome_day_data
+      parse_response(response).should == {
+        "tropo" => [{
+            "on"  => {"event" => "hangup", "next" => "/tropo/callback.json"},
+          }, {
+            "on" => {"event" => "error",  "next" => "/tropo/callback.json"}
+          }, {
+            "on" => {"event" => "continue",  "next" => "/tropo/put_on_hold.json"}
+          }, {
+            "say" => [{"value" => "I'm sorry. I called 3 other people but they didn't answer.", 
+                       "voice"=>"dave"}]
+          }, {
+            "say" => [{"value"=> "You may stay on the line, for one of them to call in. Or wait for your next call, #{event.user.next_call_time_string}.",
+                       "voice"=>"dave"}]
+        }]
+      }
+      call_session.reload
+      call_session.call_state.should == 'onhold'
+      call.reload
+      call.status.should == 'foo-apologized'
     end
   end
   
