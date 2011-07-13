@@ -31,6 +31,7 @@ class TropoController < ApplicationController
         call.From = params[:session][:from][:name]
         call.AnsweredBy = params[:session][:userType]
         call.status = 'inbound'
+        update_incoming_count(event.user)
         log_message("INCOMING for #{event.user.name}")
       else # outgoing
         tg.on :event => 'continue', :next => URI.encode("/tropo/greeting.json")
@@ -85,7 +86,8 @@ class TropoController < ApplicationController
   end
   
   def put_on_hold
-    process_request('onhold')
+    event, call_session = process_request('onhold')
+    update_answered_count(event.user)
     tg = TropoCaller.tropo_generator
     tg.on :event => 'continue', :next => "/tropo/put_on_hold.json"
     tg.on :event => 'placed', :next => "/tropo/place_in_conference.json"
@@ -126,6 +128,9 @@ class TropoController < ApplicationController
   def callback
     event, call_session, call = process_request('callback')
     call_session.destroy if call_session
+    if call && call.Direction == 'outbound'
+      update_missed_count(event.user) unless call.status =~ /-onhold/
+    end
     render :inline => ''
   end
 
@@ -219,24 +224,23 @@ class TropoController < ApplicationController
       pick_users_closest_event
     end
 
-    # def update_answered_count(user)
-    #   user.answered_count += 1
-    #   user.made_in_a_row += 1
-    #   user.missed_in_a_row = 0
-    #   user.save
-    # end
-    # 
-    # def update_missed_count(user)
-    #   user.missed_in_a_row += 1
-    #   user.made_in_a_row = 0
-    #   user.save
-    # end
-    # 
-    # def update_incoming_count(user)
-    #   user.incoming_count += 1
-    #   user.save
-    # end
-    # 
+    def update_answered_count(user)
+      user.answered_count += 1
+      user.made_in_a_row += 1
+      user.missed_in_a_row = 0
+      user.save
+    end
+
+    def update_missed_count(user)
+      user.missed_in_a_row += 1
+      user.made_in_a_row = 0
+      user.save
+    end
+    
+    def update_incoming_count(user)
+      user.incoming_count += 1
+      user.save
+    end
 
     def update_call_object_status(call, status, args = {})
       return unless call

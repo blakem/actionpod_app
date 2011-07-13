@@ -57,7 +57,7 @@ describe TropoController do
     
     describe "incoming calls" do
       it "should send them to put_on_hold" do
-        user = Factory(:user)
+        user = Factory(:user, :incoming_count => 7)
         phone = Factory(:phone, :user_id => user.id, :primary => true)
         event = Factory(:event, :user_id => user.id)
         post :tropo, tropo_incoming_session_data(event)
@@ -96,6 +96,8 @@ describe TropoController do
         call.AnsweredBy.should == 'HUMAN'
         call.session_id.should == tropo_session_id
         call.status.should == 'inbound'
+        user.reload
+        user.incoming_count.should == 8
       end      
 
       it "should match up with the event being called" do
@@ -142,7 +144,6 @@ describe TropoController do
             { "on"  => {"event"  => "continue", "next" => "/tropo/put_on_hold.json"}}
           ]
         }
-        # response.should have_selector('response>say', :content => 'Hello, welcome to your Bit After Morning Call.')
 
         CallSession.all.each {|cs| cs.destroy}
         event2.time = (now + 13.minutes).strftime("%I:%M%p")
@@ -156,7 +157,6 @@ describe TropoController do
             { "on"  => {"event"  => "continue", "next" => "/tropo/put_on_hold.json"}}
           ]
         }
-        # response.should have_selector('response>say', :content => 'Hello, welcome to your Bit Before Morning Call.')
       end
 
       it "should match up with a previous (i.e. one that's schedule every week on yesterday) call if he's not schedule for one today" do
@@ -275,15 +275,74 @@ describe TropoController do
       call.status.should == 'foo-callback'
       call.Duration.should == 4
     end
+
+    it "should update the missed count on a missed call" do
+      user = Factory(:user, :answered_count => 1, :made_in_a_row => 3, :missed_in_a_row => 0)
+      event = Factory(:event, :user_id => user.id)
+      CallSession.all.each { |cs| cs.destroy }
+      call_session = CallSession.create(
+        :session_id => tropo_session_id,
+        :event_id => event.id,
+      )
+      call = Call.create(
+        :session_id => tropo_session_id,
+        :status => 'foo-nokeypress',
+        :Direction => 'outbound',
+      )
+      post :callback, tropo_callback_session_data
+      user.reload
+      user.missed_in_a_row.should == 1
+      user.made_in_a_row.should == 0
+    end
+
+    it "should not update the missed count on a made call" do
+      user = Factory(:user, :answered_count => 1, :made_in_a_row => 3, :missed_in_a_row => 0)
+      event = Factory(:event, :user_id => user.id)
+      CallSession.all.each { |cs| cs.destroy }
+      call_session = CallSession.create(
+        :session_id => tropo_session_id,
+        :event_id => event.id,
+      )
+      call = Call.create(
+        :session_id => tropo_session_id,
+        :status => 'foo-onhold',
+        :Direction => 'outbound',
+      )
+      post :callback, tropo_callback_session_data
+      user.reload
+      user.missed_in_a_row.should == 0
+      user.made_in_a_row.should == 3
+    end
+
+    it "should not update the missed count on an inbound call" do
+      user = Factory(:user, :answered_count => 1, :made_in_a_row => 3, :missed_in_a_row => 0)
+      event = Factory(:event, :user_id => user.id)
+      CallSession.all.each { |cs| cs.destroy }
+      call_session = CallSession.create(
+        :session_id => tropo_session_id,
+        :event_id => event.id,
+      )
+      call = Call.create(
+        :session_id => tropo_session_id,
+        :status => 'foo-bar-baz',
+        :Direction => 'inbound',
+      )
+      post :callback, tropo_callback_session_data
+      user.reload
+      user.missed_in_a_row.should == 0
+      user.made_in_a_row.should == 3
+    end
     
   end
   
   describe "put_on_hold" do
     it "should play some hold music" do
-      event = Factory(:event)
+      user = Factory(:user, :answered_count => 1, :made_in_a_row => 0, :missed_in_a_row => 3)
+      event = Factory(:event, :user_id => user.id)
       CallSession.all.each { |cs| cs.destroy }
       call_session = CallSession.create(
         :session_id => tropo_session_id,
+        :event_id => event.id,
       )
       call = Call.create(:session_id => tropo_session_id, :status => 'foo')
       post :put_on_hold, tropo_onhold_success_data
@@ -306,6 +365,10 @@ describe TropoController do
       call_session.call_state.should == 'onhold'
       call.reload
       call.status.should == 'foo-onhold'
+      user.reload
+      user.answered_count.should == 2
+      user.made_in_a_row.should == 1
+      user.missed_in_a_row.should == 0
     end
   end
 
