@@ -26,6 +26,18 @@ describe TropoCaller do
       @tc.start_call_for_event(event)
     end
   end
+
+  describe "start_call_for_user" do
+    it "should start a call" do
+      user = Factory(:user)
+      @tc.should_receive(:post_to_tropo).with('http://api.tropo.com/1.0/sessions', {
+        :action   => "create", 
+        :token    => "04387300635ebe4cbc820020e5354055a8c4e24f72e407d1159abc03aa6a2a88896146fb9131e1804bae5736", 
+        :user_id => user.id,
+      })
+      @tc.start_call_for_user(user)
+    end
+  end
   
   describe "place_participant_in_conference" do
     it "should update the call_session and put a participant into a conference" do

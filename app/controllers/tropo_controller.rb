@@ -4,8 +4,23 @@ class TropoController < ApplicationController
 
   def tropo
     tg = TropoCaller.tropo_generator
-    event = find_event
-    if event
+    if user_id = find_parameters_key(:user_id) # place_test_call
+      call_session = CallSession.create(
+        :user_id => user_id,
+        :session_id => params[:session][:id],
+      )
+      user = User.find_by_id(user_id)
+      tg.on :event => 'continue', :next => "/tropo/test_call_thanks.json"
+      tg.on :event => 'incomplete', :next => '/tropo/test_call_nokeypress.json'
+      tg.ask({ :name    => 'signin', 
+               :bargein => true, 
+               :timeout => 8,
+               :required => 'true' }) do
+                 say     :value => "Welcome. Please press 1 on your handset."
+                 choices :value => '[1 DIGIT]', :mode => 'dtmf'
+               end
+      log_message("TESTCALL for #{user.name}")
+    elsif event = find_event
       call_session = CallSession.create(
         :event_id => event.id,
         :user_id => event.user_id,

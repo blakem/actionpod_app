@@ -18,7 +18,7 @@
     Email TMC alumni
 
   Tropo:
-    Appologize when no other callers
+    Done - Appologize when no other callers
     place test call
     inbound sms
     use_ifmachine

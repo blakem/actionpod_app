@@ -208,10 +208,7 @@ class PagesController < ApplicationController
     unless @user
       redirect_to(root_path, :alert => "Couldn't find user.")
     else
-      tc = TwilioCaller.new
-      tc.start_call_for_user(@user, {
-        'Url' => tc.base_url + '/place_test_call.xml',
-      })
+      TropoCaller.new.start_call_for_user(@user)
       redirect_to(@user.profile_path, :notice => "Placing test call to: #{@user.primary_phone.number_pretty}")
     end
   end

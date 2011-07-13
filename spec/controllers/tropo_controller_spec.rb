@@ -55,6 +55,35 @@ describe TropoController do
       end
     end
     
+    describe "place_test_call" do
+      it "should initiate a call" do
+        user = Factory(:user)
+        phone = Factory(:phone, :user_id => user.id, :primary => true)
+        post :tropo, tropo_test_call_data(user)
+        parse_response(response).should == {
+          "tropo" => [
+            {"on" => { "event" => "hangup", "next" => "/tropo/callback.json"}},
+            {"on"=>{"event"=>"error", "next"=>"/tropo/callback.json"}},
+            {"on" => { "event" => "continue", "next" =>"/tropo/test_call_thanks.json"}},
+            {"on" => { "event" => "incomplete", "next" =>"/tropo/test_call_nokeypress.json"}},
+            {"ask" =>{
+              "name"     =>"signin",
+              "bargein"  =>true,
+              "timeout"  =>8,
+              "required" =>"true",
+              "voice"    =>"dave",
+              "say"      => [{"value"=>"Welcome. Please press 1 on your handset.",
+                              "voice"=>"dave"}],
+              "choices"  => {"value"=>"[1 DIGIT]", "mode"=>"dtmf"}}}
+          ]
+        }
+        call_session = CallSession.where(
+          :user_id => user.id,
+        ).first
+        call_session.should_not be_nil
+      end
+    end
+    
     describe "incoming calls" do
       it "should send them to put_on_hold" do
         user = Factory(:user, :incoming_count => 7)
@@ -611,6 +640,24 @@ def tropo_incoming_session_data(event)
         "Content-Type"          => "application/sdp", 
         "x-sbc-to"              => "<sip:+14157660881@67.231.4.93>", 
         "From"                  => "<sip:4153141222@10.6.63.201:5060>;tag=0-13c4-4e03cf28-1d5dd57d-72d9"}
+    }
+  }
+end
+
+def tropo_test_call_data(user)
+  { 
+    "session" => {
+      "id"          => tropo_session_id,
+      "accountId"   => "69721", 
+      "timestamp"   => '2011-07-06 18:29:53 UTC', 
+      "userType"    =>"NONE", 
+      "initialText" => nil, 
+      "callId"      => nil, 
+      "parameters"  => {
+        "action"   => "create", 
+        "user_id"  => user.id,
+        "format"   => "form"
+      }
     }
   }
 end

@@ -31,6 +31,14 @@ class TropoCaller
     })
   end
 
+  def start_call_for_user(user)
+    post_to_tropo(api_url, {
+      :action => 'create',
+      :token => account_token,
+      :user_id => user.id,
+    })
+  end
+
   def place_participant_in_conference(session_id, conference_name, timelimit, event_id, event_ids)
     call_session = CallSession.find_by_session_id(session_id)
     call_session.conference_name = conference_name
