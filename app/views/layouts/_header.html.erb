@@ -7,7 +7,7 @@
         <li><%= link_to "Intro", :controller => :pages, :action => :homepage %>
         <li><%= link_to "Guide/FAQ", :controller => :pages, :action => :help %>
 	  <% else %>
-  	    <li><%= link_to "More Information", :controller => :pages, :action => :help %>
+  	    <li><%= link_to "More Information", 'http://www.15minutecalls.com/pages/help' %>
 	    <li><%= link_to "Home", root_path %></li>
       <% end %>
       <%= render 'devise/menu/registration_items' %>
