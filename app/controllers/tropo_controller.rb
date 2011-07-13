@@ -11,7 +11,6 @@ class TropoController < ApplicationController
       )
       user = User.find_by_id(user_id)
       tg.on :event => 'continue', :next => "/tropo/test_call.json"
-      tg.on :event => 'incomplete', :next => '/tropo/test_call_nokeypress.json'
       tg.call(
         :to => user.primary_phone.number,
         :from => TropoCaller.new.phone_number,
@@ -101,6 +100,7 @@ class TropoController < ApplicationController
                say     :value => "Welcome. Please press 1 on your handset."
                choices :value => '[1 DIGIT]', :mode => 'dtmf'
              end
+    render :json => tg
   end
 
   def no_keypress
