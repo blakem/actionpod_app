@@ -55,32 +55,48 @@ describe TropoController do
       end
     end
     
-    describe "place_test_call" do
+    describe "tropo initiate test call" do
       it "should initiate a call" do
         user = Factory(:user)
         phone = Factory(:phone, :user_id => user.id, :primary => true)
         post :tropo, tropo_test_call_data(user)
         parse_response(response).should == {
           "tropo" => [
-            {"on" => { "event" => "hangup", "next" => "/tropo/callback.json"}},
-            {"on"=>{"event"=>"error", "next"=>"/tropo/callback.json"}},
-            {"on" => { "event" => "continue", "next" =>"/tropo/test_call_thanks.json"}},
-            {"on" => { "event" => "incomplete", "next" =>"/tropo/test_call_nokeypress.json"}},
-            {"ask" =>{
-              "name"     =>"signin",
-              "bargein"  =>true,
-              "timeout"  =>8,
-              "required" =>"true",
-              "voice"    =>"dave",
-              "say"      => [{"value"=>"Welcome. Please press 1 on your handset.",
-                              "voice"=>"dave"}],
-              "choices"  => {"value"=>"[1 DIGIT]", "mode"=>"dtmf"}}}
+            {"on" => { "event" => "hangup",   "next" => "/tropo/callback.json"}},
+            {"on" => { "event" => "error",    "next" => "/tropo/callback.json"}},
+            {"on" => { "event" => "continue", "next" => "/tropo/test_call.json"}},
+            {"call" => {"to"=>"+14445556666", "from"=>"+14157660881"}}
           ]
         }
         call_session = CallSession.where(
           :user_id => user.id,
         ).first
         call_session.should_not be_nil
+      end
+    end
+
+    describe "test_call" do
+      it "should ask for input" do
+        post :test_call
+        parse_response(response).should == {
+          "tropo" => [
+            {"on"  => {"event" => "hangup", "next" => "/tropo/callback.json"}},
+            {"on"  => {"event" => "error", "next" => "/tropo/callback.json"}},
+            {"on"  => {"event" => "continue", "next" => "/tropo/test_call_thanks.json"}},
+            {"on"  => {"event" => "incomplete", "next" => "/tropo/test_call_nokeypress.json"}},
+            {"ask" => {
+              "name"     => "signin",
+              "bargein"  => true,
+              "timeout"  => 8,
+              "required" => "true",
+              "voice"    => "dave",
+              "say" => [{
+                "value" => "Welcome. Please press 1 on your handset.",
+                "voice" => "dave"
+              }],
+              "choices" => {"value" => "[1 DIGIT]", "mode" => "dtmf"}}}
+          ]
+        }
       end
     end
     
