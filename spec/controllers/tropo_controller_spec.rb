@@ -99,6 +99,34 @@ describe TropoController do
         }
       end
     end
+
+    describe "test_call_thanks" do
+      it "should say thanks" do
+        post :test_call_thanks
+        parse_response(response).should == {
+          "tropo" => [
+            {"on"  => {"event" => "hangup", "next" => "/tropo/callback.json"}},
+            {"on"  => {"event" => "error", "next" => "/tropo/callback.json"}},
+            {"say" => [{"value" => "Excellent. Your phone is now set up and ready to go.  Thank you and have an awesome day.",
+                        "voice"=>"dave"}]}
+          ]
+        }
+      end
+    end
+
+    describe "test_call_nokeypress" do
+      it "should say contact support" do
+        post :test_call_nokeypress
+        parse_response(response).should == {
+          "tropo" => [
+            {"on"  => {"event" => "hangup", "next" => "/tropo/callback.json"}},
+            {"on"  => {"event" => "error", "next" => "/tropo/callback.json"}},
+            {"say" => [{"value" => "Sorry, We didn't receive any input.  For help, please contact support.",
+                        "voice"=>"dave"}]}
+          ]
+        }
+      end
+    end
     
     describe "incoming calls" do
       it "should send them to put_on_hold" do

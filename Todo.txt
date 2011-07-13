@@ -18,16 +18,10 @@
     Email TMC alumni
 
   Tropo:
-    Done - Appologize when no other callers
-    place test call
     inbound sms
     use_ifmachine
-
     Handle HTTP errors on tropo REST API
     Send SMS through tropo?
-
-    DONE - call status tracking
-    Done - placed count/called count/ etc
 
   Business:
 
