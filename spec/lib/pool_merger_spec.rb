@@ -55,19 +55,19 @@ describe PoolMerger do
         participant_list(0)
         call1 = Call.create!( # completed => remove me
           :event_id       => 77,
-          :status         => 'outgoing-callback:match-completed',
+          :status         => 'outgoing-greeting-nokeypress-callback',
         )
         call2 = Call.create!( # onhold => remove me
           :event_id       => 76,
-          :status         => ' outgoing-greeting:match-onhold:match',
+          :status         => 'outgoing-greeting-onhold',
         )
         call3 = Call.create!( # call is still waiting for answer/hangup
           :event_id       => 66,
-          :status         => 'outgoing-direct:match',
+          :status         => 'outgoing-greeting',
         )
         call4 = Call.create!( # event from a long time ago
           :event_id       => 44,
-          :status         => 'outgoing-completed',
+          :status         => 'outgoing-greeting-nokeypress-callback',
         )
         ActiveRecord::Base.record_timestamps = false
         call4.created_at = Time.now - (@pool.timelimit + 1).minutes
