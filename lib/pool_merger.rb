@@ -311,7 +311,7 @@ class PoolMerger
     event = Event.find(participant_event_id(participant))
     TropoCaller.new.apologize_no_other_participants(participant.session_id, data[:total])
     if (event.send_sms_reminder)
-      TropoCaller.new.send_sms(
+      TwilioCaller.new.send_sms(
         Event.find(participant_event_id(participant)).user.primary_phone.number,
         "Sorry about that... I couldn't find anyone else for the call.  That shouldn't happen once we reach critical mass. ;-)",
       )
