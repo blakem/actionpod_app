@@ -37,6 +37,8 @@ class Call < ActiveRecord::Base
       'Placed'
     elsif status == 'inbound-onhold-callback'
       'Inbound Notplaced'
+    elsif status == 'outgoing-greeting-onhold-callback'
+      'Hangup'
     else
       '???'
     end
