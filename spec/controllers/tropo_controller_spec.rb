@@ -299,6 +299,7 @@ describe TropoController do
       }
       call_session.reload
       call_session.call_state.should == 'waiting_for_input'
+      call_session.call_id.should == '05d684fae36493f9ecb452c85e90b369'
       call.reload
       call.status.should == 'foo-greeting'
       call.Sid.should == '05d684fae36493f9ecb452c85e90b369'

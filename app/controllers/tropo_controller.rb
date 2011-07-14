@@ -73,8 +73,9 @@ class TropoController < ApplicationController
 
   def greeting
     event, call_session, call = process_request('greeting', 'waiting_for_input')
-    call.Sid = find_call_id
+    call_session.call_id = call.Sid = find_call_id
     call.save
+    call_session.save
     log_message(params.inspect)
     log_message(call.inspect)
     tg = TropoCaller.tropo_generator
