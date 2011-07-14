@@ -57,8 +57,7 @@ class TropoCaller
     call_session = CallSession.find_by_session_id(session_id)
     call_session.participant_count = participant_count
     call_session.save
-    call = Call.find_by_Sid(call_session.call_id)
-    update_call_status(call.Sid, 'apologizing')
+    update_call_status(call_session.call_id, 'apologizing')
     send_signal_to_session('apologize', session_id)
   end
 
