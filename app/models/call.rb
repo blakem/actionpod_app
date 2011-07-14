@@ -31,7 +31,7 @@ class Call < ActiveRecord::Base
       'NoAnswer'
     elsif status == 'outgoing-greeting-nokeypress-callback'
       'NoAnswer'
-    elsif status =~ /^outgoing-greeting-onhold-apologized/
+    elsif status =~ /^outgoing-greeting-onhold-apologizing/
       'Apology'
     elsif status =~ /^outgoing-greeting-onhold-placed/
       'Placed'

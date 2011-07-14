@@ -9,7 +9,7 @@ describe Call do
     call.status_category.should == 'NoAnswer'
     call.status = 'outgoing-greeting-nokeypress-callback'
     call.status_category.should == 'NoAnswer'
-    call.status = 'outgoing-greeting-onhold-apologized-onhold-apologized-onhold-callback'
+    call.status = 'outgoing-greeting-onhold-apologizing-apologized-onhold-onhold-onhold-callback'
     call.status_category.should == 'Apology'
     call.status = 'outgoing-greeting-onhold-placed:15mcPool11Room1-callback'
     call.status_category.should == 'Placed'

@@ -76,8 +76,6 @@ class TropoController < ApplicationController
     call_session.call_id = call.Sid = find_call_id
     call.save
     call_session.save
-    log_message(params.inspect)
-    log_message(call.inspect)
     tg = TropoCaller.tropo_generator
     tg.on :event => 'continue', :next => "/tropo/put_on_hold.json"
     tg.on :event => 'incomplete', :next => '/tropo/no_keypress.json'
