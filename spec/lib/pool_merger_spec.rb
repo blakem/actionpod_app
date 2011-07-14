@@ -69,6 +69,10 @@ describe PoolMerger do
           :event_id       => 44,
           :status         => 'outgoing-greeting-nokeypress-callback',
         )
+        call5 = Call.create!( # nokeypress => remove me
+          :event_id       => 88,
+          :status         => 'outgoing-greeting-nokeypress',
+        )
         ActiveRecord::Base.record_timestamps = false
         call4.created_at = Time.now - (@pool.timelimit + 1).minutes
         call4.updated_at = Time.now - (@pool.timelimit + 1).minutes
@@ -76,7 +80,7 @@ describe PoolMerger do
         ActiveRecord::Base.record_timestamps = true
   
         data = @pm.initialize_data({}).merge({
-          :waiting_for_events => [77, 76, 33, 44, 66],
+          :waiting_for_events => [77, 76, 33, 44, 66, 88],
         })
         @pm.merge_calls_for_pool(@pool, @pool_runs_at, data).should == @data.merge({
           :waiting_for_events => [33, 44, 66],

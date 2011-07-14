@@ -62,7 +62,7 @@ class PoolMerger
       log_message("Between:" + data[:waiting_for_events].inspect)
       calls = Call.where("created_at >= ?", Time.now - pool.timelimit.minutes)
       calls.each do |call|
-        data[:waiting_for_events].delete(call.event_id) if call.status =~ /-callback|-onhold/
+        data[:waiting_for_events].delete(call.event_id) if call.status =~ /-(callback|onhold|nokeypress)/
       end
       log_message("After:" + data[:waiting_for_events].inspect)
     end
