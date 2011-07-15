@@ -607,7 +607,7 @@ describe TropoController do
     it "should pass the arguments on to the SmsHandler" do
       sms_handler = mock('SmsHandler')
       SmsHandler.should_receive(:new).and_return(sms_handler)
-      sms_handler.should_receive(:process_sms).with('Busy', '+14153141222').and_return('Foo')
+      sms_handler.should_receive(:process_sms).with('Hello.', '+14153141222').and_return('Foo')
       post :sms, tropo_sms_data
     end
   end
