@@ -71,13 +71,7 @@ class TropoController < ApplicationController
     tg = TropoCaller.tropo_generator_sms
     number = find_session_key(:from)[:id]
     number = '+' + number if number and number !~ /^\+/
-    response = SmsHandler.new.process_sms(find_session_key(:initialText), number)
-    # tg.call(
-    #   :to => number,
-    #   :from => TropoCaller.new.phone_number,
-    #   :network => 'SMS',
-    # )
-    tg.say response
+    tg.say SmsHandler.new.process_sms(find_session_key(:initialText), number)
     render :json => tg
   end
 

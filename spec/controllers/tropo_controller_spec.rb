@@ -599,7 +599,6 @@ describe TropoController do
       post :sms, tropo_sms_data
       parse_response(response).should == {
         "tropo" => [
-          {"call" => {"to" => "+14153141222", "from" => "+14157660881", "network" => 'SMS'}},
           {"say"  => [{"value"=> "Welcome to 15 Minute Calls.  See 15minutecalls.com for more information."}]}
         ]
       }
