@@ -75,6 +75,7 @@ class TropoController < ApplicationController
     tg.call(
       :to => number,
       :from => TropoCaller.new.phone_number,
+      :network => 'SMS',
     )
     tg.say response
     render :json => tg
