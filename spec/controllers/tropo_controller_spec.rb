@@ -903,7 +903,7 @@ def tropo_sms_data
       "accountId" => "69721",
       "timestamp" => "2011-07-15T18:03:12.275Z",
       "userType" => "HUMAN",
-      "initialText" => "Busy",
+      "initialText" => "Hello.",
       "callId" => "70ce33c95103a4632bcbd266780d9530",
       "to" => {
         "id" => "14157660881",

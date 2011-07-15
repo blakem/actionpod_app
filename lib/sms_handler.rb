@@ -23,13 +23,13 @@ class SmsHandler
     next_occurrence = event.next_occurrence
     event.skip_dates = skip_dates + next_occurrence.strftime("%m/%d/%Y")
     event.save
-    "Ok, call cancelled. Your next call is at: #{user.next_call_time_string}."
+    "Ok, call cancelled. Your next call is: #{user.next_call_time_string}."
   end
   
   def handle_next(number)
     phone = Phone.find_by_number(number)
     return nil unless phone
-    "Your next call is at: #{phone.user.next_call_time_string}."
+    "Your next call is: #{phone.user.next_call_time_string}."
   end
   
   def welcome_message

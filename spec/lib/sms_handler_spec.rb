@@ -28,7 +28,7 @@ describe SmsHandler do
       response = SmsHandler.new.process_sms("Busy", phone.number)
       user.reload
       event.reload
-      response.should == "Ok, call cancelled. Your next call is at: #{user.next_call_time_string}."
+      response.should == "Ok, call cancelled. Your next call is: #{user.next_call_time_string}."
       event.next_occurrence.should == next_occurrence + 24.hours
     end
 
@@ -37,7 +37,7 @@ describe SmsHandler do
       phone = Factory(:phone, :user_id => user.id)
       event = Factory(:event, :user_id => user.id)
       response = SmsHandler.new.process_sms(" NeXt ", phone.number)
-      response.should == "Your next call is at: #{user.next_call_time_string}."
+      response.should == "Your next call is: #{user.next_call_time_string}."
     end
   end
 end
