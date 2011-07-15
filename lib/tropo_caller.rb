@@ -98,6 +98,10 @@ class TropoCaller
       :status         => call_hash['status'],
     )
   end
+
+  def self.tropo_generator_sms
+    Tropo::Generator.new
+  end
   
   def self.tropo_generator
     tg = Tropo::Generator.new(:voice => 'dave')

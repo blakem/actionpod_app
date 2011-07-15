@@ -68,7 +68,8 @@ class TropoController < ApplicationController
   end
 
   def sms
-
+    tg = TropoCaller.tropo_generator_sms
+    render :json => tg
   end
 
   def greeting

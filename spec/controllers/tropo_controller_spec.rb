@@ -594,6 +594,15 @@ describe TropoController do
     end
   end
   
+  describe "sms" do
+    it "should not crash" do
+      post :sms, tropo_sms_data
+      parse_response(response).should == {
+        "tropo" => []
+      }
+    end
+  end
+  
   describe "build_intro_string" do
     it "builds nice strings" do
       tc = TropoController.new
@@ -878,3 +887,39 @@ def tropo_apologize_data
   }
 end
 
+def tropo_sms_data
+  {
+    "session" => {
+      "id" => tropo_session_id,
+      "accountId" => "69721",
+      "timestamp" => "2011-07-15T18:03:12.275Z",
+      "userType" => "HUMAN",
+      "initialText" => "Busy",
+      "callId" => "70ce33c95103a4632bcbd266780d9530",
+      "to" => {
+        "id" => "14157660881",
+        "name" => nil,
+        "channel" => "TEXT",
+        "network" => "SMS"
+      },
+      "from" => {
+        "id" => "14153141222",
+        "name" => nil,
+        "channel" => "TEXT",
+        "network" => "SMS"
+      },
+      "headers" => {
+        "Max-Forwards" => "70",
+        "Content-Length" => "124",
+        "Contact" => 
+        "<sip:10.6.93.101:5066;transport=udp>",
+        "To" => "<sip:9996117148@10.6.69.204:5061;to=14157660881>",
+        "CSeq" => "1 INVITE",
+        "Via" => "SIP/2.0/UDP 10.6.93.101:5066;branch=z9hG4bKq0r5fz",
+        "Call-ID" => "nn9mtm",
+        "Content-Type" => "application/sdp",
+        "From" => "<sip:1ADB0A1F-A28A-43DE-B824A732995C8C74@10.6.61.201;channel=private;user=14153141222;msg=Busy;network=SMS;step=2>;tag=whha8o"
+      }
+    }
+  }
+end
