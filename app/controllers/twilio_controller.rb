@@ -143,8 +143,7 @@ class TwilioController < ApplicationController
   end
   
   def sms
-    puts params.inspect
-    @response = SmsHandler.new.process_sms("Foo", "Some Number")
+    @response = SmsHandler.new.process_sms(params[:Body], params[:From])
   end
 
   private

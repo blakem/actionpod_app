@@ -649,7 +649,7 @@ describe TwilioController do
 
   describe "sms" do
     it "should send back a welcome message" do
-      post :sms
+      post :sms, :Body => "Foo", :From => '+12223334444'
       hash = (Hash.from_xml response.body).with_indifferent_access
       hash[:Response].should be_true
       response.content_type.should =~ /^application\/xml/
