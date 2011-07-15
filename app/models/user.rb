@@ -190,9 +190,18 @@ class User < ActiveRecord::Base
   end
   
   def next_call_time
-    events.map { |e| e.next_occurrence }.select{ |o| o }.sort.first
+    next_call_time_and_event[0]
   end
-  
+
+  def event_with_next_call_time
+    next_call_time_and_event[1]
+  end
+
+  def next_call_time_and_event
+    data = events.map { |e| [e.next_occurrence, e] }.select{ |o| o[0] }.sort{ |a,b| a[0] <=> b[0]}.first
+    data ? data : []
+  end
+
   def next_call_time_string
     call_time = self.next_call_time
     return '' unless call_time

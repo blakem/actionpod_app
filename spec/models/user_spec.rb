@@ -274,6 +274,7 @@ describe User do
       user = Factory(:user)
       user.next_call_time.should be_nil
       user.next_call_time_string.should == ''
+      user.event_with_next_call_time.should be_nil
 
       event1 = Factory(:event, :user_id => user.id)
       event1.days = []
@@ -281,6 +282,7 @@ describe User do
       user.reload
       user.next_call_time.should be_nil
       user.next_call_time_string.should == ''
+      user.event_with_next_call_time.should be_nil
 
       event1.days = [0,1,2,3,4,5,6]
       event1.time = '1:00pm'
@@ -288,6 +290,7 @@ describe User do
       user.reload
       user.next_call_time.strftime("%A at %I:%M%P").sub(/ 0/,' ').humanize.should == "Tuesday at 1:00pm"
       user.next_call_time_string.should == "Tomorrow at 1:00pm"
+      user.event_with_next_call_time.should == event1
 
       event2 = Factory(:event, :user_id => user.id)
       event2.days = [0,1,2,3,4,5,6]
@@ -296,6 +299,7 @@ describe User do
       user.reload
       user.next_call_time.strftime("%A at %I:%M%P").sub(/ 0/,' ').humanize.should == "Monday at 4:00pm"
       user.next_call_time_string.should == "Today at 4:00pm"
+      user.event_with_next_call_time.should == event2
 
       event1.days = [5,6]
       event1.save
@@ -304,6 +308,7 @@ describe User do
       user.reload
       user.next_call_time.strftime("%A at %I:%M%P").sub(/ 0/,' ').humanize.should == "Friday at 1:00pm"
       user.next_call_time_string.should == "Friday at 1:00pm"
+      user.event_with_next_call_time.should == event1
 
       event1.days = [5,6]
       event1.save
@@ -312,6 +317,7 @@ describe User do
       user.reload
       user.next_call_time.strftime("%A at %I:%M%P").sub(/ 0/,' ').humanize.should == "Friday at 1:00pm"
       user.next_call_time_string.should == "Friday at 1:00pm"
+      user.event_with_next_call_time.should == event1
 
       event1.days = []
       event1.save
@@ -320,6 +326,7 @@ describe User do
       user.reload
       user.next_call_time.strftime("%A at %I:%M%P").sub(/ 0/,' ').humanize.should == "Friday at 4:00pm"
       user.next_call_time_string.should == "Friday at 4:00pm"
+      user.event_with_next_call_time.should == event2
     end    
   end
 
