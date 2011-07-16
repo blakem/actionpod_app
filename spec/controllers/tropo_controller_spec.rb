@@ -17,7 +17,7 @@ describe TropoController do
           }, {
             "on" => {"event" => "continue", "next"=> "/tropo/greeting.json"},
           }, {
-            "call" => {"to" => user.primary_phone.number , "from" => "+14157660881"}
+            "call" => {"to" => [user.primary_phone.number] , "from" => "+14157660881"}
           }]
         }
         call_session = CallSession.where(
