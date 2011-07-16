@@ -23,25 +23,25 @@ class TropoController < ApplicationController
         :pool_id => event.pool_id,
         :session_id => params[:session][:id],
       )
-      call = Call.create(
-        :event_id => event.id,
-        :user_id => event.user.id,
-        :session_id => params[:session][:id]
-      )
       if call_id = find_call_id # incoming
         tg.say :value => "Welcome to your #{event.name_in_second_person}."
         tg.on :event => 'continue', :next => "/tropo/put_on_hold.json"
         call_session.direction = 'inbound'
         call_session.call_state = 'inbound'
         call_session.call_id = call_id
-        call.Direction = 'inbound'
-        call.Sid = call_id
-        call.DateCreated = params[:session][:timestamp]
-        call.DateUpdated = params[:session][:timestamp]
-        call.To = params[:session][:to][:name]
-        call.From = params[:session][:from][:name]
-        call.AnsweredBy = params[:session][:userType]
-        call.status = 'inbound'
+        call = Call.create(
+          :event_id    => event.id,
+          :user_id     => event.user.id,
+          :session_id  => params[:session][:id],
+          :Direction   => 'inbound',
+          :Sid         => call_id,
+          :DateCreated => params[:session][:timestamp],
+          :DateUpdated => params[:session][:timestamp],
+          :To          => params[:session][:to][:name],
+          :From        => params[:session][:from][:name],
+          :AnsweredBy  => params[:session][:userType],
+          :status      => 'inbound',
+        )
         update_incoming_count(event.user)
         log_message("INCOMING for #{event.user.name}")
       else # outgoing
@@ -54,15 +54,21 @@ class TropoController < ApplicationController
         )
         call_session.direction = 'outbound'
         call_session.call_state = 'calling'
-        call.Direction = 'outbound'
-        call.status = 'outgoing'
-        call.To = numbers_to.first # XXX 
-        call.From = number_from
-        call.DateCreated = Time.now
-        call.DateUpdated = Time.now
+        numbers_to.each do |number|
+          call = Call.create(
+            :event_id    => event.id,
+            :user_id     => event.user.id,
+            :session_id  => params[:session][:id],
+            :Direction   => 'outbound',
+            :status      => 'outgoing',
+            :To          => number,
+            :From        => number_from,
+            :DateCreated => Time.now,
+            :DateUpdated => Time.now,
+          )
+        end
       end
       call_session.save
-      call.save
     end
     render :json => tg
   end
