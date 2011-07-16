@@ -42,30 +42,6 @@ describe TropoController do
         call.DateUpdated.should =~ /^201\d-/
       end
 
-      it "create two calls for a user with two phones and multi_call turned on" do
-        user = Factory(:user)
-        phone1 = Factory(:phone, :user_id => user.id, :primary => true)
-        phone2 = Factory(:phone, :user_id => user.id)
-        event = Factory(:event, :user_id => user.id)
-        post :tropo, tropo_outgoing_session_data(event)
-        parse_response(response).should == {
-          "tropo" => [{
-            "on" => {"event" => "hangup", "next" => "/tropo/callback.json"},
-          }, {
-            "on" => {"event" => "error",  "next" => "/tropo/callback.json"}
-          }, {
-            "on" => {"event" => "continue", "next"=> "/tropo/greeting.json"},
-          }, {
-            "call" => {"to" => [phone1.number, phone2.number] , "from" => "+14157660881"}
-          }]
-        }
-        calls = Call.where(
-          :event_id => event.id,
-          :user_id => user.id,
-        )
-        calls.count.should == 2
-      end
-
       it "Don't crash on empty data" do
         post :tropo
         response.should be_success
