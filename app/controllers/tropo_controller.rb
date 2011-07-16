@@ -49,14 +49,14 @@ class TropoController < ApplicationController
         numbers_to = event.user.phones.map(&:number)
         number_from = TropoCaller.new.phone_number 
         tg.call(
-          :to => numbers_to,
+          :to => numbers_to.count == 1 ? numbers_to.first : numbers_to,
           :from => number_from,
         )
         call_session.direction = 'outbound'
         call_session.call_state = 'calling'
         call.Direction = 'outbound'
         call.status = 'outgoing'
-        call.To = numbers_to.first # XXX 
+        call.To = event.user.primary_phone.number
         call.From = number_from
         call.DateCreated = Time.now
         call.DateUpdated = Time.now
