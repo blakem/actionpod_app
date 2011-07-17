@@ -42,8 +42,32 @@ describe TropoController do
         call.DateUpdated.should =~ /^201\d-/
       end
 
-      it "should call two phones" do
-        user = Factory(:user)
+      it "should call primary phone if multi_phones is turned off" do
+        user = Factory(:user, :multi_phones => false)
+        phone1 = Factory(:phone, :user_id => user.id)
+        phone2 = Factory(:phone, :user_id => user.id, :primary => true)
+        event = Factory(:event, :user_id => user.id)
+        post :tropo, tropo_outgoing_session_data(event)
+        parse_response(response).should == {
+          "tropo" => [{
+            "on" => {"event" => "hangup", "next" => "/tropo/callback.json"},
+          }, {
+            "on" => {"event" => "error",  "next" => "/tropo/callback.json"}
+          }, {
+            "on" => {"event" => "continue", "next"=> "/tropo/greeting.json"},
+          }, {
+            "call" => {"to" => phone2.number , "from" => "+14157660881"}
+          }]
+        }
+        call = Call.where(
+          :event_id => event.id,
+          :user_id => user.id,
+        ).first
+        call.To.should == phone2.number
+      end
+
+      it "should call both phones if multi_phones is turned on" do
+        user = Factory(:user, :multi_phones => true)
         phone1 = Factory(:phone, :user_id => user.id)
         phone2 = Factory(:phone, :user_id => user.id, :primary => true)
         event = Factory(:event, :user_id => user.id)

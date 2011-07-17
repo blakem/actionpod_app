@@ -46,7 +46,8 @@ class TropoController < ApplicationController
         log_message("INCOMING for #{event.user.name}")
       else # outgoing
         tg.on :event => 'continue', :next => URI.encode("/tropo/greeting.json")
-        numbers_to = event.user.phones.map(&:number)
+        user = event.user
+        numbers_to = user.multi_phones ? user.phones.map(&:number) : [user.primary_phone.number]
         number_from = TropoCaller.new.phone_number 
         tg.call(
           :to => numbers_to.count == 1 ? numbers_to.first : numbers_to,
