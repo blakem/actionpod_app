@@ -5,7 +5,11 @@ task :call_phones, [:event1_id, :event2_id, :event3_id, :event4_id, :event5_id] 
     event = Event.find(args[:event1_id])
     event.make_call(Time.now.utc)
     user = event.user
-    puts "Calling #{user.name} at #{user.primary_phone.number}..."
+    if user.multi_phones
+      puts "Calling #{user.name} at #{user.phones.map(&:number).join(', ')}"
+    else
+      puts "Calling #{user.name} at #{user.primary_phone.number}"
+    end
   else
     if args[:event1_id] && args[:event2_id]
       event1 = Event.find(args[:event1_id].to_i)
