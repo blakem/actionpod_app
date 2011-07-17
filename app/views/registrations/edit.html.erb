@@ -73,6 +73,12 @@
   </p>
 </div>
 <div class="field">
+  <p><%= f.label :multi_phones, "Call all my phones for the calls:", :class => "round" %>
+  <%= f.check_box :multi_phones %><br />
+  <i>(Check this if you want your landline and cell to ring.  First to pick up wins.)</i>
+  </p>
+</div>
+<div class="field">
   <p><%= f.label :use_ifmachine, "Go directly to conference:", :class => "round" %>
   <%= f.check_box :use_ifmachine %><br />
   <i>(Experimental: Use if your phone is having trouble sending keypresses)</i>

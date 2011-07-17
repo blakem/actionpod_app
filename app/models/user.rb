@@ -1,5 +1,5 @@
 # == Schema Information
-# Schema version: 20110506211752
+# Schema version: 20110717195137
 #
 # Table name: users
 #
@@ -39,6 +39,7 @@
 #  incoming_count       :integer         default(0)
 #  missed_in_a_row      :integer         default(0)
 #  made_in_a_row        :integer         default(0)
+#  multi_phones         :boolean
 #
 
 class User < ActiveRecord::Base
@@ -50,7 +51,7 @@ class User < ActiveRecord::Base
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email, :password, :password_confirmation, :remember_me, :invite_code, :time_zone, :name, :title,
                   :invite_code, :use_ifmachine, :location, :handle, :hide_email, :about, :phones_attributes, :facebook_uid,
-                  :phonetic_name
+                  :phonetic_name, :multi_phones
 
   has_many :events
   has_many :admin_pools, :class_name => 'Pool', :foreign_key => 'admin_id'

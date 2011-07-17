@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110713010146) do
+ActiveRecord::Schema.define(:version => 20110717195137) do
 
   create_table "call_sessions", :force => true do |t|
     t.string   "session_id"
@@ -224,6 +224,7 @@ ActiveRecord::Schema.define(:version => 20110713010146) do
     t.integer  "incoming_count",                      :default => 0
     t.integer  "missed_in_a_row",                     :default => 0
     t.integer  "made_in_a_row",                       :default => 0
+    t.boolean  "multi_phones"
   end
 
   add_index "users", ["confirmation_token"], :name => "index_users_on_confirmation_token", :unique => true

@@ -53,6 +53,7 @@ describe "Users" do
         user.hide_email.should be_false
         user.use_ifmachine.should be_false
         user.handle.should == 'newuserpurple'
+        user.multi_phones.should be_false
       end
     end
   end
@@ -112,6 +113,7 @@ describe "Users" do
         phone2 = Factory(:phone, :user_id => user.id, :string => '777 888 9999')
         user.use_ifmachine.should be_false
         user.hide_email.should be_false
+        user.multi_phones.should be_false
         user.time_zone.should == 'Pacific Time (US & Canada)'
         visit new_user_session_path
         fill_in "Email",      :with => user.email
@@ -131,6 +133,7 @@ describe "Users" do
         fill_in "Time Zone",          :with => 'Mountain Time (US & Canada)'
         check   "Hide my email address from other members"
         check   "Go directly to conference"
+        check   "Call all my phones for the calls"
         fill_in "Current Password",   :with => user.password
         click_button
 
@@ -146,6 +149,7 @@ describe "Users" do
         user.location.should == 'newlocation'
         user.time_zone.should == 'Mountain Time (US & Canada)'
         user.hide_email.should be_true
+        user.multi_phones.should be_true
         user.use_ifmachine.should be_true
         phone1.reload
         phone2.reload
