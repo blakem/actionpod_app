@@ -96,7 +96,8 @@ describe "Users" do
         user.handle.should == 'inviteexample'
         user.multi_phones.should be_false
         pool.reload
-        pool.users.should include(user)
+        user.reload
+        user.pools.map(&:id).should == [pool.id]
         user.events.count.should == 1
         event = user.events.first
         event.time.should == '7:00am'
