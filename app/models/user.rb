@@ -247,7 +247,12 @@ class User < ActiveRecord::Base
   end
   
   def timeslots
-    self.pools.map{ |p| p.timeslots(self) }.flatten.sort{ |a,b|
+    if self.admin?
+      pools = Pool.all
+    else 
+      pools = self.pools
+    end
+    pools.map{ |p| p.timeslots(self) }.flatten.sort{ |a,b|
       first = a[:pool_id] <=> b[:pool_id]
       first != 0 ? first : a[:minute] <=> b[:minute]
     }

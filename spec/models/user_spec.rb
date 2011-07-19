@@ -407,6 +407,7 @@ describe User do
   describe "timeslots" do
     it "should build timeslots from its groups" do
       user = Factory(:user)
+      user2 = Factory(:user, :admin => true)
       pool1 = Factory(:pool)
       pool2 = Factory(:pool)
       user.pools = [pool1, pool2]
@@ -435,6 +436,30 @@ describe User do
         :event_ids => [event3.id],
         :pool_id   => pool2.id,
       }]
+
+      # Admin sees all
+      user2.timeslots.should include({
+        :time      => "7:00am",
+        :string    => "7:00am on selected Weekdays",
+        :minute    => 420,
+        :days      => [1, 2, 3, 4, 5],
+        :event_ids => [event1.id],
+        :pool_id   => pool1.id,
+      }, {
+        :time      => "7:00am",
+        :string    => "7:00am on selected Weekdays",
+        :minute    => 420,
+        :days      => [1, 2, 3, 4, 5],
+        :event_ids => [event2.id],
+        :pool_id   => pool2.id,
+      }, {
+        :time      => "8:00am",
+        :string    => "8:00am on selected Weekdays",
+        :minute    => 480,
+        :days      => [1, 2, 3, 4, 5],
+        :event_ids => [event3.id],
+        :pool_id   => pool2.id,
+      })
     end
   end
 end
