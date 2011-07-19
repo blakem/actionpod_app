@@ -55,6 +55,53 @@ describe "Users" do
         user.handle.should == 'newuserpurple'
         user.multi_phones.should be_false
       end
+
+      it "should handle an invited user" do
+        user1 = Factory(:user)
+        pool = Factory(:pool, :hide_optional_fields => 'true')
+        event1 = Factory(:event, :pool_id => pool.id)
+        event2 = Factory(:event, :pool_id => pool.id)
+        event1.time = '7:00am'
+        event1.days = [3,5,6]
+        event2.time = '5:00pm'
+        event1.save
+        event2.save
+        invite_code = 'random_invite_code'
+        invite_email = 'invite_example@example.org'
+        invite = MemberInvite.create(
+          :sender_id => user1.id,
+          :pool_id => pool.id,
+          :email => invite_email,
+          :invite_code => invite_code,
+        )
+        expect { expect {
+          visit new_user_registration_path(:invite_code => invite_code)
+          fill_in "Full Name",              :with => "Example User"
+          fill_in "Primary Phone",          :with => "415 111 2222"
+          fill_in "Time Zone",              :with => "Pacific Time (US & Canada)"
+          fill_in "Password",               :with => "a"*10
+          fill_in "Password Confirmation",  :with => "a"*10
+          click_button
+          response.should have_selector('div.flash.notice', :content => 'You have signed up successfully')
+          response.should render_template('pages/my_profile')
+        }.should change(User, :count).by(1)}.should change(Phone, :count).by(1)
+        user = User.find_by_email(invite_email)
+        user.name.should == "Example User"
+        user.phonetic_name.should == "Example User"
+        user.email.should == invite_email
+        user.primary_phone.number.should == '+14151112222'
+        user.time_zone.should == 'Pacific Time (US & Canada)'
+        user.hide_email.should be_false
+        user.use_ifmachine.should be_false
+        user.handle.should == 'inviteexample'
+        user.multi_phones.should be_false
+        pool.reload
+        pool.users.should include(user)
+        user.events.count.should == 1
+        event = user.events.first
+        event.time.should == '7:00am'
+        event.days.should == [3,5,6]
+      end
     end
   end
   

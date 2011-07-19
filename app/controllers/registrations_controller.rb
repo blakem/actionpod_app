@@ -41,7 +41,19 @@ class RegistrationsController < Devise::RegistrationsController
       if invite
         group = Pool.find_by_id(invite.pool_id)
         resource.pools = []
-        group.add_member(resource) if group
+        if group
+          group.add_member(resource)
+          old_event = Event.where(:pool_id => group.id).sort{ |a,b| a.minute_of_day <=> b.minute_of_day }.first
+          if old_event
+            new_event = Event.create(
+              :user_id => resource.id,
+              :pool_id => group.id, 
+            )
+            new_event.time = old_event.time
+            new_event.days = old_event.days
+            new_event.save
+          end
+        end
         if invite.email == resource.email
           resource.confirm!
           resource.save
