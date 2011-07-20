@@ -133,9 +133,6 @@ describe PoolMerger do
         @tc.should_receive(:apologize_no_other_participants).with(participant.session_id, 2)
         twilio = mock('TwilioCaller')
         TwilioCaller.stub(:new).and_return(twilio)
-        twilio.should_receive(:send_sms).with(phone.number,
-          "Sorry about that... I couldn't find anyone else for the call.  That shouldn't happen once we reach critical mass. ;-)"
-        )
         data = @pm.initialize_data({})
         data[:on_hold] = {
           "session_id_1" => 1,

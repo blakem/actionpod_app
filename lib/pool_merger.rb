@@ -310,12 +310,6 @@ class PoolMerger
     put_on_hold(participant, data)
     event = Event.find(participant_event_id(participant))
     TropoCaller.new.apologize_no_other_participants(participant.session_id, data[:total])
-    if (event.send_sms_reminder)
-      TwilioCaller.new.send_sms(
-        Event.find(participant_event_id(participant)).user.primary_phone.number,
-        "Sorry about that... I couldn't find anyone else for the call.  That shouldn't happen once we reach critical mass. ;-)",
-      )
-    end
     conference = Conference.create(
       :pool_id    => pool.id,
       :started_at => pool_runs_at,
