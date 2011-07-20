@@ -360,6 +360,14 @@ describe TropoController do
         :session_id => tropo_session_id,
         :status => 'foo',
       )
+      event = Factory(:event)
+      call_session = CallSession.create(
+        :session_id => tropo_session_id,
+        :event_id => event.id,
+        :user_id => event.user_id,
+        :pool_id => event.pool_id,
+        :call_state => 'waiting_for_input'
+      )
       post :no_keypress, tropo_no_keypress_data
       parse_response(response).should == {
         "tropo" => [{

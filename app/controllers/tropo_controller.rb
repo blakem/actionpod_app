@@ -61,6 +61,7 @@ class TropoController < ApplicationController
         call.From = number_from
         call.DateCreated = Time.now
         call.DateUpdated = Time.now
+        log_message("OUTGOING for #{user.name}")
       end
       call_session.save
       call.save
@@ -122,9 +123,10 @@ class TropoController < ApplicationController
   end
 
   def no_keypress
-    process_request('nokeypress')
+    event, call_session = process_request('nokeypress')
     tg = TropoCaller.tropo_generator
     tg.say :value => "Sorry, We didn't receive any input. Call this number back to join the conference."
+    log_message("NOKEYPRESS for #{event.user.name}")
     render :json => tg
   end
   
@@ -137,6 +139,7 @@ class TropoController < ApplicationController
     tg.on :event => 'apologize', :next => "/tropo/apologize_no_other_participants.json"
     tg.say :value => 'Waiting for the other participants.'
     tg.say :value => 'http://hosting.tropo.com/69721/www/audio/jazz_planet.mp3'
+    log_message("ONHOLD for #{event.user.name}")
     render :json => tg
   end
   
@@ -148,6 +151,7 @@ class TropoController < ApplicationController
     tg.say :value => 'Welcome.  On the call today we have ' + build_intro_string(call_session.event_ids)
     tg.conference(conference_params(call_session))
     tg.on :event => 'onemin', :next => "/tropo/one_minute_warning.json"
+    log_message("PLACED for #{event.user.name}")
     render :json => tg
   end
 
@@ -175,6 +179,7 @@ class TropoController < ApplicationController
     if call && call.Direction == 'outbound'
       update_missed_count(event.user) unless call.status =~ /-onhold/
     end
+    log_message("CALLBACK for #{event.user.name}") if event
     render :inline => ''
   end
   
