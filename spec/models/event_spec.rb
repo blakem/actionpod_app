@@ -398,29 +398,30 @@ describe Event do
 
   describe "make calls" do
     before(:each) do
+      user = Factory(:user, :called_count => 0)
       @pool = Factory(:pool, :timelimit => 10)
-      @event = Factory(:event, :pool_id => @pool.id)
-      @tc = mock('TropoCaller')
-      TropoCaller.stub(:new).and_return(@tc)  
+      @event = Factory(:event, :pool_id => @pool.id, :user_id => user.id)
+      @sc = mock('SpeekCaller')
+      SpeekCaller.stub(:new).and_return(@sc)  
       @now = Time.now.utc
     end
 
-    it "makes calls with the twilio caller" do
-      @tc.should_receive(:start_call_for_event).with(@event)      
+    it "makes calls with the speek caller" do
+      @sc.should_receive(:start_call_for_event).with(@event)      
       @event.make_call(@now)
       @event.reload
       @event.user.called_count.should == 1
     end
     
-    it "makes calls with the twilio caller in the middle of the call window" do
-      @tc.should_receive(:start_call_for_event).with(@event)      
+    it "makes calls with the speek caller in the middle of the call window" do
+      @sc.should_receive(:start_call_for_event).with(@event)      
       @event.make_call(@now - 5.minutes)
       @event.reload
       @event.user.called_count.should == 1
     end
 
     it "does not make calls after the call window" do
-      @tc.should_not_receive(:start_call_for_event).with(@event)      
+      @sc.should_not_receive(:start_call_for_event).with(@event)      
       @event.make_call(@now - 12.minutes)
       @event.reload
       @event.user.called_count.should == 0

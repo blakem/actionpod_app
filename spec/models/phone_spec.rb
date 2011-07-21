@@ -36,6 +36,7 @@ describe Phone do
     user = Factory(:user)
     phone = Phone.create(:string => '+14154441234', :user_id => user.id, :primary => true)
     user.primary_phone.number_pretty.should == '(415) 444-1234'
+    user.primary_phone.number_plain.should == '14154441234'
   end
   
 end
