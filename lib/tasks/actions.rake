@@ -22,23 +22,29 @@ task :call_phones, [:event1_id, :event2_id, :event3_id, :event4_id, :event5_id] 
       event5 = Event.find_by_id(args[:event5_id].to_i)
       events << event5 if event5
     else
-      user1 = User.find_by_email('blakem@15minutecalls.com')
-      user2 = User.find_by_email('blakem@blakem.com')
+      user1 = User.blake
+      user2 = User.blake_test
       unless (user1 and user2)
         puts "Oops.... Couldn't find users"
         exit
-      else
-        pool = Pool.find_by_name('Testing Pool')
-        event1 = Event.find_by_name_and_user_id_and_pool_id('With Home', user1.id, pool.id)
-        event2 = Event.find_by_name_and_user_id_and_pool_id('With Cell', user2.id, pool.id)
-        if event1.nil?
-          event1 = Event.create!(:name => 'With Home', :user_id => user1.id, :pool_id => pool.id)
-        end
-        if event2.nil?
-          event2 = Event.create!(:name => 'With Cell', :user_id => user2.id, :pool_id => pool.id)
-        end
-        events = [event1, event2]
       end
+      pool = Pool.find_by_name('Testing Pool')
+      unless (pool)
+        puts "Oops.... Couldn't find 'Testing Pool'"
+        exit
+      end
+      event1 = Event.find_by_name_and_user_id_and_pool_id('With Home', user1.id, pool.id)
+      event2 = Event.find_by_name_and_user_id_and_pool_id('With Cell', user2.id, pool.id)
+      if event1.nil?
+        event1 = Event.create!(:name => 'With Home', :user_id => user1.id, :pool_id => pool.id)
+      end
+      if event2.nil?
+        event2 = Event.create!(:name => 'With Cell', :user_id => user2.id, :pool_id => pool.id)
+      end
+      events = [event1, event2]
+      SpeekCaller.new.start_call_for_events(events)
+      puts "Using Speek: #{event1.user.primary_phone.number},#{event2.user.primary_phone.number}"
+      exit
     end
 
     DelayedJob.where(:obj_jobtype => 'merge_calls_for_pool',    :pool_id => events[0].pool.id).each { |dj| dj.destroy }
