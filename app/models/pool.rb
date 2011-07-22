@@ -21,6 +21,7 @@
 class Pool < ActiveRecord::Base
   belongs_to :user, :foreign_key => 'admin_id'
   has_and_belongs_to_many :users, :order => 'name asc'
+  has_many :events
   validates_presence_of :name
   validates_numericality_of :timelimit, :greater_than => 1, :less_than_or_equal_to => 30
   
