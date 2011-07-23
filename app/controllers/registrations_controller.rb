@@ -35,15 +35,17 @@ class RegistrationsController < Devise::RegistrationsController
   def create
     build_resource
 
-    if resource.invite_code and MemberInvite.find_by_invite_code(resource.invite_code)
+    invite = resource.invite_code ? MemberInvite.find_by_invite_code(resource.invite_code) : nil
+    if invite
       resource.confirmed_at = Time.now
       resource.confirmation_token = nil
     end
 
     if resource.save
       TwilioCaller.new.send_error_to_blake("New User: #{resource.id}:#{resource.name} - #{resource.invite_code}") if Rails.env.production?
-      invite = MemberInvite.find_by_invite_code(resource.invite_code)
       if invite
+        resource.send_confirmation_instructions # won't happen during save above; we already confirmed them
+        resource.confirm!
         group = Pool.find_by_id(invite.pool_id)
         resource.pools = []
         if group
