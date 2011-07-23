@@ -37,7 +37,7 @@ class RegistrationsController < Devise::RegistrationsController
 
     if resource.invite_code and MemberInvite.find_by_invite_code(resource.invite_code)
       resource.confirmed_at = Time.now
-      resource.confirmation_token = ''
+      resource.confirmation_token = nil
     end
 
     if resource.save
