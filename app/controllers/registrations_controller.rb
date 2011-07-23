@@ -35,6 +35,11 @@ class RegistrationsController < Devise::RegistrationsController
   def create
     build_resource
 
+    if resource.invite_code and MemberInvite.find_by_invite_code(resource.invite_code)
+      resource.confirmed_at = Time.now
+      resource.confirmation_token = ''
+    end
+
     if resource.save
       TwilioCaller.new.send_error_to_blake("New User: #{resource.id}:#{resource.name} - #{resource.invite_code}") if Rails.env.production?
       invite = MemberInvite.find_by_invite_code(resource.invite_code)
@@ -55,7 +60,6 @@ class RegistrationsController < Devise::RegistrationsController
             new_event.save
           end
         end
-        resource.confirm! # if you're invited you don't need to confirm.... guess that works.
       end
       set_flash_message :notice, :signed_up
       sign_in_and_redirect(resource_name, resource)

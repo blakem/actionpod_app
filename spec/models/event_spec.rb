@@ -398,8 +398,9 @@ describe Event do
 
   describe "make calls" do
     before(:each) do
+      user = Factory(:user)
       @pool = Factory(:pool, :timelimit => 10)
-      @event = Factory(:event, :pool_id => @pool.id)
+      @event = Factory(:event, :pool_id => @pool.id, :user_id => user.id)
       @tc = mock('TropoCaller')
       TropoCaller.stub(:new).and_return(@tc)  
       @now = Time.now.utc
