@@ -44,8 +44,7 @@ class RegistrationsController < Devise::RegistrationsController
     if resource.save
       TwilioCaller.new.send_error_to_blake("New User: #{resource.id}:#{resource.name} - #{resource.invite_code}") if Rails.env.production?
       if invite
-        resource.send_confirmation_instructions # won't happen during save above; we already confirmed them
-        resource.confirm!
+        ::Devise.mailer.confirmation_instructions(self).deliver # won't happen during save above; we already confirmed them
         group = Pool.find_by_id(invite.pool_id)
         resource.pools = []
         if group
