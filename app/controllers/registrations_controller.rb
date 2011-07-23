@@ -35,10 +35,16 @@ class RegistrationsController < Devise::RegistrationsController
   def create
     build_resource
 
+    invite = resource.invite_code ? MemberInvite.find_by_invite_code(resource.invite_code) : nil
+    if invite
+      resource.confirmed_at = Time.now
+      resource.confirmation_token = nil
+    end
+
     if resource.save
       TwilioCaller.new.send_error_to_blake("New User: #{resource.id}:#{resource.name} - #{resource.invite_code}") if Rails.env.production?
-      invite = MemberInvite.find_by_invite_code(resource.invite_code)
       if invite
+        ::Devise.mailer.confirmation_instructions(resource).deliver # won't happen during save above; we already confirmed them
         group = Pool.find_by_id(invite.pool_id)
         resource.pools = []
         if group
@@ -49,14 +55,11 @@ class RegistrationsController < Devise::RegistrationsController
               :user_id => resource.id,
               :pool_id => group.id, 
             )
-            new_event.time = old_event.time
+            new_time = old_event.next_occurrence.in_time_zone(resource.time_zone)
+            new_event.time = old_event.ampm_format(new_time.hour, new_time.min)
             new_event.days = old_event.days
             new_event.save
           end
-        end
-        if invite.email == resource.email
-          resource.confirm!
-          resource.save
         end
       end
       set_flash_message :notice, :signed_up

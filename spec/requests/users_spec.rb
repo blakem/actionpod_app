@@ -103,6 +103,53 @@ describe "Users" do
         event.time.should == '7:00am'
         event.days.should == [3,5,6]
       end
+
+      it "generic invite to send to a large group" do
+        user1 = Factory(:user)
+        pool = Factory(:pool, :hide_optional_fields => 'true')
+        event1 = Factory(:event, :pool_id => pool.id)
+        event2 = Factory(:event, :pool_id => pool.id)
+        event1.time = '3:15pm'
+        event1.days = [3,5,6]
+        event2.time = '5:00pm'
+        event1.save
+        event2.save
+        invite_code = 'generic_invite_code'
+        invite = MemberInvite.create(
+          :sender_id => user1.id,
+          :pool_id => pool.id,
+          :invite_code => invite_code,
+        )
+        expect { expect {
+          visit new_user_registration_path(:invite_code => invite_code)
+          fill_in "Full Name",              :with => "Example Generic User"
+          fill_in "Primary Phone",          :with => "415 111 2223"
+          fill_in "Email",                  :with => "generic_invite@example.com"
+          fill_in "Time Zone",              :with => "Mountain Time (US & Canada)"
+          fill_in "Password",               :with => "a"*10
+          fill_in "Password Confirmation",  :with => "a"*10
+          click_button
+          response.should have_selector('div.flash.notice', :content => 'You have signed up successfully')
+          response.should render_template('pages/my_profile')
+        }.should change(User, :count).by(1)}.should change(Phone, :count).by(1)
+        user = User.find_by_email('generic_invite@example.com')
+        user.name.should == "Example Generic User"
+        user.primary_phone.number.should == '+14151112223'
+        user.time_zone.should == 'Mountain Time (US & Canada)'
+        user.hide_email.should be_false
+        user.use_ifmachine.should be_false
+        user.handle.should == 'genericinvite'
+        user.multi_phones.should be_false
+        pool.reload
+        user.reload
+        user.pools.map(&:id).should == [pool.id]
+        user.events.count.should == 1
+        event = user.events.first
+        event.time.should == '4:15pm'
+        event.days.should == [3,5,6]
+        event.name.should == "Example's 4:15pm Call"
+        event.send_sms_reminder.should be_true
+      end
     end
   end
   

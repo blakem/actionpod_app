@@ -35,6 +35,16 @@ describe Pool do
     pool.user.should == user
   end
 
+  it "has many events" do
+    pool = Factory(:pool)
+    event1 = Factory(:event, :pool_id => pool.id)
+    event2 = Factory(:event, :pool_id => pool.id)
+    event3 = Factory(:event)
+    pool.events.should include(event1, event2)
+    pool.events.should_not include(event3)
+    pool.events.count.should == 2
+  end
+
   it "has default values" do
     user = Factory(:user)
     pool1 = Pool.create(:admin_id => user.id)
