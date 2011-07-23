@@ -199,6 +199,16 @@ class Event < ActiveRecord::Base
     return true
   end
   
+  def ampm_format(hour, minute)
+    ampm = 'am'
+    if hour.to_i >= 12
+      hour = (hour.to_i - 12).to_s
+      ampm = 'pm'
+    end
+    hour = '12' if hour.to_i == 0
+    "#{hour}:" + sprintf('%02i', minute) + ampm
+  end
+
   private
     def schedule_validations
       sched_hash = schedule_actual.to_hash
@@ -220,16 +230,6 @@ class Event < ActiveRecord::Base
       sched = IceCube::Schedule.from_yaml(self.schedule_yaml ||= default_schedule.to_yaml)
       sched.instance_variable_set(:@exdates, sched.exdates.map { |ed| Time.zone.parse(ed.to_s).in_time_zone(self.user.time_zone) })
       sched
-    end
-
-    def ampm_format(hour, minute)
-      ampm = 'am'
-      if hour.to_i >= 12
-        hour = (hour.to_i - 12).to_s
-        ampm = 'pm'
-      end
-      hour = '12' if hour.to_i == 0
-      "#{hour}:" + sprintf('%02i', minute) + ampm
     end
 
     def destroy_delayed_jobs

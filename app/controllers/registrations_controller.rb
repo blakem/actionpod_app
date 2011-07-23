@@ -49,15 +49,13 @@ class RegistrationsController < Devise::RegistrationsController
               :user_id => resource.id,
               :pool_id => group.id, 
             )
-            new_event.time = old_event.time
+            new_time = old_event.next_occurrence.in_time_zone(resource.time_zone)
+            new_event.time = old_event.ampm_format(new_time.hour, new_time.min)
             new_event.days = old_event.days
             new_event.save
           end
         end
-        if invite.email == resource.email
-          resource.confirm!
-          resource.save
-        end
+        resource.confirm! # if you're invited you don't need to confirm.... guess that works.
       end
       set_flash_message :notice, :signed_up
       sign_in_and_redirect(resource_name, resource)
