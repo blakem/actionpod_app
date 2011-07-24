@@ -22,7 +22,7 @@ task :data_integrity => :environment do
   puts "  ok - Pool Count: #{pools.count}"
   pools.each do |p|
     puts "ERROR: Pool'#{p.id}:#{p.name}' is invalid!" unless p.valid?
-    user = User.find_by_id(p.user_id)
+    user = User.find_by_id(p.admin_id)
     if user
       puts "    ok - Pool'#{p.id}:#{p.name}' has a user"
     else
