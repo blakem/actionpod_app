@@ -1,5 +1,6 @@
 module PagesHelper
   def gravatar_for(user, options = {})
+    return '' unless user
     options = { 
       :size => 50, 
       :default => 'monsterid',

@@ -53,7 +53,7 @@ class User < ActiveRecord::Base
                   :invite_code, :use_ifmachine, :location, :handle, :hide_email, :about, :phones_attributes, :facebook_uid,
                   :phonetic_name, :multi_phones
 
-  has_many :events
+  has_many :events, :dependent => :destroy
   has_many :admin_pools, :class_name => 'Pool', :foreign_key => 'admin_id'
   has_many :phones, :dependent => :destroy
   has_many :plans, :dependent => :destroy

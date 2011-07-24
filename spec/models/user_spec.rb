@@ -462,4 +462,14 @@ describe User do
       })
     end
   end
+  
+  describe "destroy" do
+    it "should delete its events" do
+      user = Factory(:user)
+      event = Factory(:event, :user_id => user.id)
+      event_id = event.id
+      user.destroy
+      Event.find_by_id(event_id).should be_nil      
+    end
+  end
 end
