@@ -9,19 +9,21 @@
     <%= ts[:time] %> Call
     </b><br>
     <% ts[:event_ids].each do |event_id| %>
-    <% event = Event.find_by_id(event_id) %>
-    <% user = event.user %>
-      <%= gravatar_for user, :size => 30 %> <%= link_to user.name, user.profile_path %> - <%= user.title %>
-      <% if event.user == current_user %>
-        <% if event.user.title.blank? %>
-          <i>(<%= event.schedule_day_string %>)</i> - <%= link_to "Edit Your Availability", edit_event_path(event) %>
+      <% event = Event.find_by_id(event_id) %>
+      <% user = event.user %>
+      <% if user %>
+        <%= gravatar_for user, :size => 30 %> <%= link_to user.name, user.profile_path %> - <%= user.title %>
+        <% if event.user == current_user %>
+          <% if event.user.title.blank? %>
+            <i>(<%= event.schedule_day_string %>)</i> - <%= link_to "Edit Your Availability", edit_event_path(event) %>
+          <% else %>
+            <i>(<%= event.schedule_day_string %> - <%= link_to "Edit", edit_event_path(event) %>)</i>
+          <% end %>
         <% else %>
-          <i>(<%= event.schedule_day_string %> - <%= link_to "Edit", edit_event_path(event) %>)</i>
+          <i>(<%= event.schedule_day_string %>)</i>
         <% end %>
-      <% else %>
-        <i>(<%= event.schedule_day_string %>)</i>
+        <br/>
       <% end %>
-      <br/>
     <% end %>
     </p>
   <% end %>
