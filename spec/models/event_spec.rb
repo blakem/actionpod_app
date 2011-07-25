@@ -80,16 +80,17 @@ describe Event do
   describe "it's sms_reminder_text" do
     it "shouldn't duplicate the time" do
       user = Factory(:user, :name => 'Bob Smith')
-      event = Factory(:event, :user_id => user.id, :name => '')
+      pool = Factory(:pool, :name => 'Fancy Group')
+      event = Factory(:event, :user_id => user.id, :name => '', :pool_id => pool.id)
       event.name.should == "Bob's 8:00am Call"
       event.sms_reminder_text.should ==
-       "Your 8:00am Call is about to begin. Expect a call in 10 minutes."
+       "Your Fancy Group 8:00am Call is about to begin. Expect a call in 10 minutes."
       event.name = "Morning Accountability Call"
       event.sms_reminder_text.should ==
         "Your Morning Accountability Call will begin at 8:00am. Expect a call in 10 minutes."
-        event.name = "Something Cool"
-        event.sms_reminder_text.should ==
-          "Your Something Cool call will begin at 8:00am. Expect a call in 10 minutes."
+      event.name = "Something Cool"
+      event.sms_reminder_text.should ==
+        "Your Something Cool call will begin at 8:00am. Expect a call in 10 minutes."
     end
   end
 

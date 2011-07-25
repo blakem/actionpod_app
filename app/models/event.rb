@@ -163,7 +163,7 @@ class Event < ActiveRecord::Base
   def sms_reminder_text
     event_name = self.name_in_second_person
     if self.name == self.default_name
-      "Your #{event_name} is about to begin. Expect a call in 10 minutes."
+      "Your #{self.pool.name} #{event_name} is about to begin. Expect a call in 10 minutes."
     else
       "Your #{event_name} will begin at #{self.time}. Expect a call in 10 minutes."
     end  
