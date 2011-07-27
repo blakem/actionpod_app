@@ -20,10 +20,13 @@ describe SpeekCaller do
   describe "post_to_speek" do
 
     it "sends a post to speek" do
-      url = 'http://example.org'
+      string = 'FooBar'
       args = {'foo' => 'bar'}
-      Net::HTTP.should_receive(:post_form).with(URI.parse(url), args)
-      @sc.post_to_speek(url, args)
+      Net::HTTP.should_receive(:post_form).with(URI.parse(@sc.base_url + '/calls/' + string), {
+        'foo' => 'bar',
+        :api_key => @sc.api_key,
+      })
+      @sc.post_to_speek(string, args)
     end
   end
 
@@ -32,8 +35,7 @@ describe SpeekCaller do
       user = Factory(:user)
       phone = Factory(:phone, :user_id => user.id, :primary => true)
       event = Factory(:event, :user_id => user.id)
-      @sc.should_receive(:post_to_speek).with('http://api.speek.com/calls/callNow', {
-        :api_key => "r7442fvnyvyhrpf7b7j5gmx9", 
+      @sc.should_receive(:post_to_speek).with('callNow', {
         :description => event.name, 
         :numbers => event.user.primary_phone.number_plain, 
         :format => "json",
@@ -50,8 +52,7 @@ describe SpeekCaller do
       user2 = Factory(:user)
       phone2 = Factory(:phone, :user_id => user2.id, :primary => true)
       event2 = Factory(:event, :user_id => user2.id)
-      @sc.should_receive(:post_to_speek).with('http://api.speek.com/calls/callNow', {
-        :api_key => "r7442fvnyvyhrpf7b7j5gmx9", 
+      @sc.should_receive(:post_to_speek).with('callNow', {
         :description => event1.name, 
         :numbers => "13334445555,#{event2.user.primary_phone.number_plain}",
         :format => "json",
@@ -66,8 +67,7 @@ describe SpeekCaller do
       phone = Factory(:phone, :user_id => user.id, :primary => true)
       event = Factory(:event, :user_id => user.id)
       call_id = 'foobar'
-      @sc.should_receive(:post_to_speek).with('http://api.speek.com/calls/addParticipant', {
-        :api_key => "r7442fvnyvyhrpf7b7j5gmx9", 
+      @sc.should_receive(:post_to_speek).with('addParticipant', {
         :numbers => event.user.primary_phone.number_plain, 
         :format => "json",
         :call_id => call_id,
