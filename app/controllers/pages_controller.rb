@@ -15,7 +15,7 @@ class PagesController < ApplicationController
   end
   
   def my_profile
-    @events = current_user.events.sort { |a,b| a.minute_of_day <=> b.minute_of_day }
+    @events = current_user.events.where(:pool_event => false).sort { |a,b| a.minute_of_day <=> b.minute_of_day }
     if current_user.admin?
       @conferences = Conference.order("id DESC").paginate(:page => params[:page], :per_page => 5)
     else
