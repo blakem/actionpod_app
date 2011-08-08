@@ -43,7 +43,7 @@ module ApplicationHelper
       calls = []
       start_time = Time.now
       end_time = start_time + 1.month
-      user.events.each do |event|
+      user.normal_events.each do |event|
         event.schedule.occurrences_between(start_time, end_time).each do |occurrence|
           calls.push(occurrence.in_time_zone(current_user.time_zone))
         end

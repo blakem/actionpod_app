@@ -10,6 +10,7 @@
     </b><br>
     <% ts[:event_ids].each do |event_id| %>
       <% event = Event.find_by_id(event_id) %>
+      <% next if event.pool_event %>
       <% user = event.user %>
       <% if user %>
         <%= gravatar_for user, :size => 30 %> <%= link_to user.name, user.profile_path %> - <%= user.title %>

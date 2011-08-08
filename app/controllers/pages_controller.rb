@@ -15,7 +15,7 @@ class PagesController < ApplicationController
   end
   
   def my_profile
-    @events = current_user.events.sort { |a,b| a.minute_of_day <=> b.minute_of_day }
+    @events = current_user.normal_events.sort { |a,b| a.minute_of_day <=> b.minute_of_day }
     if current_user.admin?
       @conferences = Conference.order("id DESC").paginate(:page => params[:page], :per_page => 5)
     else
@@ -147,7 +147,7 @@ class PagesController < ApplicationController
     if pool and (current_user.pools.include?(pool) or pool.public_group)
       current_user.pools << pool unless current_user.pools.include?(pool)
       if params[:time]
-        event = current_user.events.where(:pool_id => pool.id).select{|e| e.time == params[:time]}.first
+        event = current_user.normal_events.where(:pool_id => pool.id).select{|e| e.time == params[:time]}.first
         unless event
           event = Event.create(:user_id => current_user.id, :pool_id => pool.id, :time => params[:time])
           if !params[:days].blank?
@@ -269,7 +269,7 @@ class PagesController < ApplicationController
 
   def stranded_users
     return unless check_for_admin_user
-    @users = User.all.sort_by(&:id).select { |u| u.events.empty? }
+    @users = User.all.sort_by(&:id).select { |u| u.normal_events.empty? }
     set_profile_values
     @view_options = {:hide_stranded_users => true}    
     breadcrumbs.add 'Stranded Members'

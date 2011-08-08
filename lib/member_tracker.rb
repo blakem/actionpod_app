@@ -1,7 +1,7 @@
 class MemberTracker
   def contact_stranded_members
     User.all.each do |user|
-      if user.events.empty? and user.placed_count == 0 and user.created_at < Time.now - 2.days
+      if user.normal_events.empty? and user.placed_count == 0 and user.created_at < Time.now - 2.days
         send_email_once(user, 'next_steps')
       end
     end
