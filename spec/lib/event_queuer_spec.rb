@@ -11,6 +11,9 @@ describe EventQueuer do
     event1 = create_event_at(now + 5.minutes, @user)
     event2 = create_event_at(now + 23.hours, @user)
     event3 = create_event_at(now + 25.hours, @user)
+    event4 = create_event_at(now + 5.minutes, @user)
+    event4.pool_event = true
+    event4.save
     DelayedJob.all.each { |dj| dj.destroy }
 
     pool_queuer = mock('PoolQueuer')

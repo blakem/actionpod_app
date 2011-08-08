@@ -61,12 +61,17 @@ describe "Users" do
         pool = Factory(:pool, :hide_optional_fields => 'true')
         event1 = Factory(:event, :pool_id => pool.id)
         event2 = Factory(:event, :pool_id => pool.id)
+        event3 = Factory(:event, :pool_id => pool.id, :pool_event => true, :auto_subscribe => true)
         event1.time = '7:00am'
         event1.days = [3,5,6]
-        event2.time = '5:00pm'
         event1.save
+        event2.time = '5:00pm'
         event2.save
+        event3.time = '9:00am'
+        event3.days = [2,5,6]
+        event3.save
         invite_code = 'random_invite_code'
+
         invite_email = 'invite_example@example.org'
         invite = MemberInvite.create(
           :sender_id => user1.id,
@@ -100,8 +105,8 @@ describe "Users" do
         user.pools.map(&:id).should == [pool.id]
         user.events.count.should == 1
         event = user.events.first
-        event.time.should == '7:00am'
-        event.days.should == [3,5,6]
+        event.time.should == '9:00am'
+        event.days.should == [2,5,6]
       end
 
       it "generic invite to send to a large group" do
@@ -109,11 +114,19 @@ describe "Users" do
         pool = Factory(:pool, :hide_optional_fields => 'true')
         event1 = Factory(:event, :pool_id => pool.id)
         event2 = Factory(:event, :pool_id => pool.id)
+        event3 = Factory(:event, :pool_id => pool.id, :pool_event => true, :auto_subscribe => true)
+        event4 = Factory(:event, :pool_id => pool.id, :pool_event => true, :auto_subscribe => true)
         event1.time = '3:15pm'
         event1.days = [3,5,6]
-        event2.time = '5:00pm'
         event1.save
+        event2.time = '5:00pm'
         event2.save
+        event3.time = '9:00am'
+        event3.days = [2,5,6]
+        event3.save
+        event4.time = '9:15am'
+        event4.days = [1,3,5]
+        event4.save
         invite_code = 'generic_invite_code'
         invite = MemberInvite.create(
           :sender_id => user1.id,
@@ -143,11 +156,15 @@ describe "Users" do
         pool.reload
         user.reload
         user.pools.map(&:id).should == [pool.id]
-        user.events.count.should == 1
-        event = user.events.first
-        event.time.should == '4:15pm'
-        event.days.should == [3,5,6]
-        event.name.should == "Example's 4:15pm Call"
+        user.events.count.should == 2
+        event = user.events.select{ |e| e.time == '10:00am'}.first
+        event.time.should == '10:00am'
+        event.days.should == [2,5,6]
+        event.name.should == "Example's 10:00am Call"
+        event = user.events.select{ |e| e.time == '10:15am'}.first
+        event.time.should == '10:15am'
+        event.days.should == [1,3,5]
+        event.name.should == "Example's 10:15am Call"
         event.send_sms_reminder.should be_true
       end
     end

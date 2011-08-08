@@ -1,4 +1,20 @@
 15 Minute Calls Features and Todo list:
+  Emails are not being sent out....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   FrontEnd:
     Survey for users to tell them if this is a good tool for them.
 
