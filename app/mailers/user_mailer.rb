@@ -58,7 +58,7 @@ class UserMailer < ActionMailer::Base
   def message_to_blake(message, subject = "Soooper Cool")
     @message = message
     mail(
-      :to => 'blakem@15minutecalls.com',
+      :to => 'blake@15minutecalls.com', # Can't be the same as from!?
       :subject => subject,
     )
   end
