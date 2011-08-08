@@ -284,8 +284,16 @@ describe User do
       user.next_call_time_string.should == ''
       user.event_with_next_call_time.should be_nil
 
+      event1.pool_event = true
       event1.days = [0,1,2,3,4,5,6]
       event1.time = '1:00pm'
+      event1.save
+      user.reload
+      user.next_call_time.should be_nil
+      user.next_call_time_string.should == ''
+      user.event_with_next_call_time.should be_nil
+
+      event1.pool_event = false
       event1.save
       user.reload
       user.next_call_time.strftime("%A at %I:%M%P").sub(/ 0/,' ').humanize.should == "Tuesday at 1:00pm"

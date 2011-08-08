@@ -8,6 +8,7 @@ describe ApplicationController do
     @user2 = Factory(:user, :time_zone => 'Pacific Time (US & Canada)')
     @user3 = Factory(:user, :time_zone => 'Mountain Time (US & Canada)')
     @pool1.users = User.all
+    @event11 = Factory(:event, :user_id => @user1.id, :pool_id => @pool1.id, :pool_event => true)
     @event21 = Factory(:event, :user_id => @user2.id, :pool_id => @pool1.id)
     @event31 = Factory(:event, :user_id => @user3.id, :pool_id => @pool1.id)
     @event21.time = '8:00am'

@@ -199,7 +199,7 @@ class User < ActiveRecord::Base
   end
 
   def next_call_time_and_event
-    data = events.map { |e| [e.next_occurrence, e] }.select{ |o| o[0] }.sort{ |a,b| a[0] <=> b[0]}.first
+    data = events.where(:pool_event => false).map { |e| [e.next_occurrence, e] }.select{ |o| o[0] }.sort{ |a,b| a[0] <=> b[0]}.first
     data ? data : []
   end
 
