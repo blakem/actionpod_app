@@ -21,7 +21,7 @@ namespace :show do
   desc "Show information about current Users"
   task :users => :environment do
     User.all.sort { |a,b| a.id <=> b.id }.each do |u|
-      event_count = u.events.count
+      event_count = u.normal_events.count
       plan_count = u.plans.count
       admin = u.admin? ? '*' : ' '
       not_confirmed = u.confirmed_at.blank? ? 'NC' : '  '

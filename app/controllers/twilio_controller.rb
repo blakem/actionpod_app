@@ -211,7 +211,7 @@ class TwilioController < ApplicationController
     def pick_users_closest_event(user)
       user_time = Time.now.in_time_zone(user.time_zone)
       beg_of_day = user_time.beginning_of_day
-      events = user.events.select { |e| e.next_occurrence(beg_of_day) }
+      events = user.normal_events.select { |e| e.next_occurrence(beg_of_day) }
       events = events.sort { |a,b| a.next_occurrence(beg_of_day) <=> b.next_occurrence(beg_of_day) }
       closest_event = events[0]
       events.each do |event|

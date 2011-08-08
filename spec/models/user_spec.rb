@@ -82,11 +82,15 @@ describe User do
   
   it "should have many events" do
     user = Factory(:user)
-    event1 = Factory(:event, :user_id => user.id)
-    event2 = Factory(:event, :user_id => user.id)
+    event1 = Factory(:event, :user_id => user.id, :pool_event => false)
+    event2 = Factory(:event, :user_id => user.id, :pool_event => true)
     event3 = Factory(:event)
     user.events.should include(event1, event2)
     user.events.should_not include(event3)
+    
+    user.normal_events.should include(event1)
+    user.normal_events.should_not include(event2)
+    user.normal_events.should_not include(event3)
   end
 
   it "can belong to zero or many pools" do

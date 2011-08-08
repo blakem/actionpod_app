@@ -153,6 +153,10 @@ class User < ActiveRecord::Base
     self
   end
   
+  def normal_events
+    events.where(:pool_event => false)
+  end
+  
   def self.secret_invite_code
     "acti0np0duser"
   end
@@ -199,7 +203,7 @@ class User < ActiveRecord::Base
   end
 
   def next_call_time_and_event
-    data = events.where(:pool_event => false).map { |e| [e.next_occurrence, e] }.select{ |o| o[0] }.sort{ |a,b| a[0] <=> b[0]}.first
+    data = normal_events.map { |e| [e.next_occurrence, e] }.select{ |o| o[0] }.sort{ |a,b| a[0] <=> b[0]}.first
     data ? data : []
   end
 

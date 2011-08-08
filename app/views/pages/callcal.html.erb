@@ -6,7 +6,7 @@
     <% occurrence = data[:occurrence] %>
     <% star = ''; bold = false %>
     <% if data[:count] == 1 %>
-      <% current_user.events.each do |event| %>
+      <% current_user.normal_events.each do |event| %>
 	    <% star = '*' if event.days.include?(occurrence.wday) && event.hour_of_day == occurrence.hour && event.minute_of_hour == occurrence.min %>
       <% end %>
       <% bold = true if star.blank? %>      

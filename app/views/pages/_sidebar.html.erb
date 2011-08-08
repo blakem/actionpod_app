@@ -35,11 +35,11 @@
 	  <%= link_to "View Recent Conference", :controller => :pages, :action => :conference, :id => conference.id %><br/>
 	<% end %>
 <% end %>
-<% unless @view_options[:hide_call_groups] or @user.events.empty? %>
+<% unless @view_options[:hide_call_groups] or @user.normal_events.empty? %>
   <% if current_user.admin? %>
     <%= link_to "All Call Groups", :controller => :pages, :action => :call_groups %><br/>
   <% else %>
-    <% call_groups = current_user.events.count > 1 ? 'groups' : 'group'%>
+    <% call_groups = current_user.normal_events.count > 1 ? 'groups' : 'group'%>
     <%= link_to "Who's in My Call #{call_groups}?", :controller => :pages, :action => :call_groups %><br/>
   <% end %>
 <% end %>
