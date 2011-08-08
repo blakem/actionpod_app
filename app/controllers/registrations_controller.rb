@@ -49,8 +49,7 @@ class RegistrationsController < Devise::RegistrationsController
         resource.pools = []
         if group
           group.add_member(resource)
-          old_event = Event.where(:pool_id => group.id).sort{ |a,b| a.minute_of_day <=> b.minute_of_day }.first
-          if old_event
+          Event.where(:pool_id => group.id, :pool_event => true, :auto_subscribe => true).each do |old_event|
             new_event = Event.create(
               :user_id => resource.id,
               :pool_id => group.id, 

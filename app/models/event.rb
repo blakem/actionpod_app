@@ -1,5 +1,5 @@
 # == Schema Information
-# Schema version: 20110418153156
+# Schema version: 20110801212422
 #
 # Table name: events
 #
@@ -11,6 +11,8 @@
 #  updated_at        :datetime
 #  pool_id           :integer         not null
 #  send_sms_reminder :boolean         default(TRUE)
+#  pool_event        :boolean
+#  auto_subscribe    :boolean
 #
 
 class Event < ActiveRecord::Base

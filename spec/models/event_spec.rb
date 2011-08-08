@@ -68,6 +68,24 @@ describe Event do
     event = Factory(:event, :pool_id => pool.id)
     event.pool.should == pool    
   end
+  
+  it "has a group_event" do
+    event = Factory(:event)
+    event.pool_event.should be_false
+    event.pool_event = true
+    event.save
+    event.reload
+    event.pool_event.should be_true
+  end
+
+  it "has an auto_subscribe" do
+    event = Factory(:event)
+    event.auto_subscribe.should be_false
+    event.auto_subscribe = true
+    event.save
+    event.reload
+    event.auto_subscribe.should be_true
+  end
 
   it "has a name_in_second_person" do
     user = Factory(:user, :name => 'Bob Jones')
@@ -393,6 +411,15 @@ describe Event do
       pool = Factory(:pool)
       event = Event.create(:name => 'TestCreateDJEvent', :user_id => user.id, :pool_id => pool.id, :days => [0,1,2,3,4,5,6])
       DelayedJob.where(:obj_type => 'Event', :obj_id => event.id).count.should == 1
+    end
+
+    it "should not schedule itself on create if it's a pool_event" do
+      user = Factory(:user)
+      pool = Factory(:pool)
+      event = Event.create(:name => 'TestCreatePoolEvent', :user_id => user.id, :pool_id => pool.id, :days => [0,1,2,3,4,5,6],
+        :pool_event => true,
+      )
+      DelayedJob.where(:obj_type => 'Event', :obj_id => event.id).count.should == 0
     end
     
   end

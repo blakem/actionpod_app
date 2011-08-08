@@ -1,7 +1,7 @@
 class EventQueuer
   def queue_events(time = Time.now.utc)
     rv = []
-    Event.all.each do |event|
+    Event.where(:pool_event => false).each do |event|
       delayed_job_args = queue_event(event, time)
       rv << delayed_job_args if delayed_job_args
     end
@@ -9,6 +9,7 @@ class EventQueuer
   end
   
   def queue_event(event, time = Time.now.utc)
+    return if event.pool_event
     next_run_time = event.next_occurrence
     return nil unless next_run_time
     next_run_time = next_run_time.utc
