@@ -1,0 +1,10 @@
+<h3> All Members:</h3>
+<% @users.each do |user| %>
+   <%= gravatar_for user, :size => 30 %> <%= link_to user.name, user.profile_path %>
+   Placed:<%= user.placed_count %>
+   Answered:<%= user.answered_count %>
+   Called:<%= user.called_count %>
+   Incoming:<%= user.incoming_count %>
+   Invite:<%= user.invite_code %>
+   <br/>
+<% end %>

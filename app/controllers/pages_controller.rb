@@ -274,6 +274,14 @@ class PagesController < ApplicationController
     @view_options = {:hide_stranded_users => true}    
     breadcrumbs.add 'Stranded Members'
   end
+
+  def all_users
+    return unless check_for_admin_user
+    @users = User.all.sort_by(&:name)
+    set_profile_values
+    @view_options = {:hide_all_users => true}    
+    breadcrumbs.add 'All Members'
+  end
     
   def conference_email
     return unless check_for_admin_user

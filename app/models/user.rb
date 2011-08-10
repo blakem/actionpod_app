@@ -156,6 +156,10 @@ class User < ActiveRecord::Base
   def normal_events
     events.where(:pool_event => false)
   end
+
+  def pool_events
+    events.where(:pool_event => true)
+  end
   
   def self.secret_invite_code
     "acti0np0duser"

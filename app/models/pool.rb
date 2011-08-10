@@ -34,6 +34,14 @@ class Pool < ActiveRecord::Base
     write_attribute(:allow_others_to_invite, false) unless read_attribute(:allow_others_to_invite)
   end
   
+  def normal_events
+    events.where(:pool_event => false)
+  end
+
+  def pool_events
+    events.where(:pool_event => true)
+  end
+  
   def after_call_window(time)
     Time.now.utc > time + self.timelimit.minutes
   end

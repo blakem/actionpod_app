@@ -45,6 +45,28 @@ describe Pool do
     pool.events.count.should == 2
   end
 
+  it "has normal_events that excludes pool_events" do
+    pool = Factory(:pool)
+    event1 = Factory(:event, :pool_id => pool.id, :pool_event => true)
+    event2 = Factory(:event, :pool_id => pool.id, :pool_event => false)
+    event3 = Factory(:event)
+    pool.normal_events.should include(event2)
+    pool.normal_events.should_not include(event1)
+    pool.normal_events.should_not include(event3)
+    pool.normal_events.count.should == 1
+  end
+
+  it "has pool_events that excludes normal_events" do
+    pool = Factory(:pool)
+    event1 = Factory(:event, :pool_id => pool.id, :pool_event => true)
+    event2 = Factory(:event, :pool_id => pool.id, :pool_event => false)
+    event3 = Factory(:event)
+    pool.pool_events.should include(event1)
+    pool.pool_events.should_not include(event2)
+    pool.pool_events.should_not include(event3)
+    pool.pool_events.count.should == 1
+  end
+
   it "has default values" do
     user = Factory(:user)
     pool1 = Pool.create(:admin_id => user.id)
