@@ -91,6 +91,10 @@ describe User do
     user.normal_events.should include(event1)
     user.normal_events.should_not include(event2)
     user.normal_events.should_not include(event3)
+
+    user.pool_events.should include(event2)
+    user.pool_events.should_not include(event1)
+    user.pool_events.should_not include(event3)
   end
 
   it "can belong to zero or many pools" do
