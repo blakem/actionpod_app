@@ -46,8 +46,8 @@ class Pool < ActiveRecord::Base
     Time.now.utc > time + self.timelimit.minutes
   end
 
-  def participating_users
-    Conference.where(:pool_id => self.id).map(&:users).select{ |u| u.count > 1}.flatten.uniq
+  def participating_users(minusers = 2)
+    Conference.where(:pool_id => self.id).map(&:users).select{ |u| u.count >= minusers}.flatten.uniq
   end
 
   def available_timelimits

@@ -100,6 +100,8 @@ describe Pool do
     conference2.users = [user3]
     pool.participating_users.should include(user1, user2)
     pool.participating_users.count.should == 2
+    pool.participating_users(2).count.should == 2
+    pool.participating_users(1).count.should == 3
   end
   
   it "can have zero or more users" do
