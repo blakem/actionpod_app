@@ -50,6 +50,18 @@ class Pool < ActiveRecord::Base
     Conference.where(:pool_id => self.id).map(&:users).select{ |u| u.count >= minusers}.flatten.uniq
   end
 
+  def nonparticipating_users(minusers = 2)
+    self.users - self.participating_users(minusers)
+  end
+  
+  def users_with_events
+    self.users.select{ |u| Event.find_by_user_id_and_pool_id(u.id, self.id)}
+  end
+  
+  def users_without_events
+    self.users - self.users_with_events
+  end
+  
   def available_timelimits
     list = [5, 10, 15, 20, 30]
     list << self.timelimit unless list.include?(timelimit)
