@@ -48,6 +48,44 @@ describe Event do
     end    
 
   end
+  
+  describe "reschedule_all" do
+    it "should reschedule all events in the pool that are at the same time" do
+      pool1 = Factory(:pool)
+      pool2 = Factory(:pool)
+      user1 = Factory(:user, :time_zone => 'Pacific Time (US & Canada)')
+      user2 = Factory(:user, :time_zone => 'Pacific Time (US & Canada)')
+      user3 = Factory(:user, :time_zone => 'Mountain Time (US & Canada)')
+      event1 = Factory(:event, :pool_id => pool1.id, :user_id => user1.id)
+      event1.time = '2:00pm'
+      event1.save
+      event2 = Factory(:event, :pool_id => pool2.id, :user_id => user1.id)
+      event2.time = '2:00pm'
+      event2.save
+      event3 = Factory(:event, :pool_id => pool1.id, :user_id => user2.id)
+      event3.time = '2:00pm'
+      event3.save
+      event4 = Factory(:event, :pool_id => pool1.id, :user_id => user3.id)
+      event4.time = '2:00pm'
+      event4.save
+      event5 = Factory(:event, :pool_id => pool1.id, :user_id => user3.id)
+      event5.time = '3:00pm'
+      event5.save
+      
+      event1.reschedule_all('3:00pm')
+      event1.reload
+      event1.time.should == '3:00pm'
+      event2.reload
+      event2.time.should == '2:00pm'
+      event3.reload
+      event3.time.should == '3:00pm'
+      event4.reload
+      event4.time.should == '2:00pm'
+      event5.reload
+      event5.time.should == '4:00pm'
+      
+    end
+  end
 
   it "should generate a name if it isn't given one" do
     user = Factory(:user, :name => 'Bob Jones')

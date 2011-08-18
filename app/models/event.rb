@@ -211,6 +211,21 @@ class Event < ActiveRecord::Base
     "#{hour}:" + sprintf('%02i', minute) + ampm
   end
 
+  def reschedule_all(str)
+    Event.where(:pool_id => self.pool_id).each do |event|
+      occurrence = event.next_occurrence
+      next unless occurrence
+      occurrence = occurrence.in_time_zone(self.user.time_zone)
+      time = occurrence.strftime('%l:%M%p').downcase.strip
+      next unless time == self.time
+      my_time_zone = ActiveSupport::TimeZone.new(self.user.time_zone)
+      new_time_zone = ActiveSupport::TimeZone.new(event.user.time_zone)
+      new_time = my_time_zone.parse(str).in_time_zone(new_time_zone).strftime("%I:%M%p").downcase
+      event.time = new_time
+      event.save
+    end
+  end
+  
   private
     def schedule_validations
       sched_hash = schedule_actual.to_hash
