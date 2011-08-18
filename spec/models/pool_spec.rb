@@ -88,6 +88,31 @@ describe Pool do
     pool.after_call_window(now - 13.minutes).should == true
   end
   
+  it "has participating_users" do
+    pool = Factory(:pool)
+    user1 = Factory(:user)
+    user2 = Factory(:user)
+    user3 = Factory(:user)
+    user4 = Factory(:user)
+    event = Factory(:event, :pool_id => pool.id, :user_id => user1.id)
+    pool.users = [user1, user2, user3, user4]
+    conference1 = Conference.create!(:pool_id => pool.id)
+    conference2 = Conference.create!(:pool_id => pool.id)
+    conference1.users = [user1, user2]
+    conference2.users = [user3]
+    pool.participating_users.should include(user1, user2)
+    pool.participating_users.count.should == 2
+    pool.participating_users(2).count.should == 2
+    pool.participating_users(1).count.should == 3
+    pool.nonparticipating_users.should include(user3, user4)
+    pool.nonparticipating_users.count.should == 2
+    pool.nonparticipating_users(2).count.should == 2
+    pool.nonparticipating_users(1).count.should == 1
+    pool.users_with_events.should == [user1]
+    pool.users_without_events.should include(user2, user3, user4)
+    pool.users_without_events.count.should == 3
+  end
+  
   it "can have zero or more users" do
     pool = Factory(:pool)
     pool.users.should be_empty
