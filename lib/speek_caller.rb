@@ -20,7 +20,7 @@ class SpeekCaller
   def start_call_for_event(event)
     post_to_speek('callNow', {
       :description => event.name,
-      :numbers => event.user.primary_phone.number_plain,
+      :numbers => number_string_for_event(event),
       :format => 'json',
     })
   end
@@ -28,7 +28,7 @@ class SpeekCaller
   def add_event_to_call(event, call_id)
     post_to_speek('addParticipant', {
       :call_id => call_id,
-      :numbers => event.user.primary_phone.number_plain,
+      :numbers => number_string_for_event(event),
       :format => 'json',
     })
   end
@@ -36,8 +36,20 @@ class SpeekCaller
   def start_call_for_events(events)
     post_to_speek('callNow', {
       :description => events[0].name,
-      :numbers => events.map{|e| e.user.primary_phone.number_plain}.join(','),
+      :numbers => number_string_for_events(events),
       :format => 'json',
     })
   end
+
+  private
+    def number_string_for_event(event)
+      number_string_for_events([event])
+    end
+
+    def number_string_for_events(events)
+      events.map{ |e| 
+        user = e.user; 
+        user.multi_phones ? user.phones.map{|p| p.number_plain} : user.primary_phone.number_plain
+      }.join(',')
+    end
 end

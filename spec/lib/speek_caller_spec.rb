@@ -49,12 +49,13 @@ describe SpeekCaller do
       user1 = Factory(:user)
       phone1 = Factory(:phone, :user_id => user1.id, :primary => true, :string => '+13334445555')
       event1 = Factory(:event, :user_id => user1.id)
-      user2 = Factory(:user)
-      phone2 = Factory(:phone, :user_id => user2.id, :primary => true)
+      user2 = Factory(:user, :multi_phones => true)
+      phone2 = Factory(:phone, :user_id => user2.id, :primary => true, :string => '+14567778888')
+      phone3 = Factory(:phone, :user_id => user2.id, :primary => false, :string => '+19998887777')
       event2 = Factory(:event, :user_id => user2.id)
       @sc.should_receive(:post_to_speek).with('callNow', {
         :description => event1.name, 
-        :numbers => "13334445555,#{event2.user.primary_phone.number_plain}",
+        :numbers => "13334445555,#{phone2.number_plain},#{phone3.number_plain}",
         :format => "json",
       })
       @sc.start_call_for_events([event1, event2])
