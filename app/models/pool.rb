@@ -160,5 +160,16 @@ class Pool < ActiveRecord::Base
     return true if self.public_group
     return true if self.allow_others_to_invite
   end
+
+  def merge_type_string
+    self.class.merge_type_map[merge_type]
+  end
   
+  def self.merge_type_map
+    {
+      1 => 'Consistently',
+      2 => 'Randomly',
+      3 => 'One Big Group',
+    }
+  end
 end

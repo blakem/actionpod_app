@@ -73,6 +73,11 @@ class PoolMerger
   end
 
   def handle_new_participants(participants, pool, pool_runs_at, data)
+    if pool.merge_type == 3
+      create_new_group(participants.shift(participants.length), pool, pool_runs_at, data)
+      return
+    end
+      
     while participants.count > 2 do
       if participants.count == 4
         handle_four_new_participants(participants, pool, pool_runs_at, data)

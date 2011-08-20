@@ -190,6 +190,15 @@ describe Pool do
     MemberInvite.find_by_id(invite_id).should be_nil
   end
   
+  it "has a merge_type_string" do
+    pool = Factory(:pool, :merge_type => 1)
+    pool.merge_type_string.should == 'Consistently'
+    pool.merge_type = 2
+    pool.merge_type_string.should == 'Randomly'
+    pool.merge_type = 3
+    pool.merge_type_string.should == 'One Big Group'    
+  end
+  
   describe "add_member" do
     it "adds itself to a users pools" do
       pool = Factory(:pool)

@@ -46,10 +46,7 @@
 	</div>
   <div class="field">
     <%= f.label :merge_type, "Form small call groups:", :class => "round" %>
-    <%= f.select(:merge_type, [
-      ["Consistently", "1"],
-      ["Randomly", "2"],
-    ]) %>
+    <%= f.select(:merge_type, Pool.merge_type_map.to_a.map(&:reverse)) %>
 <% if @show_member_count %>
   <div class="field">
     <b>Total Members:</b> <%= @pool.users.count %>

@@ -1175,6 +1175,19 @@ describe PoolMerger do
         @pm.handle_new_participants(new_participants, pool, pool_runs_at, data)
         new_participants.should be_empty
       end
+
+      it "should put them all into a single group with merge_type == 3" do
+        events = create_events(5)
+        pool = Factory(:pool, :merge_type => 3)
+        new_participants = participant_list_for_events(events, pool)
+        pool_runs_at = Time.now
+        data = @pm.initialize_data({})
+        @pm.should_receive(:create_new_group).with([
+          new_participants[0], new_participants[1], new_participants[2], new_participants[3], new_participants[4]
+        ], pool, pool_runs_at, data)
+        @pm.handle_new_participants(new_participants, pool, pool_runs_at, data)
+        new_participants.should be_empty
+      end
     end
   end
   
@@ -1441,13 +1454,13 @@ describe PoolMerger do
   end
 end
 
-def participant_list(participant_count, events = [])
+def participant_list(participant_count, events = [], pool = @pool)
   CallSession.where(:pool_id => @pool.id).each { |cs| cs.destroy }
   n = 0
   participant_count.times do
     n += 1
     call_session = CallSession.create!(
-      :pool_id => @pool.id,
+      :pool_id => pool.id,
       :session_id => 'session_id_' + n.to_s,
       :call_state => 'onhold',
       :event_id => n,
@@ -1482,8 +1495,8 @@ def create_events_with_placed(count)
   create_events(count, true)
 end
 
-def participant_list_for_events(events = [])
-  participant_list(events.count, events)
+def participant_list_for_events(events = [], pool = @pool)
+  participant_list(events.count, events, pool)
 end
 
 def extract_events(participants)
