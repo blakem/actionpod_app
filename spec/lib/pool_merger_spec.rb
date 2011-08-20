@@ -408,6 +408,83 @@ describe PoolMerger do
           }
         }
       end
+
+
+      it "should keep everyone in the same group if merge_type == 3" do
+        @pool.merge_type = 3
+        @pool.save
+        events = create_events(5)
+        new_participants = participant_list(5, events)
+
+        # Three come in and get merged together
+        new_participants[2].call_state = 'foo'
+        new_participants[4].call_state = 'foo'
+        new_participants.each { |p| p.save }
+        data = @pm.initialize_data({})
+        @tc.should_receive(:place_participant_in_conference).with(
+          "session_id_1", "15mcPool#{@pool.id}Room1", 
+          be_within(3).of(@timelimit_insec), 
+          events[0].id, [events[0].id, events[1].id, events[3].id]
+        )
+        @tc.should_receive(:place_participant_in_conference).with(
+          "session_id_2", "15mcPool#{@pool.id}Room1", 
+          be_within(3).of(@timelimit_insec), 
+          events[1].id, [events[0].id, events[1].id, events[3].id]
+        )
+        @tc.should_receive(:place_participant_in_conference).with(
+          "session_id_4", "15mcPool#{@pool.id}Room1", 
+          be_within(3).of(@timelimit_insec), 
+          events[3].id, [events[0].id, events[1].id, events[3].id]
+        )
+        data = @pm.merge_calls_for_pool(@pool, @pool_runs_at, data)
+
+        # Fourth comes in and gets merged into a group of four
+        new_participants[2].call_state = 'onhold'
+        new_participants[2].save
+        @tc.should_receive(:place_participant_in_conference).with(
+          "session_id_3", "15mcPool#{@pool.id}Room1", 
+          be_within(3).of(@timelimit_insec), 
+          events[2].id, [events[0].id, events[1].id, events[3].id]
+        )        
+        data = @pm.merge_calls_for_pool(@pool, @pool_runs_at, data)
+        data = @pm.merge_calls_for_pool(@pool, @pool_runs_at, data)
+
+        # Fifth comes in and gets merged into a group of five
+        new_participants[4].call_state = 'onhold'
+        new_participants[4].save
+        @tc.should_receive(:place_participant_in_conference).with(
+          "session_id_5", "15mcPool#{@pool.id}Room1", 
+          be_within(3).of(@timelimit_insec), 
+          events[4].id, [events[0].id, events[1].id, events[3].id, events[2].id]
+        )
+        data = @pm.merge_calls_for_pool(@pool, @pool_runs_at, data)
+        data = @pm.merge_calls_for_pool(@pool, @pool_runs_at, data)
+  
+        # Placed data for final grouping
+        data[:placed].each_value{ |v| v.delete(:time)}
+        data[:placed].should == {
+          "session_id_1" => {
+            :room_name => "15mcPool#{@pool.id}Room1", 
+            :event_id  => events[0].id,
+          }, 
+          "session_id_2" => {
+            :room_name => "15mcPool#{@pool.id}Room1", 
+            :event_id  => events[1].id,
+          }, 
+          "session_id_3" => {
+            :room_name => "15mcPool#{@pool.id}Room1", 
+            :event_id  => events[2].id,
+          }, 
+          "session_id_4" => {
+            :room_name => "15mcPool#{@pool.id}Room1", 
+            :event_id  => events[3].id,
+          }, 
+          "session_id_5" => {
+            :room_name => "15mcPool#{@pool.id}Room1", 
+            :event_id  => events[4].id,
+          }
+        }
+      end
     end
     
     describe "two participants" do

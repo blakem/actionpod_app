@@ -74,7 +74,13 @@ class PoolMerger
 
   def handle_new_participants(participants, pool, pool_runs_at, data)
     if pool.merge_type == 3
-      create_new_group(participants.shift(participants.length), pool, pool_runs_at, data)
+      if data[:placed].any?
+        create_new_group(participants.shift(participants.length), pool, pool_runs_at, data)
+      else
+        participants.each do |participant|
+          add_single_participant_to_conference(participant, pool, pool_runs_at, data)
+        end
+      end
       return
     end
       
@@ -438,7 +444,7 @@ class PoolMerger
   end
 
   def add_single_participant_to_conference(participant, pool, pool_runs_at, data)
-    room_name = pick_room_for_single_participant(participant, data)
+    room_name = pick_room_for_single_participant(participant, data, pool)
     if room_name
       participant_event_id = participant_event_id(participant)
       event_ids = event_ids_for_conference_room(room_name, data)
@@ -473,7 +479,8 @@ class PoolMerger
     participants
   end
 
-  def pick_room_for_single_participant(participant, data)
+  def pick_room_for_single_participant(participant, data, pool)
+    return largest_conference_room(data) if pool.merge_type == 3
     if placed?(participant, data)
       last_room_name = find_placed_data_for_participant(participant, data).first[:room_name]
       if conference_has_other_callers(last_room_name, participant, data)
