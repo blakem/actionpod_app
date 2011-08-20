@@ -74,7 +74,7 @@ class PoolMerger
 
   def handle_new_participants(participants, pool, pool_runs_at, data)
     if pool.merge_type == 3
-      if data[:placed].any?
+      if data[:placed].empty?
         create_new_group(participants.shift(participants.length), pool, pool_runs_at, data)
       else
         participants.each do |participant|
