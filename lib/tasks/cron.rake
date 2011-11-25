@@ -31,12 +31,13 @@ desc "Schedules Emails to Members"
 task :schedule_emails => :environment do
   member_tracker = MemberTracker.new
   date = next_time_offset_by(8.hours)
-  if [1,2,3,4,5].include?(date.wday)
-    member_tracker.delay(
-      :run_at => date - 5.minutes, 
-      :obj_jobtype => 'send_team_focus_email',
-    ).send_team_focus_email(date)
-  end
+
+  # if [1,2,3,4,5].include?(date.wday)
+  #   member_tracker.delay(
+  #     :run_at => date - 5.minutes, 
+  #     :obj_jobtype => 'send_team_focus_email',
+  #   ).send_team_focus_email(date)
+  # end
 
   member_tracker.delay(
     :run_at => next_time_offset_by(10.hours + 30.minutes),
